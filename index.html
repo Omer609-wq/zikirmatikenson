@@ -13,7 +13,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     
     <!-- CSS -->
@@ -29,20 +29,16 @@
                 <div class="header-left">
                     <h1>Klasörlerim</h1>
                 </div>
-                <div>
-                    <button id="openSettingsBtn" class="icon-btn" style="display:inline-block;" aria-label="Ayarlar"><span class="material-icons-outlined">settings</span></button>
-                    <button id="openLibraryBtn" class="icon-btn" style="display:inline-block;" aria-label="Keşfet"><span class="material-icons-outlined">explore</span></button>
-                    <button id="openStatsBtn" class="icon-btn" style="display:inline-block;" aria-label="İstatistikler"><span class="material-icons-outlined">bar_chart</span></button>
-                </div>
+                <div style="width: 36px;" aria-hidden="true"></div>
             </header>
+            <p class="drag-hint">Klasöre basılı tutup sürükleyerek sıralayın.</p>
 
             <section class="main-content scrollable">
                 <div class="folder-grid" id="folderGrid">
                     <!-- Folders Injected via JS -->
                 </div>
-                <div class="limit-warning" id="folderLimitWarning">En fazla 3 klasör oluşturabilirsiniz. (Premium'da Sınırsız)</div>
                 <button class="primary-btn" id="newFolderBtn" style="margin-top: 1rem;">
-                    <span class="material-icons-outlined">create_new_folder</span> Yeni Klasör Oluştur
+                    <span class="material-icons-outlined">add</span> Yeni Klasör Oluştur
                 </button>
             </section>
 
@@ -59,10 +55,26 @@
             <header class="glass-header">
                 <button class="icon-btn backBtn" data-target="homeView"><span class="material-icons-outlined">arrow_back</span></button>
                 <h1 id="folderDetailTitle">Varsayılan Zikirler</h1>
-                <div style="width: 36px;"></div> <!-- Placeholder -->
+                <button type="button" class="icon-btn" id="toggleZikirReorderHintBtn" aria-label="Sıralama ipucunu göster" aria-expanded="false" title="Sıralama">
+                    <span class="material-icons-outlined">swap_vert</span>
+                </button>
             </header>
+            <p class="drag-hint drag-hint--folder" id="folderZikirDragHint" hidden>Zikre basılı tutup sürükleyerek sıralayın.</p>
 
             <section class="main-content scrollable">
+                <div class="search-wrap" style="margin-bottom: 0.75rem;">
+                    <div class="form-group" style="margin:0;">
+                        <label style="font-size:0.75rem; color: var(--text-gray);">Ara</label>
+                        <input type="text" id="folderSearchInput" placeholder="Zikir ara..." />
+                    </div>
+                    <div class="setting-item" style="margin-top:0.75rem;">
+                        <span><span class="material-icons-outlined">star</span> Sadece Favoriler</span>
+                        <label class="switch">
+                            <input type="checkbox" id="folderFavoritesOnly">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
                 <ul class="zikir-list" id="folderZikirList">
                     <!-- Zikirs injected via JS -->
                 </ul>
@@ -80,6 +92,7 @@
                 <button class="icon-btn backBtn" data-target="folderDetailView"><span class="material-icons-outlined">arrow_back</span></button>
                 <div class="header-titles">
                     <h1 id="zikirTitle">Subhanallah</h1>
+                    <p id="zikirArabic" class="zikir-arabic-header" dir="rtl" lang="ar" style="display:none;"></p>
                     <p id="zikirNote" class="zikir-note">Allah eksikliklerden uzaktır.</p>
                 </div>
                 <div style="width: 36px;"></div> <!-- Placeholder -->
@@ -177,12 +190,14 @@
             </header>
 
             <section class="main-content scrollable">
-                <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 1rem; text-align: center;">Tüm zikirler Diyanet ve Sahih hadis kaynaklarından teyit edilmiştir.</p>
+                <p class="library-intro">Duruma göre dualar ve tekrarlı zikirler. Arama; isim, açıklama, ne zaman okunur ve anahtar kelimelerde çalışır.</p>
+                <div class="form-group" style="margin-top: 0.75rem;">
+                    <label>Ara</label>
+                    <input type="text" id="librarySearchInput" placeholder="İsim, Türkçe anlam veya fazilet/okuma metni (örn. tuvalet, günah, tevekkül)…" autocomplete="off" />
+                </div>
                 <div class="stats-tabs" id="libraryCategoryTabs">
-                    <button class="tab-btn active" data-cat="all">Tümü</button>
-                    <button class="tab-btn" data-cat="gunluk">Günlük</button>
-                    <button class="tab-btn" data-cat="sikinti">Sıkıntı</button>
-                    <button class="tab-btn" data-cat="sukur">Şükür</button>
+                    <button class="tab-btn active" data-cat="dua">Dualar</button>
+                    <button class="tab-btn" data-cat="zikir">Zikirler</button>
                 </div>
 
                 <div class="library-list" id="libraryGrid">
@@ -191,7 +206,71 @@
             </section>
         </div>
 
+        <!-- =================== PRIVACY VIEW =================== -->
+        <div id="privacyView" class="view hidden">
+            <header class="glass-header">
+                <button class="icon-btn backBtn" data-target="homeView"><span class="material-icons-outlined">arrow_back</span></button>
+                <h1>Gizlilik</h1>
+                <div style="width: 36px;"></div>
+            </header>
+            <section class="main-content scrollable">
+                <div class="stat-card">
+                    <h3>Veriler nerede tutuluyor?</h3>
+                    <p class="privacy-card-text">
+                        Bu uygulama; klasörleriniz, zikirleriniz ve sayaç geçmişinizi cihazınızda saklar (yerel depolama).
+                        Varsayılan olarak dışarıya veri göndermez.
+                    </p>
+                </div>
+                <div class="stat-card">
+                    <h3>İstatistik geçmişi</h3>
+                    <p class="privacy-card-text">
+                        Günlük tıklama kayıtları cihazınızda tutulur; grafikte son 7 gün gösterilir.
+                        Depolama dolmasın diye yaklaşık son 400 günlük günlük özetler otomatik budanır (zikirlerin toplam sayacı silinmez).
+                    </p>
+                </div>
+                <div class="stat-card">
+                    <h3>Yedekleme ve hesap</h3>
+                    <p class="privacy-card-text">
+                        Veriler şu an yalnızca bu cihazda tutulur. Tarayıcı veya uygulama verilerinizi silmek, cihaz değiştirmek ya da uygulamayı kaldırmak tüm kaydı silebilir; bu yüzden önemli verilerinizi yedeklemenizi öneririz.
+                    </p>
+                    <p class="privacy-card-text" style="margin-top: 0.75rem;">
+                        Hesap veya veri kaybını azaltmak için <strong>e-posta hesabına bağlama</strong> ve bulutta güvenli yedekleme / eşitleme <strong>ileride Premium</strong> ile sunulacaktır.
+                    </p>
+                </div>
+                <div class="stat-card">
+                    <h3>İzinler</h3>
+                    <p class="privacy-card-text">
+                        Titreşim, ses ve ekranı uyanık tutma gibi seçenekler yalnızca uygulama deneyimi içindir ve isteğe bağlıdır.
+                    </p>
+                </div>
+            </section>
+        </div>
+
     </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav" id="bottomNav" aria-label="Alt Menü">
+        <button type="button" class="bottom-nav__btn active" data-view="homeView" aria-label="Klasörler">
+            <span class="material-icons-outlined">home</span>
+            <span class="bottom-nav__label">Klasörler</span>
+        </button>
+        <button type="button" class="bottom-nav__btn" data-view="libraryView" aria-label="Keşfet">
+            <span class="material-icons-outlined">explore</span>
+            <span class="bottom-nav__label">Keşfet</span>
+        </button>
+        <button type="button" class="bottom-nav__btn" data-view="statsView" aria-label="İstatistik">
+            <span class="material-icons-outlined">bar_chart</span>
+            <span class="bottom-nav__label">İstatistik</span>
+        </button>
+        <button type="button" class="bottom-nav__btn" data-action="settings" aria-label="Ayarlar">
+            <span class="material-icons-outlined">settings</span>
+            <span class="bottom-nav__label">Ayarlar</span>
+        </button>
+        <button type="button" class="bottom-nav__btn bottom-nav__btn--premium" disabled aria-disabled="true" aria-label="Premium (yakında)" title="Premium çok yakında">
+            <span class="material-icons-outlined">workspace_premium</span>
+            <span class="bottom-nav__label">Premium</span>
+        </button>
+    </nav>
 
     <!-- =================== MODALS =================== -->
     <!-- Add Zikir Modal -->
@@ -211,6 +290,10 @@
                     <input type="number" id="newZikirTarget" min="1" value="33">
                 </div>
                 <div class="form-group">
+                    <label>Arapça (isteğe bağlı)</label>
+                    <textarea id="newZikirArabic" rows="2" dir="rtl" lang="ar" placeholder="مثال: سُبْحَانَ اللَّهِ"></textarea>
+                </div>
+                <div class="form-group">
                     <label>Anlamı / Not</label>
                     <textarea id="newZikirMeaning" rows="2"></textarea>
                 </div>
@@ -225,13 +308,17 @@
     <div class="modal-overlay" id="editModalOverlay">
         <div class="modal glass-modal">
             <div class="modal-header">
-                <h2>Hedefi Düzenle</h2>
+                <h2>Zikri düzenle</h2>
                 <button class="icon-btn closeModalBtn" data-modal="editModalOverlay"><span class="material-icons-outlined">close</span></button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
                     <label>Yeni Hedef Sayı</label>
                     <input type="number" id="editZikirTarget" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Arapça</label>
+                    <textarea id="editZikirArabic" rows="2" dir="rtl" lang="ar"></textarea>
                 </div>
                 <div class="form-group">
                     <label>Anlamı / Not</label>
@@ -273,20 +360,20 @@
                 <button class="icon-btn closeModalBtn" data-modal="libraryDetailOverlay"><span class="material-icons-outlined">close</span></button>
             </div>
             <div class="modal-body">
-                <div class="verified-badge-wrap" style="display:flex; align-items:center; gap:0.5rem; color: var(--primary-green); font-size:0.8rem; margin-bottom:1rem; font-weight:600;">
-                    <span class="material-icons-outlined" style="font-size:1.1rem;">verified</span> Onaylı Kaynak
+                <div class="lib-detail-verified">
+                    <span class="material-icons-outlined">verified</span> Onaylı Kaynak
                 </div>
-                <h3 id="libDetailName" style="font-size: 1.3rem; margin-bottom: 0.5rem; color: white;">-</h3>
-                <p id="libDetailMeaning" style="font-size: 0.9rem; color: var(--text-gray); margin-bottom: 1rem;"></p>
+                <h3 id="libDetailName" class="lib-detail-name">-</h3>
+                <p id="libDetailMeaning" class="lib-detail-meaning"></p>
                 
-                <div class="form-group" style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px;">
-                    <label style="color:var(--primary-green); font-size:0.75rem;">Fazileti / Okuma Durumu</label>
-                    <p id="libDetailContext" style="font-size: 0.85rem; color: lightgray;"></p>
+                <div class="form-group lib-detail-block" style="background: rgba(0,0,0,0.2); padding: 0.85rem; border-radius: 8px;">
+                    <label>Fazileti / Okuma durumu</label>
+                    <p id="libDetailContext"></p>
                 </div>
                 
-                <div class="form-group" style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px;">
-                    <label style="color:var(--primary-green); font-size:0.75rem;">Kaynak</label>
-                    <p id="libDetailSource" style="font-size: 0.85rem; color: lightgray; font-style: italic;"></p>
+                <div class="form-group lib-detail-block" style="background: rgba(0,0,0,0.2); padding: 0.85rem; border-radius: 8px;">
+                    <label>Kaynak</label>
+                    <p id="libDetailSource" class="lib-detail-source-text"></p>
                 </div>
             </div>
             <div class="modal-footer">
@@ -324,9 +411,16 @@
             </div>
             <div class="modal-body">
                 <div class="setting-item">
-                    <span><span class="material-icons-outlined">vibration</span> Titreşim Motoru</span>
+                    <span><span class="material-icons-outlined">touch_app</span> Dokunma Titreşimi</span>
                     <label class="switch">
-                        <input type="checkbox" id="settingVibration" checked>
+                        <input type="checkbox" id="settingVibrationTap" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span><span class="material-icons-outlined">vibration</span> Tur Bitince Titreşim</span>
+                    <label class="switch">
+                        <input type="checkbox" id="settingVibrationTarget" checked>
                         <span class="slider round"></span>
                     </label>
                 </div>
@@ -344,7 +438,27 @@
                         <span class="slider round"></span>
                     </label>
                 </div>
-                <p style="font-size: 0.75rem; color: var(--text-gray); margin-top: 1rem; text-align: center;">Ekran uyanık tutma özelliği zikir sayfasındayken aktif olur. Çok eski cihazlarda desteklenmeyebilir.</p>
+                <p class="settings-footnote">Ekran uyanık tutma özelliği zikir sayfasındayken aktif olur. Çok eski cihazlarda desteklenmeyebilir.</p>
+
+                <div style="height: 12px;"></div>
+
+                <div class="setting-actions">
+                    <button class="primary-btn" id="openPrivacyBtn" style="background: transparent; border: 1px solid var(--glass-border);">
+                        <span class="material-icons-outlined">policy</span> Gizlilik
+                    </button>
+                    <div style="height: 4px;"></div>
+                    <div class="setting-item" style="margin-top: 0.5rem;">
+                        <span><span class="material-icons-outlined">notifications</span> Günlük Hatırlatıcı</span>
+                        <label class="switch">
+                            <input type="checkbox" id="settingReminderEnabled">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="form-group" style="margin-top: 0.75rem;">
+                        <label>Hatırlatma Saati</label>
+                        <input type="time" id="settingReminderTime" value="21:00" />
+                    </div>
+                </div>
             </div>
         </div>
     </div>
