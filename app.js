@@ -127,6 +127,9 @@ const ESMA_ARABIC = [].concat(
     ["يَا مُنْتَقِمُ", "يَا عَفُوُّ", "يَا رَؤُوفُ", "يَا مَالِكَ الْمُلْكِ", "يَا ذَا الْجَلَالِ وَالْإِكْرَامِ", "يَا مُقْسِطُ", "يَا جَامِعُ", "يَا غَنِيُّ", "يَا مُغْنِي", "يَا مَانِعُ", "يَا ضَارُّ", "يَا نَافِعُ", "يَا نُورُ", "يَا هَادِي", "يَا بَدِيعُ", "يَا بَاقِي", "يَا وَارِثُ", "يَا رَشِيدُ", "يَا صَبُورُ"]
 );
 ESMA_LIST.forEach((e, i) => { e.arabic = ESMA_ARABIC[i] || ''; });
+const ESMA_INDEX_BY_NORMALIZED_NAME = new Map(
+    ESMA_LIST.map((e, i) => [normalizeEsmaName(e.name), i])
+);
 
 const DEFAULT_ZIKIR_ARABIC_BY_ID = {
     z_1: 'سُبْحَانَ اللَّهِ',
@@ -404,6 +407,140 @@ function safeZikirTarget(z) {
     return Number.isFinite(t) && t > 0 ? t : 33;
 }
 
+function esmaZikirId(index) {
+    return 'z_e_' + index;
+}
+
+function normalizeEsmaName(name) {
+    return String(name || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLocaleLowerCase('tr-TR')
+        .replace(/[^a-z0-9ğüşöçı]/g, '');
+}
+
+function nonNegativeNumber(value) {
+    const n = Number(value);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
+function getCanonicalEsmaIndex(z) {
+    if (!z) return null;
+    const byName = ESMA_INDEX_BY_NORMALIZED_NAME.get(normalizeEsmaName(z.name));
+    if (typeof byName === 'number') return byName;
+
+    const match = /^z_e_(\d+)$/.exec(String(z.id || ''));
+    if (!match) return null;
+    const byId = parseInt(match[1], 10);
+    return ESMA_LIST[byId] ? byId : null;
+}
+
+function mergeEsmaState(into, z) {
+    into.count += nonNegativeNumber(z.count);
+    into.lastClicked = Math.max(into.lastClicked, nonNegativeNumber(z.lastClicked));
+    if (z.favorite) into.favorite = true;
+}
+
+function createCanonicalEsmaZikir(index, state = {}) {
+    const esma = ESMA_LIST[index];
+    const item = {
+        id: esmaZikirId(index),
+        folderId: 'f_esma',
+        name: esma.name,
+        arabic: esma.arabic || '',
+        target: esma.target,
+        meaning: esma.meaning,
+        count: nonNegativeNumber(state.count),
+        lastClicked: nonNegativeNumber(state.lastClicked),
+        order: index
+    };
+    if (state.favorite) item.favorite = true;
+    return item;
+}
+
+function migrateHistoryIds(idMap) {
+    if (!history || typeof history !== 'object') return false;
+    let changed = false;
+    Object.keys(history).forEach((day) => {
+        const block = history[day];
+        if (!block || typeof block !== 'object') return;
+        const nextBlock = {};
+        Object.keys(block).forEach((zid) => {
+            const nextId = idMap[zid] || zid;
+            const value = nonNegativeNumber(block[zid]);
+            if (value <= 0) return;
+            nextBlock[nextId] = (nextBlock[nextId] || 0) + value;
+            if (nextId !== zid) changed = true;
+        });
+        history[day] = nextBlock;
+    });
+    return changed;
+}
+
+function syncEsmaZikirs() {
+    const idMap = {};
+    const canonicalState = new Map();
+    const nonEsmaZikirs = [];
+    let changed = false;
+
+    zikirs.forEach((z) => {
+        if (!z || z.folderId !== 'f_esma') {
+            nonEsmaZikirs.push(z);
+            return;
+        }
+
+        const canonicalIndex = getCanonicalEsmaIndex(z);
+        if (canonicalIndex == null) {
+            nonEsmaZikirs.push(z);
+            return;
+        }
+
+        const canonicalId = esmaZikirId(canonicalIndex);
+        if (z.id !== canonicalId) {
+            idMap[z.id] = canonicalId;
+            changed = true;
+        }
+
+        if (
+            z.id !== canonicalId ||
+            z.name !== ESMA_LIST[canonicalIndex].name ||
+            z.arabic !== (ESMA_LIST[canonicalIndex].arabic || '') ||
+            z.target !== ESMA_LIST[canonicalIndex].target ||
+            z.meaning !== ESMA_LIST[canonicalIndex].meaning ||
+            z.order !== canonicalIndex
+        ) {
+            changed = true;
+        }
+
+        if (!canonicalState.has(canonicalIndex)) {
+            canonicalState.set(canonicalIndex, { count: 0, lastClicked: 0, favorite: false });
+        } else {
+            changed = true;
+        }
+        mergeEsmaState(canonicalState.get(canonicalIndex), z);
+    });
+
+    const canonicalIdsOutsideEsma = new Set(
+        nonEsmaZikirs
+            .filter(z => z && /^z_e_\d+$/.test(String(z.id || '')))
+            .map(z => z.id)
+    );
+    const canonicalEsmaZikirs = [];
+    ESMA_LIST.forEach((_, index) => {
+        const state = canonicalState.get(index);
+        const canonicalId = esmaZikirId(index);
+        if (!state) {
+            if (canonicalIdsOutsideEsma.has(canonicalId)) return;
+            changed = true;
+        }
+        canonicalEsmaZikirs.push(createCanonicalEsmaZikir(index, state));
+    });
+
+    if (migrateHistoryIds(idMap)) changed = true;
+    if (changed) zikirs = nonEsmaZikirs.concat(canonicalEsmaZikirs);
+    return changed;
+}
+
 function syncZikirReorderHintButton() {
     if (!toggleZikirReorderHintBtn || !folderZikirDragHint) return;
     const open = !folderZikirDragHint.hidden;
@@ -535,35 +672,8 @@ function loadData() {
         // Migration for Esma folder (for existing users)
         if (!folders.find(f => f.id === 'f_esma')) {
             folders.push({ id: 'f_esma', name: 'Esma\'ül Hüsna' });
-            ESMA_LIST.forEach((esma, index) => {
-                zikirs.push({
-                    id: 'z_e_' + index, folderId: 'f_esma',
-                    name: esma.name, arabic: esma.arabic || '', target: esma.target, meaning: esma.meaning,
-                    count: 0, lastClicked: 0
-                });
-            });
-            saveData();
-        } else {
-            // Ensure all Esma items exist (if ESMA_LIST was expanded in later versions)
-            let changed = false;
-            ESMA_LIST.forEach((esma, index) => {
-                const id = 'z_e_' + index;
-                if (!zikirs.find(z => z.id === id)) {
-                    zikirs.push({
-                        id,
-                        folderId: 'f_esma',
-                        name: esma.name,
-                        arabic: esma.arabic || '',
-                        target: esma.target,
-                        meaning: esma.meaning,
-                        count: 0,
-                        lastClicked: 0
-                    });
-                    changed = true;
-                }
-            });
-            if (changed) saveData();
         }
+        if (syncEsmaZikirs()) saveData();
 
         // Arapça metin yoksa Esma / varsayılan zikirlere doldur (eski kayıtlar)
         let arFix = false;
