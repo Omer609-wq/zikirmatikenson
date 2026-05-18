@@ -2024,6 +2024,10 @@ function clearLibrarySearch() {
 let currentViewId = null;
 let inAppViewStack = [];
 
+function getBrowserHistory() {
+    return (typeof window !== 'undefined' && window.history) ? window.history : null;
+}
+
 function viewStateEquals(a, b) {
     if (!a || !b) return false;
     return a.viewId === b.viewId && (a.param ?? null) === (b.param ?? null);
@@ -2067,9 +2071,10 @@ function openOverlay(overlayId, { onOpen } = {}) {
     if (!el) return;
     ensureInitialHistoryState();
     try {
-        const cur = history && history.state ? history.state : null;
+        const browserHistory = getBrowserHistory();
+        const cur = browserHistory && browserHistory.state ? browserHistory.state : null;
         const next = getOverlayState(overlayId);
-        if (!isOverlayState(cur) || cur.overlayId !== next.overlayId) history.pushState(next, '');
+        if (browserHistory && (!isOverlayState(cur) || cur.overlayId !== next.overlayId)) browserHistory.pushState(next, '');
     } catch (_) {
         // ignore
     }
@@ -2082,9 +2087,10 @@ function closeOverlayPreferHistory(overlayId) {
     if (!el) return false;
     if (!isOverlayActive(el)) return false;
     try {
-        const st = history && history.state ? history.state : null;
+        const browserHistory = getBrowserHistory();
+        const st = browserHistory && browserHistory.state ? browserHistory.state : null;
         if (isOverlayState(st) && st.overlayId === overlayId) {
-            history.back();
+            browserHistory.back();
             return true;
         }
     } catch (_) {
@@ -2096,13 +2102,14 @@ function closeOverlayPreferHistory(overlayId) {
 
 function ensureInitialHistoryState() {
     try {
-        const st = history && history.state ? history.state : null;
+        const browserHistory = getBrowserHistory();
+        const st = browserHistory && browserHistory.state ? browserHistory.state : null;
         // If we already have an in-app state (view or overlay), don't clobber it.
         if (st && typeof st === 'object') {
             if (typeof st.viewId === 'string') return;
             if (typeof st.overlayId === 'string') return;
         }
-        history.replaceState(getViewState('homeView', null), '');
+        if (browserHistory) browserHistory.replaceState(getViewState('homeView', null), '');
     } catch (_) {
         // ignore: some WebViews may block history state
     }
@@ -2162,9 +2169,10 @@ function showView(viewId, param = null, options = {}) {
     // Push new state BEFORE UI switch so Android back always has an entry.
     if (push) {
         try {
-            const cur = history && history.state ? history.state : null;
+            const browserHistory = getBrowserHistory();
+            const cur = browserHistory && browserHistory.state ? browserHistory.state : null;
             // Avoid pushing duplicates (e.g., tapping the same bottom tab).
-            if (!viewStateEquals(cur, nextState)) history.pushState(nextState, '');
+            if (browserHistory && !viewStateEquals(cur, nextState)) browserHistory.pushState(nextState, '');
         } catch (_) {
             // ignore
         }
