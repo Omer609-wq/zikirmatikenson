@@ -1,0 +1,27 @@
+{
+    "name": "zikirmatik",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "cap:sync": "npm run build && npx cap sync",
+        "cap:open:android": "npx cap open android",
+        "cap:icons": "node scripts/ensure-icon-source.cjs && capacitor-assets generate --android --pwa --assetPath resources --iconBackgroundColor \"#0f2918\" --pwaManifestPath public/manifest.json && node scripts/patch-adaptive-icon.cjs"
+    },
+    "dependencies": {
+        "@capacitor-community/keep-awake": "^5.0.1",
+        "@capacitor/android": "^6.1.3",
+        "@capacitor/app": "^6.0.3",
+        "@capacitor/core": "^6.1.3",
+        "@capacitor/haptics": "^6.0.3",
+        "@capacitor/local-notifications": "^6.1.3",
+        "material-icons": "^1.13.14"
+    },
+    "devDependencies": {
+        "@capacitor/assets": "^3.0.5",
+        "@capacitor/cli": "^6.1.3",
+        "vite": "^6.0.3"
+    }
+}

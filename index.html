@@ -6,20 +6,43 @@
     <title>Zikirmatik Profesyonel</title>
     <!-- PWA Setup — üst çubuk rengi arka plan gradyanının tepesiyle aynı -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#121c31">
+    <meta name="theme-color" id="metaThemeColor" content="#0a0e16">
+    <script>
+        (function () {
+            try {
+                var raw = localStorage.getItem('zikirmatik_data_v2');
+                var theme = 'navy';
+                if (raw) {
+                    var d = JSON.parse(raw);
+                    var t = d && d.settings && d.settings.theme;
+                    if (t === 'light') theme = 'light';
+                    else if (t === 'black') theme = 'black';
+                    else theme = 'navy';
+                }
+                document.documentElement.setAttribute('data-theme', theme);
+                var meta = document.getElementById('metaThemeColor');
+                var metaColors = { navy: '#0a0e16', light: '#faf8f5', black: '#000000' };
+                if (meta) meta.setAttribute('content', metaColors[theme] || metaColors.navy);
+            } catch (e) {
+                document.documentElement.setAttribute('data-theme', 'navy');
+            }
+        })();
+    </script>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" type="image/svg+xml" href="icon.svg">
-    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="icon" type="image/webp" href="assets/icons/icon-192.webp">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.webp">
+    <link rel="icon" type="image/svg+xml" href="icon.svg" sizes="any">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <!-- Material Icons Outlined are shipped locally via style.css (@font-face) -->
     
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="themes.css">
 </head>
 <body>
 
@@ -33,7 +56,7 @@
                 </div>
                 <div style="width: 36px;" aria-hidden="true"></div>
             </header>
-            <p class="drag-hint">Klasöre basılı tutup sürükleyerek sıralayın.</p>
+            <p class="drag-hint" id="folderHomeDragHint">Silmek için klasöre uzun basın. Sıralamak için en soldaki üç çizgiyi tutup sürükleyin.</p>
 
             <section class="main-content scrollable">
                 <div class="folder-grid" id="folderGrid">
@@ -42,10 +65,17 @@
                 <button class="primary-btn" id="newFolderBtn" style="margin-top: 1rem;">
                     <span class="material-icons-outlined">add</span> Yeni Klasör Oluştur
                 </button>
+                <div id="updateBannerSlot" class="update-banner-slot" hidden></div>
             </section>
 
+            <div id="folderMultiSelectBar" class="multi-select-bar" hidden>
+                <button type="button" class="multi-select-bar__btn multi-select-bar__btn--ghost" id="folderSelectCancelBtn">İptal</button>
+                <span id="folderSelectCount" class="multi-select-bar__meta">0 seçili</span>
+                <button type="button" class="multi-select-bar__btn multi-select-bar__btn--danger" id="folderSelectDeleteBtn">Sil</button>
+            </div>
+
             <!-- Random Hadith/Ayah Footer -->
-            <footer class="quote-footer">
+            <footer class="quote-footer" id="homeQuoteFooter">
                 <div class="quote-icon"><span class="material-icons-outlined">format_quote</span></div>
                 <p id="dailyQuoteText">Ölmeden önce tövbe etmekte acele ediniz.</p>
             </footer>
@@ -57,14 +87,12 @@
             <header class="glass-header">
                 <button class="icon-btn backBtn" data-target="homeView"><span class="material-icons-outlined">arrow_back</span></button>
                 <h1 id="folderDetailTitle">Varsayılan Zikirler</h1>
-                <button type="button" class="icon-btn" id="toggleZikirReorderHintBtn" aria-label="Sıralama ipucunu göster" aria-expanded="false" title="Sıralama">
-                    <span class="material-icons-outlined">swap_vert</span>
-                </button>
+                <div style="width: 36px;" aria-hidden="true"></div>
             </header>
-            <p class="drag-hint drag-hint--folder" id="folderZikirDragHint" hidden>Zikre basılı tutup sürükleyerek sıralayın.</p>
+            <p class="drag-hint drag-hint--folder" id="folderZikirDragHint">Silmek için satıra uzun basın. Sıralamak için en soldaki üç çizgiyi tutup sürükleyin.</p>
 
             <section class="main-content scrollable">
-                <div class="search-wrap" style="margin-bottom: 0.75rem;">
+                <div class="search-wrap">
                     <div class="form-group" style="margin:0;">
                         <label style="font-size:0.75rem; color: var(--text-gray);">Ara</label>
                         <input type="text" id="folderSearchInput" placeholder="Zikir ara..." />
@@ -80,11 +108,17 @@
                 <ul class="zikir-list" id="folderZikirList">
                     <!-- Zikirs injected via JS -->
                 </ul>
-                <div class="limit-warning" id="zikirLimitWarning">Bu klasör doldu (Maks 6 zikir). Premium'da Sınırsız.</div>
+                <div class="limit-warning" id="zikirLimitWarning">Bu klasörde zikir üst sınırına ulaşıldı. Bir zikri silerek veya başka klasöre taşıyarak yer açabilirsin.</div>
                 <button class="primary-btn" id="openAddZikirModalBtn" style="margin-top: 1rem;">
                     <span class="material-icons-outlined">add</span> Zikir Ekle
                 </button>
             </section>
+
+            <div id="zikirMultiSelectBar" class="multi-select-bar" hidden>
+                <button type="button" class="multi-select-bar__btn multi-select-bar__btn--ghost" id="zikirSelectCancelBtn">İptal</button>
+                <span id="zikirSelectCount" class="multi-select-bar__meta">0 seçili</span>
+                <button type="button" class="multi-select-bar__btn multi-select-bar__btn--danger" id="zikirSelectDeleteBtn">Sil</button>
+            </div>
         </div>
 
 
@@ -97,7 +131,9 @@
                     <p id="zikirArabic" class="zikir-arabic-header" dir="rtl" lang="ar" style="display:none;"></p>
                     <p id="zikirNote" class="zikir-note">Allah eksikliklerden uzaktır.</p>
                 </div>
-                <div style="width: 36px;"></div> <!-- Placeholder -->
+                <button type="button" class="icon-btn" id="openZikirStatsBtn" aria-label="Bu zikrin istatistiği" title="İstatistik">
+                    <span class="material-icons-outlined">bar_chart</span>
+                </button>
             </header>
 
             <section class="counter-container">
@@ -116,11 +152,11 @@
                 </div>
                 
                 <div class="counter-actions" style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 280px; margin-left: auto; margin-right: auto;">
-                    <button id="decrementBtn" class="icon-btn" aria-label="Geri Al (-1)" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); width: 45px; height: 45px;">
+                    <button id="decrementBtn" class="icon-btn" aria-label="Geri Al (-1)" style="background: rgba(255,255,255,0.05); border: 1px solid var(--surface-border); width: 45px; height: 45px;">
                         <span class="material-icons-outlined">remove</span>
                     </button>
                     <p class="instruction-text" style="margin: 0;">Dokunarak Say</p>
-                    <button id="resetBtn" class="icon-btn" aria-label="Sıfırla" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); width: 45px; height: 45px; color: #ef4444;">
+                    <button id="resetBtn" class="icon-btn" aria-label="Sıfırla" style="background: rgba(255,255,255,0.05); border: 1px solid var(--surface-border); width: 45px; height: 45px; color: #ef4444;">
                         <span class="material-icons-outlined">refresh</span>
                     </button>
                 </div>
@@ -150,6 +186,12 @@
                 <div class="stat-card">
                     <h3>Son Çekilen Zikir</h3>
                     <div class="stat-value highlight" id="statLastClicked">-</div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>En Çok Zikir Çekilen Gün</h3>
+                    <div class="stat-value" id="statBestDayDate">-</div>
+                    <div class="stat-subtitle" id="statBestDayCount">Veri yok</div>
                 </div>
 
                 <!-- Simple CSS Bar Chart -->
@@ -227,7 +269,6 @@
                     <h3>İstatistik geçmişi</h3>
                     <p class="privacy-card-text">
                         Günlük tıklama kayıtları cihazınızda tutulur; grafikte son 7 gün gösterilir.
-                        Depolama dolmasın diye yaklaşık son 400 günlük günlük özetler otomatik budanır (zikirlerin toplam sayacı silinmez).
                     </p>
                 </div>
                 <div class="stat-card">
@@ -235,15 +276,105 @@
                     <p class="privacy-card-text">
                         Veriler şu an yalnızca bu cihazda tutulur. Tarayıcı veya uygulama verilerinizi silmek, cihaz değiştirmek ya da uygulamayı kaldırmak tüm kaydı silebilir; bu yüzden önemli verilerinizi yedeklemenizi öneririz.
                     </p>
-                    <p class="privacy-card-text" style="margin-top: 0.75rem;">
-                        Hesap veya veri kaybını azaltmak için <strong>e-posta hesabına bağlama</strong> ve bulutta güvenli yedekleme / eşitleme <strong>ileride Premium</strong> ile sunulacaktır.
-                    </p>
                 </div>
                 <div class="stat-card">
                     <h3>İzinler</h3>
                     <p class="privacy-card-text">
                         Titreşim, ses ve ekranı uyanık tutma gibi seçenekler yalnızca uygulama deneyimi içindir ve isteğe bağlıdır.
                     </p>
+                </div>
+            </section>
+        </div>
+
+        <!-- =================== PREMIUM VIEW (COMING SOON) =================== -->
+        <div id="premiumView" class="view hidden">
+            <header class="glass-header">
+                <button class="icon-btn backBtn" data-target="homeView"><span class="material-icons-outlined">arrow_back</span></button>
+                <h1>Premium</h1>
+                <div style="width: 36px;"></div>
+            </header>
+
+            <section class="main-content scrollable premium-view">
+                <div class="premium-hero">
+                    <div class="premium-hero__top">
+                        <span class="premium-pill">
+                            <span class="material-icons-outlined">auto_awesome</span>
+                            Çok yakında
+                        </span>
+                        <span class="premium-spark" aria-hidden="true"></span>
+                    </div>
+
+                    <h2 class="premium-title">Daha akıcı, daha güçlü bir Zikirmatik.</h2>
+                    <p class="premium-subtitle" id="premiumTeaserLine">
+                        Premium üzerinde çalışıyoruz. Yakında burada yeni şeyler göreceksin.
+                    </p>
+
+                    <div class="premium-grid">
+                        <div class="premium-card">
+                            <div class="premium-card__icon material-icons-outlined">cloud_sync</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title">Yedek & Senkron</div>
+                                <div class="premium-card__text">Cihaz değiştirince her şeyin seninle gelsin.</div>
+                            </div>
+                        </div>
+                        <div class="premium-card">
+                            <div class="premium-card__icon material-icons-outlined">insights</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title">Daha derin istatistik</div>
+                                <div class="premium-card__text">Hedeflere gidişini net gör, motivasyonun artsın.</div>
+                            </div>
+                        </div>
+                        <div class="premium-card premium-card--expandable" id="weeklyReportCard">
+                            <button type="button" class="premium-card__star" id="weeklyReportStarBtn" aria-label="Haftalık rapor detayları" aria-expanded="false" title="Detaylar">
+                                <span class="material-icons-outlined">grade</span>
+                            </button>
+                            <div class="premium-card__icon material-icons-outlined">summarize</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title">Haftalık Rapor</div>
+                                <div class="premium-card__text">Her Pazartesi kısa bir özet: süre, hedef ve trend.</div>
+                                <div class="premium-card__details" id="weeklyReportDetails" hidden>
+                                    <ul class="premium-bullets">
+                                        <li>Her Pazartesi bildirim: en çok hangi gün, toplam süre, app’de kaç saat.</li>
+                                        <li>Günlük hedef koy: haftalık raporda kaç gün hedefe ulaştın.</li>
+                                        <li>Günlük ortalama süre ve geçen haftaya göre % değişim (+/−).</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="premium-card">
+                            <div class="premium-card__icon material-icons-outlined">palette</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title">Tema & kişiselleştirme</div>
+                                <div class="premium-card__text">Daha “senin” gibi hissettiren bir arayüz.</div>
+                            </div>
+                        </div>
+                        <div class="premium-card">
+                            <div class="premium-card__icon material-icons-outlined">notifications_active</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title">Akıllı hatırlatıcılar</div>
+                                <div class="premium-card__text">Ritmine göre nazikçe hatırlatsın.</div>
+                            </div>
+                        </div>
+                        <div class="premium-card">
+                            <div class="premium-card__icon material-icons-outlined">delete</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title">Çöp Kutusu (geri al)</div>
+                                <div class="premium-card__text">Yanlışlıkla silinen zikirleri Premium ile geri yükle.</div>
+                            </div>
+                        </div>
+                        <div class="premium-card">
+                            <div class="premium-card__icon material-icons-outlined">library_add</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title">Daha geniş kütüphane</div>
+                                <div class="premium-card__text">Premium ile kütüphanede daha fazla zikir ve dua.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="premium-note">
+                        <span class="material-icons-outlined">info</span>
+                        <span>Premium özellikleri aktif olduğunda otomatik açılacak.</span>
+                    </div>
                 </div>
             </section>
         </div>
@@ -268,7 +399,7 @@
             <span class="material-icons-outlined">settings</span>
             <span class="bottom-nav__label">Ayarlar</span>
         </button>
-        <button type="button" class="bottom-nav__btn bottom-nav__btn--premium" disabled aria-disabled="true" aria-label="Premium (yakında)" title="Premium çok yakında">
+        <button type="button" class="bottom-nav__btn bottom-nav__btn--premium" data-view="premiumView" aria-label="Premium (çok yakında)" title="Premium (çok yakında)">
             <span class="material-icons-outlined">workspace_premium</span>
             <span class="bottom-nav__label">Premium</span>
         </button>
@@ -315,6 +446,10 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
+                    <label>Zikir adı</label>
+                    <input type="text" id="editZikirName" autocomplete="off" />
+                </div>
+                <div class="form-group">
                     <label>Yeni Hedef Sayı</label>
                     <input type="number" id="editZikirTarget" min="1">
                 </div>
@@ -326,9 +461,45 @@
                     <label>Anlamı / Not</label>
                     <textarea id="editZikirMeaning" rows="2"></textarea>
                 </div>
+                <div class="form-group">
+                    <label>Fazilet</label>
+                    <textarea id="editZikirFazilet" rows="3" placeholder="Esma için boş veya varsayılan metin: uygulama önerisini kullanır."></textarea>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="primary-btn full-width" id="saveEditBtn">Güncelle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Per-zikir stats (günlük / haftalık çekim grafiği) -->
+    <div class="modal-overlay" id="zikirStatsOverlay">
+        <div class="modal glass-modal zikir-stats-modal">
+            <div class="modal-header">
+                <h2 id="zikirStatsTitle">İstatistik</h2>
+                <button type="button" class="icon-btn closeModalBtn" data-modal="zikirStatsOverlay" aria-label="Kapat"><span class="material-icons-outlined">close</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="stats-tabs zikir-stats-tabs">
+                    <button type="button" class="tab-btn active" data-zikir-stat-tab="daily">Günlük</button>
+                    <button type="button" class="tab-btn" data-zikir-stat-tab="weekly">Haftalık</button>
+                </div>
+                <div class="stat-card">
+                    <h3 id="zikirStatsSummaryLabel">Bugün</h3>
+                    <div class="stat-value" id="zikirStatsSummaryValue">0</div>
+                    <div class="stat-subtitle" id="zikirStatsSummarySub">çekim</div>
+                </div>
+                <div class="chart-container zikir-stats-chart-wrap">
+                    <h3 id="zikirStatsChartHeading">Son 7 gün — bu zikir</h3>
+                    <div class="chart-wrapper">
+                        <div class="chart-y-axis" id="zikirChartYAxis">
+                            <span>10</span>
+                            <span>5</span>
+                            <span>0</span>
+                        </div>
+                        <div class="css-chart" id="zikirActivityChart"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -343,7 +514,7 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label>Hedef Klasörü Seçin</label>
-                    <select id="copyDestFolder" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--glass-border); color:white; padding:0.8rem; border-radius:10px;">
+                    <select id="copyDestFolder">
                     </select>
                 </div>
             </div>
@@ -368,14 +539,9 @@
                 <h3 id="libDetailName" class="lib-detail-name">-</h3>
                 <p id="libDetailMeaning" class="lib-detail-meaning"></p>
                 
-                <div class="form-group lib-detail-block" style="background: rgba(0,0,0,0.2); padding: 0.85rem; border-radius: 8px;">
-                    <label>Fazileti / Okuma durumu</label>
+                <div class="form-group lib-detail-block">
+                    <label id="libDetailContextLabel">Fazileti / Okuma durumu</label>
                     <p id="libDetailContext"></p>
-                </div>
-                
-                <div class="form-group lib-detail-block" style="background: rgba(0,0,0,0.2); padding: 0.85rem; border-radius: 8px;">
-                    <label>Kaynak</label>
-                    <p id="libDetailSource" class="lib-detail-source-text"></p>
                 </div>
             </div>
             <div class="modal-footer">
@@ -394,7 +560,7 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label>Eklenecek Klasör</label>
-                    <select id="libDestFolder" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--glass-border); color:white; padding:0.8rem; border-radius:10px;">
+                    <select id="libDestFolder">
                     </select>
                 </div>
             </div>
@@ -409,9 +575,25 @@
         <div class="modal glass-modal">
             <div class="modal-header">
                 <h2>Ayarlar</h2>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <button type="button" class="icon-btn" id="openTrashBtn" aria-label="Çöp Kutusu (Premium)" title="Çöp Kutusu (Premium)">
+                        <span class="material-icons-outlined">delete</span>
+                    </button>
                 <button class="icon-btn closeModalBtn" data-modal="settingsOverlay"><span class="material-icons-outlined">close</span></button>
+                </div>
             </div>
             <div class="modal-body">
+                <div class="theme-setting" role="radiogroup" aria-label="Görünüm">
+                    <div class="theme-setting__label">
+                        <span class="material-icons-outlined" aria-hidden="true">palette</span>
+                        <span>Görünüm</span>
+                    </div>
+                    <div class="theme-segment">
+                        <button type="button" class="theme-segment__btn active" data-theme-choice="navy" aria-pressed="true" title="Varsayılan lacivert görünüm">Varsayılan</button>
+                        <button type="button" class="theme-segment__btn" data-theme-choice="light" aria-pressed="false">Açık</button>
+                        <button type="button" class="theme-segment__btn" data-theme-choice="black" aria-pressed="false">Karanlık</button>
+                    </div>
+                </div>
                 <div class="setting-item">
                     <span><span class="material-icons-outlined">touch_app</span> Dokunma Titreşimi</span>
                     <label class="switch">
@@ -445,7 +627,7 @@
                 <div style="height: 12px;"></div>
 
                 <div class="setting-actions">
-                    <button class="primary-btn" id="openPrivacyBtn" style="background: transparent; border: 1px solid var(--glass-border);">
+                    <button type="button" class="primary-btn" id="openPrivacyBtn">
                         <span class="material-icons-outlined">policy</span> Gizlilik
                     </button>
                     <div style="height: 4px;"></div>
@@ -465,7 +647,55 @@
         </div>
     </div>
 
-    <!-- JS -->
-    <script src="app.js"></script>
+    <!-- Trash Modal (Premium) -->
+    <div class="modal-overlay" id="trashOverlay">
+        <div class="modal glass-modal">
+            <div class="modal-header">
+                <h2>Çöp Kutusu</h2>
+                <button class="icon-btn closeModalBtn" data-modal="trashOverlay"><span class="material-icons-outlined">close</span></button>
+            </div>
+            <div class="modal-body">
+                <p class="settings-footnote" style="margin-top: 0;">
+                    Premium ile yanlışlıkla silinen zikirleri geri alabilirsin. Kalıcı silme için boşalt.
+                </p>
+                <div class="setting-actions" style="margin-top: 0.5rem;">
+                    <button type="button" class="primary-btn" id="trashClearBtn" style="background: transparent; border: 1px solid var(--surface-border);">
+                        <span class="material-icons-outlined">delete_sweep</span> Çöp kutusunu boşalt
+                    </button>
+                </div>
+                <div id="trashEmpty" class="premium-empty" hidden>
+                    <div class="premium-empty__icon material-icons-outlined">inventory_2</div>
+                    <div class="premium-empty__title">Şimdilik boş</div>
+                    <div class="premium-empty__text">Silinen zikirler burada görünecek.</div>
+                </div>
+                <div id="trashList" class="premium-trash-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uygulama teması: tarayıcı alert/confirm/prompt yerine -->
+    <div class="modal-overlay app-dialog-overlay" id="appDialogOverlay" role="dialog" aria-modal="true" aria-labelledby="appDialogTitle" aria-describedby="appDialogBody">
+        <div class="modal glass-modal app-dialog">
+            <div class="modal-header app-dialog__header">
+                <h2 id="appDialogTitle">Bilgi</h2>
+            </div>
+            <div class="modal-body">
+                <p id="appDialogBody" class="app-dialog__body"></p>
+                <div id="appDialogInputWrap" class="form-group app-dialog__input-wrap" hidden>
+                    <label for="appDialogInput" id="appDialogInputLabel">Ad</label>
+                    <input type="text" id="appDialogInput" autocomplete="off" maxlength="120" />
+                </div>
+            </div>
+            <div class="modal-footer app-dialog__footer">
+                <div class="app-dialog__actions">
+                    <button type="button" class="app-dialog__btn-secondary" id="appDialogCancelBtn">İptal</button>
+                    <button type="button" class="primary-btn" id="appDialogOkBtn">Tamam</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS (Vite: ES modül; Capacitor köprüsü native-reminders.js) -->
+    <script type="module" src="/app.js"></script>
 </body>
 </html>

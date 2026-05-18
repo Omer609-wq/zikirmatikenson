@@ -1,14 +1,14 @@
-// ===================== DATA MODELS =====================
-const APP_QUOTES = [
-    "Ölmeden önce tövbe etmekte acele ediniz. (Hadis-i Şerif)",
-    "Kalpler ancak Allah'ı anmakla mutmain olur. (Rad Suresi 28)",
-    "Dua, müminin silahıdır. (Hadis-i Şerif)",
-    "Kim bir iyilik yaparsa ona on katı vardır. (Enam Suresi 160)",
-    "Zorlukla beraber şüphesiz bir kolaylık vardır. (İnşirah Suresi 5)",
-    "Sizin en hayırlınız Kuran'ı öğrenen ve öğretendir. (Hadis-i Şerif)",
-    "Namaz dinin direğidir. (Hadis-i Şerif)"
-];
+import { applyNativeBottomInsetVar, isCapacitorNative, syncNativeDailyReminder } from './native-reminders.js';
+import {
+    clearUpdateBannerDom,
+    placeUpdateBanner,
+    refreshUpdateBannerConfig
+} from './update-banner.js';
+import { runCounterVibration, runDragReorderNudge } from './haptics.js';
+import { pickRandomQuote, REMINDER_FIXED_BODY } from './quotes.js';
+import { ESMA_DEFAULT_FAZILET } from './esma-fazilet.js';
 
+// ===================== DATA MODELS =====================
 const DEFAULT_FOLDERS = [
     { id: 'f_default', name: 'Varsayılan Zikirler' },
     { id: 'f_esma', name: 'Esma\'ül Hüsna' }
@@ -127,6 +127,9 @@ const ESMA_ARABIC = [].concat(
     ["يَا مُنْتَقِمُ", "يَا عَفُوُّ", "يَا رَؤُوفُ", "يَا مَالِكَ الْمُلْكِ", "يَا ذَا الْجَلَالِ وَالْإِكْرَامِ", "يَا مُقْسِطُ", "يَا جَامِعُ", "يَا غَنِيُّ", "يَا مُغْنِي", "يَا مَانِعُ", "يَا ضَارُّ", "يَا نَافِعُ", "يَا نُورُ", "يَا هَادِي", "يَا بَدِيعُ", "يَا بَاقِي", "يَا وَارِثُ", "يَا رَشِيدُ", "يَا صَبُورُ"]
 );
 ESMA_LIST.forEach((e, i) => { e.arabic = ESMA_ARABIC[i] || ''; });
+ESMA_DEFAULT_FAZILET.forEach((text, i) => {
+    if (ESMA_LIST[i]) ESMA_LIST[i].fazilet = text;
+});
 
 const DEFAULT_ZIKIR_ARABIC_BY_ID = {
     z_1: 'سُبْحَانَ اللَّهِ',
@@ -154,6 +157,16 @@ ESMA_LIST.forEach((esma, index) => {
 // name: kart başlığı ve klasöre eklenince görünen isim (dua/zikir metni).
 // context: fazilet / okunma durumu (dua ve zikirde kart + detayda aynı blok; kartta kısaltılır).
 // Arama: name, meaning, context, source, keywords.
+//
+// ——— Kütüphane editoryal standardı (yeni dua/zikir eklerken zorunlu) ———
+// Yanlış bilgi kullanıcıyı yanıltır; aşağıdakilere özellikle dikkat et:
+// - meaning: Arapça/Türkçe karşılık doğru ve sade; kaynak metne dayan.
+// - context (fazilet, ne zaman/nasıl): Rivayet veya muteber özet; “kesin vaat” iddiasından kaçın.
+//   Birden fazla rivayet varsa kısaca belirt veya “yaygın rivayette…” de.
+// - source: Mümkünse kitap/bab veya güvenilir derleme (ör. Nevevî Ezkar); şüpheliyse ekleme veya “kaynak tartışmalı” notu düş.
+// - target: Tek doğru sayı çoğu metinde yoktur. Bilinen rivayette geçen sayıyı (ör. üçer defa) kullan;
+//   genel tesbih (33/100) sadece o rivayetle uyumluysa. Uygun değilse target’ı düşük tut ve context’te açıkla.
+// - keywords: Arama için; dini hüküm iddiası taşımasın.
 const ZIKIR_LIBRARY = [
     {
         id: 'lib_d_tuvalet_giris', category: 'dua',
@@ -219,6 +232,123 @@ const ZIKIR_LIBRARY = [
         keywords: 'uyku yatmak gece yatak'
     },
     {
+        id: 'lib_d_uyaninca', category: 'dua',
+        name: 'Elhamdülillâhillezî ahyânâ ba\'de mâ emâtenâ ve ileyhin-nüşûr',
+        meaning: 'Bizi ölüm gibi uyku sonrası dirilten Allah\'a hamd olsun; dönüş O\'nadır.',
+        context: 'Sabah uyandığında, gözü açınca; uyku nimetine şükür ve güne Allah\'la başlamak için.',
+        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
+        target: 1,
+        keywords: 'sabah uyanmak göz gece gündüz şükür'
+    },
+    {
+        id: 'lib_d_evden_cikis', category: 'dua',
+        name: 'Bismillâhi tevekkeltü alallâhi, lâ havle ve lâ kuvvete illâ billâh',
+        meaning: 'Allah\'ın adıyla; Allah\'a tevekkül ettim. Güç ve kuvvet ancak Allah\'tandır.',
+        context: 'Evden, işten veya güvenli bir yerden çıkarken; yol ve iş için Allah\'a dayanmak içindir.',
+        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
+        target: 1,
+        keywords: 'ev çıkış kapı iş yol günlük tevekkül'
+    },
+    {
+        id: 'lib_d_yeni_elbise', category: 'dua',
+        name: 'Elhamdülillâhillezî kezâni hâzâ ve mâ kuntu muahhıran bi hâzâ',
+        meaning: 'Bunu bana giydiren ve onsuz güç yetiremeyeceğim şeyi bana veren Allah\'a hamd olsun.',
+        context: 'Yeni elbise veya örtü giyildiğinde; nimete şükür ve israf etmemeyi hatırlamak için.',
+        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
+        target: 1,
+        keywords: 'elbise kıyafet giyinmek yeni örtü'
+    },
+    {
+        id: 'lib_d_ayna', category: 'dua',
+        name: 'Allâhümme kemâ hassente halkî fehassin hulûkî',
+        meaning: 'Ya Allah, dış görünüşümü güzel yaptığın gibi ahlâkımı da güzelleştir.',
+        context: 'Aynaya bakıldığında; suret nimetine şükür ve iç güzelliği dilemek için.',
+        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
+        target: 1,
+        keywords: 'ayna suret yüz ahlâk şükür'
+    },
+    {
+        id: 'lib_d_cami_giris', category: 'dua',
+        name: 'Allâhümmeftah li ebvâbe rahmetik',
+        meaning: 'Ya Allah, bana rahmetinin kapılarını aç.',
+        context: 'Cami veya mescide girerken; ibadet yeri saygısı ve mağfiret ümidiyle.',
+        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
+        target: 1,
+        keywords: 'cami mescid giriş kapı namaz'
+    },
+    {
+        id: 'lib_d_cami_cikis', category: 'dua',
+        name: 'Allâhümme innî es\'elüke min fadlik',
+        meaning: 'Ya Allah, Senin lütfundan (fadlından) Senden dilerim.',
+        context: 'Cami veya mescidden çıkarken; ibadet sonrası hayır ve mağfiret dilemek için.',
+        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
+        target: 1,
+        keywords: 'cami mescid çıkış namaz hayır'
+    },
+    {
+        id: 'lib_d_kabir', category: 'dua',
+        name: 'Esselâmu aleykum ehle diyârin minel mü\'minîne vel müslimîn',
+        meaning: 'Ey bu diyarın mümin ve Müslüman halkı, size selâm olsun.',
+        context: 'Kabristana girildiğinde veya mezarlıkta; ölülere selâm ve ahiret hatırlatması için.',
+        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
+        target: 1,
+        keywords: 'kabir mezarlık ölü ziyaret ahiret'
+    },
+    {
+        id: 'lib_d_kotu_ruya', category: 'dua',
+        name: 'Na\'ûzü billâhi min şerri hâzâ ve min şerri mâ fîh',
+        meaning: 'Bunun şerrinden ve içindeki şeylerin şerrinden Allah\'a sığınırım.',
+        context: 'Rüyada kötü bir şey görülüp uyanınca; şer ve vesveseden Allah\'a sığınmak için.',
+        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
+        target: 1,
+        keywords: 'rüya uyku korku şer sığınma'
+    },
+    {
+        id: 'lib_d_olum_haberi', category: 'dua',
+        name: 'İnnâ lillâhi ve innâ ileyhi râciûn, Allâhümme\'curnî fî musîbetî ve\'hturni hayren minhâ',
+        meaning: 'Biz Allah\'a aidiz ve O\'na döneceğiz. Ya Allah, musibetimde bana mükâfat yaz ve ondan hayırlı bir çıkış nasip et.',
+        context: 'Ölüm veya büyük kayıp haberi işitilince; sabır ve karşılık dilemek için (ayet ve dua birlikte anılır).',
+        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
+        target: 1,
+        keywords: 'ölüm musibet kayıp sabır taziye'
+    },
+    {
+        id: 'lib_d_yagmur_isteme', category: 'dua',
+        name: 'Allâhümme eskıb seyyiban nâfi\'an',
+        meaning: 'Ya Allah, bize faydalı bir yağmur yağdır.',
+        context: 'Kuraklık veya yağmura ihtiyaç duyulduğunda çıplak veya hafif örtülü kıbleye dönerek dua edilir (sünnet adabına göre).',
+        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
+        target: 1,
+        keywords: 'yağmur kuraklık tarla çiftçi su isteme'
+    },
+    {
+        id: 'lib_d_yagmur_yagarken', category: 'dua',
+        name: 'Allâhümme sevvibenâ mâren mübâreken',
+        meaning: 'Ya Allah, bize bereketli bir yağmur yağdır.',
+        context: 'Yağmur yağmaya başlayınca; nimete şükür ve bereket dilemek için.',
+        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
+        target: 1,
+        keywords: 'yağmur gök yağış şükür bereket'
+    },
+    {
+        id: 'lib_d_sikinti_yunus', category: 'dua',
+        name: 'Lâ ilâhe illâ ente sübhâneke innî küntü minez-zâlimîn',
+        meaning: 'Senden başka ilah yok; Seni noksan sıfatlardan tenzih ederim; ben zulmedenlerden oldum.',
+        context: 'Sıkıntı, korku veya ümitsizlik anında; Yunus (a.s.) duası olarak kalbi Allah\'a yönlendirmek için.',
+        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
+        target: 1,
+        keywords: 'sıkıntı dert korku ümit tevekkül gemi'
+    },
+    {
+        id: 'lib_d_ilim', category: 'dua',
+        name: 'Rabbi zidnî ilmen nâfi\'an ve fehmen vâsian',
+        meaning: 'Rabbim, bana faydalı ilim ve geniş bir anlayış artır.',
+        context: 'Ders, Kur\'an okuma veya işe başlarken; ilim ve hikmet dilemek için.',
+        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
+        target: 1,
+        keywords: 'ilim ders okul Kuran çalışma hikmet'
+    },
+    {
         id: 'lib_1', category: 'zikir',
         name: 'Sübhanallahi ve bihamdihi',
         arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
@@ -257,6 +387,230 @@ const ZIKIR_LIBRARY = [
         source: 'Hadis kaynakları (çeşitli rivayetler)',
         target: 100,
         keywords: 'tevhid kelime-i tevhid iman'
+    },
+    {
+        id: 'lib_5', category: 'zikir',
+        name: 'Allahu ekber',
+        arabic: 'اللَّهُ أَكْبَرُ',
+        meaning: 'Allah en büyüktür.',
+        context: 'Namaz tesbihinde ve günlük zikirde; kalpte Allah\'ın büyüklüğünü tazelemek için sık tekrarlanır.',
+        source: 'Müslim, Salât 158; genel sünnet',
+        target: 33,
+        keywords: 'tekbir büyük Allah namaz tesbih'
+    },
+    {
+        id: 'lib_6', category: 'zikir',
+        name: 'Sübhanallah',
+        arabic: 'سُبْحَانَ اللَّهِ',
+        meaning: 'Allah\'ı her türlü noksandan tenzih ederim.',
+        context: 'Tesbihat ve günlük zikir; kalbi dünyadan söküp Allah\'ı anmaya yönlendirir.',
+        source: 'Müslim, Zikr 22; Buhari, Müslim',
+        target: 33,
+        keywords: 'tesbih tenzih sübhan'
+    },
+    {
+        id: 'lib_7', category: 'zikir',
+        name: 'Lâ havle ve lâ kuvvete illâ billâh',
+        arabic: 'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',
+        meaning: 'Güç ve kuvvet ancak Allah\'tandır.',
+        context: 'Sıkıntı, üzüntü veya zorluk anında; tevekkül ve Allah\'a dayanma zikridir.',
+        source: 'Buhari, Müslim (tabii rivayetler)',
+        target: 100,
+        keywords: 'sıkıntı güç kuvvet tevekkül havl kuvve'
+    },
+    {
+        id: 'lib_8', category: 'zikir',
+        name: 'Estağfirullah',
+        arabic: 'أَسْتَغْفِرُ اللَّهَ',
+        meaning: 'Allah\'tan mağfiret dilerim.',
+        context: 'Günah sonrası ve günlük tövbe alışkanlığı; kalbi temiz tutmaya yardım eder.',
+        source: 'Buhari, Daavât 19; Müslim, Zikr 44',
+        target: 100,
+        keywords: 'istiğfar tövbe mağfiret günah af'
+    },
+    {
+        id: 'lib_9', category: 'zikir',
+        name: 'Allâhümme salli alâ Muhammed',
+        arabic: 'اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ',
+        meaning: 'Allah\'ım, Muhammed\'e salât eyle.',
+        context: 'Salavat; günahların bağışlanmasına ve derecelere vesile olduğu bildirilen sünnet zikridir.',
+        source: 'Tirmizi, Salât 22; Müslim, Salât 70',
+        target: 100,
+        keywords: 'salavat salat nebi peygamber müjde'
+    },
+    {
+        id: 'lib_10', category: 'zikir',
+        name: 'Allâhümme bârik alâ Muhammed',
+        arabic: 'اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ',
+        meaning: 'Allah\'ım, Muhammed\'e bereket ver.',
+        context: 'Salavatın tamamlayıcısı olarak beraber veya ayrı okunabilir; Nebi\'ye hürmet ve şükür içindir.',
+        source: 'Tirmizi, Salât 22; Ebu Davud, Salât 152',
+        target: 100,
+        keywords: 'salavat bereket nebi mübarek'
+    },
+    {
+        id: 'lib_11', category: 'zikir',
+        name: 'Sübhanallâhil-azîm ve bihamdihi',
+        arabic: 'سُبْحَانَ اللَّهِ الْعَظِيمِ وَبِحَمْدِهِ',
+        meaning: 'Azîm olan Allah\'ı hamd ile tenzih ederim.',
+        context: 'Hadiste cennet ağacı veya sevapla müjdelenen zikirlerden; günde belirli sayıda okunması tavsiye edilir.',
+        source: 'Tirmizi, Daavât 73; Buhari, Müslim (benzer rivayetler)',
+        target: 100,
+        keywords: 'cennet ağaç hamd azim tesbih'
+    },
+    {
+        id: 'lib_12', category: 'zikir',
+        name: 'Lâ ilâhe illallâhu vahdehu lâ şerîke leh',
+        arabic: 'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',
+        meaning: 'Allah\'tan başka ilah yoktur, O tektir, ortağı yoktur; mülk O\'nundur, hamd O\'nadır; O her şeye kadirdir.',
+        context: 'Sabah-akşam veya yatarken okunan tam kelime-i tevhid zikri; kalpte tevhidi pekiştirir.',
+        source: 'Buhari, Müslim (çeşitli rivayetler)',
+        target: 100,
+        keywords: 'tevhid mülk hamd kudret kelime tam'
+    },
+    {
+        id: 'lib_13', category: 'zikir',
+        name: 'Hasbiyallâhu lâ ilâhe illâ hu',
+        arabic: 'حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ، عَلَيْهِ تَوَكَّلْتُ',
+        meaning: 'Allah bana yeter; O\'ndan başka ilah yoktur; yalnız O\'na tevekkül ettim.',
+        context: 'Korku ve endişede Hz. İbrâhim ve Hz. Muhammed (s.a.v.) örneğiyle; kalbe güven veren ayet zikridir.',
+        source: 'Kur\'an-ı Kerim, Tevbe 129',
+        target: 100,
+        keywords: 'tevekkül korku yeter Allah ayet'
+    },
+    {
+        id: 'lib_14', category: 'zikir',
+        name: 'Rabbîğfir ve rahhem',
+        arabic: 'رَبِّ اغْفِرْ وَارْحَمْ وَأَنْتَ خَيْرُ الرَّاحِمِينَ',
+        meaning: 'Rabbim, bağışla ve merhamet et; Sen merhamet edenlerin en hayırlısısın.',
+        context: 'Tövbe ve mağfiret dilemek; Kur\'an\'da geçen dua/zikir olarak kalbi yumuşatır.',
+        source: 'Kur\'an-ı Kerim, Mü\'minûn 118',
+        target: 33,
+        keywords: 'mağfiret rahmet tövbe bağışlanma'
+    },
+    {
+        id: 'lib_15', category: 'zikir',
+        name: 'Yâ Hayyu yâ Kayyûm',
+        arabic: 'يَا حَيُّ يَا قَيُّومُ',
+        meaning: 'Ey diri olan, ey her şeyi ayakta tutan.',
+        context: 'İsmin şerifleriyle yakarış; sıkıntıda ve günde dua ile birleştirilen meşhur zikir başlangıcıdır.',
+        source: 'Tirmizi, Daavât 91; genel sünnet',
+        target: 100,
+        keywords: 'hayy kayyum isim sıkıntı dua'
+    },
+    {
+        id: 'lib_16', category: 'zikir',
+        name: 'Sübhânellâhi ve bi hamdihi',
+        arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ سُبْحَانَ اللَّهِ الْعَظِيمِ',
+        meaning: 'Allah\'ı hamd ile tenzih ederim; Azîm olan Allah\'ı tenzih ederim.',
+        context: 'Hadiste ağır basan mizanda hafif, dilde kolay zikir olarak övülür.',
+        source: 'Buhari, Müslim (Tirmizi, Daavât 57)',
+        target: 100,
+        keywords: 'mizan hamd tesbih kolay ağır'
+    },
+    {
+        id: 'lib_17', category: 'zikir',
+        name: 'Radîtu billâhi Rabben',
+        arabic: 'رَضِيتُ بِاللَّهِ رَبًّا وَبِالْإِسْلَامِ دِينًا وَبِمُحَمَّدٍ نَبِيًّا',
+        meaning: 'Allah\'ı Rabb, İslam\'ı din, Muhammed\'i Nebi olarak razı oldum.',
+        context: 'Yaygın rivayette sabah ve akşam (günde iki vakit) üçer defa okunması cennetle müjdelenmiştir. Uygulamada tek oturumda 3 tekrar hedefi; alışkanlığına göre hedefi düzenleyebilirsin.',
+        source: 'Ebu Davud, Sünnet 1; Ahmed',
+        target: 3,
+        keywords: 'rıza iman İslam nebi cennet'
+    },
+    {
+        id: 'lib_18', category: 'zikir',
+        name: 'Allâhümmâ entes-selâm',
+        arabic: 'اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ',
+        meaning: 'Allah\'ım, Sen Selâmsın; selâm Sendendir. Ey celâl ve ikram sahibi, mübarek olan Sensin.',
+        context: 'Namaz selâmından sonra okunan dua-zikir; huzur ve selâmet dilemek içindir.',
+        source: 'Müslim, Salât 288',
+        target: 1,
+        keywords: 'namaz selam huzur mübarek teşehhüd sonrası'
+    },
+    {
+        id: 'lib_19', category: 'zikir',
+        name: 'Lâ ilâhe illallâhu (mülk, hayât, hayy)',
+        arabic: 'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ، وَهُوَ حَيٌّ لَا يَمُوتُ، بِيَدِهِ الْخَيْرُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',
+        meaning: '(Tevhid ve mülk, hayat ölüm, O\'nun elinde hayır ve her şeye güç yetirme sıfatlarıyla tam zikir.)',
+        context: 'Yatarken veya gündüzün okunan uzun tevhid; kalpte Allah\'ın rububiyet ve uluhiyetini hatırlatır.',
+        source: 'Buhari, Daavât 39; Müslim, Zikr 63',
+        target: 1,
+        keywords: 'yatarken gece mülk hayat ölüm tevhid tam'
+    },
+    {
+        id: 'lib_20', category: 'zikir',
+        name: 'Sübhânellâhi ve bi hamdihi adede halkihi',
+        arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ عَدَدَ خَلْقِهِ وَرِضَا نَفْسِهِ وَزِنَةَ عَرْشِهِ وَمِدَادَ كَلِمَاتِهِ',
+        meaning: 'Allah\'ı yaratıklarının sayısı kadar, nefsinin rızası, Arş\'ının ağırlığı ve kelimelerinin mürekkebi kadar hamd ile tesbih ederim.',
+        context: 'Geniş tesbih; günde bir kez veya sünnete uygun aralıklarla okunması tavsiye edilen zikirdir.',
+        source: 'Müslim, Zikir 33',
+        target: 1,
+        keywords: 'tesbih geniş hamd yaratık arş kelime'
+    }
+];
+
+// Premium: extra library items — yukarıdaki kütüphane editoryal standardına aynen uy.
+const PREMIUM_LIBRARY_EXTRA = [
+    {
+        id: 'plib_01', category: 'dua',
+        name: 'Sefer Duası',
+        arabic: 'سُبْحَانَ الَّذِي سَخَّرَ لَنَا هٰذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلٰى رَبِّنَا لَمُنْقَلِبُونَ',
+        meaning: 'Bunu bize boyun eğdiren Allah’ı tesbih ederiz; biz buna güç yetiremezdik. Biz mutlaka Rabbimize döneceğiz.',
+        context: 'Yolculuğa binerken okunur; teslimiyet ve emniyet duygusunu güçlendirir.',
+        source: 'Kur\'an, Zuhruf 13-14',
+        target: 1,
+        keywords: 'sefer yolculuk binerken emniyet teslimiyet'
+    },
+    {
+        id: 'plib_02', category: 'dua',
+        name: 'Sıkıntı Anında Dua',
+        arabic: 'لَا إِلٰهَ إِلَّا اللهُ الْعَظِيمُ الْحَلِيمُ لَا إِلٰهَ إِلَّا اللهُ رَبُّ الْعَرْشِ الْعَظِيمِ',
+        meaning: 'Azîm ve Halîm olan Allah’tan başka ilah yoktur. Büyük Arş’ın Rabbi Allah’tan başka ilah yoktur.',
+        context: 'Zor anlarda kalbi sakinleştiren bir zikir/dua.',
+        source: 'Buhari, Daavât',
+        target: 1,
+        keywords: 'sıkıntı stres korku sakin'
+    },
+    {
+        id: 'plib_03', category: 'zikir',
+        name: 'Hasbiyallahu lâ ilâhe illâ Hû',
+        arabic: 'حَسْبِيَ اللهُ لَا إِلٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ',
+        meaning: 'Allah bana yeter. O’ndan başka ilah yoktur. O’na tevekkül ettim. O büyük Arş’ın Rabbidir.',
+        context: 'Tevekkül ve güven zikri; gün içinde tekrar edilebilir.',
+        source: 'Kur\'an, Tevbe 129',
+        target: 7,
+        keywords: 'hasbiyallahu tevekkül güven arş'
+    },
+    {
+        id: 'plib_04', category: 'zikir',
+        name: 'Estağfirullah el-azîm (Tevbe)',
+        arabic: 'أَسْتَغْفِرُ اللهَ الْعَظِيمَ',
+        meaning: 'Azîm olan Allah’tan bağışlanma dilerim.',
+        context: 'Gün içinde istiğfar; niyete göre sayılı tekrar edilir.',
+        source: 'Genel rivayet',
+        target: 100,
+        keywords: 'istiğfar tevbe günah bağışlanma'
+    },
+    {
+        id: 'plib_05', category: 'dua',
+        name: 'Anne-Baba Duası',
+        arabic: 'رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا',
+        meaning: 'Rabbim! Küçüklüğümde beni yetiştirdikleri gibi onlara merhamet et.',
+        context: 'Anne-baba için okunur.',
+        source: 'Kur\'an, İsra 24',
+        target: 1,
+        keywords: 'anne baba merhamet isrâ'
+    },
+    {
+        id: 'plib_06', category: 'zikir',
+        name: 'Sübhânallâhi’l-azîm',
+        arabic: 'سُبْحَانَ اللهِ الْعَظِيمِ',
+        meaning: 'Azîm olan Allah’ı tesbih ederim.',
+        context: 'Kısa tesbih; gün içine yayılabilir.',
+        source: 'Genel rivayet',
+        target: 33,
+        keywords: 'tesbih azîm kısa'
     }
 ];
 
@@ -264,20 +618,55 @@ const ZIKIR_LIBRARY = [
 let folders = [];
 let zikirs = [];
 let history = {};
-let appSettings = { vibrationTap: true, vibrationTarget: true, sound: false, wakeLock: false }; // { 'YYYY-MM-DD': { 'z_1': 15, 'z_2': 5 } }
-let reminderSettings = { enabled: false, time: '21:00' };
+let appSettings = { vibrationTap: true, vibrationTarget: true, sound: false, wakeLock: false, theme: 'navy' };
+let reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
 let entitlements = { premium: false };
+let trash = { v: 1, entries: [] }; // soft-deleted items
 
 let currentFolderId = null;
 let currentZikirId = null;
 let activeStatTab = 'daily';
+let activeZikirStatTab = 'daily';
 let folderSearchQuery = '';
 let folderFavOnly = false;
 let suppressListNavigation = false;
 
+/** Tur tamamlama parlaması; arka arkaya forced reflow + animasyon titremesin */
+let lastCounterGlowBurstAt = 0;
+const COUNTER_GLOW_BURST_MIN_MS = 420;
+
+let folderSelectMode = false;
+let folderSelectBarVisible = false;
+let selectedFolderIds = new Set();
+let zikirSelectMode = false;
+let zikirSelectBarVisible = false;
+let selectedZikirIds = new Set();
+
+/** Sürükle tutamacı: üç yatay çizgi */
+const GRIP_3LINES_HTML =
+    '<span class="grip-lines" aria-hidden="true"><span></span><span></span><span></span></span>';
+
 // Limits
 const MAX_FOLDERS = Infinity;
-const MAX_ZIKIRS_PER_FOLDER = 6;
+/** Klasör başına zikir üst sınırı (tek cihaz uygulaması; ileride ayrı limit istenirse değişir) */
+const MAX_ZIKIRS_PER_FOLDER = 40;
+
+// Premium daha yayınlanmadan önce: sadece klasör/zikir limitleri sınırsız kalsın.
+// Premium yayınlandığında bunu true yapacağız.
+const PREMIUM_LIVE = false;
+
+function getMaxFolders() {
+    if (!PREMIUM_LIVE) return Infinity;
+    return isPremium() ? Infinity : MAX_FOLDERS;
+}
+
+function getMaxZikirsPerFolder() {
+    if (!PREMIUM_LIVE) return Infinity;
+    return isPremium() ? Infinity : MAX_ZIKIRS_PER_FOLDER;
+}
+
+/** Bu klasörler silinemez (varsayılan içerik). */
+const PROTECTED_FOLDER_IDS = new Set(['f_default', 'f_esma']);
 
 // Circle Constants
 const CIRCLE_RADIUS = 130;
@@ -287,8 +676,19 @@ const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
 const views = document.querySelectorAll('.view');
 // Home View
 const folderGrid = document.getElementById('folderGrid');
+const updateBannerSlot = document.getElementById('updateBannerSlot');
 const newFolderBtn = document.getElementById('newFolderBtn');
 const dailyQuoteText = document.getElementById('dailyQuoteText');
+const homeQuoteFooter = document.getElementById('homeQuoteFooter');
+const folderMultiSelectBar = document.getElementById('folderMultiSelectBar');
+const folderSelectCancelBtn = document.getElementById('folderSelectCancelBtn');
+const folderSelectDeleteBtn = document.getElementById('folderSelectDeleteBtn');
+const folderSelectCountEl = document.getElementById('folderSelectCount');
+const folderHomeDragHint = document.getElementById('folderHomeDragHint');
+const zikirMultiSelectBar = document.getElementById('zikirMultiSelectBar');
+const zikirSelectCancelBtn = document.getElementById('zikirSelectCancelBtn');
+const zikirSelectDeleteBtn = document.getElementById('zikirSelectDeleteBtn');
+const zikirSelectCountEl = document.getElementById('zikirSelectCount');
 // Folder Detail View
 const folderDetailTitle = document.getElementById('folderDetailTitle');
 const folderZikirList = document.getElementById('folderZikirList');
@@ -297,7 +697,6 @@ const openAddZikirModalBtn = document.getElementById('openAddZikirModalBtn');
 const folderSearchInput = document.getElementById('folderSearchInput');
 const folderFavoritesOnly = document.getElementById('folderFavoritesOnly');
 const folderZikirDragHint = document.getElementById('folderZikirDragHint');
-const toggleZikirReorderHintBtn = document.getElementById('toggleZikirReorderHintBtn');
 // Counter View
 const countDisplay = document.getElementById('countDisplay');
 const targetDisplay = document.getElementById('targetDisplay');
@@ -310,12 +709,24 @@ const progressCircle = document.getElementById('progressCircle');
 const mainCounterBtn = document.getElementById('mainCounterBtn');
 const decrementBtn = document.getElementById('decrementBtn');
 const resetBtn = document.getElementById('resetBtn');
+const openZikirStatsBtn = document.getElementById('openZikirStatsBtn');
+const zikirStatsOverlay = document.getElementById('zikirStatsOverlay');
+const zikirActivityChart = document.getElementById('zikirActivityChart');
+const zikirChartYAxis = document.getElementById('zikirChartYAxis');
+const zikirStatsTitle = document.getElementById('zikirStatsTitle');
+const zikirStatsSummaryLabel = document.getElementById('zikirStatsSummaryLabel');
+const zikirStatsSummaryValue = document.getElementById('zikirStatsSummaryValue');
+const zikirStatsSummarySub = document.getElementById('zikirStatsSummarySub');
+const zikirStatsChartHeading = document.getElementById('zikirStatsChartHeading');
+const zikirStatTabBtns = document.querySelectorAll('#zikirStatsOverlay .zikir-stats-tabs .tab-btn');
 
 // Stats View
 const statTabBtns = document.querySelectorAll('#statsView .stats-tabs .tab-btn');
 const statMostClicked = document.getElementById('statMostClicked');
 const statMostClickedCount = document.getElementById('statMostClickedCount');
 const statLastClicked = document.getElementById('statLastClicked');
+const statBestDayDate = document.getElementById('statBestDayDate');
+const statBestDayCount = document.getElementById('statBestDayCount');
 const activityChart = document.getElementById('activityChart');
 
 // Stealth View
@@ -333,7 +744,7 @@ const libraryDetailOverlay = document.getElementById('libraryDetailOverlay');
 const libDetailName = document.getElementById('libDetailName');
 const libDetailMeaning = document.getElementById('libDetailMeaning');
 const libDetailContext = document.getElementById('libDetailContext');
-const libDetailSource = document.getElementById('libDetailSource');
+const libDetailContextLabel = document.getElementById('libDetailContextLabel');
 const prepLibraryAddBtn = document.getElementById('prepLibraryAddBtn');
 const libraryFolderSelectOverlay = document.getElementById('libraryFolderSelectOverlay');
 const libDestFolder = document.getElementById('libDestFolder');
@@ -346,6 +757,7 @@ let librarySearchQuery = '';
 // Settings
 const openSettingsBtn = document.getElementById('openSettingsBtn');
 const settingsOverlay = document.getElementById('settingsOverlay');
+const trashOverlay = document.getElementById('trashOverlay');
 const cbVibrationTap = document.getElementById('settingVibrationTap');
 const cbVibrationTarget = document.getElementById('settingVibrationTarget');
 const cbSound = document.getElementById('settingSound');
@@ -354,14 +766,25 @@ const openPrivacyBtn = document.getElementById('openPrivacyBtn');
 const cbReminderEnabled = document.getElementById('settingReminderEnabled');
 const reminderTimeInput = document.getElementById('settingReminderTime');
 const bottomNav = document.getElementById('bottomNav');
+const themeChoiceBtns = document.querySelectorAll('[data-theme-choice]');
+const THEME_META_COLORS = { navy: '#0a0e16', light: '#faf8f5', black: '#000000' };
+
+/** @returns {'navy'|'light'|'black'} */
+function normalizeAppTheme(theme) {
+    if (theme === 'light') return 'light';
+    if (theme === 'black') return 'black';
+    return 'navy';
+}
 
 // Modals
 const addModalOverlay = document.getElementById('addModalOverlay');
 const saveZikirBtn = document.getElementById('saveZikirBtn');
 const editModalOverlay = document.getElementById('editModalOverlay');
 const saveEditBtn = document.getElementById('saveEditBtn');
+const editZikirNameInp = document.getElementById('editZikirName');
 const editZikirTargetInp = document.getElementById('editZikirTarget');
 const editZikirMeaningInp = document.getElementById('editZikirMeaning');
+const editZikirFaziletInp = document.getElementById('editZikirFazilet');
 const editZikirArabicInp = document.getElementById('editZikirArabic');
 let editingZikirIdMap = null; // tracking edit
 
@@ -371,6 +794,129 @@ const saveCopyBtn = document.getElementById('saveCopyBtn');
 const saveMoveBtn = document.getElementById('saveMoveBtn');
 let copyingZikirId = null;
 
+// Uygulama temalı alert / confirm / prompt
+const appDialogOverlay = document.getElementById('appDialogOverlay');
+const appDialogTitle = document.getElementById('appDialogTitle');
+const appDialogBody = document.getElementById('appDialogBody');
+const appDialogInputWrap = document.getElementById('appDialogInputWrap');
+const appDialogInputLabel = document.getElementById('appDialogInputLabel');
+const appDialogInput = document.getElementById('appDialogInput');
+const appDialogCancelBtn = document.getElementById('appDialogCancelBtn');
+const appDialogOkBtn = document.getElementById('appDialogOkBtn');
+
+let appDialogKind = 'alert';
+let appDialogResolve = null;
+
+function onAppDialogOk() {
+    if (!appDialogResolve) return;
+    const res = appDialogResolve;
+    appDialogResolve = null;
+    if (appDialogOverlay) appDialogOverlay.classList.remove('active');
+    if (appDialogKind === 'prompt') res(appDialogInput ? appDialogInput.value : '');
+    else if (appDialogKind === 'confirm') res(true);
+    else res();
+}
+
+function onAppDialogCancel() {
+    if (!appDialogResolve) return;
+    const res = appDialogResolve;
+    appDialogResolve = null;
+    if (appDialogOverlay) appDialogOverlay.classList.remove('active');
+    if (appDialogKind === 'prompt') res(null);
+    else if (appDialogKind === 'confirm') res(false);
+}
+
+function onAppDialogBackdrop() {
+    if (appDialogKind === 'alert') onAppDialogOk();
+    else onAppDialogCancel();
+}
+
+function onAppDialogKeydown(e) {
+    if (!appDialogOverlay || !appDialogOverlay.classList.contains('active')) return;
+    if (e.key === 'Escape') {
+        e.preventDefault();
+        onAppDialogBackdrop();
+    }
+}
+
+function showAppAlert(message, options = {}) {
+    return new Promise((resolve) => {
+        if (!appDialogOverlay || !appDialogOkBtn) {
+            window.alert(message);
+            resolve();
+            return;
+        }
+        appDialogKind = 'alert';
+        appDialogTitle.textContent = options.title || 'Bilgi';
+        appDialogBody.textContent = message;
+        if (appDialogInputWrap) appDialogInputWrap.hidden = true;
+        if (appDialogCancelBtn) appDialogCancelBtn.hidden = true;
+        appDialogOkBtn.textContent = options.okLabel || 'Tamam';
+        appDialogResolve = resolve;
+        appDialogOverlay.classList.add('active');
+        requestAnimationFrame(() => appDialogOkBtn.focus());
+    });
+}
+
+function showAppConfirm(message, options = {}) {
+    return new Promise((resolve) => {
+        if (!appDialogOverlay || !appDialogOkBtn) {
+            resolve(window.confirm(message));
+            return;
+        }
+        appDialogKind = 'confirm';
+        appDialogTitle.textContent = options.title || 'Onay';
+        appDialogBody.textContent = message;
+        if (appDialogInputWrap) appDialogInputWrap.hidden = true;
+        if (appDialogCancelBtn) appDialogCancelBtn.hidden = false;
+        appDialogOkBtn.textContent = options.confirmLabel || 'Tamam';
+        appDialogResolve = resolve;
+        appDialogOverlay.classList.add('active');
+        requestAnimationFrame(() => appDialogOkBtn.focus());
+    });
+}
+
+function showAppPrompt(message, defaultValue = '', options = {}) {
+    return new Promise((resolve) => {
+        if (!appDialogOverlay || !appDialogOkBtn || !appDialogInput) {
+            resolve(window.prompt(message, defaultValue));
+            return;
+        }
+        appDialogKind = 'prompt';
+        appDialogTitle.textContent = options.title || 'Giriş';
+        appDialogBody.textContent = message;
+        if (appDialogInputWrap) appDialogInputWrap.hidden = false;
+        if (appDialogInputLabel) appDialogInputLabel.textContent = options.inputLabel || 'Ad';
+        appDialogInput.value = defaultValue ?? '';
+        if (appDialogCancelBtn) appDialogCancelBtn.hidden = false;
+        appDialogOkBtn.textContent = options.okLabel || 'Tamam';
+        appDialogResolve = resolve;
+        appDialogOverlay.classList.add('active');
+        requestAnimationFrame(() => {
+            appDialogInput.focus();
+            appDialogInput.select();
+        });
+    });
+}
+
+function setupAppDialog() {
+    if (!appDialogOverlay || !appDialogOkBtn || !appDialogCancelBtn) return;
+    appDialogOkBtn.addEventListener('click', onAppDialogOk);
+    appDialogCancelBtn.addEventListener('click', onAppDialogCancel);
+    appDialogOverlay.addEventListener('click', (e) => {
+        if (e.target === appDialogOverlay) onAppDialogBackdrop();
+    });
+    if (appDialogInput) {
+        appDialogInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                onAppDialogOk();
+            }
+        });
+    }
+    document.addEventListener('keydown', onAppDialogKeydown);
+}
+
 
 // ===================== INIT =====================
 function init() {
@@ -379,19 +925,63 @@ function init() {
         progressCircle.style.strokeDashoffset = CIRCLE_CIRCUMFERENCE;
     }
 
+    applyNativeBottomInsetVar();
     loadData();
     setupEventListeners();
     setDailyQuote();
-    showView('homeView');
+    setMultiSelectBarShown(folderMultiSelectBar, false);
+    setMultiSelectBarShown(zikirMultiSelectBar, false);
+    // Do not push on first paint; set the baseline history state.
+    showView('homeView', null, { push: false });
+    ensureInitialHistoryState();
+    setInAppStackTo(getViewState('homeView', null));
+    syncTrashButtonUI();
 
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(console.error);
-    if (reminderSettings && reminderSettings.enabled) {
-        maybeRequestNotificationPermission();
-        scheduleInAppReminderTick();
+    if (!isCapacitorNative() && 'serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(console.error);
     }
+    if (reminderSettings && reminderSettings.enabled) {
+        if (!isCapacitorNative()) maybeRequestNotificationPermission();
+        ensureReminderSchedule().catch(console.error);
+    }
+    document.addEventListener('visibilitychange', onAppBecameVisibleForReminders);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState !== 'visible') return;
+        refreshUpdateBannerConfig().then(() => {
+            if (document.getElementById('homeView')?.classList.contains('active')) renderFolders();
+        });
+    });
+    window.addEventListener('pageshow', onPageShowForReminders);
+    // Make Android/iOS/WebView back follow in-app navigation.
+    window.addEventListener('popstate', (e) => {
+        const st = e && e.state ? e.state : null;
+        closeAllOverlays();
+        if (isOverlayState(st)) {
+            const el = document.getElementById(st.overlayId);
+            if (el) el.classList.add('active');
+            if (st.overlayId === 'zikirStatsOverlay') renderZikirStats();
+            return;
+        }
+        if (!st || typeof st !== 'object' || typeof st.viewId !== 'string') return;
+        showView(st.viewId, st.param ?? null, { push: false });
+    });
+    // Some WebViews don't produce reliable history for internal tabs; keep a robust fallback stack.
+    document.addEventListener('keydown', (e) => {
+        // Desktop browsers sometimes map Backspace to back-navigation; don't steal when typing.
+        if (e.key !== 'Backspace') return;
+        const t = e.target;
+        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+        // Prevent browser default back and use in-app back instead.
+        e.preventDefault();
+        goBackInApp();
+    });
     if (ESMA_LIST.length !== ESMA_ARABIC.length) {
         console.warn('Zikirmatik: ESMA_LIST ile ESMA_ARABIC uzunlukları eşleşmiyor.');
     }
+
+    refreshUpdateBannerConfig().then(() => {
+        if (document.getElementById('homeView')?.classList.contains('active')) renderFolders();
+    });
 }
 
 function getTodayString() {
@@ -404,17 +994,6 @@ function safeZikirTarget(z) {
     return Number.isFinite(t) && t > 0 ? t : 33;
 }
 
-function syncZikirReorderHintButton() {
-    if (!toggleZikirReorderHintBtn || !folderZikirDragHint) return;
-    const open = !folderZikirDragHint.hidden;
-    toggleZikirReorderHintBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    toggleZikirReorderHintBtn.classList.toggle('icon-btn--reorder-hint-on', open);
-    toggleZikirReorderHintBtn.setAttribute(
-        'aria-label',
-        open ? 'Sıralama ipucunu gizle' : 'Sıralama ipucunu göster'
-    );
-}
-
 function escapeHtml(str) {
     if (str == null || str === '') return '';
     return String(str)
@@ -422,6 +1001,188 @@ function escapeHtml(str) {
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
+}
+
+function escapeAttr(str) {
+    // Minimal attribute escaping; also strips control chars.
+    if (str == null) return '';
+    return String(str)
+        .replace(/[\u0000-\u001F\u007F]/g, '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function isPlainObject(v) {
+    if (!v || typeof v !== 'object') return false;
+    const p = Object.getPrototypeOf(v);
+    return p === Object.prototype || p === null;
+}
+
+function coerceString(v, maxLen = 240) {
+    if (v == null) return '';
+    const s = String(v).replace(/\s+/g, ' ').trim();
+    if (s.length <= maxLen) return s;
+    return s.slice(0, maxLen);
+}
+
+function coerceId(v, fallbackPrefix) {
+    const raw = coerceString(v, 64);
+    // Allow only safe id chars for attribute usage and DOM datasets.
+    const ok = /^[a-zA-Z0-9_-]+$/.test(raw);
+    if (ok) return raw;
+    return mintId(fallbackPrefix);
+}
+
+function clampNumber(v, { min = 0, max = Number.MAX_SAFE_INTEGER, fallback = 0 } = {}) {
+    const n = typeof v === 'number' ? v : parseFloat(v);
+    if (!Number.isFinite(n)) return fallback;
+    return Math.min(max, Math.max(min, n));
+}
+
+function sanitizeLoadedData(d) {
+    const safe = isPlainObject(d) ? d : {};
+
+    // folders
+    let fArr = Array.isArray(safe.folders) ? safe.folders : [];
+    fArr = fArr
+        .filter((x) => isPlainObject(x))
+        .slice(0, 5000)
+        .map((f, idx) => ({
+            id: coerceId(f.id, 'f'),
+            name: coerceString(f.name || 'Klasör', 60) || `Klasör ${idx + 1}`,
+            order: (typeof f.order === 'number' && Number.isFinite(f.order)) ? f.order : idx
+        }));
+
+    // zikirs
+    let zArr = Array.isArray(safe.zikirs) ? safe.zikirs : [];
+    zArr = zArr
+        .filter((x) => isPlainObject(x))
+        .slice(0, 200000)
+        .map((z, idx) => ({
+            id: coerceId(z.id, 'z'),
+            folderId: coerceId(z.folderId || 'f_default', 'f'),
+            name: coerceString(z.name || 'Zikir', 80) || `Zikir ${idx + 1}`,
+            arabic: coerceString(z.arabic || '', 1200),
+            target: clampNumber(z.target, { min: 1, max: 1000000, fallback: 33 }),
+            meaning: coerceString(z.meaning || '', 1600),
+            count: clampNumber(z.count, { min: 0, max: 1000000000, fallback: 0 }),
+            lastClicked: clampNumber(z.lastClicked, { min: 0, max: 9e15, fallback: 0 }),
+            order: (typeof z.order === 'number' && Number.isFinite(z.order)) ? z.order : idx,
+            favorite: typeof z.favorite === 'boolean' ? z.favorite : false,
+            fazilet: z.fazilet != null ? coerceString(z.fazilet, 2000) : undefined
+        }));
+
+    // history (keep existing pruning rules later too)
+    const hist = isPlainObject(safe.history) ? safe.history : {};
+    // Use a null-prototype map to reduce prototype pollution surface.
+    const historyOut = Object.create(null);
+    Object.keys(hist).slice(0, 2000).forEach((day) => {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return;
+        const block = hist[day];
+        if (!isPlainObject(block)) return;
+        const outBlock = Object.create(null);
+        Object.keys(block).slice(0, 40000).forEach((zid) => {
+            const id = coerceId(zid, 'z');
+            const v = block[zid];
+            const num = clampNumber(v, { min: 0, max: 1000000000, fallback: 0 });
+            if (num > 0) outBlock[id] = num;
+        });
+        historyOut[day] = outBlock;
+    });
+
+    // settings/reminders/entitlements
+    const s = isPlainObject(safe.settings) ? safe.settings : {};
+    const oldVib = (typeof s.vibration === 'boolean') ? s.vibration : true;
+    const settingsOut = {
+        vibrationTap: (typeof s.vibrationTap === 'boolean') ? s.vibrationTap : oldVib,
+        vibrationTarget: (typeof s.vibrationTarget === 'boolean') ? s.vibrationTarget : oldVib,
+        sound: (typeof s.sound === 'boolean') ? s.sound : false,
+        wakeLock: (typeof s.wakeLock === 'boolean') ? s.wakeLock : false,
+        theme: normalizeAppTheme(s.theme)
+    };
+
+    const r = isPlainObject(safe.reminders) ? safe.reminders : (isPlainObject(safe.reminderSettings) ? safe.reminderSettings : {});
+    const remindersOut = {
+        enabled: (typeof r.enabled === 'boolean') ? r.enabled : false,
+        time: /^\d{2}:\d{2}$/.test(String(r.time || '')) ? String(r.time) : '21:00',
+        lastFiredYmd: (typeof r.lastFiredYmd === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(r.lastFiredYmd)) ? r.lastFiredYmd : null
+    };
+
+    const e = isPlainObject(safe.entitlements) ? safe.entitlements : {};
+    const entOut = { premium: !!e.premium };
+
+    // trash
+    const t = isPlainObject(safe.trash) ? safe.trash : {};
+    const entries = Array.isArray(t.entries) ? t.entries : [];
+    const trashOut = {
+        v: 1,
+        entries: entries
+            .filter((x) => isPlainObject(x))
+            .slice(0, 500) // prevent unbounded growth
+            .map((x) => ({
+                kind: x.kind === 'folder' ? 'folder' : 'zikir',
+                deletedAt: clampNumber(x.deletedAt, { min: 0, max: 9e15, fallback: Date.now() }),
+                folder: x.folder && isPlainObject(x.folder) ? { id: coerceId(x.folder.id, 'f'), name: coerceString(x.folder.name, 60), order: clampNumber(x.folder.order, { min: 0, max: 1e9, fallback: 0 }) } : undefined,
+                zikirs: Array.isArray(x.zikirs)
+                    ? x.zikirs.filter(isPlainObject).slice(0, 2000).map((z) => ({
+                        id: coerceId(z.id, 'z'),
+                        folderId: coerceId(z.folderId || 'f_default', 'f'),
+                        name: coerceString(z.name || 'Zikir', 80),
+                        arabic: coerceString(z.arabic || '', 1200),
+                        target: clampNumber(z.target, { min: 1, max: 1000000, fallback: 33 }),
+                        meaning: coerceString(z.meaning || '', 1600),
+                        count: clampNumber(z.count, { min: 0, max: 1000000000, fallback: 0 }),
+                        lastClicked: clampNumber(z.lastClicked, { min: 0, max: 9e15, fallback: 0 }),
+                        order: clampNumber(z.order, { min: 0, max: 1e9, fallback: 0 })
+                    }))
+                    : undefined,
+                zikir: x.zikir && isPlainObject(x.zikir)
+                    ? {
+                        id: coerceId(x.zikir.id, 'z'),
+                        folderId: coerceId(x.zikir.folderId || 'f_default', 'f'),
+                        name: coerceString(x.zikir.name || 'Zikir', 80),
+                        arabic: coerceString(x.zikir.arabic || '', 1200),
+                        target: clampNumber(x.zikir.target, { min: 1, max: 1000000, fallback: 33 }),
+                        meaning: coerceString(x.zikir.meaning || '', 1600),
+                        count: clampNumber(x.zikir.count, { min: 0, max: 1000000000, fallback: 0 }),
+                        lastClicked: clampNumber(x.zikir.lastClicked, { min: 0, max: 9e15, fallback: 0 }),
+                        order: clampNumber(x.zikir.order, { min: 0, max: 1e9, fallback: 0 })
+                    }
+                    : undefined,
+                originalFolderId: x.originalFolderId != null ? coerceId(x.originalFolderId, 'f') : null
+            }))
+    };
+
+    // Deduplicate IDs (keep first, mint new for collisions)
+    const seenF = new Set();
+    fArr.forEach((f) => {
+        if (seenF.has(f.id)) f.id = mintId('f');
+        seenF.add(f.id);
+    });
+    const seenZ = new Set();
+    zArr.forEach((z) => {
+        if (seenZ.has(z.id)) z.id = mintId('z');
+        seenZ.add(z.id);
+    });
+
+    // Ensure zikir folderId exists; otherwise move to default folder.
+    const folderIds = new Set(fArr.map((f) => f.id));
+    zArr.forEach((z) => {
+        if (!folderIds.has(z.folderId)) z.folderId = 'f_default';
+    });
+
+    return {
+        folders: fArr,
+        zikirs: zArr,
+        history: historyOut,
+        settings: settingsOut,
+        reminders: remindersOut,
+        entitlements: entOut,
+        trash: trashOut
+    };
 }
 
 // Günlük tıklama geçmişi: grafik ~7 gün kullanır; eski günleri tutmak istatistik için faydalı,
@@ -476,6 +1237,22 @@ function sanitizeHistory() {
     return changed;
 }
 
+function applyAppTheme(theme) {
+    const t = normalizeAppTheme(theme);
+    document.documentElement.setAttribute('data-theme', t);
+    const meta = document.getElementById('metaThemeColor');
+    if (meta) meta.setAttribute('content', THEME_META_COLORS[t]);
+}
+
+function syncThemeUI() {
+    const t = normalizeAppTheme(appSettings.theme);
+    themeChoiceBtns.forEach((btn) => {
+        const on = btn.getAttribute('data-theme-choice') === t;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+}
+
 function syncSettingsUI() {
     if (cbVibrationTap) cbVibrationTap.checked = !!appSettings.vibrationTap;
     if (cbVibrationTarget) cbVibrationTarget.checked = !!appSettings.vibrationTarget;
@@ -483,6 +1260,8 @@ function syncSettingsUI() {
     if (cbWakeLock) cbWakeLock.checked = !!appSettings.wakeLock;
     if (cbReminderEnabled) cbReminderEnabled.checked = !!reminderSettings.enabled;
     if (reminderTimeInput) reminderTimeInput.value = reminderSettings.time || '21:00';
+    applyAppTheme(appSettings.theme);
+    syncThemeUI();
 }
 
 function loadData() {
@@ -496,26 +1275,26 @@ function loadData() {
             folders = [...DEFAULT_FOLDERS];
             zikirs = [...DEFAULT_ZIKIRS];
             history = {};
-            appSettings = { vibrationTap: true, vibrationTarget: true, sound: false, wakeLock: false };
-            reminderSettings = { enabled: false, time: '21:00' };
+            appSettings = { vibrationTap: true, vibrationTarget: true, sound: false, wakeLock: false, theme: 'navy' };
+            reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
             entitlements = { premium: false };
+            trash = { v: 1, entries: [] };
             syncSettingsUI();
             return;
         }
-        folders = Array.isArray(d.folders) ? d.folders : [...DEFAULT_FOLDERS];
-        zikirs = Array.isArray(d.zikirs) ? d.zikirs : [...DEFAULT_ZIKIRS];
-        history = d.history && typeof d.history === 'object' ? d.history : {};
-        const s = d.settings || {};
-        // Backward compatible: old `vibration` means both.
-        const oldVib = (typeof s.vibration === 'boolean') ? s.vibration : true;
-        appSettings = {
-            vibrationTap: (typeof s.vibrationTap === 'boolean') ? s.vibrationTap : oldVib,
-            vibrationTarget: (typeof s.vibrationTarget === 'boolean') ? s.vibrationTarget : oldVib,
-            sound: (typeof s.sound === 'boolean') ? s.sound : false,
-            wakeLock: (typeof s.wakeLock === 'boolean') ? s.wakeLock : false
+        const sanitized = sanitizeLoadedData(d);
+        folders = sanitized.folders.length ? sanitized.folders : [...DEFAULT_FOLDERS];
+        zikirs = sanitized.zikirs.length ? sanitized.zikirs : [...DEFAULT_ZIKIRS];
+        history = sanitized.history || {};
+        appSettings = sanitized.settings || appSettings;
+        reminderSettings = {
+            enabled: false,
+            time: '21:00',
+            lastFiredYmd: null,
+            ...(sanitized.reminders || {})
         };
-        reminderSettings = d.reminders || { enabled: false, time: '21:00' };
-        entitlements = d.entitlements || { premium: false };
+        entitlements = sanitized.entitlements || { premium: false };
+        trash = sanitized.trash || { v: 1, entries: [] };
 
         // Ordering (folders + zikirs)
         let touched = false;
@@ -588,6 +1367,7 @@ function loadData() {
         folders = [...DEFAULT_FOLDERS];
         zikirs = [...DEFAULT_ZIKIRS];
         history = {};
+        trash = { v: 1, entries: [] };
     }
 
     syncSettingsUI();
@@ -599,7 +1379,8 @@ function saveData() {
         history,
         settings: appSettings,
         reminders: reminderSettings,
-        entitlements
+        entitlements,
+        trash
     };
     try {
         localStorage.setItem('zikirmatik_data_v2', JSON.stringify(payload));
@@ -625,22 +1406,222 @@ function isPremium() {
     return !!(entitlements && entitlements.premium);
 }
 
-function requirePremium(featureName) {
-    if (isPremium()) return true;
-    alert(`${featureName} Premium özelliğidir. (Üyelik sistemi eklenince otomatik açılacak)`);
+function syncTrashButtonUI() {
+    const btn = document.getElementById('openTrashBtn');
+    if (!btn) return;
+    const locked = !isPremium();
+    btn.classList.toggle('is-locked', locked);
+    btn.setAttribute('aria-disabled', locked ? 'true' : 'false');
+    btn.title = locked ? 'Çöp Kutusu (Premium)' : 'Çöp Kutusu';
+}
+
+function deepClone(obj) {
+    try {
+        if (typeof structuredClone === 'function') return structuredClone(obj);
+    } catch {
+        // ignore
+    }
+    return JSON.parse(JSON.stringify(obj));
+}
+
+function formatRelativeTime(ts) {
+    if (!ts) return '';
+    const diffMs = Date.now() - ts;
+    const min = Math.floor(diffMs / 60000);
+    if (min < 1) return 'az önce';
+    if (min < 60) return `${min} dk önce`;
+    const h = Math.floor(min / 60);
+    if (h < 48) return `${h} sa önce`;
+    const d = Math.floor(h / 24);
+    return `${d} gün önce`;
+}
+
+function ensureRestoredFolder() {
+    const id = 'f_restored';
+    let f = folders.find((x) => x.id === id);
+    if (!f) {
+        const maxOrder = folders.reduce((m, ff) => Math.max(m, typeof ff.order === 'number' ? ff.order : -1), -1);
+        f = { id, name: 'Geri Yüklenenler', order: maxOrder + 1 };
+        folders.push(f);
+    }
+    return id;
+}
+
+function mintId(prefix) {
+    return `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2, 8)}`;
+}
+
+function capTrashEntries() {
+    if (!trash || !Array.isArray(trash.entries)) return;
+    const MAX_TRASH = 500;
+    if (trash.entries.length > MAX_TRASH) trash.entries.length = MAX_TRASH;
+}
+
+function restoreTrashEntry(index) {
+    const e = trash && Array.isArray(trash.entries) ? trash.entries[index] : null;
+    if (!e) return false;
+
+    if (e.kind === 'zikir' && e.zikir) {
+        const z = deepClone(e.zikir);
+        if (zikirs.find((x) => x.id === z.id)) z.id = mintId('z');
+        const targetFolder = (z.folderId && folders.find((f) => f.id === z.folderId)) ? z.folderId : ensureRestoredFolder();
+        z.folderId = targetFolder;
+        // Put at end of folder order.
+        const maxOrder = zikirs
+            .filter((x) => x.folderId === targetFolder)
+            .reduce((m, x) => Math.max(m, typeof x.order === 'number' ? x.order : -1), -1);
+        z.order = maxOrder + 1;
+        zikirs.push(z);
+        trash.entries.splice(index, 1);
+        saveData();
+        return true;
+    }
+
+    if (e.kind === 'folder' && e.folder && Array.isArray(e.zikirs)) {
+        const f = deepClone(e.folder);
+        if (folders.find((x) => x.id === f.id)) f.id = mintId('f');
+        // Ensure order at end.
+        const maxOrder = folders.reduce((m, ff) => Math.max(m, typeof ff.order === 'number' ? ff.order : -1), -1);
+        f.order = maxOrder + 1;
+        folders.push(f);
+
+        const existingZIds = new Set(zikirs.map((x) => x.id));
+        let maxZOrder = zikirs
+            .filter((x) => x.folderId === f.id)
+            .reduce((m, x) => Math.max(m, typeof x.order === 'number' ? x.order : -1), -1);
+        e.zikirs.forEach((orig) => {
+            const z = deepClone(orig);
+            z.folderId = f.id;
+            if (existingZIds.has(z.id)) z.id = mintId('z');
+            maxZOrder += 1;
+            z.order = maxZOrder;
+            zikirs.push(z);
+        });
+
+        trash.entries.splice(index, 1);
+        saveData();
+        return true;
+    }
+
     return false;
 }
 
-function downloadJson(filename, obj) {
-    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+function deleteTrashEntry(index) {
+    const e = trash && Array.isArray(trash.entries) ? trash.entries[index] : null;
+    if (!e) return false;
+    // Now it's a permanent delete: remove history for the affected zikir ids.
+    const zIds = new Set();
+    if (e.kind === 'zikir' && e.zikir && e.zikir.id) zIds.add(e.zikir.id);
+    if (e.kind === 'folder' && Array.isArray(e.zikirs)) {
+        e.zikirs.forEach((z) => {
+            if (z && z.id) zIds.add(z.id);
+        });
+    }
+    if (zIds.size) removeHistoryForZikirIds(zIds);
+    trash.entries.splice(index, 1);
+    saveData();
+    return true;
+}
+
+async function clearTrashAll() {
+    const n = trash && Array.isArray(trash.entries) ? trash.entries.length : 0;
+    if (n === 0) return;
+    if (!(await showAppConfirm('Çöp kutusundaki her şey kalıcı olarak silinsin mi? Bu işlem geri alınamaz.', { title: 'Çöp kutusunu boşalt', confirmLabel: 'Boşalt' }))) {
+        return;
+    }
+    const zIds = new Set();
+    trash.entries.forEach((e) => {
+        if (e.kind === 'zikir' && e.zikir && e.zikir.id) zIds.add(e.zikir.id);
+        if (e.kind === 'folder' && Array.isArray(e.zikirs)) e.zikirs.forEach((z) => z && z.id && zIds.add(z.id));
+    });
+    if (zIds.size) removeHistoryForZikirIds(zIds);
+    trash.entries = [];
+    saveData();
+}
+
+function renderPremiumTrash() {
+    // Backwards-compat (old ids): no-op if elements removed from DOM.
+    const list = document.getElementById('premiumTrashList');
+    const empty = document.getElementById('premiumTrashEmpty');
+    const clearBtn = document.getElementById('premiumTrashClearBtn');
+    if (!list || !empty) return;
+    const entries = trash && Array.isArray(trash.entries) ? trash.entries : [];
+    list.innerHTML = '';
+    empty.hidden = entries.length !== 0;
+    if (clearBtn) clearBtn.disabled = entries.length === 0;
+
+    entries.slice(0, 60).forEach((e, i) => {
+        const title =
+            e.kind === 'zikir' ? (e.zikir && e.zikir.name ? e.zikir.name : 'Zikir') :
+            e.kind === 'folder' ? (e.folder && e.folder.name ? e.folder.name : 'Klasör') :
+            'Öğe';
+        const sub =
+            e.kind === 'zikir'
+                ? `Zikir • ${formatRelativeTime(e.deletedAt)}`
+                : `Klasör (${Array.isArray(e.zikirs) ? e.zikirs.length : 0} zikir) • ${formatRelativeTime(e.deletedAt)}`;
+
+        const row = document.createElement('div');
+        row.className = 'premium-trash-item';
+        row.innerHTML = `
+            <div class="premium-trash-item__main">
+                <div class="premium-trash-item__title">${escapeHtml(title)}</div>
+                <div class="premium-trash-item__meta">${escapeHtml(sub)}</div>
+            </div>
+            <div class="premium-trash-item__actions">
+                <button type="button" class="premium-mini-btn premium-mini-btn--restore" data-trash-action="restore" data-trash-index="${i}">
+                    <span class="material-icons-outlined">restore</span>
+                    Geri al
+                </button>
+                <button type="button" class="premium-mini-btn premium-mini-btn--delete" data-trash-action="delete" data-trash-index="${i}">
+                    <span class="material-icons-outlined">delete_forever</span>
+                    Sil
+                </button>
+            </div>
+        `;
+        list.appendChild(row);
+    });
+}
+
+function renderTrashOverlay() {
+    const list = document.getElementById('trashList');
+    const empty = document.getElementById('trashEmpty');
+    const clearBtn = document.getElementById('trashClearBtn');
+    if (!list || !empty) return;
+    const entries = trash && Array.isArray(trash.entries) ? trash.entries : [];
+    list.innerHTML = '';
+    empty.hidden = entries.length !== 0;
+    if (clearBtn) clearBtn.disabled = entries.length === 0;
+
+    entries.slice(0, 80).forEach((e, i) => {
+        const title =
+            e.kind === 'zikir' ? (e.zikir && e.zikir.name ? e.zikir.name : 'Zikir') :
+            e.kind === 'folder' ? (e.folder && e.folder.name ? e.folder.name : 'Klasör') :
+            'Öğe';
+        const sub =
+            e.kind === 'zikir'
+                ? `Zikir • ${formatRelativeTime(e.deletedAt)}`
+                : `Klasör (${Array.isArray(e.zikirs) ? e.zikirs.length : 0} zikir) • ${formatRelativeTime(e.deletedAt)}`;
+
+        const row = document.createElement('div');
+        row.className = 'premium-trash-item';
+        row.innerHTML = `
+            <div class="premium-trash-item__main">
+                <div class="premium-trash-item__title">${escapeHtml(title)}</div>
+                <div class="premium-trash-item__meta">${escapeHtml(sub)}</div>
+            </div>
+            <div class="premium-trash-item__actions">
+                <button type="button" class="premium-mini-btn premium-mini-btn--restore" data-trash-action="restore" data-trash-index="${i}">
+                    <span class="material-icons-outlined">restore</span>
+                    Geri al
+                </button>
+                <button type="button" class="premium-mini-btn premium-mini-btn--delete" data-trash-action="delete" data-trash-index="${i}">
+                    <span class="material-icons-outlined">delete_forever</span>
+                    Sil
+                </button>
+            </div>
+        `;
+        list.appendChild(row);
+    });
 }
 
 function maybeRequestNotificationPermission() {
@@ -648,6 +1629,74 @@ function maybeRequestNotificationPermission() {
     if (Notification.permission === 'default') {
         Notification.requestPermission().catch(() => {});
     }
+}
+
+function reminderNotificationPayload() {
+    const base = new URL('icon.svg', window.location.href).href;
+    /* Başlık boş: ana sayfa hadis şeridindeki gibi yalnızca hadis/ayet metni öne çıksın (OS kendi satırında uygulama adını gösterebilir). */
+    return {
+        title: '',
+        options: {
+            body: REMINDER_FIXED_BODY,
+            icon: base,
+            badge: base,
+            tag: 'zikir-gunluk-hatir',
+            renotify: false,
+            lang: 'tr',
+            data: { url: window.location.origin + window.location.pathname + window.location.search }
+        }
+    };
+}
+
+/** Mobil/PWA: service worker bildirimi genelde sayfadaki new Notification’dan daha güvenilir */
+function showDailyReminderNotification() {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    const { title, options } = reminderNotificationPayload();
+    const markFired = () => {
+        reminderSettings.lastFiredYmd = getTodayString();
+        saveData();
+    };
+    const fallback = () => {
+        try {
+            new Notification(title, options);
+            markFired();
+        } catch (e) {
+            console.error('Zikirmatik: bildirim gösterilemedi', e);
+        }
+    };
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready
+            .then((reg) => {
+                if (reg && typeof reg.showNotification === 'function') {
+                    const ret = reg.showNotification(title, options);
+                    if (ret && typeof ret.then === 'function') {
+                        return ret.then(() => markFired()).catch(fallback);
+                    }
+                    markFired();
+                    return;
+                }
+                fallback();
+            })
+            .catch(fallback);
+    } else {
+        fallback();
+    }
+}
+
+/** Uygulama kapalıyken zamanlayıcı çalışmaz; hatır saatinden sonra açılırsa bir kez telafi */
+function maybeCatchUpMissedReminder() {
+    if (!('Notification' in window)) return;
+    if (!reminderSettings.enabled) return;
+    if (Notification.permission !== 'granted') return;
+    const today = getTodayString();
+    if (reminderSettings.lastFiredYmd === today) return;
+    const [hh, mm] = String(reminderSettings.time || '21:00').split(':').map((x) => parseInt(x, 10));
+    if (Number.isNaN(hh) || Number.isNaN(mm)) return;
+    const now = new Date();
+    const deadline = new Date(now);
+    deadline.setHours(hh, mm, 0, 0);
+    if (now.getTime() <= deadline.getTime()) return;
+    showDailyReminderNotification();
 }
 
 let reminderTimeoutId = null;
@@ -660,13 +1709,13 @@ function clearInAppReminderTick() {
 }
 
 function scheduleInAppReminderTick() {
-    // Web fallback: works only while app is open. On Android build we will replace with native scheduling.
+    /* Tam saatinde yalnızca sekme/PWA açıkken tetiklenir; arka planda OS genelde zamanlayıcıyı durdurur. */
     clearInAppReminderTick();
     if (!('Notification' in window)) return;
     if (!reminderSettings.enabled) return;
     if (Notification.permission !== 'granted') return;
     const now = new Date();
-    const [hh, mm] = String(reminderSettings.time || '21:00').split(':').map(x => parseInt(x, 10));
+    const [hh, mm] = String(reminderSettings.time || '21:00').split(':').map((x) => parseInt(x, 10));
     if (Number.isNaN(hh) || Number.isNaN(mm)) return;
     const target = new Date(now);
     target.setHours(hh, mm, 0, 0);
@@ -674,13 +1723,55 @@ function scheduleInAppReminderTick() {
     const ms = Math.min(target.getTime() - now.getTime(), 2147483647); // setTimeout limit
     reminderTimeoutId = setTimeout(() => {
         reminderTimeoutId = null;
-        try {
-            new Notification('Zikirmatik', { body: 'Bugünün zikrini tamamlamak ister misin?' });
-        } catch (e) {
-            console.error(e);
+        if (reminderSettings.lastFiredYmd === getTodayString()) {
+            scheduleInAppReminderTick();
+            return;
         }
+        showDailyReminderNotification();
         scheduleInAppReminderTick();
     }, ms);
+}
+
+async function ensureReminderSchedule() {
+    if (isCapacitorNative()) {
+        clearInAppReminderTick();
+        const r = await syncNativeDailyReminder(reminderSettings.enabled, reminderSettings.time);
+        if (reminderSettings.enabled && !r.ok && r.reason === 'denied') {
+            await showAppAlert(
+                'Hatırlatıcı için bildirim izni gerekli. Android: Uygulama bilgisi → Bildirimler bölümünden açabilirsin.',
+                { title: 'Bildirim izni' }
+            );
+        } else if (reminderSettings.enabled && r.warnExactAlarm) {
+            await showAppAlert(
+                'Hatırlatıcının seçtiğin saatte çalışması için tam zamanlı alarm izni gerekli.\n\nAndroid: Ayarlar → Uygulamalar → Zikirmatik → Zamanlanmış alarmlar veya Bildirimler → tam zamanlı alarmları aç.',
+                { title: 'Alarm izni' }
+            );
+        } else if (reminderSettings.enabled && !r.ok && r.reason === 'schedule') {
+            await showAppAlert(
+                'Günlük hatırlatıcı zamanlanamadı. Uygulamayı güncelleyip tekrar dene; sorun sürerse Ayarlar → Bildirimler bölümünü kontrol et.',
+                { title: 'Hatırlatıcı' }
+            );
+        }
+        return;
+    }
+    if (!reminderSettings.enabled) {
+        clearInAppReminderTick();
+        return;
+    }
+    maybeCatchUpMissedReminder();
+    scheduleInAppReminderTick();
+}
+
+function onAppBecameVisibleForReminders() {
+    if (document.visibilityState !== 'visible') return;
+    if (!reminderSettings.enabled) return;
+    /* Native: çoklu günlük alarmlar tükendikçe uygulama açılınca yeniden planlanır */
+    ensureReminderSchedule().catch(console.error);
+}
+
+function onPageShowForReminders() {
+    if (!reminderSettings.enabled) return;
+    ensureReminderSchedule().catch(console.error);
 }
 
 function logClick(zId) {
@@ -706,8 +1797,395 @@ function logDecrement(zId) {
     saveData();
 }
 
+function removeHistoryForZikirIds(zidSet) {
+    if (!history || !zidSet || zidSet.size === 0) return;
+    Object.keys(history).forEach((day) => {
+        const block = history[day];
+        if (!block || typeof block !== 'object') return;
+        zidSet.forEach((zid) => {
+            delete block[zid];
+        });
+        if (Object.keys(block).length === 0) delete history[day];
+    });
+}
+
+function updateFolderSelectChrome() {
+    if (folderSelectCountEl) {
+        folderSelectCountEl.textContent =
+            selectedFolderIds.size === 0 ? 'Seçim yok' : `${selectedFolderIds.size} klasör seçili`;
+    }
+    if (folderSelectDeleteBtn) {
+        folderSelectDeleteBtn.disabled = selectedFolderIds.size === 0;
+    }
+}
+
+function updateZikirSelectChrome() {
+    if (zikirSelectCountEl) {
+        zikirSelectCountEl.textContent =
+            selectedZikirIds.size === 0 ? 'Seçim yok' : `${selectedZikirIds.size} zikir seçili`;
+    }
+    if (zikirSelectDeleteBtn) {
+        zikirSelectDeleteBtn.disabled = selectedZikirIds.size === 0;
+    }
+}
+
+/** Android WebView: yalnızca .hidden bazen yeterli olmuyor; [hidden] + !important CSS ile eşle */
+function setMultiSelectBarShown(barEl, show) {
+    if (!barEl) return;
+    if (show) {
+        barEl.removeAttribute('hidden');
+        barEl.hidden = false;
+    } else {
+        barEl.hidden = true;
+        barEl.setAttribute('hidden', '');
+    }
+}
+
+function exitFolderSelectMode(skipRender) {
+    folderSelectMode = false;
+    folderSelectBarVisible = false;
+    selectedFolderIds.clear();
+    const hv = document.getElementById('homeView');
+    if (hv) hv.classList.remove('home-view--select-mode');
+    if (folderGrid) folderGrid.classList.remove('folder-grid--select-mode');
+    setMultiSelectBarShown(folderMultiSelectBar, false);
+    if (homeQuoteFooter) homeQuoteFooter.hidden = false;
+    updateFolderSelectChrome();
+    if (!skipRender && hv && hv.classList.contains('active')) renderFolders();
+}
+
+function exitZikirSelectMode(skipRender) {
+    zikirSelectMode = false;
+    zikirSelectBarVisible = false;
+    selectedZikirIds.clear();
+    const fd = document.getElementById('folderDetailView');
+    if (fd) fd.classList.remove('folder-detail--select-mode');
+    if (folderZikirList) folderZikirList.classList.remove('zikir-list--select-mode');
+    setMultiSelectBarShown(zikirMultiSelectBar, false);
+    updateZikirSelectChrome();
+    if (!skipRender && fd && fd.classList.contains('active')) renderFolderDetail();
+}
+
+function onFolderLongPressSelect(id) {
+    if (!folderSelectMode) {
+        folderSelectMode = true;
+        selectedFolderIds = new Set([id]);
+    } else if (selectedFolderIds.has(id)) {
+        selectedFolderIds.delete(id);
+    } else {
+        selectedFolderIds.add(id);
+    }
+    folderSelectBarVisible = true;
+    const hv = document.getElementById('homeView');
+    if (hv) hv.classList.add('home-view--select-mode');
+    if (folderGrid) folderGrid.classList.add('folder-grid--select-mode');
+    setMultiSelectBarShown(folderMultiSelectBar, true);
+    if (homeQuoteFooter) homeQuoteFooter.hidden = folderSelectMode;
+    updateFolderSelectChrome();
+    renderFolders();
+}
+
+function onZikirLongPressSelect(id) {
+    if (!zikirSelectMode) {
+        zikirSelectMode = true;
+        selectedZikirIds = new Set([id]);
+    } else if (selectedZikirIds.has(id)) {
+        selectedZikirIds.delete(id);
+    } else {
+        selectedZikirIds.add(id);
+    }
+    zikirSelectBarVisible = true;
+    const fd = document.getElementById('folderDetailView');
+    if (fd) fd.classList.add('folder-detail--select-mode');
+    if (folderZikirList) folderZikirList.classList.add('zikir-list--select-mode');
+    setMultiSelectBarShown(zikirMultiSelectBar, true);
+    updateZikirSelectChrome();
+    renderFolderDetail();
+}
+
+function toggleFolderSelected(id) {
+    if (selectedFolderIds.has(id)) selectedFolderIds.delete(id);
+    else selectedFolderIds.add(id);
+    /* Sil çubuğu seçim yaparken açık kalsın; kapanış: İptal veya silme tamamlanınca */
+    folderSelectBarVisible = true;
+    setMultiSelectBarShown(folderMultiSelectBar, true);
+    updateFolderSelectChrome();
+    renderFolders();
+}
+
+function toggleZikirSelected(id) {
+    if (selectedZikirIds.has(id)) selectedZikirIds.delete(id);
+    else selectedZikirIds.add(id);
+    zikirSelectBarVisible = true;
+    setMultiSelectBarShown(zikirMultiSelectBar, true);
+    updateZikirSelectChrome();
+    renderFolderDetail();
+}
+
+async function deleteSelectedFolders() {
+    const ids = [...selectedFolderIds];
+    if (ids.length === 0) return;
+    const blocked = ids.filter((fid) => PROTECTED_FOLDER_IDS.has(fid));
+    if (blocked.length > 0) {
+        await showAppAlert('“Varsayılan Zikirler” ve “Esma\'ül Hüsna” klasörleri silinemez. Seçimden çıkarın.', {
+            title: 'Silinemez'
+        });
+        folderSelectBarVisible = false;
+        setMultiSelectBarShown(folderMultiSelectBar, false);
+        renderFolders();
+        return;
+    }
+    const zikirIdsToRemove = new Set(
+        zikirs.filter((z) => ids.includes(z.folderId)).map((z) => z.id)
+    );
+    const nFolders = ids.length;
+    const nZikirs = zikirIdsToRemove.size;
+    const msg = `Seçilen ${nFolders} klasör ve içindeki ${nZikirs} zikir kalıcı olarak silinsin mi? Bu işlem geri alınamaz.`;
+    if (!(await showAppConfirm(msg, { title: 'Klasörleri sil', confirmLabel: 'Sil' }))) {
+        folderSelectBarVisible = false;
+        setMultiSelectBarShown(folderMultiSelectBar, false);
+        renderFolders();
+        return;
+    }
+    if (isPremium()) {
+        // Soft-delete into Trash (Premium).
+        const deletedAt = Date.now();
+        const deletedFolders = folders.filter((f) => ids.includes(f.id));
+        const deletedZikirs = zikirs.filter((z) => ids.includes(z.folderId));
+        deletedFolders.forEach((f) => {
+            trash.entries.unshift({
+                kind: 'folder',
+                deletedAt,
+                folder: deepClone(f),
+                zikirs: deletedZikirs
+                    .filter((z) => z.folderId === f.id)
+                    .map((z) => deepClone(z))
+            });
+        });
+        capTrashEntries();
+    } else {
+        // Non-premium: permanent delete (old behavior).
+        removeHistoryForZikirIds(zikirIdsToRemove);
+    }
+    zikirs = zikirs.filter((z) => !ids.includes(z.folderId));
+    folders = folders.filter((f) => !ids.includes(f.id));
+    exitFolderSelectMode(false);
+    saveData();
+    renderFolders();
+}
+
+async function deleteSelectedZikirs() {
+    const ids = [...selectedZikirIds];
+    if (ids.length === 0) return;
+    const msg = `Seçilen ${ids.length} zikir kalıcı olarak silinsin mi? Okuma geçmişi bu zikirler için temizlenir. Bu işlem geri alınamaz.`;
+    if (!(await showAppConfirm(msg, { title: 'Zikirleri sil', confirmLabel: 'Sil' }))) {
+        zikirSelectBarVisible = false;
+        setMultiSelectBarShown(zikirMultiSelectBar, false);
+        renderFolderDetail();
+        return;
+    }
+    if (isPremium()) {
+        // Soft-delete into Trash (Premium).
+        const deletedAt = Date.now();
+        const deleted = zikirs.filter((z) => ids.includes(z.id));
+        deleted.forEach((z) => {
+            trash.entries.unshift({
+                kind: 'zikir',
+                deletedAt,
+                zikir: deepClone(z),
+                originalFolderId: z.folderId ?? null
+            });
+        });
+        capTrashEntries();
+    } else {
+        // Non-premium: permanent delete (old behavior).
+        removeHistoryForZikirIds(new Set(ids));
+    }
+    zikirs = zikirs.filter((z) => !ids.includes(z.id));
+    if (currentZikirId && ids.includes(currentZikirId)) {
+        currentZikirId = null;
+    }
+    exitZikirSelectMode(false);
+    saveData();
+    renderFolderDetail();
+}
+
 // ===================== ROUTING =====================
-function showView(viewId, param = null) {
+function clearFolderSearch() {
+    folderSearchQuery = '';
+    if (folderSearchInput) folderSearchInput.value = '';
+}
+
+function clearLibrarySearch() {
+    librarySearchQuery = '';
+    if (librarySearchInput) librarySearchInput.value = '';
+}
+
+let currentViewId = null;
+let inAppViewStack = [];
+
+function viewStateEquals(a, b) {
+    if (!a || !b) return false;
+    return a.viewId === b.viewId && (a.param ?? null) === (b.param ?? null);
+}
+
+function getViewState(viewId, param = null) {
+    const p = param ?? null;
+    return { viewId, param: p };
+}
+
+function isOverlayState(st) {
+    return !!(st && typeof st === 'object' && typeof st.overlayId === 'string');
+}
+
+function getOverlayState(overlayId) {
+    return { overlayId: String(overlayId) };
+}
+
+function isOverlayActive(el) {
+    return !!(el && el.classList && el.classList.contains('active'));
+}
+
+function closeAllOverlays() {
+    [
+        appDialogOverlay,
+        copyModalOverlay,
+        editModalOverlay,
+        addModalOverlay,
+        trashOverlay,
+        libraryFolderSelectOverlay,
+        libraryDetailOverlay,
+        settingsOverlay,
+        zikirStatsOverlay
+    ].forEach((el) => {
+        if (el) el.classList.remove('active');
+    });
+}
+
+function openOverlay(overlayId, { onOpen } = {}) {
+    const el = document.getElementById(overlayId);
+    if (!el) return;
+    ensureInitialHistoryState();
+    try {
+        const cur = history && history.state ? history.state : null;
+        const next = getOverlayState(overlayId);
+        if (!isOverlayState(cur) || cur.overlayId !== next.overlayId) history.pushState(next, '');
+    } catch (_) {
+        // ignore
+    }
+    el.classList.add('active');
+    if (typeof onOpen === 'function') onOpen();
+}
+
+function closeOverlayPreferHistory(overlayId) {
+    const el = document.getElementById(overlayId);
+    if (!el) return false;
+    if (!isOverlayActive(el)) return false;
+    try {
+        const st = history && history.state ? history.state : null;
+        if (isOverlayState(st) && st.overlayId === overlayId) {
+            history.back();
+            return true;
+        }
+    } catch (_) {
+        // ignore
+    }
+    el.classList.remove('active');
+    return true;
+}
+
+function ensureInitialHistoryState() {
+    try {
+        const st = history && history.state ? history.state : null;
+        // If we already have an in-app state (view or overlay), don't clobber it.
+        if (st && typeof st === 'object') {
+            if (typeof st.viewId === 'string') return;
+            if (typeof st.overlayId === 'string') return;
+        }
+        history.replaceState(getViewState('homeView', null), '');
+    } catch (_) {
+        // ignore: some WebViews may block history state
+    }
+}
+
+function setInAppStackTo(state) {
+    inAppViewStack = [state];
+}
+
+function pushInAppStack(state) {
+    const last = inAppViewStack.length ? inAppViewStack[inAppViewStack.length - 1] : null;
+    if (last && viewStateEquals(last, state)) return;
+    inAppViewStack.push(state);
+}
+
+function goBackInApp({ fallbackViewId = 'homeView' } = {}) {
+    // Prefer closing overlays first (they manage their own history too).
+    const overlayIds = [
+        'appDialogOverlay',
+        'copyModalOverlay',
+        'editModalOverlay',
+        'addModalOverlay',
+        'trashOverlay',
+        'libraryFolderSelectOverlay',
+        'libraryDetailOverlay',
+        'settingsOverlay',
+        'zikirStatsOverlay'
+    ];
+    for (const oid of overlayIds) {
+        const el = document.getElementById(oid);
+        if (isOverlayActive(el)) {
+            closeOverlayPreferHistory(oid);
+            return;
+        }
+    }
+
+    if (inAppViewStack.length >= 2) {
+        // Drop current, go to previous.
+        inAppViewStack.pop();
+        const prev = inAppViewStack[inAppViewStack.length - 1];
+        showView(prev.viewId, prev.param ?? null, { push: false });
+        return;
+    }
+    showView(fallbackViewId, null, { push: false });
+}
+
+function showView(viewId, param = null, options = {}) {
+    const { push = true } = options || {};
+    const nextState = getViewState(viewId, param);
+    const prevState = currentViewId ? getViewState(currentViewId, (
+        currentViewId === 'folderDetailView' ? currentFolderId :
+        currentViewId === 'counterView' ? currentZikirId :
+        null
+    )) : null;
+
+    if (push) ensureInitialHistoryState();
+    // Push new state BEFORE UI switch so Android back always has an entry.
+    if (push) {
+        try {
+            const cur = history && history.state ? history.state : null;
+            // Avoid pushing duplicates (e.g., tapping the same bottom tab).
+            if (!viewStateEquals(cur, nextState)) history.pushState(nextState, '');
+        } catch (_) {
+            // ignore
+        }
+        pushInAppStack(nextState);
+    }
+
+    if (viewId !== 'counterView' && zikirStatsOverlay) zikirStatsOverlay.classList.remove('active');
+
+    if (viewId !== 'homeView') exitFolderSelectMode(true);
+    if (viewId !== 'folderDetailView') exitZikirSelectMode(true);
+
+    if (viewId !== 'folderDetailView') {
+        clearFolderSearch();
+    } else if (param != null && param !== currentFolderId) {
+        clearFolderSearch();
+    }
+
+    if (viewId !== 'libraryView') {
+        clearLibrarySearch();
+    }
+
     views.forEach(v => {
         if (v.id === viewId) {
             v.classList.remove('hidden');
@@ -719,37 +2197,63 @@ function showView(viewId, param = null) {
     });
 
     if (bottomNav) {
+        const stealth = viewId === 'stealthView';
+        if (stealth) {
+            bottomNav.hidden = true;
+            bottomNav.setAttribute('hidden', '');
+            bottomNav.classList.add('bottom-nav--stealth');
+            bottomNav.setAttribute('aria-hidden', 'true');
+        } else {
+            bottomNav.hidden = false;
+            bottomNav.removeAttribute('hidden');
+            bottomNav.classList.remove('bottom-nav--stealth');
+            bottomNav.removeAttribute('aria-hidden');
+        }
         bottomNav.querySelectorAll('.bottom-nav__btn').forEach(btn => btn.classList.remove('active'));
         const activeBtn = bottomNav.querySelector(`.bottom-nav__btn[data-view="${viewId}"]`);
         if (activeBtn) activeBtn.classList.add('active');
     }
 
     if (viewId !== 'counterView') {
-        releaseWakeLock();
+        void releaseWakeLock();
     }
 
     if (viewId === 'homeView') renderFolders();
     else if (viewId === 'folderDetailView') {
         currentFolderId = param;
-        if (folderZikirDragHint) folderZikirDragHint.hidden = true;
-        syncZikirReorderHintButton();
         renderFolderDetail();
     } else if (viewId === 'counterView') {
         currentZikirId = param;
         updateCounterUI();
-        if (appSettings.wakeLock) requestWakeLock();
+        if (appSettings.wakeLock) void requestWakeLock();
     } else if (viewId === 'statsView') {
         renderStats();
     } else if (viewId === 'libraryView') {
         renderLibrary();
+    } else if (viewId === 'premiumView') {
+        renderPremium();
     }
+
+    currentViewId = viewId;
+}
+
+function renderPremium() {
+    const el = document.getElementById('premiumTeaserLine');
+    if (!el) return;
+    const teasers = [
+        'Premium ile çöp kutusu (geri al) + daha geniş kütüphane açılacak.',
+        'Yakında: Premium ile silinen zikirleri geri al ve kütüphanede daha fazla içerik gör.',
+        'Premium: daha geniş kütüphane + daha güvenli silme (çöp kutusu).',
+        'Premium geldiğinde çöp kutusu ve geniş kütüphane burada aktif olacak.'
+    ];
+    const pick = teasers[Math.floor(Math.random() * teasers.length)];
+    el.textContent = pick;
 }
 
 // ===================== VIEWS =====================
 function setDailyQuote() {
     if (!dailyQuoteText) return;
-    const randomQuote = APP_QUOTES[Math.floor(Math.random() * APP_QUOTES.length)];
-    dailyQuoteText.textContent = randomQuote;
+    dailyQuoteText.textContent = pickRandomQuote();
 }
 
 // ——— Liste sıralama: uzun bas + sürükle (mobil) ———
@@ -801,6 +2305,50 @@ function computeListDropIndex(container, clientY, dragSourceEl) {
     return items.length;
 }
 
+/** Bir satır + aralık kadar dikey kaydırma (flex gap veya margin) */
+function getReorderShiftHeight(el, container) {
+    if (!el || !container) return 48;
+    const rect = el.getBoundingClientRect();
+    const next = el.nextElementSibling;
+    if (next && container.contains(next) && next.matches('[data-drag-order-item]')) {
+        return Math.max(1, next.getBoundingClientRect().top - rect.top);
+    }
+    const prev = el.previousElementSibling;
+    if (prev && container.contains(prev) && prev.matches('[data-drag-order-item]')) {
+        return Math.max(1, rect.top - prev.getBoundingClientRect().bottom);
+    }
+    const st = getComputedStyle(el);
+    const mb = parseFloat(st.marginBottom) || 0;
+    const cg = getComputedStyle(container);
+    const gap = parseFloat(cg.rowGap || cg.gap) || 0;
+    return Math.max(1, rect.height + Math.max(mb, gap));
+}
+
+function clearListDragTransforms(container) {
+    if (!container) return;
+    container.querySelectorAll('[data-drag-order-item]').forEach((el) => {
+        el.style.transform = '';
+    });
+}
+
+function updateListDragShifts(clientY) {
+    if (!activeListDrag) return;
+    const { container, sourceEl, sourceIndex, shiftHeight } = activeListDrag;
+    if (sourceIndex < 0) return;
+    const insertAt = computeListDropIndex(container, clientY, sourceEl);
+    const nodes = [...container.querySelectorAll('[data-drag-order-item]')];
+    nodes.forEach((el, i) => {
+        if (el === sourceEl) {
+            el.style.transform = '';
+            return;
+        }
+        let ty = 0;
+        if (insertAt < sourceIndex && i >= insertAt && i < sourceIndex) ty = shiftHeight;
+        else if (insertAt > sourceIndex && i > sourceIndex && i <= insertAt) ty = -shiftHeight;
+        el.style.transform = ty === 0 ? '' : `translateY(${ty}px)`;
+    });
+}
+
 function moveListDragGhost(clientY) {
     if (!activeListDrag) return;
     const { ghost, ghostLeft, ghostWidth, ghostHeight, offsetY } = activeListDrag;
@@ -810,11 +2358,13 @@ function moveListDragGhost(clientY) {
     if (typeof ghostHeight === 'number') {
         ghost.style.minHeight = `${ghostHeight}px`;
     }
+    updateListDragShifts(clientY);
 }
 
 function teardownListDrag() {
     if (!activeListDrag) return;
-    const { removeDocListeners, ghost, sourceEl } = activeListDrag;
+    const { removeDocListeners, ghost, sourceEl, container } = activeListDrag;
+    clearListDragTransforms(container);
     removeDocListeners();
     ghost.remove();
     sourceEl.classList.remove('drag-reorder-source', 'drag-reorder-pending');
@@ -826,6 +2376,7 @@ function completeListDrag(clientY) {
     if (!activeListDrag) return;
     const { id, sourceEl, container, getSortedIds, onCommit, ghost, removeDocListeners } = activeListDrag;
     removeDocListeners();
+    clearListDragTransforms(container);
     const sortedIds = getSortedIds();
     const insertAt = computeListDropIndex(container, clientY, sourceEl);
     const sans = sortedIds.filter(x => x !== id);
@@ -851,7 +2402,23 @@ function beginListDrag(sourceEl, id, container, getSortedIds, onCommit, pointerI
         b.disabled = true;
         b.style.pointerEvents = 'none';
     });
+    ghost.querySelectorAll('input[type="checkbox"]').forEach((inp, idx) => {
+        const srcList = sourceEl.querySelectorAll('input[type="checkbox"]');
+        if (srcList[idx]) inp.checked = srcList[idx].checked;
+        inp.disabled = true;
+        inp.style.pointerEvents = 'none';
+    });
+    if (
+        container.classList.contains('folder-grid--select-mode') ||
+        container.classList.contains('zikir-list--select-mode')
+    ) {
+        ghost.classList.add('drag-reorder-ghost--select');
+    }
     document.body.appendChild(ghost);
+
+    const allOrderEls = [...container.querySelectorAll('[data-drag-order-item]')];
+    const sourceIndex = allOrderEls.indexOf(sourceEl);
+    const shiftHeight = getReorderShiftHeight(sourceEl, container);
 
     sourceEl.classList.add('drag-reorder-source');
     setDragReorderLock(true);
@@ -888,6 +2455,8 @@ function beginListDrag(sourceEl, id, container, getSortedIds, onCommit, pointerI
         ghostWidth: rect.width,
         ghostHeight: rect.height,
         offsetY: clientY - rect.top,
+        sourceIndex,
+        shiftHeight,
         removeDocListeners() {
             document.removeEventListener('pointermove', docMove, { capture: true });
             document.removeEventListener('pointerup', docEnd, { capture: true });
@@ -896,10 +2465,11 @@ function beginListDrag(sourceEl, id, container, getSortedIds, onCommit, pointerI
     };
 
     moveListDragGhost(clientY);
-    if (navigator.vibrate) navigator.vibrate(15);
+    runDragReorderNudge();
 }
 
-function attachListDragLongPress(el, { id, container, getSortedIds, onCommit, shouldIgnoreDown }) {
+function attachListDragLongPress(el, { id, container, getSortedIds, onCommit, shouldIgnoreDown, rowElement }) {
+    const rowEl = rowElement || el;
     el.addEventListener(
         'pointerdown',
         (e) => {
@@ -917,10 +2487,10 @@ function attachListDragLongPress(el, { id, container, getSortedIds, onCommit, sh
                     ? LIST_DRAG_MOVE_CANCEL_PX_TOUCH
                     : LIST_DRAG_MOVE_CANCEL_PX_MOUSE;
 
-            el.classList.add('drag-reorder-pending');
+            rowEl.classList.add('drag-reorder-pending');
 
             function removePending() {
-                el.classList.remove('drag-reorder-pending');
+                rowEl.classList.remove('drag-reorder-pending');
                 if (longTimer) {
                     clearTimeout(longTimer);
                     longTimer = null;
@@ -952,7 +2522,76 @@ function attachListDragLongPress(el, { id, container, getSortedIds, onCommit, sh
             longTimer = setTimeout(() => {
                 longTimer = null;
                 removePending();
-                beginListDrag(el, id, container, getSortedIds, onCommit, pid, lastClientY);
+                beginListDrag(rowEl, id, container, getSortedIds, onCommit, pid, lastClientY);
+            }, LIST_DRAG_LONG_MS);
+
+            document.addEventListener('pointermove', onPendingMove, { passive: false, capture: true });
+            document.addEventListener('pointerup', onPendingUp, { capture: true });
+            document.addEventListener('pointercancel', onPendingUp, { capture: true });
+        },
+        { passive: true }
+    );
+}
+
+function shouldIgnoreSelectLongPressTarget(target) {
+    if (!target || !target.closest) return true;
+    return !!target.closest(
+        '.row-drag-handle, .folder-card__check, .zikir-row__check, button, a, input, label.switch, .fav-btn, .edit-target-btn'
+    );
+}
+
+/** Çoklu silme: seçim moduna geçirir veya seçimi günceller. */
+function attachLongPressSelect(el, id, { onEnter }) {
+    el.addEventListener(
+        'pointerdown',
+        (e) => {
+            if (shouldIgnoreSelectLongPressTarget(e.target)) return;
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
+
+            const pid = e.pointerId;
+            const ptrKind = e.pointerType;
+            const startX = e.clientX;
+            const startY = e.clientY;
+            let longTimer = null;
+            const cancelMovePx =
+                ptrKind === 'touch' || ptrKind === 'pen'
+                    ? LIST_DRAG_MOVE_CANCEL_PX_TOUCH
+                    : LIST_DRAG_MOVE_CANCEL_PX_MOUSE;
+
+            el.classList.add('drag-reorder-pending');
+
+            function removePending() {
+                el.classList.remove('drag-reorder-pending');
+                if (longTimer) {
+                    clearTimeout(longTimer);
+                    longTimer = null;
+                }
+                document.removeEventListener('pointermove', onPendingMove, true);
+                document.removeEventListener('pointerup', onPendingUp, true);
+                document.removeEventListener('pointercancel', onPendingUp, true);
+            }
+
+            function onPendingMove(ev) {
+                if (ev.pointerId !== pid) return;
+                const moved = Math.hypot(ev.clientX - startX, ev.clientY - startY);
+                if (moved > cancelMovePx) {
+                    removePending();
+                    return;
+                }
+                if (ptrKind === 'touch' || ptrKind === 'pen') {
+                    ev.preventDefault();
+                }
+            }
+
+            function onPendingUp(ev) {
+                if (ev.pointerId !== pid) return;
+                removePending();
+            }
+
+            longTimer = setTimeout(() => {
+                longTimer = null;
+                removePending();
+                onEnter(id);
             }, LIST_DRAG_LONG_MS);
 
             document.addEventListener('pointermove', onPendingMove, { passive: false, capture: true });
@@ -964,27 +2603,96 @@ function attachListDragLongPress(el, { id, container, getSortedIds, onCommit, sh
 }
 
 function renderFolders() {
+    if (!folderSelectMode) folderSelectBarVisible = false;
     folderGrid.innerHTML = '';
+    if (folderSelectMode) {
+        folderGrid.classList.add('folder-grid--select-mode');
+        document.getElementById('homeView')?.classList.add('home-view--select-mode');
+        setMultiSelectBarShown(folderMultiSelectBar, folderSelectBarVisible);
+        if (homeQuoteFooter) homeQuoteFooter.hidden = true;
+    } else {
+        folderGrid.classList.remove('folder-grid--select-mode');
+        document.getElementById('homeView')?.classList.remove('home-view--select-mode');
+        setMultiSelectBarShown(folderMultiSelectBar, false);
+        if (homeQuoteFooter) homeQuoteFooter.hidden = false;
+    }
+    updateFolderSelectChrome();
+
+    if (folderHomeDragHint) {
+        if (!folderSelectMode) {
+            folderHomeDragHint.textContent =
+                'Silmek için klasöre uzun basın. Sıralamak için en soldaki üç çizgiyi tutup sürükleyin.';
+        } else {
+            folderHomeDragHint.textContent =
+                'Kutucuğa tik veya satıra dokunarak seçin; sileceklerinizi işaretledikten sonra alttan Sil’e dokunun. Vazgeç: İptal. Sıralama: üç çizgi.';
+        }
+    }
+
     const sortedFolders = [...folders].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     sortedFolders.forEach((f) => {
         const count = zikirs.filter(z => z.folderId === f.id).length;
         const card = document.createElement('div');
         card.className = 'folder-card';
+        card.dataset.folderId = f.id;
         card.dataset.dragOrderItem = 'folder';
+        const checked = selectedFolderIds.has(f.id) ? 'checked' : '';
         card.innerHTML = `
-            <span class="folder-card__mark" aria-hidden="true"></span>
+            <button type="button" class="row-drag-handle icon-btn" aria-label="Sıralamak için basılı tutup sürükleyin">
+                ${GRIP_3LINES_HTML}
+            </button>
+            <label class="folder-card__check" aria-hidden="true">
+                <input type="checkbox" class="folder-select-cb" data-folder-id="${escapeAttr(f.id)}" ${checked} />
+            </label>
             <div class="folder-card__text">
-                <h3>${f.name}</h3>
+                <h3>${escapeHtml(f.name)}</h3>
                 <p>${count} Zikir</p>
             </div>
         `;
-        attachListDragLongPress(card, {
+        const dragHandle = card.querySelector('.row-drag-handle');
+        attachListDragLongPress(dragHandle, {
             id: f.id,
+            rowElement: card,
             container: folderGrid,
             getSortedIds: getFolderSortedIds,
             onCommit: applyFolderOrder,
-            shouldIgnoreDown: (t) => t.closest && t.closest('button, a')
+            shouldIgnoreDown: () => false
         });
+        attachLongPressSelect(card, f.id, {
+            onEnter: onFolderLongPressSelect
+        });
+
+        const cb = card.querySelector('.folder-select-cb');
+        const folderCheckLabel = card.querySelector('.folder-card__check');
+        if (folderCheckLabel) {
+            folderCheckLabel.addEventListener('click', (ev) => ev.stopPropagation());
+            folderCheckLabel.addEventListener('pointerdown', (ev) => ev.stopPropagation(), { passive: true });
+        }
+        if (cb) {
+            let folderCbSyncScheduled = false;
+            const syncFolderCheckbox = () => {
+                if (folderCbSyncScheduled) return;
+                folderCbSyncScheduled = true;
+                queueMicrotask(() => {
+                    folderCbSyncScheduled = false;
+                    if (cb.checked) selectedFolderIds.add(f.id);
+                    else selectedFolderIds.delete(f.id);
+                    folderSelectBarVisible = true;
+                    setMultiSelectBarShown(folderMultiSelectBar, true);
+                    updateFolderSelectChrome();
+                    renderFolders();
+                });
+            };
+            cb.addEventListener('change', (ev) => {
+                ev.stopPropagation();
+                syncFolderCheckbox();
+            });
+            cb.addEventListener('input', (ev) => {
+                ev.stopPropagation();
+                syncFolderCheckbox();
+            });
+            cb.addEventListener('click', (ev) => ev.stopPropagation());
+        }
+
         card.addEventListener('click', (e) => {
             if (suppressListNavigation) {
                 e.preventDefault();
@@ -992,17 +2700,51 @@ function renderFolders() {
                 suppressListNavigation = false;
                 return;
             }
+            if (folderSelectMode) {
+                if (e.target.closest('.row-drag-handle') || e.target.closest('.folder-card__check')) return;
+                toggleFolderSelected(f.id);
+                return;
+            }
             showView('folderDetailView', f.id);
         });
         folderGrid.appendChild(card);
     });
 
-    newFolderBtn.style.display = 'flex';
+    if (newFolderBtn) {
+        newFolderBtn.style.display = folderSelectMode ? 'none' : 'flex';
+    }
+
+    if (folderSelectMode) {
+        clearUpdateBannerDom(updateBannerSlot, folderGrid);
+    } else {
+        placeUpdateBanner(sortedFolders.length, folderGrid, updateBannerSlot, {
+            onDismiss: () => renderFolders()
+        });
+    }
+}
+
+function getEsmaListEntryForZikir(z) {
+    const m = /^z_e_(\d+)$/.exec(z && z.id != null ? String(z.id) : '');
+    if (!m) return null;
+    const idx = parseInt(m[1], 10);
+    return ESMA_LIST[idx] || null;
+}
+
+function getEsmaDefaultFaziletForZikir(z) {
+    const e = getEsmaListEntryForZikir(z);
+    return e && e.fazilet ? String(e.fazilet) : '';
+}
+
+function getEffectiveFazilet(z) {
+    if (!z) return '';
+    if (z.fazilet != null && String(z.fazilet).trim()) return String(z.fazilet).trim();
+    return getEsmaDefaultFaziletForZikir(z);
 }
 
 function renderFolderDetail() {
     const folder = folders.find(f => f.id === currentFolderId);
     if (!folder) return;
+    if (!zikirSelectMode) zikirSelectBarVisible = false;
     folderDetailTitle.textContent = folder.name;
 
     const q = (folderSearchQuery || '').trim().toLocaleLowerCase('tr-TR');
@@ -1013,64 +2755,139 @@ function renderFolderDetail() {
         const name = (z.name || '').toLocaleLowerCase('tr-TR');
         const meaning = (z.meaning || '').toLocaleLowerCase('tr-TR');
         const arabic = (z.arabic || '');
-        return name.includes(q) || meaning.includes(q) || arabic.includes(q);
+        const fz = getEffectiveFazilet(z).toLocaleLowerCase('tr-TR');
+        return name.includes(q) || meaning.includes(q) || arabic.includes(q) || fz.includes(q);
     }).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     const canDragZikir = !q && !folderFavOnly;
 
     if (folderZikirDragHint) {
         if (canDragZikir) {
-            folderZikirDragHint.textContent = 'Zikre basılı tutup sürükleyerek sıralayın.';
             folderZikirDragHint.classList.remove('drag-hint--muted');
+            if (!zikirSelectMode) {
+                folderZikirDragHint.textContent =
+                    'Silmek için satıra uzun basın. Sıralamak için en soldaki üç çizgiyi tutup sürükleyin.';
+            } else {
+                folderZikirDragHint.textContent =
+                    'Kutucuğa tik veya satıra dokunarak seçin; sileceklerinizi işaretledikten sonra alttan Sil’e dokunun. Vazgeç: İptal. Sıralama: üç çizgi.';
+            }
         } else {
-            folderZikirDragHint.textContent = 'Sıralamak için aramayı temizleyin ve favori filtresini kapatın.';
-            folderZikirDragHint.classList.add('drag-hint--muted');
+            if (zikirSelectMode) {
+                folderZikirDragHint.classList.remove('drag-hint--muted');
+                folderZikirDragHint.textContent =
+                    'Kutucuğa tik veya satıra dokunarak seçin; sileceklerinizi işaretledikten sonra alttan Sil’e dokunun. Vazgeç: İptal. Arama veya favori açıkken sıralama kapalı.';
+            } else {
+                folderZikirDragHint.textContent =
+                    'Sıralamak için aramayı temizleyin ve favori filtresini kapatın.';
+                folderZikirDragHint.classList.add('drag-hint--muted');
+            }
         }
-        syncZikirReorderHintButton();
     }
 
     folderZikirList.innerHTML = '';
-    
+    if (zikirSelectMode) {
+        folderZikirList.classList.add('zikir-list--select-mode');
+        document.getElementById('folderDetailView')?.classList.add('folder-detail--select-mode');
+        setMultiSelectBarShown(zikirMultiSelectBar, zikirSelectBarVisible);
+    } else {
+        folderZikirList.classList.remove('zikir-list--select-mode');
+        document.getElementById('folderDetailView')?.classList.remove('folder-detail--select-mode');
+        setMultiSelectBarShown(zikirMultiSelectBar, false);
+    }
+    updateZikirSelectChrome();
+
     fZikirs.forEach((z) => {
         const li = document.createElement('li');
+        li.dataset.zikirId = z.id;
         const favIcon = z.favorite ? 'star' : 'star_border';
         const favTitle = z.favorite ? 'Favoriden çıkar' : 'Favorilere ekle';
         const meaningPrev = z.meaning
-            ? (z.meaning.length > 40 ? z.meaning.substring(0, 40) + '…' : z.meaning)
+            ? z.meaning.length > 40
+                ? z.meaning.substring(0, 40) + '…'
+                : z.meaning
             : '';
+        const meaningBlock = meaningPrev ? `<p>${escapeHtml(meaningPrev)}</p>` : '';
         const arabicLine = (z.arabic && String(z.arabic).trim())
             ? `<p class="zikir-arabic" dir="rtl" lang="ar">${escapeHtml(String(z.arabic).trim())}</p>`
             : '';
+        const zChecked = selectedZikirIds.has(z.id) ? 'checked' : '';
+        const dragBtnHtml = canDragZikir
+            ? `<button type="button" class="row-drag-handle icon-btn" aria-label="Sıralamak için basılı tutup sürükleyin">${GRIP_3LINES_HTML}</button>`
+            : '';
         li.innerHTML = `
-            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap: 12px;">
-                <div style="min-width:0; flex:1;">
-                    <h3 style="margin:0;">${escapeHtml(z.name)}</h3>
-                    ${arabicLine}
+            ${dragBtnHtml}
+            <label class="zikir-row__check" aria-hidden="true">
+                <input type="checkbox" class="zikir-select-cb" data-zikir-id="${escapeAttr(z.id)}" ${zChecked} />
+            </label>
+            <div class="zikir-row__inner">
+                <div style="display:flex; align-items:flex-start; justify-content:space-between; gap: 12px;">
+                    <div style="min-width:0; flex:1;">
+                        <h3 style="margin:0;">${escapeHtml(z.name)}</h3>
+                        ${arabicLine}
+                    </div>
+                    <button class="icon-btn fav-btn" data-id="${escapeAttr(z.id)}" aria-label="${escapeAttr(favTitle)}" title="${escapeAttr(favTitle)}" style="padding:0.25rem; flex-shrink:0;">
+                        <span class="material-icons-outlined" style="color: ${z.favorite ? 'var(--primary-green)' : 'var(--text-gray)'}">${favIcon}</span>
+                    </button>
                 </div>
-                <button class="icon-btn fav-btn" data-id="${z.id}" aria-label="${favTitle}" title="${favTitle}" style="padding:0.25rem; flex-shrink:0;">
-                    <span class="material-icons-outlined" style="color: ${z.favorite ? 'var(--primary-green)' : 'var(--text-gray)'}">${favIcon}</span>
-                </button>
-            </div>
-            ${meaningPrev ? `<p>${escapeHtml(meaningPrev)}</p>` : ''}
-            <div class="meta">
-                <span>Hedef: ${z.target} 
-                    <button class="edit-target-btn" data-id="${z.id}"><span class="material-icons-outlined" style="font-size:16px;">edit</span></button>
-                    <button class="edit-target-btn copy-btn" data-id="${z.id}"><span class="material-icons-outlined" style="font-size:16px;">content_copy</span></button>
-                </span>
-                <span>Okunan: ${z.count}</span>
+                ${meaningBlock}
+                <div class="meta">
+                    <span>Hedef: ${z.target} 
+                        <button class="edit-target-btn" data-id="${escapeAttr(z.id)}"><span class="material-icons-outlined" style="font-size:16px;">edit</span></button>
+                        <button class="edit-target-btn copy-btn" data-id="${escapeAttr(z.id)}"><span class="material-icons-outlined" style="font-size:16px;">content_copy</span></button>
+                    </span>
+                    <span>Okunan: ${z.count}</span>
+                </div>
             </div>
         `;
 
         if (canDragZikir) {
             li.dataset.dragOrderItem = 'zikir';
-            attachListDragLongPress(li, {
-                id: z.id,
-                container: folderZikirList,
-                getSortedIds: getZikirSortedIdsInCurrentFolder,
-                onCommit: applyZikirOrder,
-                shouldIgnoreDown: (t) => t.closest && t.closest('.fav-btn, .edit-target-btn, button')
-            });
+            const zDrag = li.querySelector('.row-drag-handle');
+            if (zDrag) {
+                attachListDragLongPress(zDrag, {
+                    id: z.id,
+                    rowElement: li,
+                    container: folderZikirList,
+                    getSortedIds: getZikirSortedIdsInCurrentFolder,
+                    onCommit: applyZikirOrder,
+                    shouldIgnoreDown: () => false
+                });
+            }
         }
-        
+
+        attachLongPressSelect(li, z.id, { onEnter: onZikirLongPressSelect });
+
+        const zcb = li.querySelector('.zikir-select-cb');
+        const zikirCheckLabel = li.querySelector('.zikir-row__check');
+        if (zikirCheckLabel) {
+            zikirCheckLabel.addEventListener('click', (ev) => ev.stopPropagation());
+            zikirCheckLabel.addEventListener('pointerdown', (ev) => ev.stopPropagation(), { passive: true });
+        }
+        if (zcb) {
+            let zikirCbSyncScheduled = false;
+            const syncZikirCheckbox = () => {
+                if (zikirCbSyncScheduled) return;
+                zikirCbSyncScheduled = true;
+                queueMicrotask(() => {
+                    zikirCbSyncScheduled = false;
+                    if (zcb.checked) selectedZikirIds.add(z.id);
+                    else selectedZikirIds.delete(z.id);
+                    zikirSelectBarVisible = true;
+                    setMultiSelectBarShown(zikirMultiSelectBar, true);
+                    updateZikirSelectChrome();
+                    renderFolderDetail();
+                });
+            };
+            zcb.addEventListener('change', (ev) => {
+                ev.stopPropagation();
+                syncZikirCheckbox();
+            });
+            zcb.addEventListener('input', (ev) => {
+                ev.stopPropagation();
+                syncZikirCheckbox();
+            });
+            zcb.addEventListener('click', (ev) => ev.stopPropagation());
+        }
+
         li.addEventListener('click', (e) => {
             const favBtn = e.target.closest('.fav-btn');
             if (favBtn) {
@@ -1097,19 +2914,25 @@ function renderFolderDetail() {
                 suppressListNavigation = false;
                 return;
             }
+            if (zikirSelectMode) {
+                if (e.target.closest('.row-drag-handle') || e.target.closest('.zikir-row__check')) return;
+                toggleZikirSelected(z.id);
+                return;
+            }
             showView('counterView', z.id);
         });
         folderZikirList.appendChild(li);
     });
 
+    const maxPerFolder = getMaxZikirsPerFolder();
     if (currentFolderId === 'f_esma') {
         openAddZikirModalBtn.style.display = 'none';
         zikirLimitWarning.classList.remove('visible');
-    } else if (fZikirsAll.length >= MAX_ZIKIRS_PER_FOLDER) {
+    } else if (Number.isFinite(maxPerFolder) && fZikirsAll.length >= maxPerFolder) {
         openAddZikirModalBtn.style.display = 'none';
         zikirLimitWarning.classList.add('visible');
     } else {
-        openAddZikirModalBtn.style.display = 'flex';
+        openAddZikirModalBtn.style.display = zikirSelectMode ? 'none' : 'flex';
         zikirLimitWarning.classList.remove('visible');
     }
 }
@@ -1135,12 +2958,20 @@ function updateCounterUI() {
             zikirArabicHeader.style.display = 'none';
         }
     }
-    if (zikirNote) zikirNote.textContent = zikir.meaning || '';
+    if (zikirNote) {
+        const m = (zikir.meaning && String(zikir.meaning).trim()) || '';
+        const fz = getEffectiveFazilet(zikir);
+        zikirNote.textContent = fz ? (m ? `${m}\n\nFazilet: ${fz}` : `Fazilet: ${fz}`) : m;
+        zikirNote.classList.toggle('zikir-note--esma-detail', !!fz);
+    }
     
-    // Yalnızca mevcut turun sayısını hesapla
-    let currentRoundDisplay = zikir.count % target;
-    if (currentRoundDisplay === 0 && zikir.count > 0) currentRoundDisplay = target;
-    if (zikir.count === 0) currentRoundDisplay = 0;
+    // Mevcut turdaki okuma: tam tur sonrası (33, 66…) yeni turun başı → 0 göster;
+    // geri alınca önce 0, bir basım daha önceki turun son adımına düşer.
+    let currentRoundDisplay = 0;
+    if (zikir.count > 0) {
+        const r = zikir.count % target;
+        currentRoundDisplay = r === 0 ? 0 : r;
+    }
     
     if (countDisplay) countDisplay.textContent = currentRoundDisplay;
     if (targetDisplay) targetDisplay.textContent = target;
@@ -1160,17 +2991,23 @@ function updateCounterUI() {
         }
     }
 
-    const progress = Math.min((zikir.count % target) / target, 1);
-    let offset = CIRCLE_CIRCUMFERENCE - (progress * CIRCLE_CIRCUMFERENCE);
-    
+    let circleProgress = 0;
+    if (zikir.count > 0 && zikir.count % target !== 0) {
+        circleProgress = (zikir.count % target) / target;
+    }
+    const offset = CIRCLE_CIRCUMFERENCE - circleProgress * CIRCLE_CIRCUMFERENCE;
+
     if (zikir.count > 0 && zikir.count % target === 0) {
-        offset = 0;
         if (mainCounterBtn) {
-            mainCounterBtn.classList.remove('glow-burst');
-            void mainCounterBtn.offsetWidth;
-            mainCounterBtn.classList.add('glow-burst');
+            const now = performance.now();
+            if (now - lastCounterGlowBurstAt >= COUNTER_GLOW_BURST_MIN_MS) {
+                lastCounterGlowBurstAt = now;
+                mainCounterBtn.classList.remove('glow-burst');
+                void mainCounterBtn.offsetWidth;
+                mainCounterBtn.classList.add('glow-burst');
+            }
         }
-        handleVibration(true);
+        /* Titreşim: yalnızca incrementCounter içinde (çift tetiklenmesin) */
     }
     if (progressCircle) progressCircle.style.strokeDashoffset = offset;
 }
@@ -1178,24 +3015,48 @@ function updateCounterUI() {
 // ===================== HARDWARE LOGIC =====================
 
 let wakeLockRef = null;
-async function requestWakeLock() {
+
+async function nativeKeepScreenAwake(on) {
+    if (!isCapacitorNative()) return;
     try {
-        if ('wakeLock' in navigator && appSettings.wakeLock && !wakeLockRef) {
+        const { KeepAwake } = await import('@capacitor-community/keep-awake');
+        if (on) await KeepAwake.keepAwake();
+        else await KeepAwake.allowSleep();
+    } catch (err) {
+        console.warn('KeepAwake:', err);
+    }
+}
+
+async function requestWakeLock() {
+    if (!appSettings.wakeLock) return;
+    if (isCapacitorNative()) {
+        await nativeKeepScreenAwake(true);
+        return;
+    }
+    try {
+        if ('wakeLock' in navigator && !wakeLockRef) {
             wakeLockRef = await navigator.wakeLock.request('screen');
         }
     } catch (err) {
         console.log('WakeLock error:', err);
     }
 }
-function releaseWakeLock() {
+
+async function releaseWakeLock() {
+    if (isCapacitorNative()) {
+        await nativeKeepScreenAwake(false);
+        wakeLockRef = null;
+        return;
+    }
     if (wakeLockRef) {
         wakeLockRef.release().then(() => { wakeLockRef = null; }).catch(() => { wakeLockRef = null; });
     }
 }
+
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState !== 'visible' || !appSettings.wakeLock) return;
     const counterView = document.getElementById('counterView');
-    if (counterView && counterView.classList.contains('active')) requestWakeLock();
+    if (counterView && counterView.classList.contains('active')) void requestWakeLock();
 });
 
 let audioCtx = null;
@@ -1225,14 +3086,10 @@ function playTickSound(isTarget) {
 }
 
 function handleVibration(isTarget) {
-    if (!navigator.vibrate) return;
-    if (isTarget) {
-        if (!appSettings.vibrationTarget) return;
-        navigator.vibrate([100, 50, 100]); // Uzun çift titreşim
-    } else {
-        if (!appSettings.vibrationTap) return;
-        navigator.vibrate(40); // Kısa titreşim
-    }
+    runCounterVibration(isTarget, {
+        vibrationTap: appSettings.vibrationTap,
+        vibrationTarget: appSettings.vibrationTarget
+    });
 }
 
 function incrementCounter() {
@@ -1242,7 +3099,8 @@ function incrementCounter() {
     zikir.count++;
     logClick(zikir.id);
     updateCounterUI();
-    
+    maybeRefreshZikirStatsModal();
+
     const isTargetHit = zikir.count % safeZikirTarget(zikir) === 0;
     handleVibration(isTargetHit);
     playTickSound(isTargetHit);
@@ -1255,6 +3113,11 @@ function decrementCounter() {
     zikir.count--;
     logDecrement(zikir.id);
     updateCounterUI();
+    maybeRefreshZikirStatsModal();
+}
+
+function maybeRefreshZikirStatsModal() {
+    if (zikirStatsOverlay && zikirStatsOverlay.classList.contains('active')) renderZikirStats();
 }
 
 // ===================== LIBRARY LOGIC =====================
@@ -1266,6 +3129,11 @@ function libraryItemSearchHaystack(z) {
 const LIBRARY_CARD_CONTEXT_MAX = 120;
 
 function libraryCardSubtitle(z) {
+    if (z.category === 'zikir') {
+        const m = (z.meaning && String(z.meaning).trim()) || '';
+        if (m.length > 52) return m.substring(0, 49) + '…';
+        return m;
+    }
     const raw = (z.context && String(z.context).trim()) || '';
     if (raw.length > LIBRARY_CARD_CONTEXT_MAX) return raw.substring(0, LIBRARY_CARD_CONTEXT_MAX - 1) + '…';
     if (raw) return raw;
@@ -1286,9 +3154,10 @@ function renderLibrary() {
     libraryGrid.innerHTML = '';
     const q = (librarySearchQuery || '').trim();
     const searchActive = q.length > 0;
+    const baseLib = isPremium() ? [...ZIKIR_LIBRARY, ...PREMIUM_LIBRARY_EXTRA] : ZIKIR_LIBRARY;
     const filteredBase = searchActive
-        ? ZIKIR_LIBRARY
-        : ZIKIR_LIBRARY.filter(z => z.category === activeLibraryCat);
+        ? baseLib
+        : baseLib.filter(z => z.category === activeLibraryCat);
     const filtered = filteredBase.filter(z => libraryMatchesSearch(z, q));
     
     filtered.forEach(z => {
@@ -1314,12 +3183,21 @@ function openLibraryDetail(z) {
     selectedLibraryItem = z;
     libDetailName.textContent = z.name;
     libDetailMeaning.textContent = z.meaning;
-    libDetailContext.textContent = z.context;
-    libDetailSource.textContent = z.source;
-    libraryDetailOverlay.classList.add('active');
+    if (libDetailContextLabel) {
+        libDetailContextLabel.textContent =
+            z.category === 'zikir' ? 'Fazilet' : 'Fazileti / Okuma durumu';
+    }
+    libDetailContext.textContent = z.context || '';
+    openOverlay('libraryDetailOverlay');
 }
 
 // ===================== STATS LOGIC =====================
+function dayHistoryTotal(dayKey) {
+    const block = history && history[dayKey];
+    if (!block || typeof block !== 'object') return 0;
+    return Object.values(block).reduce((sum, v) => sum + (Number(v) || 0), 0);
+}
+
 function renderStats() {
     if (!statMostClicked || !statMostClickedCount || !statLastClicked || !activityChart) return;
     let targetDays = [];
@@ -1370,6 +3248,35 @@ function renderStats() {
         statLastClicked.textContent = '-';
     }
 
+    // Kayıtlı tüm günlük toplamlar içinden en yüksek gün (genel)
+    let bestDayKey = null;
+    let bestDayTotal = 0;
+    if (history && typeof history === 'object') {
+        Object.keys(history).forEach((dayKey) => {
+            const tot = dayHistoryTotal(dayKey);
+            if (tot > bestDayTotal) {
+                bestDayTotal = tot;
+                bestDayKey = dayKey;
+            } else if (tot === bestDayTotal && tot > 0 && bestDayKey != null && dayKey > bestDayKey) {
+                bestDayKey = dayKey;
+            }
+        });
+    }
+    if (statBestDayDate && statBestDayCount) {
+        if (bestDayKey && bestDayTotal > 0) {
+            const bd = new Date(`${bestDayKey}T12:00:00`);
+            statBestDayDate.textContent = bd.toLocaleDateString('tr-TR', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            statBestDayCount.textContent = `${bestDayTotal.toLocaleString('tr-TR')} çekim`;
+        } else {
+            statBestDayDate.textContent = '-';
+            statBestDayCount.textContent = 'Veri yok';
+        }
+    }
+
     // 2) Grafik Render
     // Son 7 Günlük basit veri oluştur
     activityChart.innerHTML = '';
@@ -1418,12 +3325,102 @@ function renderStats() {
     });
 }
 
+function renderZikirStats() {
+    const zid = currentZikirId;
+    if (!zid || !zikirActivityChart) return;
+    const z = zikirs.find((x) => x.id === zid);
+    if (zikirStatsTitle) {
+        zikirStatsTitle.textContent = z ? z.name : 'İstatistik';
+    }
+
+    const today = getTodayString();
+    const last7 = [];
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        last7.push(
+            `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+        );
+    }
+
+    const todayCount = history[today] && history[today][zid] ? history[today][zid] : 0;
+    const weekSum = last7.reduce((acc, ds) => {
+        const v = history[ds] && history[ds][zid] ? history[ds][zid] : 0;
+        return acc + v;
+    }, 0);
+
+    if (zikirStatsSummaryLabel && zikirStatsSummaryValue && zikirStatsSummarySub) {
+        if (activeZikirStatTab === 'daily') {
+            zikirStatsSummaryLabel.textContent = 'Bugün';
+            zikirStatsSummaryValue.textContent = String(todayCount);
+            zikirStatsSummarySub.textContent = 'çekim kaydı';
+        } else {
+            zikirStatsSummaryLabel.textContent = 'Son 7 gün';
+            zikirStatsSummaryValue.textContent = String(weekSum);
+            zikirStatsSummarySub.textContent = 'toplam çekim';
+        }
+    }
+
+    if (zikirStatsChartHeading) {
+        zikirStatsChartHeading.textContent = 'Son 7 gün — günlük dağılım (bu zikir)';
+    }
+
+    let maxDayCount = 1;
+    const dayTotals = last7.map((ds) => {
+        const val = history[ds] && history[ds][zid] ? history[ds][zid] : 0;
+        if (val > maxDayCount) maxDayCount = val;
+        const d = new Date(`${ds}T12:00:00`);
+        return {
+            ds,
+            label: d.toLocaleDateString('tr-TR', { weekday: 'short' }),
+            val,
+            isToday: ds === today
+        };
+    });
+
+    let yMax = 10;
+    if (maxDayCount > 10) yMax = Math.ceil(maxDayCount / 10) * 10;
+    if (maxDayCount > 100) yMax = Math.ceil(maxDayCount / 100) * 100;
+    if (maxDayCount > 1000) yMax = Math.ceil(maxDayCount / 500) * 500;
+
+    if (zikirChartYAxis) {
+        zikirChartYAxis.innerHTML = `
+            <span>${yMax}</span>
+            <span>${Math.floor(yMax / 2)}</span>
+            <span>0</span>
+        `;
+    }
+
+    zikirActivityChart.innerHTML = '';
+    dayTotals.forEach((dt) => {
+        const group = document.createElement('div');
+        group.className = 'chart-bar-group';
+        const hPct = Math.max((dt.val / yMax) * 100, 3);
+        const barH = dt.val === 0 ? '4px' : `${hPct}%`;
+        const col = dt.val === 0 ? 'var(--glass-border)' : 'var(--primary-green)';
+        const bar = document.createElement('div');
+        bar.className = 'chart-bar';
+        if (activeZikirStatTab === 'daily' && dt.isToday) bar.classList.add('chart-bar--today');
+        bar.dataset.tooltip = `${dt.val} çekim`;
+        bar.style.height = barH;
+        bar.style.background = col;
+        const lab = document.createElement('div');
+        lab.className = 'chart-label';
+        lab.textContent = dt.label;
+        group.appendChild(bar);
+        group.appendChild(lab);
+        zikirActivityChart.appendChild(group);
+    });
+}
+
 // ===================== EVENT LISTENERS & MODALS =====================
 function setupEventListeners() {
+    setupAppDialog();
     // Back Buttons
     document.querySelectorAll('.backBtn').forEach(btn => {
         btn.addEventListener('click', () => {
-            showView(btn.getAttribute('data-target'), currentFolderId);
+            // Always prefer in-app stack so back returns to the last screen, not a hard-coded target.
+            goBackInApp({ fallbackViewId: btn.getAttribute('data-target') || 'homeView' });
         });
     });
 
@@ -1435,7 +3432,12 @@ function setupEventListeners() {
         showView('stealthView');
     });
     if(stealthClickArea) stealthClickArea.addEventListener('click', incrementCounter);
-    if(exitStealthBtn) exitStealthBtn.addEventListener('click', () => showView('counterView', currentZikirId));
+    // Exiting stealth should NOT push a new history entry; otherwise Back can bounce into stealth again.
+    if (exitStealthBtn) exitStealthBtn.addEventListener('click', (e) => {
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
+        if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+        goBackInApp({ fallbackViewId: 'counterView' });
+    });
 
     // Bottom navigation
     if (bottomNav) {
@@ -1450,6 +3452,56 @@ function setupEventListeners() {
                 }
                 if (view) showView(view);
             });
+        });
+    }
+
+    const openTrashBtn = document.getElementById('openTrashBtn');
+    if (openTrashBtn) {
+        openTrashBtn.addEventListener('click', async () => {
+            if (!isPremium()) {
+                await showAppAlert('Çöp Kutusu Premium ile açılacak.', { title: 'Premium' });
+                showView('premiumView');
+                return;
+            }
+            openOverlay('trashOverlay', { onOpen: renderTrashOverlay });
+        });
+    }
+
+    const trashClearBtn = document.getElementById('trashClearBtn');
+    if (trashClearBtn) trashClearBtn.addEventListener('click', () => {
+        if (!isPremium()) return;
+        void clearTrashAll().then(() => renderTrashOverlay());
+    });
+    const trashList = document.getElementById('trashList');
+    if (trashList) {
+        trashList.addEventListener('click', async (e) => {
+            if (!isPremium()) return;
+            const btn = e.target && e.target.closest ? e.target.closest('[data-trash-action]') : null;
+            if (!btn) return;
+            const action = btn.getAttribute('data-trash-action');
+            const idx = parseInt(btn.getAttribute('data-trash-index') || '', 10);
+            if (!Number.isFinite(idx)) return;
+            if (action === 'restore') {
+                restoreTrashEntry(idx);
+                renderTrashOverlay();
+                return;
+            }
+            if (action === 'delete') {
+                if (!(await showAppConfirm('Bu öğe çöp kutusundan kalıcı olarak silinsin mi? Bu işlem geri alınamaz.', { title: 'Kalıcı sil', confirmLabel: 'Sil' }))) return;
+                deleteTrashEntry(idx);
+                renderTrashOverlay();
+            }
+        });
+    }
+
+    const weeklyReportStarBtn = document.getElementById('weeklyReportStarBtn');
+    const weeklyReportDetails = document.getElementById('weeklyReportDetails');
+    if (weeklyReportStarBtn && weeklyReportDetails) {
+        weeklyReportStarBtn.addEventListener('click', () => {
+            const expanded = weeklyReportStarBtn.getAttribute('aria-expanded') === 'true';
+            const next = !expanded;
+            weeklyReportStarBtn.setAttribute('aria-expanded', next ? 'true' : 'false');
+            weeklyReportDetails.hidden = !next;
         });
     }
     
@@ -1467,9 +3519,9 @@ function setupEventListeners() {
         renderLibrary();
     });
 
-    if(prepLibraryAddBtn) prepLibraryAddBtn.addEventListener('click', () => {
+    if(prepLibraryAddBtn) prepLibraryAddBtn.addEventListener('click', async () => {
         if(!selectedLibraryItem) return;
-        libraryDetailOverlay.classList.remove('active');
+        closeOverlayPreferHistory('libraryDetailOverlay');
         
         libDestFolder.innerHTML = '';
         folders.forEach(f => {
@@ -1479,35 +3531,68 @@ function setupEventListeners() {
             libDestFolder.appendChild(opt);
         });
 
-        if(libDestFolder.options.length === 0) return alert("Lütfen önce bir klasör oluşturun.");
-        libraryFolderSelectOverlay.classList.add('active');
+        if(libDestFolder.options.length === 0) {
+            await showAppAlert('Lütfen önce bir klasör oluşturun.', { title: 'Klasör yok' });
+            return;
+        }
+        openOverlay('libraryFolderSelectOverlay');
     });
 
-    if(confirmLibraryAddBtn) confirmLibraryAddBtn.addEventListener('click', () => {
+    if(confirmLibraryAddBtn) confirmLibraryAddBtn.addEventListener('click', async () => {
         const destId = libDestFolder.value;
         if(!destId) return;
         const destCount = zikirs.filter(x => x.folderId === destId).length;
-        if(destCount >= MAX_ZIKIRS_PER_FOLDER) return alert("Hedef klasör dolu (Maks 6 zikir).");
+        const maxPerFolder = getMaxZikirsPerFolder();
+        if (Number.isFinite(maxPerFolder) && destCount >= maxPerFolder) {
+            await showAppAlert(`Hedef klasör dolu (en fazla ${maxPerFolder} zikir).`, { title: 'Klasör dolu' });
+            return;
+        }
 
-        zikirs.push({
+        const libZ = selectedLibraryItem;
+        const newZ = {
             id: 'z_' + Date.now(),
             folderId: destId,
-            name: selectedLibraryItem.name,
-            arabic: (selectedLibraryItem.arabic && String(selectedLibraryItem.arabic).trim()) || '',
-            target: selectedLibraryItem.target,
-            meaning: selectedLibraryItem.meaning,
-            count: 0, lastClicked: 0,
-            order: (zikirs.filter(x => x.folderId === destId).reduce((m2, x) => Math.max(m2, typeof x.order === 'number' ? x.order : -1), -1) + 1)
-        });
+            name: libZ.name,
+            arabic: (libZ.arabic && String(libZ.arabic).trim()) || '',
+            target: libZ.target,
+            meaning: libZ.meaning,
+            count: 0,
+            lastClicked: 0,
+            order:
+                zikirs
+                    .filter((x) => x.folderId === destId)
+                    .reduce((m2, x) => Math.max(m2, typeof x.order === 'number' ? x.order : -1), -1) + 1
+        };
+        if (libZ.category === 'zikir' && libZ.context && String(libZ.context).trim()) {
+            newZ.fazilet = String(libZ.context).trim();
+        }
+        zikirs.push(newZ);
         saveData();
         libraryFolderSelectOverlay.classList.remove('active');
         showView('folderDetailView', destId);
     });
 
+    if (folderSelectCancelBtn) {
+        folderSelectCancelBtn.addEventListener('click', () => exitFolderSelectMode(false));
+    }
+    if (folderSelectDeleteBtn) {
+        folderSelectDeleteBtn.addEventListener('click', () => deleteSelectedFolders());
+    }
+    if (zikirSelectCancelBtn) {
+        zikirSelectCancelBtn.addEventListener('click', () => exitZikirSelectMode(false));
+    }
+    if (zikirSelectDeleteBtn) {
+        zikirSelectDeleteBtn.addEventListener('click', () => deleteSelectedZikirs());
+    }
+
     // Custom Folders
-    newFolderBtn.addEventListener('click', () => {
-        const name = prompt('Yeni Klasör Adı:');
-        if (name && name.trim()) {
+    newFolderBtn.addEventListener('click', async () => {
+        if (folderSelectMode) return;
+        const name = await showAppPrompt('Yeni klasör için bir ad yazın.', '', {
+            title: 'Yeni klasör',
+            inputLabel: 'Klasör adı'
+        });
+        if (name != null && name.trim()) {
             const maxOrder = folders.reduce((m, f) => Math.max(m, typeof f.order === 'number' ? f.order : -1), -1);
             folders.push({ id: 'f_' + Date.now(), name: name.trim(), order: maxOrder + 1 });
             saveData();
@@ -1521,9 +3606,32 @@ function setupEventListeners() {
         incrementCounter();
     });
     if(decrementBtn) decrementBtn.addEventListener('click', decrementCounter);
-    resetBtn.addEventListener('click', () => {
+    if (openZikirStatsBtn && zikirStatsOverlay) {
+        openZikirStatsBtn.addEventListener('click', () => {
+            activeZikirStatTab = 'daily';
+            zikirStatTabBtns.forEach((b) => {
+                b.classList.toggle('active', b.getAttribute('data-zikir-stat-tab') === 'daily');
+            });
+            openOverlay('zikirStatsOverlay', { onOpen: renderZikirStats });
+        });
+    }
+    zikirStatTabBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            zikirStatTabBtns.forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeZikirStatTab = btn.getAttribute('data-zikir-stat-tab') || 'daily';
+            renderZikirStats();
+        });
+    });
+    resetBtn.addEventListener('click', async () => {
         const z = zikirs.find(x => x.id === currentZikirId);
-        if (z && confirm(`'${z.name}' sıfırlanacak. Onaylıyor musunuz?`)) {
+        if (
+            z &&
+            (await showAppConfirm(`'${z.name}' sıfırlanacak. Onaylıyor musunuz?`, {
+                title: 'Sayaç sıfırla',
+                confirmLabel: 'Sıfırla'
+            }))
+        ) {
             z.count = 0;
             saveData();
             updateCounterUI();
@@ -1531,13 +3639,23 @@ function setupEventListeners() {
     });
 
     // Settings
-    if(openSettingsBtn) openSettingsBtn.addEventListener('click', () => settingsOverlay.classList.add('active'));
+    if (openSettingsBtn) openSettingsBtn.addEventListener('click', () => {
+        syncTrashButtonUI();
+        openOverlay('settingsOverlay');
+    });
     
     const updateSettings = () => {
         if(cbVibrationTap) appSettings.vibrationTap = cbVibrationTap.checked;
         if(cbVibrationTarget) appSettings.vibrationTarget = cbVibrationTarget.checked;
         if(cbSound) appSettings.sound = cbSound.checked;
-        if(cbWakeLock) appSettings.wakeLock = cbWakeLock.checked;
+        if (cbWakeLock) {
+            appSettings.wakeLock = cbWakeLock.checked;
+            const counterView = document.getElementById('counterView');
+            if (counterView && counterView.classList.contains('active')) {
+                if (appSettings.wakeLock) void requestWakeLock();
+                else void releaseWakeLock();
+            }
+        }
         saveData();
     };
     if(cbVibrationTap) cbVibrationTap.addEventListener('change', updateSettings);
@@ -1545,22 +3663,51 @@ function setupEventListeners() {
     if(cbSound) cbSound.addEventListener('change', updateSettings);
     if(cbWakeLock) cbWakeLock.addEventListener('change', updateSettings);
 
+    themeChoiceBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const choice = btn.getAttribute('data-theme-choice');
+            if (choice !== 'light' && choice !== 'black' && choice !== 'navy') return;
+            if (appSettings.theme === choice) return;
+            appSettings.theme = choice;
+            applyAppTheme(choice);
+            syncThemeUI();
+            saveData();
+        });
+    });
+
     const updateReminders = () => {
         if (cbReminderEnabled) reminderSettings.enabled = cbReminderEnabled.checked;
         if (reminderTimeInput) reminderSettings.time = reminderTimeInput.value || '21:00';
         saveData();
-        if (reminderSettings.enabled) {
-            maybeRequestNotificationPermission();
-            scheduleInAppReminderTick();
-        } else {
-            clearInAppReminderTick();
-        }
+        (async () => {
+            if (reminderSettings.enabled && !isCapacitorNative()) {
+                if (!('Notification' in window)) {
+                    await showAppAlert('Bu tarayıcı veya görünüm bildirim desteklemiyor.', { title: 'Bildirim' });
+                    return;
+                }
+                let perm = Notification.permission;
+                if (perm === 'default') {
+                    perm = await Notification.requestPermission();
+                }
+                if (perm !== 'granted') {
+                    if (perm === 'denied') {
+                        await showAppAlert(
+                            'Bildirim izni kapalı. Hatırlatıcı için telefon veya tarayıcı ayarlarından bu siteye bildirim vermen gerekir.',
+                            { title: 'Bildirim izni' }
+                        );
+                    }
+                    clearInAppReminderTick();
+                    return;
+                }
+            }
+            await ensureReminderSchedule();
+        })().catch(console.error);
     };
     if (cbReminderEnabled) cbReminderEnabled.addEventListener('change', updateReminders);
     if (reminderTimeInput) reminderTimeInput.addEventListener('change', updateReminders);
 
     if (openPrivacyBtn) openPrivacyBtn.addEventListener('click', () => {
-        if (settingsOverlay) settingsOverlay.classList.remove('active');
+        closeOverlayPreferHistory('settingsOverlay');
         showView('privacyView');
     });
 
@@ -1573,34 +3720,36 @@ function setupEventListeners() {
         renderFolderDetail();
     });
 
-    if (toggleZikirReorderHintBtn && folderZikirDragHint) {
-        toggleZikirReorderHintBtn.addEventListener('click', () => {
-            folderZikirDragHint.hidden = !folderZikirDragHint.hidden;
-            syncZikirReorderHintButton();
-        });
-    }
-
     // Modals Handling
     document.querySelectorAll('.closeModalBtn').forEach(btn => {
         btn.addEventListener('click', () => {
             const mid = btn.getAttribute('data-modal');
-            const el = mid && document.getElementById(mid);
-            if (el) el.classList.remove('active');
+            if (mid) {
+                if (closeOverlayPreferHistory(mid)) return;
+                const el = document.getElementById(mid);
+                if (el) el.classList.remove('active');
+            }
         });
     });
 
     openAddZikirModalBtn.addEventListener('click', () => {
-        addModalOverlay.classList.add('active');
+        openOverlay('addModalOverlay');
     });
 
-    saveZikirBtn.addEventListener('click', () => {
+    saveZikirBtn.addEventListener('click', async () => {
         const n = document.getElementById('newZikirName').value.trim();
         const t = parseInt(document.getElementById('newZikirTarget').value);
         const m = document.getElementById('newZikirMeaning').value.trim();
         const ar = document.getElementById('newZikirArabic').value.trim();
         
-        if(!n) return alert('Zikir adı gerekli.');
-        if(isNaN(t) || t < 1) return alert('Geçerli hedef yazın.');
+        if(!n) {
+            await showAppAlert('Zikir adı gerekli.', { title: 'Eksik bilgi' });
+            return;
+        }
+        if(isNaN(t) || t < 1) {
+            await showAppAlert('Geçerli hedef yazın.', { title: 'Geçersiz hedef' });
+            return;
+        }
 
         const maxOrder = zikirs
             .filter(x => x.folderId === currentFolderId)
@@ -1625,26 +3774,44 @@ function setupEventListeners() {
     });
 
     // Edit Target Handle
-    saveEditBtn.addEventListener('click', () => {
-        const val = parseInt(editZikirTargetInp.value);
-        if(!isNaN(val) && val > 0 && editingZikirIdMap) {
-            const z = zikirs.find(x => x.id === editingZikirIdMap);
-            if(z) {
-                z.target = val;
-                z.meaning = editZikirMeaningInp.value.trim();
-                if (editZikirArabicInp) z.arabic = editZikirArabicInp.value.trim();
-                saveData();
-                renderFolderDetail();
-                if (currentZikirId === z.id) updateCounterUI();
-            }
-            editModalOverlay.classList.remove('active');
-            editingZikirIdMap = null;
+    saveEditBtn.addEventListener('click', async () => {
+        if (!editingZikirIdMap) return;
+        const nameVal = editZikirNameInp ? editZikirNameInp.value.trim() : '';
+        if (!nameVal) {
+            await showAppAlert('Zikir adı boş olamaz.', { title: 'Eksik bilgi' });
+            return;
         }
+        const val = parseInt(editZikirTargetInp.value, 10);
+        if (isNaN(val) || val < 1) {
+            await showAppAlert('Geçerli bir hedef sayısı yazın.', { title: 'Geçersiz hedef' });
+            return;
+        }
+        const z = zikirs.find((x) => x.id === editingZikirIdMap);
+        if (!z) return;
+        z.name = nameVal;
+        z.target = val;
+        z.meaning = editZikirMeaningInp.value.trim();
+        if (editZikirArabicInp) z.arabic = editZikirArabicInp.value.trim();
+        const fzVal = editZikirFaziletInp ? editZikirFaziletInp.value.trim() : '';
+        const defF = getEsmaDefaultFaziletForZikir(z);
+        if (getEsmaListEntryForZikir(z)) {
+            if (!fzVal || fzVal === defF) delete z.fazilet;
+            else z.fazilet = fzVal;
+        } else if (fzVal) {
+            z.fazilet = fzVal;
+        } else {
+            delete z.fazilet;
+        }
+        saveData();
+        renderFolderDetail();
+        if (currentZikirId === z.id) updateCounterUI();
+        editModalOverlay.classList.remove('active');
+        editingZikirIdMap = null;
     });
 
     // Copy / Move
-    saveCopyBtn.addEventListener('click', () => processCopyMove('copy'));
-    saveMoveBtn.addEventListener('click', () => processCopyMove('move'));
+    saveCopyBtn.addEventListener('click', () => void processCopyMove('copy'));
+    saveMoveBtn.addEventListener('click', () => void processCopyMove('move'));
 
     statTabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1660,13 +3827,18 @@ function openEditModal(zId) {
     const z = zikirs.find(x => x.id === zId);
     if (!z) return;
     editingZikirIdMap = zId;
+    if (editZikirNameInp) editZikirNameInp.value = z.name || '';
     editZikirTargetInp.value = z.target;
     editZikirMeaningInp.value = z.meaning || '';
     if (editZikirArabicInp) editZikirArabicInp.value = z.arabic || '';
-    editModalOverlay.classList.add('active');
+    if (editZikirFaziletInp) {
+        const stored = z.fazilet != null && String(z.fazilet).trim();
+        editZikirFaziletInp.value = stored ? String(z.fazilet).trim() : getEsmaDefaultFaziletForZikir(z);
+    }
+    openOverlay('editModalOverlay');
 }
 
-function openCopyModal(zId) {
+async function openCopyModal(zId) {
     copyingZikirId = zId;
     copyDestFolder.innerHTML = '';
     folders.forEach(f => {
@@ -1679,22 +3851,25 @@ function openCopyModal(zId) {
     });
 
     if(copyDestFolder.options.length === 0) {
-        alert("Hedeflenecek başka klasör yok. Lütfen önce yeni bir klasör oluşturun.");
+        await showAppAlert('Hedeflenecek başka klasör yok. Lütfen önce yeni bir klasör oluşturun.', {
+            title: 'Klasör yok'
+        });
         return;
     }
     
-    copyModalOverlay.classList.add('active');
+    openOverlay('copyModalOverlay');
 }
 
-function processCopyMove(actionType) {
+async function processCopyMove(actionType) {
     if(!copyingZikirId) return;
     const destFolderId = copyDestFolder.value;
     if(!destFolderId) return;
 
     // Limit check in destination
     const destCount = zikirs.filter(z => z.folderId === destFolderId).length;
-    if(destCount >= MAX_ZIKIRS_PER_FOLDER) {
-        alert("Hedef klasör dolu (Maks 6 zikir).");
+    const maxPerFolder = getMaxZikirsPerFolder();
+    if (Number.isFinite(maxPerFolder) && destCount >= maxPerFolder) {
+        await showAppAlert(`Hedef klasör dolu (en fazla ${maxPerFolder} zikir).`, { title: 'Klasör dolu' });
         return;
     }
 

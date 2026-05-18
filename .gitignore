@@ -1,0 +1,9 @@
+node_modules/
+# resources/app-icon.png veya logo.png kaynak; cap:icons öncesi icon.png’e kopyalanır
+resources/icon.png
+www/
+dist/
+.DS_Store
+*.log
+.idea/
+.capacitor/
