@@ -39,6 +39,23 @@
     --app-system-nav-inset: 0px;
     --app-bottom-inset-merged: max(env(safe-area-inset-bottom, 0px), var(--app-system-nav-inset, 0px));
     --bottom-nav-stack-height: calc(64px + var(--app-bottom-inset-merged));
+    --round-badge-color: #f8fafc;
+    /* Güncelleme duyurusu — kalıcı altın kart stili (update-banner--teaser) */
+    --update-banner-accent: #d4af37;
+    --update-banner-accent-bright: #e8c96a;
+    --update-banner-glow: rgba(212, 175, 55, 0.28);
+    --update-banner-glow-strong: rgba(240, 210, 120, 0.4);
+    --update-banner-tint-min: 0.09;
+    --update-banner-tint-max: 0.17;
+    --update-banner-border-idle: color-mix(in srgb, var(--update-banner-accent) 58%, var(--surface-border));
+    --update-banner-border-pulse: color-mix(in srgb, var(--update-banner-accent-bright) 88%, #fff8e6);
+    /* transparent yerine açık altın taban — koyu temada iç kararmasın */
+    --update-banner-btn-tint: rgba(240, 210, 120, 0.12);
+    --update-banner-btn-tint-pulse: rgba(248, 220, 150, 0.2);
+    --update-banner-btn-fg: #f2e8c8;
+    --update-banner-btn-highlight: rgba(255, 248, 230, 0.07);
+    --update-banner-btn-border: color-mix(in srgb, var(--update-banner-accent) 58%, var(--surface-border));
+    --update-banner-btn-border-pulse: var(--update-banner-accent-bright);
 }
 
 /* ================== ICON FONT (OFFLINE-SAFE) ==================
@@ -791,7 +808,7 @@ body {
 
 /* Güncelleme duyurusu — aktif değilken slot boş kalır (klasörler dolar) */
 .update-banner-slot {
-    margin-top: 0.85rem;
+    margin-top: 0.75rem;
 }
 .update-banner-slot[hidden] {
     display: none !important;
@@ -799,51 +816,255 @@ body {
     padding: 0;
 }
 
-.update-banner {
-    background: var(--surface-card);
-    border: 1px solid var(--surface-border);
-    border-radius: var(--surface-radius);
-    box-shadow: var(--surface-shadow);
-    padding: 0.9rem 0.95rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+/*
+ * Güncelleme duyurusu (ana ekran) — klasör kartı boyutu, altın nabız.
+ * Metin/butonlar modalda; özet kart dokunulunca açılır. Tasarım sabit; içerik GitHub JSON.
+ */
+.update-banner--teaser.folder-card {
+    position: relative;
+    isolation: isolate;
+    overflow: visible;
+    width: 100%;
+    border: 1.5px solid var(--update-banner-border-idle);
+    animation: update-banner-border-pulse 2.8s ease-in-out infinite;
 }
-.update-banner__top {
-    display: flex;
-    gap: 0.65rem;
-    align-items: flex-start;
+.update-banner--teaser.folder-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: calc(var(--surface-radius) - 1.5px);
+    background: linear-gradient(
+        135deg,
+        var(--update-banner-accent-bright) 0%,
+        var(--update-banner-accent) 55%,
+        #b8922e 100%
+    );
+    opacity: var(--update-banner-tint-min, 0.11);
+    pointer-events: none;
+    z-index: 0;
+    animation: update-banner-tint-pulse 2.8s ease-in-out infinite;
 }
-.update-banner__icon {
+.update-banner--teaser .update-banner__icon,
+.update-banner--teaser .folder-card__text {
+    position: relative;
+    z-index: 1;
+}
+.update-banner--teaser.folder-card::after {
+    position: relative;
+    z-index: 1;
+}
+.update-banner--teaser .update-banner__icon {
     flex-shrink: 0;
     font-size: 1.35rem;
-    color: var(--primary-green);
-    margin-top: 0.05rem;
+    color: var(--update-banner-accent-bright);
+    margin-left: 0.15rem;
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--update-banner-accent) 28%, transparent));
 }
-.update-banner__body {
-    flex: 1;
-    min-width: 0;
+.update-banner--teaser .folder-card__text p {
+    color: color-mix(in srgb, var(--update-banner-accent-bright) 55%, var(--text-gray));
 }
-.update-banner__title {
-    font-size: var(--text-base);
-    font-weight: 600;
-    line-height: var(--leading-tight);
-    color: var(--text-white);
+.update-banner--teaser:active {
+    animation: none;
+}
+.update-banner--teaser:active::before {
+    animation: none;
+    opacity: var(--update-banner-tint-max, 0.17);
+}
+
+@keyframes update-banner-tint-pulse {
+    0%,
+    100% {
+        opacity: var(--update-banner-tint-min, 0.09);
+    }
+    50% {
+        opacity: var(--update-banner-tint-max, 0.17);
+    }
+}
+
+/* Tur tamamlama (glow-burst) hissi — hafif çerçeve altı + dış hale */
+@keyframes update-banner-border-pulse {
+    0%,
+    100% {
+        border-color: var(--update-banner-border-idle);
+        box-shadow:
+            var(--surface-shadow),
+            inset 0 0 0 1px color-mix(in srgb, var(--update-banner-accent) 18%, transparent),
+            0 0 8px 1px var(--update-banner-glow);
+    }
+    50% {
+        border-color: var(--update-banner-border-pulse);
+        box-shadow:
+            var(--surface-shadow),
+            inset 0 0 10px 1px var(--update-banner-glow),
+            0 0 12px 2px var(--update-banner-glow-strong),
+            0 0 22px 5px var(--update-banner-glow);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html[data-theme="black"] #updateBannerDetailOverlay .update-banner-spotlight::before,
+    html[data-theme="black"] #updateBannerDetailOverlay.active .update-banner-spotlight--play + .update-banner-detail {
+        animation: none !important;
+    }
+    .update-banner__update-btn {
+        animation: none;
+    }
+    .update-banner--teaser.folder-card,
+    .update-banner--teaser.folder-card::before {
+        animation: none;
+    }
+    .update-banner--teaser.folder-card {
+        border-color: var(--update-banner-border-idle);
+        box-shadow:
+            var(--surface-shadow),
+            0 0 10px 2px var(--update-banner-glow);
+    }
+    .update-banner--teaser.folder-card::before {
+        opacity: var(--update-banner-tint-min, 0.09);
+    }
+}
+
+/* Siyah mod: detay açılınca üstten sahne ışığı (dar → kutu üstüne genişler) */
+html[data-theme="black"] #updateBannerDetailOverlay .update-banner-spotlight {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+html[data-theme="black"] #updateBannerDetailOverlay .update-banner-spotlight::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: var(--update-banner-spotlight-width, min(92vw, 420px));
+    height: var(--update-banner-spotlight-end, 48vh);
+    transform: translateX(-50%) scaleX(0.04) scaleY(0.06);
+    transform-origin: 50% 0;
+    opacity: 0;
+    clip-path: polygon(8% 0%, 92% 0%, 100% 100%, 0% 100%);
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.2) 0%,
+        rgba(255, 252, 245, 0.11) 38%,
+        rgba(255, 250, 240, 0.04) 72%,
+        transparent 100%
+    );
+    filter: blur(0.5px);
+    will-change: transform, opacity;
+}
+html[data-theme="black"] #updateBannerDetailOverlay.active .update-banner-spotlight--play::before {
+    animation: update-banner-spotlight-beam 1.15s cubic-bezier(0.2, 0.65, 0.25, 1) forwards;
+}
+html[data-theme="black"] #updateBannerDetailOverlay .glass-modal.update-banner-detail {
+    position: relative;
+    z-index: 1;
+}
+html[data-theme="black"] #updateBannerDetailOverlay.active .update-banner-spotlight--play + .update-banner-detail {
+    animation: update-banner-detail-spotlit 1.15s cubic-bezier(0.2, 0.65, 0.25, 1) forwards;
+}
+@keyframes update-banner-spotlight-beam {
+    0% {
+        transform: translateX(-50%) scaleX(0.04) scaleY(0.06);
+        opacity: 0;
+    }
+    14% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50%) scaleX(1) scaleY(1);
+        opacity: 1;
+    }
+}
+@keyframes update-banner-detail-spotlit {
+    0%,
+    35% {
+        box-shadow:
+            var(--surface-shadow),
+            0 0 14px 1px color-mix(in srgb, var(--update-banner-accent) 16%, transparent);
+    }
+    100% {
+        box-shadow:
+            var(--surface-shadow),
+            0 0 14px 1px color-mix(in srgb, var(--update-banner-accent) 16%, transparent),
+            0 -18px 42px -6px rgba(255, 255, 255, 0.07),
+            inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+}
+
+/* Detay modal — ince altın çerçeve */
+.glass-modal.update-banner-detail {
+    border: 1px solid var(--update-banner-border-idle);
+    box-shadow:
+        var(--surface-shadow),
+        0 0 14px 1px color-mix(in srgb, var(--update-banner-accent) 16%, transparent);
+}
+
+.update-banner-detail__message {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+.update-banner-detail__footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    align-items: stretch;
+}
+.update-banner-detail__footer .primary-btn,
+.update-banner-detail__footer .update-banner__btn {
+    width: 100%;
     margin: 0;
 }
-.update-banner__message {
-    margin-top: 0.45rem;
+
+/* Güncelle — şeffaf sarı iç, altın çerçeve + hafif nabız (özet kutusu gibi) */
+.update-banner__update-btn {
+    background:
+        linear-gradient(180deg, var(--update-banner-btn-highlight) 0%, transparent 58%),
+        var(--update-banner-btn-tint);
+    color: var(--update-banner-btn-fg);
+    border: 1.5px solid var(--update-banner-btn-border);
+    animation: update-banner-btn-pulse 3.2s ease-in-out infinite;
+    transition: background 0.2s, transform 0.1s, border-color 0.2s, box-shadow 0.2s;
 }
+.update-banner__update-btn:hover {
+    background:
+        linear-gradient(180deg, var(--update-banner-btn-highlight) 0%, transparent 58%),
+        var(--update-banner-btn-tint-pulse);
+}
+.update-banner__update-btn:active {
+    transform: scale(0.98);
+    animation: none;
+    background:
+        linear-gradient(180deg, var(--update-banner-btn-highlight) 0%, transparent 58%),
+        var(--update-banner-btn-tint-pulse);
+    border-color: var(--update-banner-btn-border-pulse);
+}
+
+@keyframes update-banner-btn-pulse {
+    0%,
+    100% {
+        border-color: var(--update-banner-btn-border);
+        box-shadow:
+            inset 0 0 0 1px color-mix(in srgb, var(--update-banner-accent) 12%, transparent),
+            0 0 6px 1px var(--update-banner-glow);
+    }
+    50% {
+        border-color: var(--update-banner-btn-border-pulse);
+        background:
+            linear-gradient(180deg, var(--update-banner-btn-highlight) 0%, transparent 58%),
+            var(--update-banner-btn-tint-pulse);
+        box-shadow:
+            inset 0 0 8px 1px var(--update-banner-glow),
+            0 0 10px 2px var(--update-banner-glow-strong);
+    }
+}
+
 .update-banner__line {
     font-size: var(--text-sm);
     color: var(--text-gray);
     line-height: var(--leading-relaxed);
-    margin: 0.2rem 0 0;
-}
-.update-banner__actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    margin: 0;
 }
 .update-banner__btn {
     border-radius: 10px;
@@ -1364,12 +1585,26 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
 
 .round-badge {
     position: absolute;
-    top: 0px; right: 5px; z-index: 10;
-    background: var(--primary-green); color: white;
-    font-size: 0.8rem; font-weight: 600;
-    padding: 0.25rem 0.5rem; border-radius: 12px;
-    opacity: 0; transform: scale(0.8);
-    transition: all 0.3s;
+    top: 2px;
+    right: 6px;
+    z-index: 10;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--round-badge-color);
+    font-size: clamp(0.62rem, 2.4vw, 0.72rem);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+}
+.round-badge.round-badge--compact {
+    font-size: clamp(0.52rem, 2vw, 0.62rem);
+    letter-spacing: -0.03em;
 }
 .round-badge.visible { opacity: 1; transform: scale(1); }
 

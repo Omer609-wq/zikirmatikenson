@@ -1,17 +1,18 @@
 /**
- * Güncelleme kutusu — Play yayınında GitHub update-banner.json güncellenir.
- * İlk açılışta internetle bir kez indirilir, telefona kaydedilir; sonra internetsiz de
- * aynı duyuru gösterilir. Yeni bir Play sürümü için JSON tekrar güncellenince
- * kullanıcının bir kez daha internete ihtiyacı olur (yeni duyuruyu almak için).
+ * Güncelleme duyurusu (ana ekran / Klasörlerim).
+ * Görünüm: style.css → .update-banner--teaser (altın kart, nabız, dokununca modal).
+ * İçerik: GitHub public/update-banner.json (latestVersionCode, title, message).
+ * Test: UPDATE_BANNER_PREVIEW = true. Yayında: false (kapalı).
  */
 import { Capacitor } from '@capacitor/core';
 
-/** GitHub raw — her yayında yalnızca public/update-banner.json düzenle. */
 export const UPDATE_BANNER_CONFIG_URL =
     'https://raw.githubusercontent.com/Omer609-wq/zikirmatikenson/main/public/update-banner.json';
 
-/** true = özelliği tamamen kapat (acil durum). */
 export const UPDATE_BANNER_DISABLED = false;
+
+/** TEST — Android Studio’da kutuyu görmek için true; bitince false yap. */
+export const UPDATE_BANNER_PREVIEW = false;
 
 const DISMISS_STORAGE_KEY = 'zikirmatik_dismissed_update_banners';
 const REMOTE_CONFIG_CACHE_KEY = 'zikirmatik_update_banner_config_cache';
@@ -19,8 +20,21 @@ const DEFAULT_PLAY_STORE =
     'https://play.google.com/store/apps/details?id=com.omerzikirmatik.app';
 export const UPDATE_BANNER_INLINE_FOLDER_THRESHOLD = 3;
 
+const PREVIEW_PAYLOAD = {
+    id: 'onizleme-android-studio',
+    title: 'Yeni sürüm mevcut',
+    message:
+        '• Güncelleme kutusu tasarımı\n' +
+        '• Dokununca yenilikler ve butonlar\n' +
+        '• Nabız animasyonu (önizleme)',
+    playStoreUrl: DEFAULT_PLAY_STORE
+};
+
 let cachedPayload = null;
 let installedVersionCode = 0;
+let detailOverlayWired = false;
+let detailOnDismiss = null;
+let spotlightStartTimer = null;
 
 function readDismissedIds() {
     try {
@@ -83,10 +97,6 @@ async function readInstalledVersionCode() {
     return 0;
 }
 
-/**
- * @param {Record<string, unknown>} raw
- * @param {number} installed
- */
 function buildPayloadFromRemote(raw, installed) {
     if (!raw || typeof raw !== 'object' || !raw.active) return null;
 
@@ -124,28 +134,27 @@ export function getInstalledAppVersionCode() {
 export function shouldShowUpdateBanner() {
     const p = cachedPayload;
     if (!p) return false;
+    if (UPDATE_BANNER_PREVIEW) return true;
     return !readDismissedIds().includes(p.id);
 }
 
-/**
- * Telefonda kayıtlı duyuru varsa internetsiz kullanır.
- * Kayıt yoksa GitHub'dan bir kez indirir ve kaydeder.
- */
 export async function refreshUpdateBannerConfig() {
     cachedPayload = null;
     if (UPDATE_BANNER_DISABLED) return null;
 
     installedVersionCode = await readInstalledVersionCode();
 
-    const saved = readRemoteConfigCache();
-    if (saved) {
-        return applyRemoteConfig(saved, installedVersionCode);
+    if (UPDATE_BANNER_PREVIEW) {
+        cachedPayload = { ...PREVIEW_PAYLOAD };
+        return cachedPayload;
     }
 
     const urls = [];
-    if (UPDATE_BANNER_CONFIG_URL) urls.push(UPDATE_BANNER_CONFIG_URL);
+    if (UPDATE_BANNER_CONFIG_URL) {
+        urls.push(`${UPDATE_BANNER_CONFIG_URL}?t=${Date.now()}`);
+    }
     if (Capacitor.isNativePlatform()) {
-        urls.push('./update-banner.json');
+        urls.push(`./update-banner.json?t=${Date.now()}`);
     }
 
     for (const url of urls) {
@@ -161,11 +170,16 @@ export async function refreshUpdateBannerConfig() {
                 }
                 writeRemoteConfigCache(raw);
             }
-            return applyRemoteConfig(raw, installedVersionCode);
+            const payload = applyRemoteConfig(raw, installedVersionCode);
+            if (payload) return payload;
+            if (raw?.active) return null;
         } catch (e) {
             console.warn('update-banner fetch', url, e);
         }
     }
+
+    const saved = readRemoteConfigCache();
+    if (saved) return applyRemoteConfig(saved, installedVersionCode);
 
     return null;
 }
@@ -188,7 +202,118 @@ function formatMessageHtml(message) {
     return lines.map((line) => `<p class="update-banner__line">${escapeHtml(line)}</p>`).join('');
 }
 
+function ensureDetailOverlayWired() {
+    if (detailOverlayWired) return;
+    const overlay = document.getElementById('updateBannerDetailOverlay');
+    const dismissBtn = document.getElementById('updateBannerDismissBtn');
+    const updateBtn = document.getElementById('updateBannerUpdateBtn');
+    if (!overlay || !dismissBtn || !updateBtn) return;
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeUpdateBannerDetail();
+    });
+
+    dismissBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const p = cachedPayload;
+        if (p) dismissBannerId(p.id);
+        closeUpdateBannerDetail();
+        detailOnDismiss?.();
+        detailOnDismiss = null;
+    });
+
+    updateBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const p = cachedPayload;
+        if (p) openPlayStore(p.playStoreUrl);
+    });
+
+    detailOverlayWired = true;
+}
+
+function openUpdateBannerDetail(opts = {}) {
+    const p = cachedPayload;
+    if (!p) return;
+
+    ensureDetailOverlayWired();
+    detailOnDismiss = opts.onDismiss ?? null;
+
+    const overlay = document.getElementById('updateBannerDetailOverlay');
+    const titleEl = document.getElementById('updateBannerDetailTitle');
+    const msgEl = document.getElementById('updateBannerDetailMessage');
+    if (!overlay || !titleEl || !msgEl) return;
+
+    titleEl.textContent = p.title;
+    msgEl.innerHTML = formatMessageHtml(p.message) || '<p class="update-banner__line">Yenilikleri görmek için mağazadan güncelleyebilirsiniz.</p>';
+
+    overlay.classList.add('active');
+    playUpdateBannerSpotlight();
+}
+
+function isBlackTheme() {
+    return document.documentElement.getAttribute('data-theme') === 'black';
+}
+
+function positionUpdateBannerSpotlight() {
+    const overlay = document.getElementById('updateBannerDetailOverlay');
+    const modal = overlay?.querySelector('.update-banner-detail');
+    if (!overlay || !modal) return;
+
+    const measure = () => {
+        const rect = modal.getBoundingClientRect();
+        const end = Math.max(0, Math.ceil(rect.top));
+        overlay.style.setProperty('--update-banner-spotlight-end', `${end}px`);
+        const beamW = Math.min(rect.width + 24, window.innerWidth * 0.94);
+        overlay.style.setProperty('--update-banner-spotlight-width', `${Math.ceil(beamW)}px`);
+    };
+
+    requestAnimationFrame(() => requestAnimationFrame(measure));
+}
+
+function playUpdateBannerSpotlight() {
+    const overlay = document.getElementById('updateBannerDetailOverlay');
+    const spotlight = overlay?.querySelector('.update-banner-spotlight');
+    if (!overlay || !spotlight) return;
+
+    clearTimeout(spotlightStartTimer);
+    spotlightStartTimer = null;
+
+    if (!isBlackTheme() || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        spotlight.hidden = true;
+        spotlight.classList.remove('update-banner-spotlight--play');
+        return;
+    }
+
+    spotlight.hidden = false;
+    spotlight.classList.remove('update-banner-spotlight--play');
+
+    /* Modal translateY(0) animasyonu (~300ms) bitsin, ışık kutu üstüne otursun */
+    spotlightStartTimer = setTimeout(() => {
+        spotlightStartTimer = null;
+        if (!overlay.classList.contains('active')) return;
+        positionUpdateBannerSpotlight();
+        void spotlight.offsetWidth;
+        spotlight.classList.add('update-banner-spotlight--play');
+    }, 300);
+}
+
+function stopUpdateBannerSpotlight() {
+    clearTimeout(spotlightStartTimer);
+    spotlightStartTimer = null;
+    const overlay = document.getElementById('updateBannerDetailOverlay');
+    const spotlight = overlay?.querySelector('.update-banner-spotlight');
+    spotlight?.classList.remove('update-banner-spotlight--play');
+    if (spotlight) spotlight.hidden = true;
+}
+
+function closeUpdateBannerDetail() {
+    const overlay = document.getElementById('updateBannerDetailOverlay');
+    overlay?.classList.remove('active');
+    stopUpdateBannerSpotlight();
+}
+
 /**
+ * Klasör kartı boyutunda özet; dokununca detay modalı açılır.
  * @param {{ onDismiss?: () => void }} opts
  */
 export function createUpdateBannerElement(opts = {}) {
@@ -196,67 +321,49 @@ export function createUpdateBannerElement(opts = {}) {
     if (!p) return null;
 
     const root = document.createElement('d' + 'iv');
-    root.className = 'update-banner';
-    root.setAttribute('role', 'region');
-    root.setAttribute('aria-label', 'Uygulama güncellemesi');
+    root.className = 'folder-card update-banner update-banner--teaser';
+    root.setAttribute('role', 'button');
+    root.setAttribute('tabindex', '0');
+    root.setAttribute('aria-label', `${p.title}. Yenilikleri görmek için dokunun.`);
 
     const icon = document.createElement('span');
     icon.className = 'update-banner__icon material-icons-outlined';
     icon.setAttribute('aria-hidden', 'true');
     icon.textContent = 'system_update';
 
-    const body = document.createElement('d' + 'iv');
-    body.className = 'update-banner__body';
+    const text = document.createElement('d' + 'iv');
+    text.className = 'folder-card__text';
 
     const title = document.createElement('h3');
-    title.className = 'update-banner__title';
     title.textContent = p.title;
 
-    const msg = document.createElement('d' + 'iv');
-    msg.className = 'update-banner__message';
-    msg.innerHTML = formatMessageHtml(p.message);
+    const sub = document.createElement('p');
+    sub.textContent = 'Yenilikler · dokunun';
 
-    body.appendChild(title);
-    if (p.message) body.appendChild(msg);
+    text.appendChild(title);
+    text.appendChild(sub);
+    root.appendChild(icon);
+    root.appendChild(text);
 
-    const actions = document.createElement('d' + 'iv');
-    actions.className = 'update-banner__actions';
-
-    const dismissBtn = document.createElement('button');
-    dismissBtn.type = 'button';
-    dismissBtn.className = 'update-banner__btn update-banner__btn--ghost';
-    dismissBtn.textContent = 'Bir daha gösterme';
-
-    const updateBtn = document.createElement('button');
-    updateBtn.type = 'button';
-    updateBtn.className = 'update-banner__btn update-banner__btn--primary';
-    updateBtn.textContent = 'Güncelle';
-
-    dismissBtn.addEventListener('click', (e) => {
+    const openDetail = (e) => {
+        e.preventDefault();
         e.stopPropagation();
-        dismissBannerId(p.id);
-        opts.onDismiss?.();
+        openUpdateBannerDetail(opts);
+    };
+
+    root.addEventListener('click', openDetail);
+    root.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openDetail(e);
+        }
     });
-    updateBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openPlayStore(p.playStoreUrl);
-    });
-
-    actions.appendChild(dismissBtn);
-    actions.appendChild(updateBtn);
-
-    const top = document.createElement('d' + 'iv');
-    top.className = 'update-banner__top';
-    top.appendChild(icon);
-    top.appendChild(body);
-
-    root.appendChild(top);
-    root.appendChild(actions);
 
     return root;
 }
 
 export function clearUpdateBannerDom(slotEl, gridEl) {
+    closeUpdateBannerDetail();
     if (slotEl) {
         slotEl.innerHTML = '';
         slotEl.hidden = true;
@@ -266,12 +373,6 @@ export function clearUpdateBannerDom(slotEl, gridEl) {
     }
 }
 
-/**
- * @param {number} folderCount
- * @param {HTMLElement} folderGrid
- * @param {HTMLElement} slotEl
- * @param {{ onDismiss?: () => void }} opts
- */
 export function placeUpdateBanner(folderCount, folderGrid, slotEl, opts = {}) {
     clearUpdateBannerDom(slotEl, folderGrid);
     if (!shouldShowUpdateBanner() || !folderGrid || !slotEl) return;

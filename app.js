@@ -4,6 +4,7 @@ import {
     placeUpdateBanner,
     refreshUpdateBannerConfig
 } from './update-banner.js';
+import { applyNativeStatusBarTheme } from './status-bar-theme.js';
 import { runCounterVibration, runDragReorderNudge } from './haptics.js';
 import { pickRandomQuote, REMINDER_FIXED_BODY } from './quotes.js';
 import { ESMA_DEFAULT_FAZILET } from './esma-fazilet.js';
@@ -547,6 +548,16 @@ const ZIKIR_LIBRARY = [
         source: 'Müslim, Zikir 33',
         target: 1,
         keywords: 'tesbih geniş hamd yaratık arş kelime'
+    },
+    {
+        id: 'lib_21', category: 'zikir',
+        name: 'Lâ ilâhe illallâhü\'l-melikü\'l-hakkü\'l-mübîn',
+        arabic: 'لَا إِلَٰهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ',
+        meaning: 'Allah\'tan başka ilah yoktur; O, mülkün gerçek sahibi (Melik), hak ve adaletle hükmeden (Hakk), birliği ve hakkı apaçık olan (Mübîn) Allah\'tır.',
+        context: 'Hz. Ali (r.a.)\'dan rivayet edilen bir hadiste günde yüz defa okuyanın fakirlikten emin olacağı, kabirde yoldaş bulacağı ve tevhid sevabına vesile olacağı bildirilir; bazı kaynaklarda Cuma günü iki yüz defa okunması da zikredilir. Bu rivayetin senedi zayıf görüldüğünden tam itikadi sonuçlar için âlim görüşüne başvurulmalıdır; tevhid ve Allah\'ı anma niyetiyle okunması caiz görülür.',
+        source: 'Hz. Ali (r.a.) rivayeti (Kenzü\'l-Ummâl, 5058; senedi tenkit edilmiş)',
+        target: 100,
+        keywords: 'melik hakk mubin tevhid kelime cuma yüz fakirlik kabir zenginlik'
     }
 ];
 
@@ -1242,6 +1253,11 @@ function applyAppTheme(theme) {
     document.documentElement.setAttribute('data-theme', t);
     const meta = document.getElementById('metaThemeColor');
     if (meta) meta.setAttribute('content', THEME_META_COLORS[t]);
+    const appleStatus = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    if (appleStatus) {
+        appleStatus.setAttribute('content', t === 'light' ? 'default' : 'black-translucent');
+    }
+    void applyNativeStatusBarTheme(t);
 }
 
 function syncThemeUI() {
@@ -2985,9 +3001,10 @@ function updateCounterUI() {
     if (roundDisplay) {
         if (completedRounds > 0) {
             roundDisplay.textContent = completedRounds;
+            roundDisplay.classList.toggle('round-badge--compact', completedRounds >= 1000);
             roundDisplay.classList.add('visible');
         } else {
-            roundDisplay.classList.remove('visible');
+            roundDisplay.classList.remove('visible', 'round-badge--compact');
         }
     }
 
