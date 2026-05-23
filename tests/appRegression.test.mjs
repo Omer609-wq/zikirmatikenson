@@ -223,10 +223,10 @@ function loadApp(initialStorage = {}) {
 function testBrowserHistoryUsesWindowHistory() {
     const ctx = loadApp();
     ctx.__testApi.ensureInitialHistoryState();
-    assert.deepEqual(ctx.window.history.replaces[0], { viewId: 'homeView', param: null });
+    assert.equal(JSON.stringify(ctx.window.history.replaces[0]), JSON.stringify({ viewId: 'homeView', param: null }));
 
     ctx.__testApi.openOverlay('settingsOverlay');
-    assert.deepEqual(ctx.window.history.pushes[0], { overlayId: 'settingsOverlay' });
+    assert.equal(JSON.stringify(ctx.window.history.pushes[0]), JSON.stringify({ overlayId: 'settingsOverlay' }));
 }
 
 function testCorruptStorageIsNotOverwritten() {
