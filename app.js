@@ -146,12 +146,37 @@ const DEFAULT_ZIKIRS = [
     { id: 'z_4', folderId: 'f_default', name: 'La ilahe illallah', arabic: DEFAULT_ZIKIR_ARABIC_BY_ID.z_4, target: 100, meaning: "Allah'tan başka ilah yoktur.", count: 0, lastClicked: 0 }
 ];
 
+function createDefaultEsmaZikir(index) {
+    const esma = ESMA_LIST[index];
+    return {
+        id: 'z_e_' + index,
+        folderId: 'f_esma',
+        name: esma.name,
+        arabic: esma.arabic || '',
+        target: esma.target,
+        meaning: esma.meaning,
+        count: 0,
+        lastClicked: 0,
+        order: index
+    };
+}
+
 ESMA_LIST.forEach((esma, index) => {
-    DEFAULT_ZIKIRS.push({
-        id: 'z_e_' + index, folderId: 'f_esma',
-        name: esma.name, arabic: esma.arabic || '', target: esma.target, meaning: esma.meaning,
-        count: 0, lastClicked: 0
-    });
+    DEFAULT_ZIKIRS.push(createDefaultEsmaZikir(index));
+});
+
+function normalizeEsmaNameKey(value) {
+    return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLocaleLowerCase('tr-TR')
+        .replace(/[^\p{L}\p{N}]+/gu, '');
+}
+
+const ESMA_NAME_TO_INDEX = new Map();
+ESMA_LIST.forEach((esma, index) => {
+    const key = normalizeEsmaNameKey(esma.name);
+    if (key && !ESMA_NAME_TO_INDEX.has(key)) ESMA_NAME_TO_INDEX.set(key, index);
 });
 
 // category: 'dua' | 'zikir' — UI’da yalnızca bu iki sekme var.
@@ -628,7 +653,8 @@ const PREMIUM_LIBRARY_EXTRA = [
 // State
 let folders = [];
 let zikirs = [];
-let history = {};
+let clickHistory = {};
+let dataStoreWriteBlocked = false;
 let appSettings = { vibrationTap: true, vibrationTarget: true, sound: false, wakeLock: false, theme: 'navy' };
 let reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
 let entitlements = { premium: false };
@@ -1089,7 +1115,7 @@ function sanitizeLoadedData(d) {
     // history (keep existing pruning rules later too)
     const hist = isPlainObject(safe.history) ? safe.history : {};
     // Use a null-prototype map to reduce prototype pollution surface.
-    const historyOut = Object.create(null);
+    const clickHistoryOut = Object.create(null);
     Object.keys(hist).slice(0, 2000).forEach((day) => {
         if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return;
         const block = hist[day];
@@ -1101,7 +1127,7 @@ function sanitizeLoadedData(d) {
             const num = clampNumber(v, { min: 0, max: 1000000000, fallback: 0 });
             if (num > 0) outBlock[id] = num;
         });
-        historyOut[day] = outBlock;
+        clickHistoryOut[day] = outBlock;
     });
 
     // settings/reminders/entitlements
@@ -1188,7 +1214,7 @@ function sanitizeLoadedData(d) {
     return {
         folders: fArr,
         zikirs: zArr,
-        history: historyOut,
+        history: clickHistoryOut,
         settings: settingsOut,
         reminders: remindersOut,
         entitlements: entOut,
@@ -1202,7 +1228,7 @@ const HISTORY_RETENTION_DAYS = 400;
 
 // ===================== DATA =====================
 function pruneHistory() {
-    if (!history || typeof history !== 'object') return false;
+    if (!clickHistory || typeof clickHistory !== 'object') return false;
     const cutoff = new Date();
     cutoff.setHours(0, 0, 0, 0);
     cutoff.setDate(cutoff.getDate() - HISTORY_RETENTION_DAYS);
@@ -1211,9 +1237,9 @@ function pruneHistory() {
     const cd = String(cutoff.getDate()).padStart(2, '0');
     const cutoffStr = `${cy}-${cm}-${cd}`;
     let changed = false;
-    Object.keys(history).forEach((day) => {
+    Object.keys(clickHistory).forEach((day) => {
         if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || day < cutoffStr) {
-            delete history[day];
+            delete clickHistory[day];
             changed = true;
         }
     });
@@ -1221,12 +1247,12 @@ function pruneHistory() {
 }
 
 function sanitizeHistory() {
-    if (!history || typeof history !== 'object') return false;
+    if (!clickHistory || typeof clickHistory !== 'object') return false;
     let changed = false;
-    Object.keys(history).forEach((day) => {
-        const block = history[day];
+    Object.keys(clickHistory).forEach((day) => {
+        const block = clickHistory[day];
         if (!block || typeof block !== 'object') {
-            delete history[day];
+            delete clickHistory[day];
             changed = true;
             return;
         }
@@ -1241,10 +1267,114 @@ function sanitizeHistory() {
             }
         });
         if (Object.keys(block).length === 0) {
-            delete history[day];
+            delete clickHistory[day];
             changed = true;
         }
     });
+    return changed;
+}
+
+function getCanonicalEsmaIndexByName(name) {
+    const key = normalizeEsmaNameKey(name);
+    return ESMA_NAME_TO_INDEX.has(key) ? ESMA_NAME_TO_INDEX.get(key) : null;
+}
+
+function applyCanonicalEsmaFields(z, index) {
+    const esma = ESMA_LIST[index];
+    if (!z || !esma) return false;
+    let changed = false;
+    const fields = {
+        folderId: 'f_esma',
+        name: esma.name,
+        arabic: esma.arabic || '',
+        target: esma.target,
+        meaning: esma.meaning
+    };
+    Object.keys(fields).forEach((key) => {
+        if (z[key] !== fields[key]) {
+            z[key] = fields[key];
+            changed = true;
+        }
+    });
+    if (typeof z.order !== 'number' || !Number.isFinite(z.order)) {
+        z.order = index;
+        changed = true;
+    }
+    return changed;
+}
+
+function mergeEsmaZikirData(target, source) {
+    if (!target || !source || target === source) return false;
+    const targetCount = clampNumber(target.count, { min: 0, max: 1000000000, fallback: 0 });
+    const sourceCount = clampNumber(source.count, { min: 0, max: 1000000000, fallback: 0 });
+    target.count = Math.min(1000000000, targetCount + sourceCount);
+    target.lastClicked = Math.max(
+        clampNumber(target.lastClicked, { min: 0, max: 9e15, fallback: 0 }),
+        clampNumber(source.lastClicked, { min: 0, max: 9e15, fallback: 0 })
+    );
+    target.favorite = !!(target.favorite || source.favorite);
+    if (typeof target.order !== 'number' && typeof source.order === 'number') target.order = source.order;
+    return true;
+}
+
+function migrateClickHistoryIds(idMap) {
+    if (!idMap || idMap.size === 0 || !clickHistory || typeof clickHistory !== 'object') return false;
+    let changed = false;
+    Object.keys(clickHistory).forEach((day) => {
+        const block = clickHistory[day];
+        if (!block || typeof block !== 'object') return;
+        const moved = Object.create(null);
+        idMap.forEach((newId, oldId) => {
+            if (oldId === newId || !Object.prototype.hasOwnProperty.call(block, oldId)) return;
+            const value = clampNumber(block[oldId], { min: 0, max: 1000000000, fallback: 0 });
+            if (value > 0) moved[newId] = Math.min(1000000000, (moved[newId] || 0) + value);
+            delete block[oldId];
+            changed = true;
+        });
+        Object.keys(moved).forEach((newId) => {
+            const current = clampNumber(block[newId], { min: 0, max: 1000000000, fallback: 0 });
+            block[newId] = Math.min(1000000000, current + moved[newId]);
+            changed = true;
+        });
+    });
+    return changed;
+}
+
+function syncEsmaZikirsToCanonicalIds() {
+    if (!folders.find((f) => f.id === 'f_esma')) return false;
+    const idMap = new Map();
+    const canonicalById = new Map();
+    const removeSet = new Set();
+    let changed = false;
+
+    zikirs.forEach((z) => {
+        if (!z || typeof z !== 'object') return;
+        const oldId = String(z.id || '');
+        const isEsma = z.folderId === 'f_esma' || /^z_e_\d+$/.test(oldId);
+        if (!isEsma) return;
+        const canonicalIndex = getCanonicalEsmaIndexByName(z.name);
+        if (canonicalIndex == null) return;
+        const canonicalId = 'z_e_' + canonicalIndex;
+        const existing = canonicalById.get(canonicalId);
+        if (existing && existing !== z) {
+            mergeEsmaZikirData(existing, z);
+            removeSet.add(z);
+            changed = true;
+            if (oldId !== canonicalId) idMap.set(oldId, canonicalId);
+            return;
+        }
+
+        canonicalById.set(canonicalId, z);
+        if (oldId !== canonicalId) {
+            z.id = canonicalId;
+            idMap.set(oldId, canonicalId);
+            changed = true;
+        }
+        if (applyCanonicalEsmaFields(z, canonicalIndex)) changed = true;
+    });
+
+    if (removeSet.size) zikirs = zikirs.filter((z) => !removeSet.has(z));
+    if (migrateClickHistoryIds(idMap)) changed = true;
     return changed;
 }
 
@@ -1286,22 +1416,24 @@ function loadData() {
         let d;
         try {
             d = JSON.parse(sv);
+            dataStoreWriteBlocked = false;
         } catch (e) {
             console.error('zikirmatik_data_v2 okunamadı, varsayılan veri:', e);
             folders = [...DEFAULT_FOLDERS];
             zikirs = [...DEFAULT_ZIKIRS];
-            history = {};
+            clickHistory = {};
             appSettings = { vibrationTap: true, vibrationTarget: true, sound: false, wakeLock: false, theme: 'navy' };
             reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
             entitlements = { premium: false };
             trash = { v: 1, entries: [] };
+            dataStoreWriteBlocked = true;
             syncSettingsUI();
             return;
         }
         const sanitized = sanitizeLoadedData(d);
         folders = sanitized.folders.length ? sanitized.folders : [...DEFAULT_FOLDERS];
         zikirs = sanitized.zikirs.length ? sanitized.zikirs : [...DEFAULT_ZIKIRS];
-        history = sanitized.history || {};
+        clickHistory = sanitized.history || {};
         appSettings = sanitized.settings || appSettings;
         reminderSettings = {
             enabled: false,
@@ -1330,30 +1462,17 @@ function loadData() {
         // Migration for Esma folder (for existing users)
         if (!folders.find(f => f.id === 'f_esma')) {
             folders.push({ id: 'f_esma', name: 'Esma\'ül Hüsna' });
-            ESMA_LIST.forEach((esma, index) => {
-                zikirs.push({
-                    id: 'z_e_' + index, folderId: 'f_esma',
-                    name: esma.name, arabic: esma.arabic || '', target: esma.target, meaning: esma.meaning,
-                    count: 0, lastClicked: 0
-                });
+            ESMA_LIST.forEach((_, index) => {
+                zikirs.push(createDefaultEsmaZikir(index));
             });
             saveData();
         } else {
+            let changed = syncEsmaZikirsToCanonicalIds();
             // Ensure all Esma items exist (if ESMA_LIST was expanded in later versions)
-            let changed = false;
-            ESMA_LIST.forEach((esma, index) => {
+            ESMA_LIST.forEach((_, index) => {
                 const id = 'z_e_' + index;
                 if (!zikirs.find(z => z.id === id)) {
-                    zikirs.push({
-                        id,
-                        folderId: 'f_esma',
-                        name: esma.name,
-                        arabic: esma.arabic || '',
-                        target: esma.target,
-                        meaning: esma.meaning,
-                        count: 0,
-                        lastClicked: 0
-                    });
+                    zikirs.push(createDefaultEsmaZikir(index));
                     changed = true;
                 }
             });
@@ -1382,17 +1501,22 @@ function loadData() {
     } else {
         folders = [...DEFAULT_FOLDERS];
         zikirs = [...DEFAULT_ZIKIRS];
-        history = {};
+        clickHistory = {};
         trash = { v: 1, entries: [] };
+        dataStoreWriteBlocked = false;
     }
 
     syncSettingsUI();
 }
 function saveData() {
+    if (dataStoreWriteBlocked) {
+        console.error('saveData: persisted data is unreadable; refusing to overwrite zikirmatik_data_v2.');
+        return false;
+    }
     const payload = {
         folders,
         zikirs,
-        history,
+        history: clickHistory,
         settings: appSettings,
         reminders: reminderSettings,
         entitlements,
@@ -1400,6 +1524,7 @@ function saveData() {
     };
     try {
         localStorage.setItem('zikirmatik_data_v2', JSON.stringify(payload));
+        return true;
     } catch (e) {
         const isQuota =
             e &&
@@ -1409,6 +1534,7 @@ function saveData() {
         if (isQuota && (pruneHistory() || sanitizeHistory())) {
             try {
                 localStorage.setItem('zikirmatik_data_v2', JSON.stringify(payload));
+                return true;
             } catch (e2) {
                 console.error('saveData: kota dolu, eski geçmiş budandıktan sonra da yazılamadı.', e2);
             }
@@ -1416,6 +1542,7 @@ function saveData() {
             console.error('saveData', e);
         }
     }
+    return false;
 }
 
 function isPremium() {
@@ -1525,7 +1652,7 @@ function restoreTrashEntry(index) {
 function deleteTrashEntry(index) {
     const e = trash && Array.isArray(trash.entries) ? trash.entries[index] : null;
     if (!e) return false;
-    // Now it's a permanent delete: remove history for the affected zikir ids.
+    // Now it's a permanent delete: remove clickHistory for the affected zikir ids.
     const zIds = new Set();
     if (e.kind === 'zikir' && e.zikir && e.zikir.id) zIds.add(e.zikir.id);
     if (e.kind === 'folder' && Array.isArray(e.zikirs)) {
@@ -1792,9 +1919,9 @@ function onPageShowForReminders() {
 
 function logClick(zId) {
     const today = getTodayString();
-    if (!history[today]) history[today] = {};
-    if (!history[today][zId]) history[today][zId] = 0;
-    history[today][zId]++;
+    if (!clickHistory[today]) clickHistory[today] = {};
+    if (!clickHistory[today][zId]) clickHistory[today][zId] = 0;
+    clickHistory[today][zId]++;
     
     // Update lastClicked
     const z = zikirs.find(x => x.id === zId);
@@ -1805,23 +1932,23 @@ function logClick(zId) {
 
 function logDecrement(zId) {
     const today = getTodayString();
-    if (history[today] && history[today][zId] > 0) {
-        history[today][zId]--;
-        if (history[today][zId] <= 0) delete history[today][zId];
-        if (Object.keys(history[today]).length === 0) delete history[today];
+    if (clickHistory[today] && clickHistory[today][zId] > 0) {
+        clickHistory[today][zId]--;
+        if (clickHistory[today][zId] <= 0) delete clickHistory[today][zId];
+        if (Object.keys(clickHistory[today]).length === 0) delete clickHistory[today];
     }
     saveData();
 }
 
 function removeHistoryForZikirIds(zidSet) {
-    if (!history || !zidSet || zidSet.size === 0) return;
-    Object.keys(history).forEach((day) => {
-        const block = history[day];
+    if (!clickHistory || !zidSet || zidSet.size === 0) return;
+    Object.keys(clickHistory).forEach((day) => {
+        const block = clickHistory[day];
         if (!block || typeof block !== 'object') return;
         zidSet.forEach((zid) => {
             delete block[zid];
         });
-        if (Object.keys(block).length === 0) delete history[day];
+        if (Object.keys(block).length === 0) delete clickHistory[day];
     });
 }
 
@@ -2062,6 +2189,10 @@ function isOverlayActive(el) {
     return !!(el && el.classList && el.classList.contains('active'));
 }
 
+function getBrowserHistory() {
+    return window.history;
+}
+
 function closeAllOverlays() {
     [
         appDialogOverlay,
@@ -2083,9 +2214,10 @@ function openOverlay(overlayId, { onOpen } = {}) {
     if (!el) return;
     ensureInitialHistoryState();
     try {
-        const cur = history && history.state ? history.state : null;
+        const browserHistory = getBrowserHistory();
+        const cur = browserHistory && browserHistory.state ? browserHistory.state : null;
         const next = getOverlayState(overlayId);
-        if (!isOverlayState(cur) || cur.overlayId !== next.overlayId) history.pushState(next, '');
+        if (!isOverlayState(cur) || cur.overlayId !== next.overlayId) browserHistory.pushState(next, '');
     } catch (_) {
         // ignore
     }
@@ -2098,9 +2230,10 @@ function closeOverlayPreferHistory(overlayId) {
     if (!el) return false;
     if (!isOverlayActive(el)) return false;
     try {
-        const st = history && history.state ? history.state : null;
+        const browserHistory = getBrowserHistory();
+        const st = browserHistory && browserHistory.state ? browserHistory.state : null;
         if (isOverlayState(st) && st.overlayId === overlayId) {
-            history.back();
+            browserHistory.back();
             return true;
         }
     } catch (_) {
@@ -2112,13 +2245,14 @@ function closeOverlayPreferHistory(overlayId) {
 
 function ensureInitialHistoryState() {
     try {
-        const st = history && history.state ? history.state : null;
+        const browserHistory = getBrowserHistory();
+        const st = browserHistory && browserHistory.state ? browserHistory.state : null;
         // If we already have an in-app state (view or overlay), don't clobber it.
         if (st && typeof st === 'object') {
             if (typeof st.viewId === 'string') return;
             if (typeof st.overlayId === 'string') return;
         }
-        history.replaceState(getViewState('homeView', null), '');
+        browserHistory.replaceState(getViewState('homeView', null), '');
     } catch (_) {
         // ignore: some WebViews may block history state
     }
@@ -2178,9 +2312,10 @@ function showView(viewId, param = null, options = {}) {
     // Push new state BEFORE UI switch so Android back always has an entry.
     if (push) {
         try {
-            const cur = history && history.state ? history.state : null;
+            const browserHistory = getBrowserHistory();
+            const cur = browserHistory && browserHistory.state ? browserHistory.state : null;
             // Avoid pushing duplicates (e.g., tapping the same bottom tab).
-            if (!viewStateEquals(cur, nextState)) history.pushState(nextState, '');
+            if (!viewStateEquals(cur, nextState)) browserHistory.pushState(nextState, '');
         } catch (_) {
             // ignore
         }
@@ -3210,7 +3345,7 @@ function openLibraryDetail(z) {
 
 // ===================== STATS LOGIC =====================
 function dayHistoryTotal(dayKey) {
-    const block = history && history[dayKey];
+    const block = clickHistory && clickHistory[dayKey];
     if (!block || typeof block !== 'object') return 0;
     return Object.values(block).reduce((sum, v) => sum + (Number(v) || 0), 0);
 }
@@ -3232,9 +3367,9 @@ function renderStats() {
     // 1) En Çok Çekilen ve Son çekilen
     let totalClicksPerZikir = {};
     targetDays.forEach(day => {
-        if(history[day]) {
-            Object.keys(history[day]).forEach(zid => {
-                totalClicksPerZikir[zid] = (totalClicksPerZikir[zid]||0) + history[day][zid];
+        if(clickHistory[day]) {
+            Object.keys(clickHistory[day]).forEach(zid => {
+                totalClicksPerZikir[zid] = (totalClicksPerZikir[zid]||0) + clickHistory[day][zid];
             });
         }
     });
@@ -3268,8 +3403,8 @@ function renderStats() {
     // Kayıtlı tüm günlük toplamlar içinden en yüksek gün (genel)
     let bestDayKey = null;
     let bestDayTotal = 0;
-    if (history && typeof history === 'object') {
-        Object.keys(history).forEach((dayKey) => {
+    if (clickHistory && typeof clickHistory === 'object') {
+        Object.keys(clickHistory).forEach((dayKey) => {
             const tot = dayHistoryTotal(dayKey);
             if (tot > bestDayTotal) {
                 bestDayTotal = tot;
@@ -3308,7 +3443,7 @@ function renderStats() {
     let dayTotals = last7Days.map(d => {
         const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
         let tot = 0;
-        if(history[ds]) Object.values(history[ds]).forEach(v => tot += v);
+        if(clickHistory[ds]) Object.values(clickHistory[ds]).forEach(v => tot += v);
         if(tot > maxDayCount) maxDayCount = tot;
         return { label: d.toLocaleDateString('tr-TR', {weekday: 'short'}), val: tot };
     });
@@ -3360,9 +3495,9 @@ function renderZikirStats() {
         );
     }
 
-    const todayCount = history[today] && history[today][zid] ? history[today][zid] : 0;
+    const todayCount = clickHistory[today] && clickHistory[today][zid] ? clickHistory[today][zid] : 0;
     const weekSum = last7.reduce((acc, ds) => {
-        const v = history[ds] && history[ds][zid] ? history[ds][zid] : 0;
+        const v = clickHistory[ds] && clickHistory[ds][zid] ? clickHistory[ds][zid] : 0;
         return acc + v;
     }, 0);
 
@@ -3384,7 +3519,7 @@ function renderZikirStats() {
 
     let maxDayCount = 1;
     const dayTotals = last7.map((ds) => {
-        const val = history[ds] && history[ds][zid] ? history[ds][zid] : 0;
+        const val = clickHistory[ds] && clickHistory[ds][zid] ? clickHistory[ds][zid] : 0;
         if (val > maxDayCount) maxDayCount = val;
         const d = new Date(`${ds}T12:00:00`);
         return {
