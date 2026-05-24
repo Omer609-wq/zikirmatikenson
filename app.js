@@ -633,6 +633,7 @@ let appSettings = { vibrationTap: true, vibrationTarget: true, sound: false, wak
 let reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
 let entitlements = { premium: false };
 let trash = { v: 1, entries: [] }; // soft-deleted items
+let dataWriteBlocked = false;
 
 let currentFolderId = null;
 let currentZikirId = null;
@@ -1288,6 +1289,7 @@ function loadData() {
             d = JSON.parse(sv);
         } catch (e) {
             console.error('zikirmatik_data_v2 okunamadı, varsayılan veri:', e);
+            dataWriteBlocked = true;
             folders = [...DEFAULT_FOLDERS];
             zikirs = [...DEFAULT_ZIKIRS];
             clickHistory = {};
@@ -1299,6 +1301,7 @@ function loadData() {
             return;
         }
         const sanitized = sanitizeLoadedData(d);
+        dataWriteBlocked = false;
         folders = sanitized.folders.length ? sanitized.folders : [...DEFAULT_FOLDERS];
         zikirs = sanitized.zikirs.length ? sanitized.zikirs : [...DEFAULT_ZIKIRS];
         clickHistory = sanitized.history || {};
@@ -1380,6 +1383,7 @@ function loadData() {
 
         if (sanitizeHistory() || pruneHistory()) saveData();
     } else {
+        dataWriteBlocked = false;
         folders = [...DEFAULT_FOLDERS];
         zikirs = [...DEFAULT_ZIKIRS];
         clickHistory = {};
@@ -1389,6 +1393,10 @@ function loadData() {
     syncSettingsUI();
 }
 function saveData() {
+    if (dataWriteBlocked) {
+        console.error('saveData engellendi: zikirmatik_data_v2 okunamadığı için mevcut kayıt korunuyor.');
+        return;
+    }
     const payload = {
         folders,
         zikirs,
