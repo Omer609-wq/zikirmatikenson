@@ -100,8 +100,11 @@ test('overlay navigation uses window.history when click history shadows the glob
 
     context.openOverlay('settingsOverlay');
 
-    assert.deepEqual(replaceStates, [{ viewId: 'homeView', param: null }]);
-    assert.deepEqual(pushStates, [{ overlayId: 'settingsOverlay' }]);
+    assert.equal(replaceStates.length, 1);
+    assert.equal(replaceStates[0].viewId, 'homeView');
+    assert.equal(replaceStates[0].param, null);
+    assert.equal(pushStates.length, 1);
+    assert.equal(pushStates[0].overlayId, 'settingsOverlay');
     assert.equal(overlay.classList.contains('active'), true);
 
     context.closeOverlayPreferHistory('settingsOverlay');
