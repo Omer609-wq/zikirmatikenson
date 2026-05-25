@@ -9,7 +9,20 @@ function extractFunction(name) {
     const start = appSource.indexOf(`function ${name}`);
     assert.notEqual(start, -1, `function ${name} not found`);
 
-    const bodyStart = appSource.indexOf('{', start);
+    const signatureStart = appSource.indexOf('(', start);
+    let parenDepth = 0;
+    let signatureEnd = -1;
+    for (let i = signatureStart; i < appSource.length; i += 1) {
+        const ch = appSource[i];
+        if (ch === '(') parenDepth += 1;
+        if (ch === ')') parenDepth -= 1;
+        if (parenDepth === 0) {
+            signatureEnd = i;
+            break;
+        }
+    }
+
+    const bodyStart = appSource.indexOf('{', signatureEnd);
     let depth = 0;
     for (let i = bodyStart; i < appSource.length; i += 1) {
         const ch = appSource[i];
