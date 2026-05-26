@@ -124,7 +124,7 @@ function loadAppWithStorage(initialStorage = {}) {
         const runDragReorderNudge = () => {};
         const pickRandomQuote = () => ({ text: '', source: '' });
         const REMINDER_FIXED_BODY = '';
-        const ESMA_DEFAULT_FAZILET = {};
+        const ESMA_DEFAULT_FAZILET = [];
     `;
 
     const expose = `
