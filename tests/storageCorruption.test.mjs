@@ -145,7 +145,7 @@ function loadAppWithStorage(initialStorage = {}) {
     const { api, storage, writes } = loadAppWithStorage({ [DATA_KEY]: corruptRaw });
 
     api.loadData();
-    assert.deepEqual(api.getFolderIds(), ['f_default', 'f_esma']);
+    assert.deepEqual(Array.from(api.getFolderIds()), ['f_default', 'f_esma']);
 
     api.saveData();
     assert.equal(storage.get(DATA_KEY), corruptRaw);
