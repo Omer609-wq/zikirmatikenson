@@ -629,6 +629,8 @@ const PREMIUM_LIBRARY_EXTRA = [
 let folders = [];
 let zikirs = [];
 let history = {};
+let storageWriteBlocked = false;
+let storageWriteBlockReason = null;
 let appSettings = { vibrationTap: true, vibrationTarget: true, sound: false, wakeLock: false, theme: 'navy' };
 let reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
 let entitlements = { premium: false };
@@ -973,7 +975,8 @@ function init() {
             if (st.overlayId === 'zikirStatsOverlay') renderZikirStats();
             return;
         }
-        if (!st || typeof st !== 'object' || typeof st.viewId !== 'string') return;
+        if (!isViewState(st)) return;
+        syncInAppStackToState(st);
         showView(st.viewId, st.param ?? null, { push: false });
     });
     // Some WebViews don't produce reliable history for internal tabs; keep a robust fallback stack.
@@ -1283,11 +1286,15 @@ function syncSettingsUI() {
 function loadData() {
     const sv = localStorage.getItem('zikirmatik_data_v2');
     if (sv) {
+        storageWriteBlocked = false;
+        storageWriteBlockReason = null;
         let d;
         try {
             d = JSON.parse(sv);
         } catch (e) {
             console.error('zikirmatik_data_v2 okunamadı, varsayılan veri:', e);
+            storageWriteBlocked = true;
+            storageWriteBlockReason = e;
             folders = [...DEFAULT_FOLDERS];
             zikirs = [...DEFAULT_ZIKIRS];
             history = {};
@@ -1380,6 +1387,8 @@ function loadData() {
 
         if (sanitizeHistory() || pruneHistory()) saveData();
     } else {
+        storageWriteBlocked = false;
+        storageWriteBlockReason = null;
         folders = [...DEFAULT_FOLDERS];
         zikirs = [...DEFAULT_ZIKIRS];
         history = {};
@@ -1389,6 +1398,14 @@ function loadData() {
     syncSettingsUI();
 }
 function saveData() {
+    if (storageWriteBlocked) {
+        console.error(
+            'saveData: zikirmatik_data_v2 okunamadığı için bu oturumda mevcut kayıtların üzerine yazılmadı.',
+            storageWriteBlockReason
+        );
+        return;
+    }
+
     const payload = {
         folders,
         zikirs,
@@ -2054,6 +2071,14 @@ function isOverlayState(st) {
     return !!(st && typeof st === 'object' && typeof st.overlayId === 'string');
 }
 
+function isViewState(st) {
+    return !!(st && typeof st === 'object' && typeof st.viewId === 'string');
+}
+
+function getBrowserHistory() {
+    return typeof window !== 'undefined' && window.history ? window.history : null;
+}
+
 function getOverlayState(overlayId) {
     return { overlayId: String(overlayId) };
 }
@@ -2083,9 +2108,12 @@ function openOverlay(overlayId, { onOpen } = {}) {
     if (!el) return;
     ensureInitialHistoryState();
     try {
-        const cur = history && history.state ? history.state : null;
+        const browserHistory = getBrowserHistory();
+        const cur = browserHistory && browserHistory.state ? browserHistory.state : null;
         const next = getOverlayState(overlayId);
-        if (!isOverlayState(cur) || cur.overlayId !== next.overlayId) history.pushState(next, '');
+        if (browserHistory && (!isOverlayState(cur) || cur.overlayId !== next.overlayId)) {
+            browserHistory.pushState(next, '');
+        }
     } catch (_) {
         // ignore
     }
@@ -2098,9 +2126,10 @@ function closeOverlayPreferHistory(overlayId) {
     if (!el) return false;
     if (!isOverlayActive(el)) return false;
     try {
-        const st = history && history.state ? history.state : null;
+        const browserHistory = getBrowserHistory();
+        const st = browserHistory && browserHistory.state ? browserHistory.state : null;
         if (isOverlayState(st) && st.overlayId === overlayId) {
-            history.back();
+            browserHistory.back();
             return true;
         }
     } catch (_) {
@@ -2112,13 +2141,15 @@ function closeOverlayPreferHistory(overlayId) {
 
 function ensureInitialHistoryState() {
     try {
-        const st = history && history.state ? history.state : null;
+        const browserHistory = getBrowserHistory();
+        if (!browserHistory) return;
+        const st = browserHistory.state ? browserHistory.state : null;
         // If we already have an in-app state (view or overlay), don't clobber it.
         if (st && typeof st === 'object') {
             if (typeof st.viewId === 'string') return;
             if (typeof st.overlayId === 'string') return;
         }
-        history.replaceState(getViewState('homeView', null), '');
+        browserHistory.replaceState(getViewState('homeView', null), '');
     } catch (_) {
         // ignore: some WebViews may block history state
     }
@@ -2126,6 +2157,17 @@ function ensureInitialHistoryState() {
 
 function setInAppStackTo(state) {
     inAppViewStack = [state];
+}
+
+function syncInAppStackToState(state) {
+    if (!isViewState(state)) return;
+    for (let i = inAppViewStack.length - 1; i >= 0; i -= 1) {
+        if (viewStateEquals(inAppViewStack[i], state)) {
+            inAppViewStack = inAppViewStack.slice(0, i + 1);
+            return;
+        }
+    }
+    pushInAppStack(state);
 }
 
 function pushInAppStack(state) {
@@ -2156,6 +2198,17 @@ function goBackInApp({ fallbackViewId = 'homeView' } = {}) {
     }
 
     if (inAppViewStack.length >= 2) {
+        const current = inAppViewStack[inAppViewStack.length - 1];
+        try {
+            const browserHistory = getBrowserHistory();
+            const st = browserHistory && browserHistory.state ? browserHistory.state : null;
+            if (browserHistory && viewStateEquals(st, current)) {
+                browserHistory.back();
+                return;
+            }
+        } catch (_) {
+            // fall through to the local fallback stack
+        }
         // Drop current, go to previous.
         inAppViewStack.pop();
         const prev = inAppViewStack[inAppViewStack.length - 1];
@@ -2178,9 +2231,10 @@ function showView(viewId, param = null, options = {}) {
     // Push new state BEFORE UI switch so Android back always has an entry.
     if (push) {
         try {
-            const cur = history && history.state ? history.state : null;
+            const browserHistory = getBrowserHistory();
+            const cur = browserHistory && browserHistory.state ? browserHistory.state : null;
             // Avoid pushing duplicates (e.g., tapping the same bottom tab).
-            if (!viewStateEquals(cur, nextState)) history.pushState(nextState, '');
+            if (browserHistory && !viewStateEquals(cur, nextState)) browserHistory.pushState(nextState, '');
         } catch (_) {
             // ignore
         }
