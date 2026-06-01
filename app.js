@@ -629,6 +629,7 @@ const PREMIUM_LIBRARY_EXTRA = [
 let folders = [];
 let zikirs = [];
 let history = {};
+let blockStorageWrites = false;
 let appSettings = { vibrationTap: true, vibrationTarget: true, sound: false, wakeLock: false, theme: 'navy' };
 let reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
 let entitlements = { premium: false };
@@ -1281,6 +1282,7 @@ function syncSettingsUI() {
 }
 
 function loadData() {
+    blockStorageWrites = false;
     const sv = localStorage.getItem('zikirmatik_data_v2');
     if (sv) {
         let d;
@@ -1288,6 +1290,7 @@ function loadData() {
             d = JSON.parse(sv);
         } catch (e) {
             console.error('zikirmatik_data_v2 okunamadı, varsayılan veri:', e);
+            blockStorageWrites = true;
             folders = [...DEFAULT_FOLDERS];
             zikirs = [...DEFAULT_ZIKIRS];
             history = {};
@@ -1389,6 +1392,10 @@ function loadData() {
     syncSettingsUI();
 }
 function saveData() {
+    if (blockStorageWrites) {
+        console.error('saveData engellendi: zikirmatik_data_v2 okunamadığı için mevcut kayıt korunuyor.');
+        return;
+    }
     const payload = {
         folders,
         zikirs,
@@ -2083,9 +2090,9 @@ function openOverlay(overlayId, { onOpen } = {}) {
     if (!el) return;
     ensureInitialHistoryState();
     try {
-        const cur = history && history.state ? history.state : null;
+        const cur = window.history && window.history.state ? window.history.state : null;
         const next = getOverlayState(overlayId);
-        if (!isOverlayState(cur) || cur.overlayId !== next.overlayId) history.pushState(next, '');
+        if (!isOverlayState(cur) || cur.overlayId !== next.overlayId) window.history.pushState(next, '');
     } catch (_) {
         // ignore
     }
@@ -2098,9 +2105,9 @@ function closeOverlayPreferHistory(overlayId) {
     if (!el) return false;
     if (!isOverlayActive(el)) return false;
     try {
-        const st = history && history.state ? history.state : null;
+        const st = window.history && window.history.state ? window.history.state : null;
         if (isOverlayState(st) && st.overlayId === overlayId) {
-            history.back();
+            window.history.back();
             return true;
         }
     } catch (_) {
@@ -2112,13 +2119,13 @@ function closeOverlayPreferHistory(overlayId) {
 
 function ensureInitialHistoryState() {
     try {
-        const st = history && history.state ? history.state : null;
+        const st = window.history && window.history.state ? window.history.state : null;
         // If we already have an in-app state (view or overlay), don't clobber it.
         if (st && typeof st === 'object') {
             if (typeof st.viewId === 'string') return;
             if (typeof st.overlayId === 'string') return;
         }
-        history.replaceState(getViewState('homeView', null), '');
+        window.history.replaceState(getViewState('homeView', null), '');
     } catch (_) {
         // ignore: some WebViews may block history state
     }
@@ -2178,9 +2185,9 @@ function showView(viewId, param = null, options = {}) {
     // Push new state BEFORE UI switch so Android back always has an entry.
     if (push) {
         try {
-            const cur = history && history.state ? history.state : null;
+            const cur = window.history && window.history.state ? window.history.state : null;
             // Avoid pushing duplicates (e.g., tapping the same bottom tab).
-            if (!viewStateEquals(cur, nextState)) history.pushState(nextState, '');
+            if (!viewStateEquals(cur, nextState)) window.history.pushState(nextState, '');
         } catch (_) {
             // ignore
         }
