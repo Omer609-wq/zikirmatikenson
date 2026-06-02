@@ -625,6 +625,8 @@ const PREMIUM_LIBRARY_EXTRA = [
     }
 ];
 
+const DATA_STORAGE_KEY = 'zikirmatik_data_v2';
+
 // State
 let folders = [];
 let zikirs = [];
@@ -633,6 +635,7 @@ let appSettings = { vibrationTap: true, vibrationTarget: true, sound: false, wak
 let reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
 let entitlements = { premium: false };
 let trash = { v: 1, entries: [] }; // soft-deleted items
+let dataStorageWriteBlocked = false;
 
 let currentFolderId = null;
 let currentZikirId = null;
@@ -1281,11 +1284,12 @@ function syncSettingsUI() {
 }
 
 function loadData() {
-    const sv = localStorage.getItem('zikirmatik_data_v2');
+    const sv = localStorage.getItem(DATA_STORAGE_KEY);
     if (sv) {
         let d;
         try {
             d = JSON.parse(sv);
+            dataStorageWriteBlocked = false;
         } catch (e) {
             console.error('zikirmatik_data_v2 okunamadı, varsayılan veri:', e);
             folders = [...DEFAULT_FOLDERS];
@@ -1295,6 +1299,7 @@ function loadData() {
             reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
             entitlements = { premium: false };
             trash = { v: 1, entries: [] };
+            dataStorageWriteBlocked = true;
             syncSettingsUI();
             return;
         }
@@ -1380,6 +1385,7 @@ function loadData() {
 
         if (sanitizeHistory() || pruneHistory()) saveData();
     } else {
+        dataStorageWriteBlocked = false;
         folders = [...DEFAULT_FOLDERS];
         zikirs = [...DEFAULT_ZIKIRS];
         history = {};
@@ -1389,6 +1395,10 @@ function loadData() {
     syncSettingsUI();
 }
 function saveData() {
+    if (dataStorageWriteBlocked) {
+        console.warn('saveData: mevcut kayıt okunamadığı için bu oturumda veri üzerine yazılmadı.');
+        return;
+    }
     const payload = {
         folders,
         zikirs,
@@ -1399,7 +1409,7 @@ function saveData() {
         trash
     };
     try {
-        localStorage.setItem('zikirmatik_data_v2', JSON.stringify(payload));
+        localStorage.setItem(DATA_STORAGE_KEY, JSON.stringify(payload));
     } catch (e) {
         const isQuota =
             e &&
@@ -1408,7 +1418,7 @@ function saveData() {
                 e.code === 1014);
         if (isQuota && (pruneHistory() || sanitizeHistory())) {
             try {
-                localStorage.setItem('zikirmatik_data_v2', JSON.stringify(payload));
+                localStorage.setItem(DATA_STORAGE_KEY, JSON.stringify(payload));
             } catch (e2) {
                 console.error('saveData: kota dolu, eski geçmiş budandıktan sonra da yazılamadı.', e2);
             }
