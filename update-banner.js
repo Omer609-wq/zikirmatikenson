@@ -306,7 +306,7 @@ function stopUpdateBannerSpotlight() {
     if (spotlight) spotlight.hidden = true;
 }
 
-function closeUpdateBannerDetail() {
+export function closeUpdateBannerDetail() {
     const overlay = document.getElementById('updateBannerDetailOverlay');
     overlay?.classList.remove('active');
     stopUpdateBannerSpotlight();

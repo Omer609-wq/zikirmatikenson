@@ -1,6 +1,7 @@
 import { applyNativeBottomInsetVar, isCapacitorNative, syncNativeDailyReminder } from './native-reminders.js';
 import {
     clearUpdateBannerDom,
+    closeUpdateBannerDetail,
     placeUpdateBanner,
     refreshUpdateBannerConfig
 } from './update-banner.js';
@@ -2076,6 +2077,7 @@ function closeAllOverlays() {
     ].forEach((el) => {
         if (el) el.classList.remove('active');
     });
+    closeUpdateBannerDetail();
 }
 
 function openOverlay(overlayId, { onOpen } = {}) {
@@ -2145,11 +2147,16 @@ function goBackInApp({ fallbackViewId = 'homeView' } = {}) {
         'libraryFolderSelectOverlay',
         'libraryDetailOverlay',
         'settingsOverlay',
-        'zikirStatsOverlay'
+        'zikirStatsOverlay',
+        'updateBannerDetailOverlay'
     ];
     for (const oid of overlayIds) {
         const el = document.getElementById(oid);
         if (isOverlayActive(el)) {
+            if (oid === 'updateBannerDetailOverlay') {
+                closeUpdateBannerDetail();
+                return;
+            }
             closeOverlayPreferHistory(oid);
             return;
         }
