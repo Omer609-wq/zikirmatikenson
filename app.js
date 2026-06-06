@@ -633,6 +633,8 @@ let appSettings = { vibrationTap: true, vibrationTarget: true, sound: false, wak
 let reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
 let entitlements = { premium: false };
 let trash = { v: 1, entries: [] }; // soft-deleted items
+let persistedDataWriteBlocked = false;
+let persistedDataWriteBlockReason = '';
 
 let currentFolderId = null;
 let currentZikirId = null;
@@ -1032,6 +1034,11 @@ function isPlainObject(v) {
     return p === Object.prototype || p === null;
 }
 
+function blockPersistedDataWrites(reason) {
+    persistedDataWriteBlocked = true;
+    persistedDataWriteBlockReason = reason || 'invalid persisted data';
+}
+
 function coerceString(v, maxLen = 240) {
     if (v == null) return '';
     const s = String(v).replace(/\s+/g, ' ').trim();
@@ -1288,6 +1295,7 @@ function loadData() {
             d = JSON.parse(sv);
         } catch (e) {
             console.error('zikirmatik_data_v2 okunamadı, varsayılan veri:', e);
+            blockPersistedDataWrites('zikirmatik_data_v2 parse failed');
             folders = [...DEFAULT_FOLDERS];
             zikirs = [...DEFAULT_ZIKIRS];
             history = {};
@@ -1298,9 +1306,25 @@ function loadData() {
             syncSettingsUI();
             return;
         }
+        if (!isPlainObject(d) || !Array.isArray(d.zikirs)) {
+            console.error('zikirmatik_data_v2 geçersiz; mevcut kayıt korunuyor.');
+            blockPersistedDataWrites('zikirmatik_data_v2 has invalid shape');
+            folders = [...DEFAULT_FOLDERS];
+            zikirs = [...DEFAULT_ZIKIRS];
+            history = {};
+            appSettings = { vibrationTap: true, vibrationTarget: true, sound: false, wakeLock: false, theme: 'navy' };
+            reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
+            entitlements = { premium: false };
+            trash = { v: 1, entries: [] };
+            syncSettingsUI();
+            return;
+        }
+        persistedDataWriteBlocked = false;
+        persistedDataWriteBlockReason = '';
+        const loadedZikirsWereExplicitlyEmpty = d.zikirs.length === 0;
         const sanitized = sanitizeLoadedData(d);
         folders = sanitized.folders.length ? sanitized.folders : [...DEFAULT_FOLDERS];
-        zikirs = sanitized.zikirs.length ? sanitized.zikirs : [...DEFAULT_ZIKIRS];
+        zikirs = sanitized.zikirs;
         history = sanitized.history || {};
         appSettings = sanitized.settings || appSettings;
         reminderSettings = {
@@ -1338,7 +1362,7 @@ function loadData() {
                 });
             });
             saveData();
-        } else {
+        } else if (!loadedZikirsWereExplicitlyEmpty) {
             // Ensure all Esma items exist (if ESMA_LIST was expanded in later versions)
             let changed = false;
             ESMA_LIST.forEach((esma, index) => {
@@ -1380,6 +1404,8 @@ function loadData() {
 
         if (sanitizeHistory() || pruneHistory()) saveData();
     } else {
+        persistedDataWriteBlocked = false;
+        persistedDataWriteBlockReason = '';
         folders = [...DEFAULT_FOLDERS];
         zikirs = [...DEFAULT_ZIKIRS];
         history = {};
@@ -1389,6 +1415,10 @@ function loadData() {
     syncSettingsUI();
 }
 function saveData() {
+    if (persistedDataWriteBlocked) {
+        console.error(`saveData engellendi: ${persistedDataWriteBlockReason || 'geçersiz mevcut kayıt'}`);
+        return;
+    }
     const payload = {
         folders,
         zikirs,
