@@ -230,6 +230,6 @@ test('an intentionally empty zikirs array remains empty and writable', () => {
     api.saveData();
 
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    assert.deepEqual(api.getState().zikirs, []);
+    assert.equal(api.getState().zikirs.length, 0);
     assert.deepEqual(saved.zikirs, []);
 });
