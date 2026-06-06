@@ -1321,6 +1321,7 @@ function loadData() {
         }
         persistedDataWriteBlocked = false;
         persistedDataWriteBlockReason = '';
+        const loadedZikirsWereExplicitlyEmpty = d.zikirs.length === 0;
         const sanitized = sanitizeLoadedData(d);
         folders = sanitized.folders.length ? sanitized.folders : [...DEFAULT_FOLDERS];
         zikirs = sanitized.zikirs;
@@ -1361,7 +1362,7 @@ function loadData() {
                 });
             });
             saveData();
-        } else {
+        } else if (!loadedZikirsWereExplicitlyEmpty) {
             // Ensure all Esma items exist (if ESMA_LIST was expanded in later versions)
             let changed = false;
             ESMA_LIST.forEach((esma, index) => {
