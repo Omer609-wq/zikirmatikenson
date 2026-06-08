@@ -1,6 +1,7 @@
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { REMINDER_FIXED_BODY } from './quotes.js';
+import { SystemChrome } from './system-chrome.js';
 
 /** İlk slot; ardışık id’ler kullanılır (günlük tekrar için çoklu tek-sefer alarm). */
 const REMINDER_BASE_ID = 9001;
@@ -14,6 +15,63 @@ export function isCapacitorNative() {
         return Capacitor.isNativePlatform();
     } catch {
         return false;
+    }
+}
+
+function setBottomInsetPx(px) {
+    const root = document.documentElement;
+    if (px > 0) {
+        root.style.setProperty('--app-system-nav-inset', `${px}px`);
+    } else {
+        root.style.removeProperty('--app-system-nav-inset');
+    }
+}
+
+function readVisualViewportBottomInset() {
+    const vv = window.visualViewport;
+    if (!vv) return 0;
+    return Math.max(0, Math.round(window.innerHeight - vv.offsetTop - vv.height));
+}
+
+/**
+ * Alt sistem çubuğu için global inset — yalnızca içerik çubuğun altına taşıyorsa (visualViewport).
+ * decorFitsSystemWindows=true iken native inset eklenmez (çift boşluk olur).
+ */
+export async function refreshNativeBottomInsetVar() {
+    const root = document.documentElement;
+    if (!isCapacitorNative() || Capacitor.getPlatform() !== 'android') {
+        root.classList.remove('cap-native-android');
+        root.style.removeProperty('--app-system-nav-inset');
+        return;
+    }
+
+    root.classList.add('cap-native-android');
+    setBottomInsetPx(readVisualViewportBottomInset());
+}
+
+/**
+ * Kaydırılabilir modal (Ayarlar vb.) alt boşluğu — native nav yüksekliği dahil.
+ */
+export async function applyModalOverlayBottomInset(overlayEl) {
+    if (!overlayEl) return;
+    if (!isCapacitorNative() || Capacitor.getPlatform() !== 'android') {
+        overlayEl.style.removeProperty('--overlay-modal-bottom');
+        return;
+    }
+
+    let px = readVisualViewportBottomInset();
+    if (px <= 0) {
+        try {
+            const { bottom } = await SystemChrome.getSafeAreaInsets();
+            px = Math.max(0, Math.round(Number(bottom) || 0));
+        } catch {
+            /* yoksay */
+        }
+    }
+    if (px > 0) {
+        overlayEl.style.setProperty('--overlay-modal-bottom', `${px}px`);
+    } else {
+        overlayEl.style.removeProperty('--overlay-modal-bottom');
     }
 }
 
@@ -38,29 +96,18 @@ export function applyNativeBottomInsetVar() {
 
     root.classList.add('cap-native-android');
 
-    const read = () => {
-        const vv = window.visualViewport;
-        if (!vv) {
-            clear();
-            return;
-        }
-        const gap = window.innerHeight - vv.offsetTop - vv.height;
-        const px = Math.max(0, Math.round(gap));
-        if (px > 0) {
-            root.style.setProperty('--app-system-nav-inset', `${px}px`);
-        } else {
-            clear();
-        }
+    const readViewport = () => {
+        void refreshNativeBottomInsetVar();
     };
 
-    read();
+    readViewport();
     const vv = window.visualViewport;
     if (vv) {
-        vv.addEventListener('resize', read);
-        vv.addEventListener('scroll', read);
+        vv.addEventListener('resize', readViewport);
+        vv.addEventListener('scroll', readViewport);
     }
     window.addEventListener('orientationchange', () => {
-        setTimeout(read, 200);
+        setTimeout(readViewport, 200);
     });
 }
 

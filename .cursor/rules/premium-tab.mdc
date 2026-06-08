@@ -1,0 +1,21 @@
+---
+description: Premium sekmesi ve çöp kutusu UI geçici kaldırıldı; yayın zamanı geri eklenecek
+alwaysApply: true
+---
+
+# Premium UI (geçici kapalı)
+
+Alt menüdeki **Premium** sekmesi ve ayarlardaki **çöp kutusu** butonu kullanıcıya gösterilmiyor. `premiumView`, çöp kutusu mantığı (`trash` verisi, soft-delete) ve çeviriler kodda duruyor.
+
+## Yeniden açmak için
+
+1. `app.js`: `const PREMIUM_UI_VISIBLE = false` → `true`
+2. `index.html` geri ekle:
+   - Alt menü: `bottom-nav__btn--premium` butonu (`data-view="premiumView"`)
+   - Ayarlar başlığı: `#openTrashBtn` çöp kutusu ikonu
+   - `#trashOverlay` modalı
+3. `app.js` içinde çöp kutusu dinleyicilerini ve `syncTrashButtonUI` çağrılarını geri bağla (git geçmişine bakılabilir).
+
+İsteğe bağlı limitler: `PREMIUM_LIVE = true`
+
+Kullanıcı yayın zamanı geldiğinde bunları tekrar aktifleştirmek isteyecek.

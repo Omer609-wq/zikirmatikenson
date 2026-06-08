@@ -1,0 +1,433 @@
+[
+  {
+    "id": "lib_d_tuvalet_giris",
+    "category": "dua",
+    "name": "Allahümme innî eûzü bike minel hubsi vel habâisi",
+    "meaning": "Ya Allah, pislikten ve pis varlıklardan Sana sığınıyorum.",
+    "context": "Tuvalete, helaya veya abdesthane gibi mahrem yere girilmeden önce okunur; Allah'a sığınmak sünnettir.",
+    "source": "Buhari, Vudu 23; Müslim, Taharet 16",
+    "target": 1,
+    "keywords": "tuvalet hela wc lavabo abdesthane tuvalete mahrem hijyen"
+  },
+  {
+    "id": "lib_d_tuvalet_cikis",
+    "category": "dua",
+    "name": "Ğufreâneke",
+    "meaning": "Affını dilerim.",
+    "context": "Tuvaletten veya heladan çıkarken okunur; kulun affını dilemesi edeptir.",
+    "source": "Ebu Davud, Taharet 7; Tirmizi, Daavat 22",
+    "target": 1,
+    "keywords": "tuvalet hela wc çıkış affetme"
+  },
+  {
+    "id": "lib_d_eve_giris",
+    "category": "dua",
+    "name": "Allahümme inni esa'elüke hayral mühlı ve hayral mahrı",
+    "meaning": "Ya Allah, gireceğim yerin hayrını ve çıkacağım yerin hayrını Senden dilerim.",
+    "context": "Eve, iş yerine veya misafirliğe kapıdan girerken; giriş ve çıkışın hayrını dilemek sünnettir.",
+    "source": "Müslim, Salat 65; Ebu Davud, Edeb 101",
+    "target": 1,
+    "keywords": "ev kapı giriş misafir iş yeri besmele"
+  },
+  {
+    "id": "lib_d_yemek_once",
+    "category": "dua",
+    "name": "Bismillâh",
+    "meaning": "Allah'ın adıyla.",
+    "context": "Yemeğe başlarken; besmele ile başlamak bereket ve şükür içindir.",
+    "source": "Tirmizi, Daavat 14",
+    "target": 1,
+    "keywords": "yemek sofra yemekten önce başlangıç"
+  },
+  {
+    "id": "lib_d_yemek_sonra",
+    "category": "dua",
+    "name": "Elhamdülillâhillezî et'amenâ ve sekânâ",
+    "meaning": "Bizi yediren ve içiren Allah'a hamd olsun.",
+    "context": "Yemek bitince şükür ve hamd için; nimeti veren Allah'a hamdetmek sünnettir.",
+    "source": "Tirmizi, Daavat 11; Ebu Davud, At'ime 13",
+    "target": 1,
+    "keywords": "yemek sofra bitiş şükür hamd"
+  },
+  {
+    "id": "lib_d_arac",
+    "category": "dua",
+    "name": "Sübhânellezî sehhara lenâ hâzâ",
+    "meaning": "Bunu bizim emrimize veren Allah'ı tesbih ederim.",
+    "context": "Binek veya araca (otobüs, araba vb.) binildiğinde; yolculukta Allah'ı anmak tavsiye edilir.",
+    "source": "Müslim, Hac 15",
+    "target": 1,
+    "keywords": "araç araba otobüs yolculuk binek seyahat"
+  },
+  {
+    "id": "lib_d_uyku",
+    "category": "dua",
+    "name": "Bismike Allahümme ehya ve emût",
+    "meaning": "Ey Allah'ım! Senin adınla yaşarım ve ölürüm (uyurum).",
+    "context": "Uyumadan önce yatağa yatınca; geceyi Allah'a emanet etmek sünnettir.",
+    "source": "Buhari, Daavat 11",
+    "target": 1,
+    "keywords": "uyku yatmak gece yatak"
+  },
+  {
+    "id": "lib_d_uyaninca",
+    "category": "dua",
+    "name": "Elhamdülillâhillezî ahyânâ ba'de mâ emâtenâ ve ileyhin-nüşûr",
+    "meaning": "Bizi ölüm gibi uyku sonrası dirilten Allah'a hamd olsun; dönüş O'nadır.",
+    "context": "Sabah uyandığında, gözü açınca; uyku nimetine şükür ve güne Allah'la başlamak için.",
+    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "target": 1,
+    "keywords": "sabah uyanmak göz gece gündüz şükür"
+  },
+  {
+    "id": "lib_d_evden_cikis",
+    "category": "dua",
+    "name": "Bismillâhi tevekkeltü alallâhi, lâ havle ve lâ kuvvete illâ billâh",
+    "meaning": "Allah'ın adıyla; Allah'a tevekkül ettim. Güç ve kuvvet ancak Allah'tandır.",
+    "context": "Evden, işten veya güvenli bir yerden çıkarken; yol ve iş için Allah'a dayanmak içindir.",
+    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "target": 1,
+    "keywords": "ev çıkış kapı iş yol günlük tevekkül"
+  },
+  {
+    "id": "lib_d_yeni_elbise",
+    "category": "dua",
+    "name": "Elhamdülillâhillezî kezâni hâzâ ve mâ kuntu muahhıran bi hâzâ",
+    "meaning": "Bunu bana giydiren ve onsuz güç yetiremeyeceğim şeyi bana veren Allah'a hamd olsun.",
+    "context": "Yeni elbise veya örtü giyildiğinde; nimete şükür ve israf etmemeyi hatırlamak için.",
+    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "target": 1,
+    "keywords": "elbise kıyafet giyinmek yeni örtü"
+  },
+  {
+    "id": "lib_d_ayna",
+    "category": "dua",
+    "name": "Allâhümme kemâ hassente halkî fehassin hulûkî",
+    "meaning": "Ya Allah, dış görünüşümü güzel yaptığın gibi ahlâkımı da güzelleştir.",
+    "context": "Aynaya bakıldığında; suret nimetine şükür ve iç güzelliği dilemek için.",
+    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "target": 1,
+    "keywords": "ayna suret yüz ahlâk şükür"
+  },
+  {
+    "id": "lib_d_cami_giris",
+    "category": "dua",
+    "name": "Allâhümmeftah li ebvâbe rahmetik",
+    "meaning": "Ya Allah, bana rahmetinin kapılarını aç.",
+    "context": "Cami veya mescide girerken; ibadet yeri saygısı ve mağfiret ümidiyle.",
+    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "target": 1,
+    "keywords": "cami mescid giriş kapı namaz"
+  },
+  {
+    "id": "lib_d_cami_cikis",
+    "category": "dua",
+    "name": "Allâhümme innî es'elüke min fadlik",
+    "meaning": "Ya Allah, Senin lütfundan (fadlından) Senden dilerim.",
+    "context": "Cami veya mescidden çıkarken; ibadet sonrası hayır ve mağfiret dilemek için.",
+    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "target": 1,
+    "keywords": "cami mescid çıkış namaz hayır"
+  },
+  {
+    "id": "lib_d_kabir",
+    "category": "dua",
+    "name": "Esselâmu aleykum ehle diyârin minel mü'minîne vel müslimîn",
+    "meaning": "Ey bu diyarın mümin ve Müslüman halkı, size selâm olsun.",
+    "context": "Kabristana girildiğinde veya mezarlıkta; ölülere selâm ve ahiret hatırlatması için.",
+    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "target": 1,
+    "keywords": "kabir mezarlık ölü ziyaret ahiret"
+  },
+  {
+    "id": "lib_d_kotu_ruya",
+    "category": "dua",
+    "name": "Na'ûzü billâhi min şerri hâzâ ve min şerri mâ fîh",
+    "meaning": "Bunun şerrinden ve içindeki şeylerin şerrinden Allah'a sığınırım.",
+    "context": "Rüyada kötü bir şey görülüp uyanınca; şer ve vesveseden Allah'a sığınmak için.",
+    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "target": 1,
+    "keywords": "rüya uyku korku şer sığınma"
+  },
+  {
+    "id": "lib_d_olum_haberi",
+    "category": "dua",
+    "name": "İnnâ lillâhi ve innâ ileyhi râciûn, Allâhümme'curnî fî musîbetî ve'hturni hayren minhâ",
+    "meaning": "Biz Allah'a aidiz ve O'na döneceğiz. Ya Allah, musibetimde bana mükâfat yaz ve ondan hayırlı bir çıkış nasip et.",
+    "context": "Ölüm veya büyük kayıp haberi işitilince; sabır ve karşılık dilemek için (ayet ve dua birlikte anılır).",
+    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "target": 1,
+    "keywords": "ölüm musibet kayıp sabır taziye"
+  },
+  {
+    "id": "lib_d_yagmur_isteme",
+    "category": "dua",
+    "name": "Allâhümme eskıb seyyiban nâfi'an",
+    "meaning": "Ya Allah, bize faydalı bir yağmur yağdır.",
+    "context": "Kuraklık veya yağmura ihtiyaç duyulduğunda çıplak veya hafif örtülü kıbleye dönerek dua edilir (sünnet adabına göre).",
+    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "target": 1,
+    "keywords": "yağmur kuraklık tarla çiftçi su isteme"
+  },
+  {
+    "id": "lib_d_yagmur_yagarken",
+    "category": "dua",
+    "name": "Allâhümme sevvibenâ mâren mübâreken",
+    "meaning": "Ya Allah, bize bereketli bir yağmur yağdır.",
+    "context": "Yağmur yağmaya başlayınca; nimete şükür ve bereket dilemek için.",
+    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "target": 1,
+    "keywords": "yağmur gök yağış şükür bereket"
+  },
+  {
+    "id": "lib_d_sikinti_yunus",
+    "category": "dua",
+    "name": "Lâ ilâhe illâ ente sübhâneke innî küntü minez-zâlimîn",
+    "meaning": "Senden başka ilah yok; Seni noksan sıfatlardan tenzih ederim; ben zulmedenlerden oldum.",
+    "context": "Sıkıntı, korku veya ümitsizlik anında; Yunus (a.s.) duası olarak kalbi Allah'a yönlendirmek için.",
+    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "target": 1,
+    "keywords": "sıkıntı dert korku ümit tevekkül gemi"
+  },
+  {
+    "id": "lib_d_ilim",
+    "category": "dua",
+    "name": "Rabbi zidnî ilmen nâfi'an ve fehmen vâsian",
+    "meaning": "Rabbim, bana faydalı ilim ve geniş bir anlayış artır.",
+    "context": "Ders, Kur'an okuma veya işe başlarken; ilim ve hikmet dilemek için.",
+    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "target": 1,
+    "keywords": "ilim ders okul Kuran çalışma hikmet"
+  },
+  {
+    "id": "lib_1",
+    "category": "zikir",
+    "name": "Sübhanallahi ve bihamdihi",
+    "arabic": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
+    "meaning": "Allah'ı noksan sıfatlardan tenzih eder, O'na hamdederim",
+    "context": "Günde yüz defa okuyanın günahları deniz köpüğü kadar olsa affedilir. Gün içinde istenen sıklıkta tekrarlanır.",
+    "source": "Buhari, Daavat 65; Müslim, Zikir 28",
+    "target": 100,
+    "keywords": "günah mağfiret günlük tesbih bağışlanma"
+  },
+  {
+    "id": "lib_2",
+    "category": "zikir",
+    "name": "Hasbünallahü ve ni'mel vekil",
+    "arabic": "حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ",
+    "meaning": "Allah bize yeter; O ne güzel vekildir.",
+    "context": "Ayette geçer; sıkıntı ve korkuda kalbe huzur ve tevekkül verir. Zor anlarda okunması tavsiye edilir.",
+    "source": "Kur'an-ı Kerim, Al-i İmran: 173",
+    "target": 100,
+    "keywords": "sıkıntı dert korku güven tevekkül ayet"
+  },
+  {
+    "id": "lib_3",
+    "category": "zikir",
+    "name": "Elhamdülillah",
+    "arabic": "الْحَمْدُ لِلَّهِ",
+    "meaning": "Hamd (şükür ve övgü) Allah'a mahsustur.",
+    "context": "Mizanı ağırlatır, kalbi Allah'a bağlar. Şükür ve günlük zikir olarak her an okunabilir.",
+    "source": "Müslim, Taharet 1",
+    "target": 33,
+    "keywords": "şükür hamd nimet mizan"
+  },
+  {
+    "id": "lib_4",
+    "category": "zikir",
+    "name": "Lâ ilâhe illallah",
+    "arabic": "لَا إِلَهَ إِلَّا اللَّهُ",
+    "meaning": "Allah'tan başka ilah yoktur.",
+    "context": "Tevhid şuuru pekişir; sünnete uygun tekrarı faziletlidir. Sık tekrarlanan tevhid zikridir.",
+    "source": "Hadis kaynakları (çeşitli rivayetler)",
+    "target": 100,
+    "keywords": "tevhid kelime-i tevhid iman"
+  },
+  {
+    "id": "lib_5",
+    "category": "zikir",
+    "name": "Allahu ekber",
+    "arabic": "اللَّهُ أَكْبَرُ",
+    "meaning": "Allah en büyüktür.",
+    "context": "Namaz tesbihinde ve günlük zikirde; kalpte Allah'ın büyüklüğünü tazelemek için sık tekrarlanır.",
+    "source": "Müslim, Salât 158; genel sünnet",
+    "target": 33,
+    "keywords": "tekbir büyük Allah namaz tesbih"
+  },
+  {
+    "id": "lib_6",
+    "category": "zikir",
+    "name": "Sübhanallah",
+    "arabic": "سُبْحَانَ اللَّهِ",
+    "meaning": "Allah'ı her türlü noksandan tenzih ederim.",
+    "context": "Tesbihat ve günlük zikir; kalbi dünyadan söküp Allah'ı anmaya yönlendirir.",
+    "source": "Müslim, Zikr 22; Buhari, Müslim",
+    "target": 33,
+    "keywords": "tesbih tenzih sübhan"
+  },
+  {
+    "id": "lib_7",
+    "category": "zikir",
+    "name": "Lâ havle ve lâ kuvvete illâ billâh",
+    "arabic": "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+    "meaning": "Güç ve kuvvet ancak Allah'tandır.",
+    "context": "Sıkıntı, üzüntü veya zorluk anında; tevekkül ve Allah'a dayanma zikridir.",
+    "source": "Buhari, Müslim (tabii rivayetler)",
+    "target": 100,
+    "keywords": "sıkıntı güç kuvvet tevekkül havl kuvve"
+  },
+  {
+    "id": "lib_8",
+    "category": "zikir",
+    "name": "Estağfirullah",
+    "arabic": "أَسْتَغْفِرُ اللَّهَ",
+    "meaning": "Allah'tan mağfiret dilerim.",
+    "context": "Günah sonrası ve günlük tövbe alışkanlığı; kalbi temiz tutmaya yardım eder.",
+    "source": "Buhari, Daavât 19; Müslim, Zikr 44",
+    "target": 100,
+    "keywords": "istiğfar tövbe mağfiret günah af"
+  },
+  {
+    "id": "lib_9",
+    "category": "zikir",
+    "name": "Allâhümme salli alâ Muhammed",
+    "arabic": "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ",
+    "meaning": "Allah'ım, Muhammed'e salât eyle.",
+    "context": "Salavat; günahların bağışlanmasına ve derecelere vesile olduğu bildirilen sünnet zikridir.",
+    "source": "Tirmizi, Salât 22; Müslim, Salât 70",
+    "target": 100,
+    "keywords": "salavat salat nebi peygamber müjde"
+  },
+  {
+    "id": "lib_10",
+    "category": "zikir",
+    "name": "Allâhümme bârik alâ Muhammed",
+    "arabic": "اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ",
+    "meaning": "Allah'ım, Muhammed'e bereket ver.",
+    "context": "Salavatın tamamlayıcısı olarak beraber veya ayrı okunabilir; Nebi'ye hürmet ve şükür içindir.",
+    "source": "Tirmizi, Salât 22; Ebu Davud, Salât 152",
+    "target": 100,
+    "keywords": "salavat bereket nebi mübarek"
+  },
+  {
+    "id": "lib_11",
+    "category": "zikir",
+    "name": "Sübhanallâhil-azîm ve bihamdihi",
+    "arabic": "سُبْحَانَ اللَّهِ الْعَظِيمِ وَبِحَمْدِهِ",
+    "meaning": "Azîm olan Allah'ı hamd ile tenzih ederim.",
+    "context": "Hadiste cennet ağacı veya sevapla müjdelenen zikirlerden; günde belirli sayıda okunması tavsiye edilir.",
+    "source": "Tirmizi, Daavât 73; Buhari, Müslim (benzer rivayetler)",
+    "target": 100,
+    "keywords": "cennet ağaç hamd azim tesbih"
+  },
+  {
+    "id": "lib_12",
+    "category": "zikir",
+    "name": "Lâ ilâhe illallâhu vahdehu lâ şerîke leh",
+    "arabic": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+    "meaning": "Allah'tan başka ilah yoktur, O tektir, ortağı yoktur; mülk O'nundur, hamd O'nadır; O her şeye kadirdir.",
+    "context": "Sabah-akşam veya yatarken okunan tam kelime-i tevhid zikri; kalpte tevhidi pekiştirir.",
+    "source": "Buhari, Müslim (çeşitli rivayetler)",
+    "target": 100,
+    "keywords": "tevhid mülk hamd kudret kelime tam"
+  },
+  {
+    "id": "lib_13",
+    "category": "zikir",
+    "name": "Hasbiyallâhu lâ ilâhe illâ hu",
+    "arabic": "حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ، عَلَيْهِ تَوَكَّلْتُ",
+    "meaning": "Allah bana yeter; O'ndan başka ilah yoktur; yalnız O'na tevekkül ettim.",
+    "context": "Korku ve endişede Hz. İbrâhim ve Hz. Muhammed (s.a.v.) örneğiyle; kalbe güven veren ayet zikridir.",
+    "source": "Kur'an-ı Kerim, Tevbe 129",
+    "target": 100,
+    "keywords": "tevekkül korku yeter Allah ayet"
+  },
+  {
+    "id": "lib_14",
+    "category": "zikir",
+    "name": "Rabbîğfir ve rahhem",
+    "arabic": "رَبِّ اغْفِرْ وَارْحَمْ وَأَنْتَ خَيْرُ الرَّاحِمِينَ",
+    "meaning": "Rabbim, bağışla ve merhamet et; Sen merhamet edenlerin en hayırlısısın.",
+    "context": "Tövbe ve mağfiret dilemek; Kur'an'da geçen dua/zikir olarak kalbi yumuşatır.",
+    "source": "Kur'an-ı Kerim, Mü'minûn 118",
+    "target": 33,
+    "keywords": "mağfiret rahmet tövbe bağışlanma"
+  },
+  {
+    "id": "lib_15",
+    "category": "zikir",
+    "name": "Yâ Hayyu yâ Kayyûm",
+    "arabic": "يَا حَيُّ يَا قَيُّومُ",
+    "meaning": "Ey diri olan, ey her şeyi ayakta tutan.",
+    "context": "İsmin şerifleriyle yakarış; sıkıntıda ve günde dua ile birleştirilen meşhur zikir başlangıcıdır.",
+    "source": "Tirmizi, Daavât 91; genel sünnet",
+    "target": 100,
+    "keywords": "hayy kayyum isim sıkıntı dua"
+  },
+  {
+    "id": "lib_16",
+    "category": "zikir",
+    "name": "Sübhânellâhi ve bi hamdihi",
+    "arabic": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ سُبْحَانَ اللَّهِ الْعَظِيمِ",
+    "meaning": "Allah'ı hamd ile tenzih ederim; Azîm olan Allah'ı tenzih ederim.",
+    "context": "Hadiste ağır basan mizanda hafif, dilde kolay zikir olarak övülür.",
+    "source": "Buhari, Müslim (Tirmizi, Daavât 57)",
+    "target": 100,
+    "keywords": "mizan hamd tesbih kolay ağır"
+  },
+  {
+    "id": "lib_17",
+    "category": "zikir",
+    "name": "Radîtu billâhi Rabben",
+    "arabic": "رَضِيتُ بِاللَّهِ رَبًّا وَبِالْإِسْلَامِ دِينًا وَبِمُحَمَّدٍ نَبِيًّا",
+    "meaning": "Allah'ı Rabb, İslam'ı din, Muhammed'i Nebi olarak razı oldum.",
+    "context": "Yaygın rivayette sabah ve akşam (günde iki vakit) üçer defa okunması cennetle müjdelenmiştir. Uygulamada tek oturumda 3 tekrar hedefi; alışkanlığına göre hedefi düzenleyebilirsin.",
+    "source": "Ebu Davud, Sünnet 1; Ahmed",
+    "target": 3,
+    "keywords": "rıza iman İslam nebi cennet"
+  },
+  {
+    "id": "lib_18",
+    "category": "zikir",
+    "name": "Allâhümmâ entes-selâm",
+    "arabic": "اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ",
+    "meaning": "Allah'ım, Sen Selâmsın; selâm Sendendir. Ey celâl ve ikram sahibi, mübarek olan Sensin.",
+    "context": "Namaz selâmından sonra okunan dua-zikir; huzur ve selâmet dilemek içindir.",
+    "source": "Müslim, Salât 288",
+    "target": 1,
+    "keywords": "namaz selam huzur mübarek teşehhüd sonrası"
+  },
+  {
+    "id": "lib_19",
+    "category": "zikir",
+    "name": "Lâ ilâhe illallâhu (mülk, hayât, hayy)",
+    "arabic": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ، وَهُوَ حَيٌّ لَا يَمُوتُ، بِيَدِهِ الْخَيْرُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+    "meaning": "(Tevhid ve mülk, hayat ölüm, O'nun elinde hayır ve her şeye güç yetirme sıfatlarıyla tam zikir.)",
+    "context": "Yatarken veya gündüzün okunan uzun tevhid; kalpte Allah'ın rububiyet ve uluhiyetini hatırlatır.",
+    "source": "Buhari, Daavât 39; Müslim, Zikr 63",
+    "target": 1,
+    "keywords": "yatarken gece mülk hayat ölüm tevhid tam"
+  },
+  {
+    "id": "lib_20",
+    "category": "zikir",
+    "name": "Sübhânellâhi ve bi hamdihi adede halkihi",
+    "arabic": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ عَدَدَ خَلْقِهِ وَرِضَا نَفْسِهِ وَزِنَةَ عَرْشِهِ وَمِدَادَ كَلِمَاتِهِ",
+    "meaning": "Allah'ı yaratıklarının sayısı kadar, nefsinin rızası, Arş'ının ağırlığı ve kelimelerinin mürekkebi kadar hamd ile tesbih ederim.",
+    "context": "Geniş tesbih; günde bir kez veya sünnete uygun aralıklarla okunması tavsiye edilen zikirdir.",
+    "source": "Müslim, Zikir 33",
+    "target": 1,
+    "keywords": "tesbih geniş hamd yaratık arş kelime"
+  },
+  {
+    "id": "lib_21",
+    "category": "zikir",
+    "name": "Lâ ilâhe illallâhü'l-melikü'l-hakkü'l-mübîn",
+    "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ",
+    "meaning": "Allah'tan başka ilah yoktur; O, mülkün gerçek sahibi (Melik), hak ve adaletle hükmeden (Hakk), birliği ve hakkı apaçık olan (Mübîn) Allah'tır.",
+    "context": "Hz. Ali (r.a.)'dan rivayet edilen bir hadiste günde yüz defa okuyanın fakirlikten emin olacağı, kabirde yoldaş bulacağı ve tevhid sevabına vesile olacağı bildirilir; bazı kaynaklarda Cuma günü iki yüz defa okunması da zikredilir. Bu rivayetin senedi zayıf görüldüğünden tam itikadi sonuçlar için âlim görüşüne başvurulmalıdır; tevhid ve Allah'ı anma niyetiyle okunması caiz görülür.",
+    "source": "Hz. Ali (r.a.) rivayeti (Kenzü'l-Ummâl, 5058; senedi tenkit edilmiş)",
+    "target": 100,
+    "keywords": "melik hakk mubin tevhid kelime cuma yüz fakirlik kabir zenginlik"
+  }
+]

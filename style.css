@@ -257,10 +257,10 @@ body {
     height: auto;
     background: var(--bottom-nav-bg, rgba(2, 6, 23, 0.92));
     border-top: 1px solid var(--bottom-nav-border, rgba(255, 255, 255, 0.06));
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    padding: 6px 4px calc(10px + var(--app-bottom-inset-merged));
-    gap: 6px;
+    display: flex;
+    align-items: stretch;
+    padding: 6px 8px calc(10px + var(--app-bottom-inset-merged));
+    gap: 4px;
     z-index: 20;
     box-sizing: border-box;
 }
@@ -271,6 +271,8 @@ body {
     pointer-events: none !important;
 }
 .bottom-nav__btn {
+    flex: 1 1 0;
+    min-width: 0;
     border: none;
     background: transparent;
     color: var(--nav-btn-color, rgba(255, 255, 255, 0.7));
@@ -281,6 +283,7 @@ body {
     gap: 2px;
     border-radius: 12px;
     cursor: pointer;
+    padding: 4px 2px;
 }
 .bottom-nav__btn .material-icons-outlined {
     font-size: 22px;
@@ -289,6 +292,11 @@ body {
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.1px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
 }
 .bottom-nav__btn.active {
     color: var(--text-white);
@@ -1492,13 +1500,22 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
 .edit-target-btn:hover { background: rgba(255,255,255,0.1); color: white; }
 
 /* ================== COUNTER VIEW ================== */
+#counterView .glass-header {
+    align-items: flex-start;
+    flex-shrink: 0;
+}
+#counterView .glass-header > .icon-btn {
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+}
 .header-titles {
     text-align: center;
     flex-grow: 1;
-}
-.header-titles {
     min-width: 0;
     padding: 0 0.25rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 .header-titles h1 {
     font-size: clamp(0.9rem, 3.8vw, 1.0625rem);
@@ -1508,26 +1525,37 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
     letter-spacing: -0.02em;
     word-break: break-word;
     hyphens: auto;
+    flex-shrink: 0;
+}
+/* Arapça + anlam/fazilet — uzun metinlerde dikey kaydırma */
+.zikir-header-scroll {
+    max-height: min(26dvh, 11.5rem);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    text-align: center;
+    padding: 0 0.1rem 0.15rem;
+    margin-right: -0.15rem;
+    padding-right: 0.2rem;
+}
+.zikir-header-scroll:empty {
+    display: none;
 }
 .zikir-note {
     font-size: var(--text-sm);
     color: var(--text-gray);
     line-height: var(--leading-relaxed);
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    overflow: hidden;
-}
-.zikir-note.zikir-note--esma-detail {
     white-space: pre-line;
-    -webkit-line-clamp: 10;
-    line-clamp: 10;
-    max-height: 11.5em;
+    word-break: break-word;
+    margin: 0;
+}
+.zikir-header-scroll .zikir-arabic-header {
+    margin-bottom: 0.2rem;
 }
 
 .counter-container {
     flex-grow: 1;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1635,6 +1663,16 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
     margin-bottom: 1.5rem;
     box-shadow: var(--surface-shadow);
 }
+.stats-tabs--period {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+.stats-tabs--period .tab-btn {
+    flex: 1 1 calc(25% - 0.25rem);
+    min-width: 3.6rem;
+    padding: 0.5rem 0.2rem;
+    font-size: clamp(0.68rem, 2.6vw, var(--text-sm));
+}
 .tab-btn {
     flex: 1;
     padding: 0.6rem 0.45rem;
@@ -1712,13 +1750,40 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
     flex-direction: column; 
     align-items: center; 
     justify-content: flex-end;
-    width: 12%; 
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 14%;
     height: 100%; 
+}
+.css-chart--dense .chart-bar-group {
+    max-width: none;
+}
+.css-chart--dense .chart-label {
+    font-size: 0.58rem;
+}
+/* Aylık (12 ay): küçük ay etiketi; sütun kalınlığı haftalık ile aynı (max-width: 14%) */
+.css-chart--months {
+    gap: 0.12rem;
+    justify-content: space-between;
+    padding: 0;
+}
+.css-chart--months .chart-label {
+    font-size: 0.54rem;
+    line-height: 1.1;
+    margin-top: 0.4rem;
+    letter-spacing: -0.02em;
+    word-break: keep-all;
+}
+.css-chart--years .chart-label {
+    font-size: 0.58rem;
+    letter-spacing: -0.02em;
 }
 .chart-bar {
     position: relative;
     width: 100%; background: var(--primary-green); border-radius: 4px 4px 0 0;
-    min-height: 4px; transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 4px;
+    max-height: 100%;
+    transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .chart-bar:hover::after, .chart-bar:active::after {
     content: attr(data-tooltip);
@@ -1887,6 +1952,34 @@ input:checked + .slider:before { transform: translateX(22px); }
     -webkit-backdrop-filter: blur(8px);
 }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+/* Ayarlar / çöp kutusu: küçük ekran + 3 tuş nav — taşmayı önle, içerik kaydırılsın */
+.modal-overlay.modal-overlay--scrollable {
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding:
+        calc(0.65rem + env(safe-area-inset-top, 0px))
+        0.75rem
+        calc(0.65rem + var(--overlay-modal-bottom, var(--app-bottom-inset-merged, env(safe-area-inset-bottom, 0px))));
+    box-sizing: border-box;
+}
+.modal-overlay.modal-overlay--scrollable .glass-modal {
+    display: flex;
+    flex-direction: column;
+    max-height: min(92dvh, 100%);
+    margin: auto 0;
+    flex-shrink: 0;
+}
+.modal-overlay.modal-overlay--scrollable .modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
 .glass-modal {
     background: var(--surface-card);
     border: 1px solid var(--surface-border);

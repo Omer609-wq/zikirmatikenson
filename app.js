@@ -1,4 +1,10 @@
-import { applyNativeBottomInsetVar, isCapacitorNative, syncNativeDailyReminder } from './native-reminders.js';
+import {
+    applyModalOverlayBottomInset,
+    applyNativeBottomInsetVar,
+    isCapacitorNative,
+    refreshNativeBottomInsetVar,
+    syncNativeDailyReminder
+} from './native-reminders.js';
 import {
     clearUpdateBannerDom,
     placeUpdateBanner,
@@ -8,12 +14,24 @@ import { applyNativeStatusBarTheme } from './status-bar-theme.js';
 import { runCounterVibration, runDragReorderNudge } from './haptics.js';
 import { pickRandomQuote, REMINDER_FIXED_BODY } from './quotes.js';
 import { ESMA_DEFAULT_FAZILET } from './esma-fazilet.js';
+import {
+    applyLocaleToDocument,
+    tForLocale,
+    getLocaleTag,
+    getZikirLibrary,
+    initI18n,
+    normalizeAppLocale,
+    SUPPORTED_LOCALES,
+    t
+} from './i18n.js';
 
 // ===================== DATA MODELS =====================
-const DEFAULT_FOLDERS = [
-    { id: 'f_default', name: 'Varsayılan Zikirler' },
-    { id: 'f_esma', name: 'Esma\'ül Hüsna' }
-];
+function getDefaultFolders() {
+    return [
+        { id: 'f_default', name: t('defaults.folderDefault') },
+        { id: 'f_esma', name: t('defaults.folderEsma') }
+    ];
+}
 
 const ESMA_LIST = [
     // Meanings: https://www.esmaulhusna.gen.tr/esmaul-husna.html
@@ -139,11 +157,58 @@ const DEFAULT_ZIKIR_ARABIC_BY_ID = {
     z_4: 'لَا إِلَهَ إِلَّا اللَّهُ'
 };
 
+const CLASSIC_ZIKIR_IDS = ['z_1', 'z_2', 'z_3', 'z_4'];
+
+function classicZikirMeaningKey(zid) {
+    return `defaults.zikirMeaning.${zid}`;
+}
+
+function getKnownClassicZikirMeanings(zid) {
+    const known = new Set();
+    for (const loc of SUPPORTED_LOCALES) {
+        const text = tForLocale(loc.code, classicZikirMeaningKey(zid));
+        if (text) known.add(text.trim());
+    }
+    return known;
+}
+
+function getLocalizedClassicZikirMeaning(zid) {
+    const text = t(classicZikirMeaningKey(zid));
+    const key = classicZikirMeaningKey(zid);
+    return text !== key ? text : (tForLocale('tr', key) || '');
+}
+
+function syncLocalizedDefaults({ persist = false } = {}) {
+    const df = folders.find((f) => f.id === 'f_default');
+    if (df) df.name = t('defaults.folderDefault');
+    const esma = folders.find((f) => f.id === 'f_esma');
+    if (esma) esma.name = t('defaults.folderEsma');
+
+    for (const zid of CLASSIC_ZIKIR_IDS) {
+        const z = zikirs.find((x) => x.id === zid);
+        if (!z) continue;
+        const cur = String(z.meaning || '').trim();
+        const known = getKnownClassicZikirMeanings(zid);
+        if (!cur || known.has(cur)) {
+            z.meaning = getLocalizedClassicZikirMeaning(zid);
+        }
+    }
+
+    if (persist) saveData();
+
+    const home = document.getElementById('homeView');
+    if (home && home.classList.contains('active')) renderFolders();
+    const fd = document.getElementById('folderDetailView');
+    if (fd && fd.classList.contains('active')) renderFolderDetail();
+    const cv = document.getElementById('counterView');
+    if (cv && cv.classList.contains('active')) updateCounterUI();
+}
+
 const DEFAULT_ZIKIRS = [
-    { id: 'z_1', folderId: 'f_default', name: 'Subhanallah', arabic: DEFAULT_ZIKIR_ARABIC_BY_ID.z_1, target: 33, meaning: 'Allah her türlü eksiklikten münezzehtir.', count: 0, lastClicked: 0 },
-    { id: 'z_2', folderId: 'f_default', name: 'Elhamdülillah', arabic: DEFAULT_ZIKIR_ARABIC_BY_ID.z_2, target: 33, meaning: "Hamd Allah'adır.", count: 0, lastClicked: 0 },
-    { id: 'z_3', folderId: 'f_default', name: 'Allahü Ekber', arabic: DEFAULT_ZIKIR_ARABIC_BY_ID.z_3, target: 33, meaning: 'Allah en büyüktür.', count: 0, lastClicked: 0 },
-    { id: 'z_4', folderId: 'f_default', name: 'La ilahe illallah', arabic: DEFAULT_ZIKIR_ARABIC_BY_ID.z_4, target: 100, meaning: "Allah'tan başka ilah yoktur.", count: 0, lastClicked: 0 }
+    { id: 'z_1', folderId: 'f_default', name: 'Subhanallah', arabic: DEFAULT_ZIKIR_ARABIC_BY_ID.z_1, target: 33, meaning: getLocalizedClassicZikirMeaning('z_1'), count: 0, lastClicked: 0 },
+    { id: 'z_2', folderId: 'f_default', name: 'Elhamdülillah', arabic: DEFAULT_ZIKIR_ARABIC_BY_ID.z_2, target: 33, meaning: getLocalizedClassicZikirMeaning('z_2'), count: 0, lastClicked: 0 },
+    { id: 'z_3', folderId: 'f_default', name: 'Allahü Ekber', arabic: DEFAULT_ZIKIR_ARABIC_BY_ID.z_3, target: 33, meaning: getLocalizedClassicZikirMeaning('z_3'), count: 0, lastClicked: 0 },
+    { id: 'z_4', folderId: 'f_default', name: 'La ilahe illallah', arabic: DEFAULT_ZIKIR_ARABIC_BY_ID.z_4, target: 100, meaning: getLocalizedClassicZikirMeaning('z_4'), count: 0, lastClicked: 0 }
 ];
 
 ESMA_LIST.forEach((esma, index) => {
@@ -154,482 +219,20 @@ ESMA_LIST.forEach((esma, index) => {
     });
 });
 
-// category: 'dua' | 'zikir' — UI’da yalnızca bu iki sekme var.
-// name: kart başlığı ve klasöre eklenince görünen isim (dua/zikir metni).
-// context: fazilet / okunma durumu (dua ve zikirde kart + detayda aynı blok; kartta kısaltılır).
-// Arama: name, meaning, context, source, keywords.
-//
-// ——— Kütüphane editoryal standardı (yeni dua/zikir eklerken zorunlu) ———
-// Yanlış bilgi kullanıcıyı yanıltır; aşağıdakilere özellikle dikkat et:
-// - meaning: Arapça/Türkçe karşılık doğru ve sade; kaynak metne dayan.
-// - context (fazilet, ne zaman/nasıl): Rivayet veya muteber özet; “kesin vaat” iddiasından kaçın.
-//   Birden fazla rivayet varsa kısaca belirt veya “yaygın rivayette…” de.
-// - source: Mümkünse kitap/bab veya güvenilir derleme (ör. Nevevî Ezkar); şüpheliyse ekleme veya “kaynak tartışmalı” notu düş.
-// - target: Tek doğru sayı çoğu metinde yoktur. Bilinen rivayette geçen sayıyı (ör. üçer defa) kullan;
-//   genel tesbih (33/100) sadece o rivayetle uyumluysa. Uygun değilse target’ı düşük tut ve context’te açıkla.
-// - keywords: Arama için; dini hüküm iddiası taşımasın.
-const ZIKIR_LIBRARY = [
-    {
-        id: 'lib_d_tuvalet_giris', category: 'dua',
-        name: 'Allahümme innî eûzü bike minel hubsi vel habâisi',
-        meaning: 'Ya Allah, pislikten ve pis varlıklardan Sana sığınıyorum.',
-        context: 'Tuvalete, helaya veya abdesthane gibi mahrem yere girilmeden önce okunur; Allah\'a sığınmak sünnettir.',
-        source: 'Buhari, Vudu 23; Müslim, Taharet 16',
-        target: 1,
-        keywords: 'tuvalet hela wc lavabo abdesthane tuvalete mahrem hijyen'
-    },
-    {
-        id: 'lib_d_tuvalet_cikis', category: 'dua',
-        name: 'Ğufreâneke',
-        meaning: 'Affını dilerim.',
-        context: 'Tuvaletten veya heladan çıkarken okunur; kulun affını dilemesi edeptir.',
-        source: 'Ebu Davud, Taharet 7; Tirmizi, Daavat 22',
-        target: 1,
-        keywords: 'tuvalet hela wc çıkış affetme'
-    },
-    {
-        id: 'lib_d_eve_giris', category: 'dua',
-        name: 'Allahümme inni esa\'elüke hayral mühlı ve hayral mahrı',
-        meaning: 'Ya Allah, gireceğim yerin hayrını ve çıkacağım yerin hayrını Senden dilerim.',
-        context: 'Eve, iş yerine veya misafirliğe kapıdan girerken; giriş ve çıkışın hayrını dilemek sünnettir.',
-        source: 'Müslim, Salat 65; Ebu Davud, Edeb 101',
-        target: 1,
-        keywords: 'ev kapı giriş misafir iş yeri besmele'
-    },
-    {
-        id: 'lib_d_yemek_once', category: 'dua',
-        name: 'Bismillâh',
-        meaning: 'Allah\'ın adıyla.',
-        context: 'Yemeğe başlarken; besmele ile başlamak bereket ve şükür içindir.',
-        source: 'Tirmizi, Daavat 14',
-        target: 1,
-        keywords: 'yemek sofra yemekten önce başlangıç'
-    },
-    {
-        id: 'lib_d_yemek_sonra', category: 'dua',
-        name: 'Elhamdülillâhillezî et\'amenâ ve sekânâ',
-        meaning: 'Bizi yediren ve içiren Allah\'a hamd olsun.',
-        context: 'Yemek bitince şükür ve hamd için; nimeti veren Allah\'a hamdetmek sünnettir.',
-        source: 'Tirmizi, Daavat 11; Ebu Davud, At\'ime 13',
-        target: 1,
-        keywords: 'yemek sofra bitiş şükür hamd'
-    },
-    {
-        id: 'lib_d_arac', category: 'dua',
-        name: 'Sübhânellezî sehhara lenâ hâzâ',
-        meaning: 'Bunu bizim emrimize veren Allah\'ı tesbih ederim.',
-        context: 'Binek veya araca (otobüs, araba vb.) binildiğinde; yolculukta Allah\'ı anmak tavsiye edilir.',
-        source: 'Müslim, Hac 15',
-        target: 1,
-        keywords: 'araç araba otobüs yolculuk binek seyahat'
-    },
-    {
-        id: 'lib_d_uyku', category: 'dua',
-        name: 'Bismike Allahümme ehya ve emût',
-        meaning: 'Ey Allah\'ım! Senin adınla yaşarım ve ölürüm (uyurum).',
-        context: 'Uyumadan önce yatağa yatınca; geceyi Allah\'a emanet etmek sünnettir.',
-        source: 'Buhari, Daavat 11',
-        target: 1,
-        keywords: 'uyku yatmak gece yatak'
-    },
-    {
-        id: 'lib_d_uyaninca', category: 'dua',
-        name: 'Elhamdülillâhillezî ahyânâ ba\'de mâ emâtenâ ve ileyhin-nüşûr',
-        meaning: 'Bizi ölüm gibi uyku sonrası dirilten Allah\'a hamd olsun; dönüş O\'nadır.',
-        context: 'Sabah uyandığında, gözü açınca; uyku nimetine şükür ve güne Allah\'la başlamak için.',
-        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
-        target: 1,
-        keywords: 'sabah uyanmak göz gece gündüz şükür'
-    },
-    {
-        id: 'lib_d_evden_cikis', category: 'dua',
-        name: 'Bismillâhi tevekkeltü alallâhi, lâ havle ve lâ kuvvete illâ billâh',
-        meaning: 'Allah\'ın adıyla; Allah\'a tevekkül ettim. Güç ve kuvvet ancak Allah\'tandır.',
-        context: 'Evden, işten veya güvenli bir yerden çıkarken; yol ve iş için Allah\'a dayanmak içindir.',
-        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
-        target: 1,
-        keywords: 'ev çıkış kapı iş yol günlük tevekkül'
-    },
-    {
-        id: 'lib_d_yeni_elbise', category: 'dua',
-        name: 'Elhamdülillâhillezî kezâni hâzâ ve mâ kuntu muahhıran bi hâzâ',
-        meaning: 'Bunu bana giydiren ve onsuz güç yetiremeyeceğim şeyi bana veren Allah\'a hamd olsun.',
-        context: 'Yeni elbise veya örtü giyildiğinde; nimete şükür ve israf etmemeyi hatırlamak için.',
-        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
-        target: 1,
-        keywords: 'elbise kıyafet giyinmek yeni örtü'
-    },
-    {
-        id: 'lib_d_ayna', category: 'dua',
-        name: 'Allâhümme kemâ hassente halkî fehassin hulûkî',
-        meaning: 'Ya Allah, dış görünüşümü güzel yaptığın gibi ahlâkımı da güzelleştir.',
-        context: 'Aynaya bakıldığında; suret nimetine şükür ve iç güzelliği dilemek için.',
-        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
-        target: 1,
-        keywords: 'ayna suret yüz ahlâk şükür'
-    },
-    {
-        id: 'lib_d_cami_giris', category: 'dua',
-        name: 'Allâhümmeftah li ebvâbe rahmetik',
-        meaning: 'Ya Allah, bana rahmetinin kapılarını aç.',
-        context: 'Cami veya mescide girerken; ibadet yeri saygısı ve mağfiret ümidiyle.',
-        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
-        target: 1,
-        keywords: 'cami mescid giriş kapı namaz'
-    },
-    {
-        id: 'lib_d_cami_cikis', category: 'dua',
-        name: 'Allâhümme innî es\'elüke min fadlik',
-        meaning: 'Ya Allah, Senin lütfundan (fadlından) Senden dilerim.',
-        context: 'Cami veya mescidden çıkarken; ibadet sonrası hayır ve mağfiret dilemek için.',
-        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
-        target: 1,
-        keywords: 'cami mescid çıkış namaz hayır'
-    },
-    {
-        id: 'lib_d_kabir', category: 'dua',
-        name: 'Esselâmu aleykum ehle diyârin minel mü\'minîne vel müslimîn',
-        meaning: 'Ey bu diyarın mümin ve Müslüman halkı, size selâm olsun.',
-        context: 'Kabristana girildiğinde veya mezarlıkta; ölülere selâm ve ahiret hatırlatması için.',
-        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
-        target: 1,
-        keywords: 'kabir mezarlık ölü ziyaret ahiret'
-    },
-    {
-        id: 'lib_d_kotu_ruya', category: 'dua',
-        name: 'Na\'ûzü billâhi min şerri hâzâ ve min şerri mâ fîh',
-        meaning: 'Bunun şerrinden ve içindeki şeylerin şerrinden Allah\'a sığınırım.',
-        context: 'Rüyada kötü bir şey görülüp uyanınca; şer ve vesveseden Allah\'a sığınmak için.',
-        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
-        target: 1,
-        keywords: 'rüya uyku korku şer sığınma'
-    },
-    {
-        id: 'lib_d_olum_haberi', category: 'dua',
-        name: 'İnnâ lillâhi ve innâ ileyhi râciûn, Allâhümme\'curnî fî musîbetî ve\'hturni hayren minhâ',
-        meaning: 'Biz Allah\'a aidiz ve O\'na döneceğiz. Ya Allah, musibetimde bana mükâfat yaz ve ondan hayırlı bir çıkış nasip et.',
-        context: 'Ölüm veya büyük kayıp haberi işitilince; sabır ve karşılık dilemek için (ayet ve dua birlikte anılır).',
-        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
-        target: 1,
-        keywords: 'ölüm musibet kayıp sabır taziye'
-    },
-    {
-        id: 'lib_d_yagmur_isteme', category: 'dua',
-        name: 'Allâhümme eskıb seyyiban nâfi\'an',
-        meaning: 'Ya Allah, bize faydalı bir yağmur yağdır.',
-        context: 'Kuraklık veya yağmura ihtiyaç duyulduğunda çıplak veya hafif örtülü kıbleye dönerek dua edilir (sünnet adabına göre).',
-        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
-        target: 1,
-        keywords: 'yağmur kuraklık tarla çiftçi su isteme'
-    },
-    {
-        id: 'lib_d_yagmur_yagarken', category: 'dua',
-        name: 'Allâhümme sevvibenâ mâren mübâreken',
-        meaning: 'Ya Allah, bize bereketli bir yağmur yağdır.',
-        context: 'Yağmur yağmaya başlayınca; nimete şükür ve bereket dilemek için.',
-        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
-        target: 1,
-        keywords: 'yağmur gök yağış şükür bereket'
-    },
-    {
-        id: 'lib_d_sikinti_yunus', category: 'dua',
-        name: 'Lâ ilâhe illâ ente sübhâneke innî küntü minez-zâlimîn',
-        meaning: 'Senden başka ilah yok; Seni noksan sıfatlardan tenzih ederim; ben zulmedenlerden oldum.',
-        context: 'Sıkıntı, korku veya ümitsizlik anında; Yunus (a.s.) duası olarak kalbi Allah\'a yönlendirmek için.',
-        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
-        target: 1,
-        keywords: 'sıkıntı dert korku ümit tevekkül gemi'
-    },
-    {
-        id: 'lib_d_ilim', category: 'dua',
-        name: 'Rabbi zidnî ilmen nâfi\'an ve fehmen vâsian',
-        meaning: 'Rabbim, bana faydalı ilim ve geniş bir anlayış artır.',
-        context: 'Ders, Kur\'an okuma veya işe başlarken; ilim ve hikmet dilemek için.',
-        source: 'İmâm Nevevî, El-Ezkar (el-Adhkâr)',
-        target: 1,
-        keywords: 'ilim ders okul Kuran çalışma hikmet'
-    },
-    {
-        id: 'lib_1', category: 'zikir',
-        name: 'Sübhanallahi ve bihamdihi',
-        arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
-        meaning: 'Allah\'ı noksan sıfatlardan tenzih eder, O\'na hamdederim',
-        context: 'Günde yüz defa okuyanın günahları deniz köpüğü kadar olsa affedilir. Gün içinde istenen sıklıkta tekrarlanır.',
-        source: 'Buhari, Daavat 65; Müslim, Zikir 28',
-        target: 100,
-        keywords: 'günah mağfiret günlük tesbih bağışlanma'
-    },
-    {
-        id: 'lib_2', category: 'zikir',
-        name: 'Hasbünallahü ve ni\'mel vekil',
-        arabic: 'حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ',
-        meaning: 'Allah bize yeter; O ne güzel vekildir.',
-        context: 'Ayette geçer; sıkıntı ve korkuda kalbe huzur ve tevekkül verir. Zor anlarda okunması tavsiye edilir.',
-        source: 'Kur\'an-ı Kerim, Al-i İmran: 173',
-        target: 100,
-        keywords: 'sıkıntı dert korku güven tevekkül ayet'
-    },
-    {
-        id: 'lib_3', category: 'zikir',
-        name: 'Elhamdülillah',
-        arabic: 'الْحَمْدُ لِلَّهِ',
-        meaning: 'Hamd (şükür ve övgü) Allah\'a mahsustur.',
-        context: 'Mizanı ağırlatır, kalbi Allah\'a bağlar. Şükür ve günlük zikir olarak her an okunabilir.',
-        source: 'Müslim, Taharet 1',
-        target: 33,
-        keywords: 'şükür hamd nimet mizan'
-    },
-    {
-        id: 'lib_4', category: 'zikir',
-        name: 'Lâ ilâhe illallah',
-        arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
-        meaning: 'Allah\'tan başka ilah yoktur.',
-        context: 'Tevhid şuuru pekişir; sünnete uygun tekrarı faziletlidir. Sık tekrarlanan tevhid zikridir.',
-        source: 'Hadis kaynakları (çeşitli rivayetler)',
-        target: 100,
-        keywords: 'tevhid kelime-i tevhid iman'
-    },
-    {
-        id: 'lib_5', category: 'zikir',
-        name: 'Allahu ekber',
-        arabic: 'اللَّهُ أَكْبَرُ',
-        meaning: 'Allah en büyüktür.',
-        context: 'Namaz tesbihinde ve günlük zikirde; kalpte Allah\'ın büyüklüğünü tazelemek için sık tekrarlanır.',
-        source: 'Müslim, Salât 158; genel sünnet',
-        target: 33,
-        keywords: 'tekbir büyük Allah namaz tesbih'
-    },
-    {
-        id: 'lib_6', category: 'zikir',
-        name: 'Sübhanallah',
-        arabic: 'سُبْحَانَ اللَّهِ',
-        meaning: 'Allah\'ı her türlü noksandan tenzih ederim.',
-        context: 'Tesbihat ve günlük zikir; kalbi dünyadan söküp Allah\'ı anmaya yönlendirir.',
-        source: 'Müslim, Zikr 22; Buhari, Müslim',
-        target: 33,
-        keywords: 'tesbih tenzih sübhan'
-    },
-    {
-        id: 'lib_7', category: 'zikir',
-        name: 'Lâ havle ve lâ kuvvete illâ billâh',
-        arabic: 'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',
-        meaning: 'Güç ve kuvvet ancak Allah\'tandır.',
-        context: 'Sıkıntı, üzüntü veya zorluk anında; tevekkül ve Allah\'a dayanma zikridir.',
-        source: 'Buhari, Müslim (tabii rivayetler)',
-        target: 100,
-        keywords: 'sıkıntı güç kuvvet tevekkül havl kuvve'
-    },
-    {
-        id: 'lib_8', category: 'zikir',
-        name: 'Estağfirullah',
-        arabic: 'أَسْتَغْفِرُ اللَّهَ',
-        meaning: 'Allah\'tan mağfiret dilerim.',
-        context: 'Günah sonrası ve günlük tövbe alışkanlığı; kalbi temiz tutmaya yardım eder.',
-        source: 'Buhari, Daavât 19; Müslim, Zikr 44',
-        target: 100,
-        keywords: 'istiğfar tövbe mağfiret günah af'
-    },
-    {
-        id: 'lib_9', category: 'zikir',
-        name: 'Allâhümme salli alâ Muhammed',
-        arabic: 'اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ',
-        meaning: 'Allah\'ım, Muhammed\'e salât eyle.',
-        context: 'Salavat; günahların bağışlanmasına ve derecelere vesile olduğu bildirilen sünnet zikridir.',
-        source: 'Tirmizi, Salât 22; Müslim, Salât 70',
-        target: 100,
-        keywords: 'salavat salat nebi peygamber müjde'
-    },
-    {
-        id: 'lib_10', category: 'zikir',
-        name: 'Allâhümme bârik alâ Muhammed',
-        arabic: 'اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ',
-        meaning: 'Allah\'ım, Muhammed\'e bereket ver.',
-        context: 'Salavatın tamamlayıcısı olarak beraber veya ayrı okunabilir; Nebi\'ye hürmet ve şükür içindir.',
-        source: 'Tirmizi, Salât 22; Ebu Davud, Salât 152',
-        target: 100,
-        keywords: 'salavat bereket nebi mübarek'
-    },
-    {
-        id: 'lib_11', category: 'zikir',
-        name: 'Sübhanallâhil-azîm ve bihamdihi',
-        arabic: 'سُبْحَانَ اللَّهِ الْعَظِيمِ وَبِحَمْدِهِ',
-        meaning: 'Azîm olan Allah\'ı hamd ile tenzih ederim.',
-        context: 'Hadiste cennet ağacı veya sevapla müjdelenen zikirlerden; günde belirli sayıda okunması tavsiye edilir.',
-        source: 'Tirmizi, Daavât 73; Buhari, Müslim (benzer rivayetler)',
-        target: 100,
-        keywords: 'cennet ağaç hamd azim tesbih'
-    },
-    {
-        id: 'lib_12', category: 'zikir',
-        name: 'Lâ ilâhe illallâhu vahdehu lâ şerîke leh',
-        arabic: 'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',
-        meaning: 'Allah\'tan başka ilah yoktur, O tektir, ortağı yoktur; mülk O\'nundur, hamd O\'nadır; O her şeye kadirdir.',
-        context: 'Sabah-akşam veya yatarken okunan tam kelime-i tevhid zikri; kalpte tevhidi pekiştirir.',
-        source: 'Buhari, Müslim (çeşitli rivayetler)',
-        target: 100,
-        keywords: 'tevhid mülk hamd kudret kelime tam'
-    },
-    {
-        id: 'lib_13', category: 'zikir',
-        name: 'Hasbiyallâhu lâ ilâhe illâ hu',
-        arabic: 'حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ، عَلَيْهِ تَوَكَّلْتُ',
-        meaning: 'Allah bana yeter; O\'ndan başka ilah yoktur; yalnız O\'na tevekkül ettim.',
-        context: 'Korku ve endişede Hz. İbrâhim ve Hz. Muhammed (s.a.v.) örneğiyle; kalbe güven veren ayet zikridir.',
-        source: 'Kur\'an-ı Kerim, Tevbe 129',
-        target: 100,
-        keywords: 'tevekkül korku yeter Allah ayet'
-    },
-    {
-        id: 'lib_14', category: 'zikir',
-        name: 'Rabbîğfir ve rahhem',
-        arabic: 'رَبِّ اغْفِرْ وَارْحَمْ وَأَنْتَ خَيْرُ الرَّاحِمِينَ',
-        meaning: 'Rabbim, bağışla ve merhamet et; Sen merhamet edenlerin en hayırlısısın.',
-        context: 'Tövbe ve mağfiret dilemek; Kur\'an\'da geçen dua/zikir olarak kalbi yumuşatır.',
-        source: 'Kur\'an-ı Kerim, Mü\'minûn 118',
-        target: 33,
-        keywords: 'mağfiret rahmet tövbe bağışlanma'
-    },
-    {
-        id: 'lib_15', category: 'zikir',
-        name: 'Yâ Hayyu yâ Kayyûm',
-        arabic: 'يَا حَيُّ يَا قَيُّومُ',
-        meaning: 'Ey diri olan, ey her şeyi ayakta tutan.',
-        context: 'İsmin şerifleriyle yakarış; sıkıntıda ve günde dua ile birleştirilen meşhur zikir başlangıcıdır.',
-        source: 'Tirmizi, Daavât 91; genel sünnet',
-        target: 100,
-        keywords: 'hayy kayyum isim sıkıntı dua'
-    },
-    {
-        id: 'lib_16', category: 'zikir',
-        name: 'Sübhânellâhi ve bi hamdihi',
-        arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ سُبْحَانَ اللَّهِ الْعَظِيمِ',
-        meaning: 'Allah\'ı hamd ile tenzih ederim; Azîm olan Allah\'ı tenzih ederim.',
-        context: 'Hadiste ağır basan mizanda hafif, dilde kolay zikir olarak övülür.',
-        source: 'Buhari, Müslim (Tirmizi, Daavât 57)',
-        target: 100,
-        keywords: 'mizan hamd tesbih kolay ağır'
-    },
-    {
-        id: 'lib_17', category: 'zikir',
-        name: 'Radîtu billâhi Rabben',
-        arabic: 'رَضِيتُ بِاللَّهِ رَبًّا وَبِالْإِسْلَامِ دِينًا وَبِمُحَمَّدٍ نَبِيًّا',
-        meaning: 'Allah\'ı Rabb, İslam\'ı din, Muhammed\'i Nebi olarak razı oldum.',
-        context: 'Yaygın rivayette sabah ve akşam (günde iki vakit) üçer defa okunması cennetle müjdelenmiştir. Uygulamada tek oturumda 3 tekrar hedefi; alışkanlığına göre hedefi düzenleyebilirsin.',
-        source: 'Ebu Davud, Sünnet 1; Ahmed',
-        target: 3,
-        keywords: 'rıza iman İslam nebi cennet'
-    },
-    {
-        id: 'lib_18', category: 'zikir',
-        name: 'Allâhümmâ entes-selâm',
-        arabic: 'اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ',
-        meaning: 'Allah\'ım, Sen Selâmsın; selâm Sendendir. Ey celâl ve ikram sahibi, mübarek olan Sensin.',
-        context: 'Namaz selâmından sonra okunan dua-zikir; huzur ve selâmet dilemek içindir.',
-        source: 'Müslim, Salât 288',
-        target: 1,
-        keywords: 'namaz selam huzur mübarek teşehhüd sonrası'
-    },
-    {
-        id: 'lib_19', category: 'zikir',
-        name: 'Lâ ilâhe illallâhu (mülk, hayât, hayy)',
-        arabic: 'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ، وَهُوَ حَيٌّ لَا يَمُوتُ، بِيَدِهِ الْخَيْرُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',
-        meaning: '(Tevhid ve mülk, hayat ölüm, O\'nun elinde hayır ve her şeye güç yetirme sıfatlarıyla tam zikir.)',
-        context: 'Yatarken veya gündüzün okunan uzun tevhid; kalpte Allah\'ın rububiyet ve uluhiyetini hatırlatır.',
-        source: 'Buhari, Daavât 39; Müslim, Zikr 63',
-        target: 1,
-        keywords: 'yatarken gece mülk hayat ölüm tevhid tam'
-    },
-    {
-        id: 'lib_20', category: 'zikir',
-        name: 'Sübhânellâhi ve bi hamdihi adede halkihi',
-        arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ عَدَدَ خَلْقِهِ وَرِضَا نَفْسِهِ وَزِنَةَ عَرْشِهِ وَمِدَادَ كَلِمَاتِهِ',
-        meaning: 'Allah\'ı yaratıklarının sayısı kadar, nefsinin rızası, Arş\'ının ağırlığı ve kelimelerinin mürekkebi kadar hamd ile tesbih ederim.',
-        context: 'Geniş tesbih; günde bir kez veya sünnete uygun aralıklarla okunması tavsiye edilen zikirdir.',
-        source: 'Müslim, Zikir 33',
-        target: 1,
-        keywords: 'tesbih geniş hamd yaratık arş kelime'
-    },
-    {
-        id: 'lib_21', category: 'zikir',
-        name: 'Lâ ilâhe illallâhü\'l-melikü\'l-hakkü\'l-mübîn',
-        arabic: 'لَا إِلَٰهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ',
-        meaning: 'Allah\'tan başka ilah yoktur; O, mülkün gerçek sahibi (Melik), hak ve adaletle hükmeden (Hakk), birliği ve hakkı apaçık olan (Mübîn) Allah\'tır.',
-        context: 'Hz. Ali (r.a.)\'dan rivayet edilen bir hadiste günde yüz defa okuyanın fakirlikten emin olacağı, kabirde yoldaş bulacağı ve tevhid sevabına vesile olacağı bildirilir; bazı kaynaklarda Cuma günü iki yüz defa okunması da zikredilir. Bu rivayetin senedi zayıf görüldüğünden tam itikadi sonuçlar için âlim görüşüne başvurulmalıdır; tevhid ve Allah\'ı anma niyetiyle okunması caiz görülür.',
-        source: 'Hz. Ali (r.a.) rivayeti (Kenzü\'l-Ummâl, 5058; senedi tenkit edilmiş)',
-        target: 100,
-        keywords: 'melik hakk mubin tevhid kelime cuma yüz fakirlik kabir zenginlik'
-    }
-];
-
-// Premium: extra library items — yukarıdaki kütüphane editoryal standardına aynen uy.
-const PREMIUM_LIBRARY_EXTRA = [
-    {
-        id: 'plib_01', category: 'dua',
-        name: 'Sefer Duası',
-        arabic: 'سُبْحَانَ الَّذِي سَخَّرَ لَنَا هٰذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلٰى رَبِّنَا لَمُنْقَلِبُونَ',
-        meaning: 'Bunu bize boyun eğdiren Allah’ı tesbih ederiz; biz buna güç yetiremezdik. Biz mutlaka Rabbimize döneceğiz.',
-        context: 'Yolculuğa binerken okunur; teslimiyet ve emniyet duygusunu güçlendirir.',
-        source: 'Kur\'an, Zuhruf 13-14',
-        target: 1,
-        keywords: 'sefer yolculuk binerken emniyet teslimiyet'
-    },
-    {
-        id: 'plib_02', category: 'dua',
-        name: 'Sıkıntı Anında Dua',
-        arabic: 'لَا إِلٰهَ إِلَّا اللهُ الْعَظِيمُ الْحَلِيمُ لَا إِلٰهَ إِلَّا اللهُ رَبُّ الْعَرْشِ الْعَظِيمِ',
-        meaning: 'Azîm ve Halîm olan Allah’tan başka ilah yoktur. Büyük Arş’ın Rabbi Allah’tan başka ilah yoktur.',
-        context: 'Zor anlarda kalbi sakinleştiren bir zikir/dua.',
-        source: 'Buhari, Daavât',
-        target: 1,
-        keywords: 'sıkıntı stres korku sakin'
-    },
-    {
-        id: 'plib_03', category: 'zikir',
-        name: 'Hasbiyallahu lâ ilâhe illâ Hû',
-        arabic: 'حَسْبِيَ اللهُ لَا إِلٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ',
-        meaning: 'Allah bana yeter. O’ndan başka ilah yoktur. O’na tevekkül ettim. O büyük Arş’ın Rabbidir.',
-        context: 'Tevekkül ve güven zikri; gün içinde tekrar edilebilir.',
-        source: 'Kur\'an, Tevbe 129',
-        target: 7,
-        keywords: 'hasbiyallahu tevekkül güven arş'
-    },
-    {
-        id: 'plib_04', category: 'zikir',
-        name: 'Estağfirullah el-azîm (Tevbe)',
-        arabic: 'أَسْتَغْفِرُ اللهَ الْعَظِيمَ',
-        meaning: 'Azîm olan Allah’tan bağışlanma dilerim.',
-        context: 'Gün içinde istiğfar; niyete göre sayılı tekrar edilir.',
-        source: 'Genel rivayet',
-        target: 100,
-        keywords: 'istiğfar tevbe günah bağışlanma'
-    },
-    {
-        id: 'plib_05', category: 'dua',
-        name: 'Anne-Baba Duası',
-        arabic: 'رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا',
-        meaning: 'Rabbim! Küçüklüğümde beni yetiştirdikleri gibi onlara merhamet et.',
-        context: 'Anne-baba için okunur.',
-        source: 'Kur\'an, İsra 24',
-        target: 1,
-        keywords: 'anne baba merhamet isrâ'
-    },
-    {
-        id: 'plib_06', category: 'zikir',
-        name: 'Sübhânallâhi’l-azîm',
-        arabic: 'سُبْحَانَ اللهِ الْعَظِيمِ',
-        meaning: 'Azîm olan Allah’ı tesbih ederim.',
-        context: 'Kısa tesbih; gün içine yayılabilir.',
-        source: 'Genel rivayet',
-        target: 33,
-        keywords: 'tesbih azîm kısa'
-    }
-];
+// Kütüphane: data/library/*.json — editoryal kurallar docs/I18N.md
 
 // State
 let folders = [];
 let zikirs = [];
 let history = {};
-let appSettings = { vibrationTap: true, vibrationTarget: true, sound: false, wakeLock: false, theme: 'navy' };
+let appSettings = {
+    vibrationTap: true,
+    vibrationTarget: true,
+    sound: false,
+    wakeLock: false,
+    theme: 'navy',
+    locale: 'tr'
+};
 let reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
 let entitlements = { premium: false };
 let trash = { v: 1, entries: [] }; // soft-deleted items
@@ -665,6 +268,9 @@ const MAX_ZIKIRS_PER_FOLDER = 40;
 // Premium daha yayınlanmadan önce: sadece klasör/zikir limitleri sınırsız kalsın.
 // Premium yayınlandığında bunu true yapacağız.
 const PREMIUM_LIVE = false;
+
+/** Premium sekmesi + ayarlardaki çöp kutusu. Yayın zamanı: true + index.html’de nav/çöp UI geri ekleyin. */
+const PREMIUM_UI_VISIBLE = false;
 
 function getMaxFolders() {
     if (!PREMIUM_LIVE) return Infinity;
@@ -767,7 +373,6 @@ let librarySearchQuery = '';
 
 // Settings
 const openSettingsBtn = document.getElementById('openSettingsBtn');
-const settingsOverlay = document.getElementById('settingsOverlay');
 const trashOverlay = document.getElementById('trashOverlay');
 const cbVibrationTap = document.getElementById('settingVibrationTap');
 const cbVibrationTarget = document.getElementById('settingVibrationTarget');
@@ -778,6 +383,12 @@ const cbReminderEnabled = document.getElementById('settingReminderEnabled');
 const reminderTimeInput = document.getElementById('settingReminderTime');
 const bottomNav = document.getElementById('bottomNav');
 const themeChoiceBtns = document.querySelectorAll('[data-theme-choice]');
+const localeSetting = document.getElementById('localeSetting');
+const localeToggleBtn = document.getElementById('localeToggleBtn');
+const localeOptionsPanel = document.getElementById('localeOptionsPanel');
+const localeOptionsList = document.getElementById('localeOptionsList');
+const localeCurrentLabel = document.getElementById('localeCurrentLabel');
+const localeChoiceBtns = document.querySelectorAll('.locale-setting__option[data-locale-choice]');
 const THEME_META_COLORS = { navy: '#0a0e16', light: '#faf8f5', black: '#000000' };
 
 /** @returns {'navy'|'light'|'black'} */
@@ -858,11 +469,11 @@ function showAppAlert(message, options = {}) {
             return;
         }
         appDialogKind = 'alert';
-        appDialogTitle.textContent = options.title || 'Bilgi';
+        appDialogTitle.textContent = options.title || t('dialog.info');
         appDialogBody.textContent = message;
         if (appDialogInputWrap) appDialogInputWrap.hidden = true;
         if (appDialogCancelBtn) appDialogCancelBtn.hidden = true;
-        appDialogOkBtn.textContent = options.okLabel || 'Tamam';
+        appDialogOkBtn.textContent = options.okLabel || t('dialog.ok');
         appDialogResolve = resolve;
         appDialogOverlay.classList.add('active');
         requestAnimationFrame(() => appDialogOkBtn.focus());
@@ -876,11 +487,14 @@ function showAppConfirm(message, options = {}) {
             return;
         }
         appDialogKind = 'confirm';
-        appDialogTitle.textContent = options.title || 'Onay';
+        appDialogTitle.textContent = options.title || t('dialog.confirm');
         appDialogBody.textContent = message;
         if (appDialogInputWrap) appDialogInputWrap.hidden = true;
-        if (appDialogCancelBtn) appDialogCancelBtn.hidden = false;
-        appDialogOkBtn.textContent = options.confirmLabel || 'Tamam';
+        if (appDialogCancelBtn) {
+            appDialogCancelBtn.hidden = false;
+            appDialogCancelBtn.textContent = options.cancelLabel || t('dialog.cancel');
+        }
+        appDialogOkBtn.textContent = options.confirmLabel || t('dialog.ok');
         appDialogResolve = resolve;
         appDialogOverlay.classList.add('active');
         requestAnimationFrame(() => appDialogOkBtn.focus());
@@ -894,13 +508,16 @@ function showAppPrompt(message, defaultValue = '', options = {}) {
             return;
         }
         appDialogKind = 'prompt';
-        appDialogTitle.textContent = options.title || 'Giriş';
+        appDialogTitle.textContent = options.title || t('dialog.prompt');
         appDialogBody.textContent = message;
         if (appDialogInputWrap) appDialogInputWrap.hidden = false;
-        if (appDialogInputLabel) appDialogInputLabel.textContent = options.inputLabel || 'Ad';
+        if (appDialogInputLabel) appDialogInputLabel.textContent = options.inputLabel || t('dialog.inputLabelName');
         appDialogInput.value = defaultValue ?? '';
-        if (appDialogCancelBtn) appDialogCancelBtn.hidden = false;
-        appDialogOkBtn.textContent = options.okLabel || 'Tamam';
+        if (appDialogCancelBtn) {
+            appDialogCancelBtn.hidden = false;
+            appDialogCancelBtn.textContent = options.cancelLabel || t('dialog.cancel');
+        }
+        appDialogOkBtn.textContent = options.okLabel || t('dialog.ok');
         appDialogResolve = resolve;
         appDialogOverlay.classList.add('active');
         requestAnimationFrame(() => {
@@ -937,6 +554,16 @@ function init() {
     }
 
     applyNativeBottomInsetVar();
+    if (isCapacitorNative()) {
+        setTimeout(() => void refreshNativeBottomInsetVar(), 200);
+        import('@capacitor/app')
+            .then(({ App }) => {
+                App.addListener('appStateChange', ({ isActive }) => {
+                    if (isActive) void refreshNativeBottomInsetVar();
+                });
+            })
+            .catch(() => {});
+    }
     loadData();
     setupEventListeners();
     setDailyQuote();
@@ -946,8 +573,6 @@ function init() {
     showView('homeView', null, { push: false });
     ensureInitialHistoryState();
     setInAppStackTo(getViewState('homeView', null));
-    syncTrashButtonUI();
-
     if (!isCapacitorNative() && 'serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch(console.error);
     }
@@ -1112,7 +737,8 @@ function sanitizeLoadedData(d) {
         vibrationTarget: (typeof s.vibrationTarget === 'boolean') ? s.vibrationTarget : oldVib,
         sound: (typeof s.sound === 'boolean') ? s.sound : false,
         wakeLock: (typeof s.wakeLock === 'boolean') ? s.wakeLock : false,
-        theme: normalizeAppTheme(s.theme)
+        theme: normalizeAppTheme(s.theme),
+        locale: normalizeAppLocale(s.locale)
     };
 
     const r = isPlainObject(safe.reminders) ? safe.reminders : (isPlainObject(safe.reminderSettings) ? safe.reminderSettings : {});
@@ -1261,11 +887,53 @@ function applyAppTheme(theme) {
 }
 
 function syncThemeUI() {
-    const t = normalizeAppTheme(appSettings.theme);
+    const theme = normalizeAppTheme(appSettings.theme);
     themeChoiceBtns.forEach((btn) => {
-        const on = btn.getAttribute('data-theme-choice') === t;
+        const on = btn.getAttribute('data-theme-choice') === theme;
         btn.classList.toggle('active', on);
         btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+}
+
+function applyAppLocale(locale) {
+    appSettings.locale = normalizeAppLocale(locale);
+    applyLocaleToDocument(appSettings.locale);
+    syncLocalizedDefaults({ persist: true });
+    const libView = document.getElementById('libraryView');
+    if (libView && !libView.classList.contains('hidden')) renderLibrary();
+    const statsView = document.getElementById('statsView');
+    if (statsView && !statsView.classList.contains('hidden')) renderStats();
+    if (zikirStatsOverlay && zikirStatsOverlay.classList.contains('active')) renderZikirStats();
+    updateFolderSelectChrome();
+    updateZikirSelectChrome();
+    const hv = document.getElementById('homeView');
+    if (hv && hv.classList.contains('active')) renderFolders();
+    const fd = document.getElementById('folderDetailView');
+    if (fd && fd.classList.contains('active')) renderFolderDetail();
+    const premiumView = document.getElementById('premiumView');
+    if (premiumView && premiumView.classList.contains('active')) renderPremium();
+}
+
+function setLocalePickerOpen(open) {
+    if (!localeSetting || !localeToggleBtn || !localeOptionsPanel) return;
+    const isOpen = !!open;
+    localeSetting.classList.toggle('is-open', isOpen);
+    localeToggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    localeOptionsPanel.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+}
+
+function syncLocaleUI() {
+    const loc = normalizeAppLocale(appSettings.locale);
+    const current = SUPPORTED_LOCALES.find((l) => l.code === loc);
+    if (localeCurrentLabel && current) {
+        localeCurrentLabel.textContent = t(current.labelKey);
+    }
+    localeChoiceBtns.forEach((btn) => {
+        const on = btn.getAttribute('data-locale-choice') === loc;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        const labelKey = btn.getAttribute('data-i18n');
+        if (labelKey) btn.textContent = t(labelKey);
     });
 }
 
@@ -1277,7 +945,9 @@ function syncSettingsUI() {
     if (cbReminderEnabled) cbReminderEnabled.checked = !!reminderSettings.enabled;
     if (reminderTimeInput) reminderTimeInput.value = reminderSettings.time || '21:00';
     applyAppTheme(appSettings.theme);
+    applyAppLocale(appSettings.locale);
     syncThemeUI();
+    syncLocaleUI();
 }
 
 function loadData() {
@@ -1288,10 +958,17 @@ function loadData() {
             d = JSON.parse(sv);
         } catch (e) {
             console.error('zikirmatik_data_v2 okunamadı, varsayılan veri:', e);
-            folders = [...DEFAULT_FOLDERS];
+            folders = [...getDefaultFolders()];
             zikirs = [...DEFAULT_ZIKIRS];
             history = {};
-            appSettings = { vibrationTap: true, vibrationTarget: true, sound: false, wakeLock: false, theme: 'navy' };
+            appSettings = {
+                vibrationTap: true,
+                vibrationTarget: true,
+                sound: false,
+                wakeLock: false,
+                theme: 'navy',
+                locale: 'tr'
+            };
             reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
             entitlements = { premium: false };
             trash = { v: 1, entries: [] };
@@ -1299,7 +976,7 @@ function loadData() {
             return;
         }
         const sanitized = sanitizeLoadedData(d);
-        folders = sanitized.folders.length ? sanitized.folders : [...DEFAULT_FOLDERS];
+        folders = sanitized.folders.length ? sanitized.folders : [...getDefaultFolders()];
         zikirs = sanitized.zikirs.length ? sanitized.zikirs : [...DEFAULT_ZIKIRS];
         history = sanitized.history || {};
         appSettings = sanitized.settings || appSettings;
@@ -1380,7 +1057,7 @@ function loadData() {
 
         if (sanitizeHistory() || pruneHistory()) saveData();
     } else {
-        folders = [...DEFAULT_FOLDERS];
+        folders = [...getDefaultFolders()];
         zikirs = [...DEFAULT_ZIKIRS];
         history = {};
         trash = { v: 1, entries: [] };
@@ -1420,15 +1097,6 @@ function saveData() {
 
 function isPremium() {
     return !!(entitlements && entitlements.premium);
-}
-
-function syncTrashButtonUI() {
-    const btn = document.getElementById('openTrashBtn');
-    if (!btn) return;
-    const locked = !isPremium();
-    btn.classList.toggle('is-locked', locked);
-    btn.setAttribute('aria-disabled', locked ? 'true' : 'false');
-    btn.title = locked ? 'Çöp Kutusu (Premium)' : 'Çöp Kutusu';
 }
 
 function deepClone(obj) {
@@ -1828,7 +1496,9 @@ function removeHistoryForZikirIds(zidSet) {
 function updateFolderSelectChrome() {
     if (folderSelectCountEl) {
         folderSelectCountEl.textContent =
-            selectedFolderIds.size === 0 ? 'Seçim yok' : `${selectedFolderIds.size} klasör seçili`;
+            selectedFolderIds.size === 0
+                ? t('home.selectNone')
+                : t('home.selectedFolders', { count: selectedFolderIds.size });
     }
     if (folderSelectDeleteBtn) {
         folderSelectDeleteBtn.disabled = selectedFolderIds.size === 0;
@@ -1838,7 +1508,9 @@ function updateFolderSelectChrome() {
 function updateZikirSelectChrome() {
     if (zikirSelectCountEl) {
         zikirSelectCountEl.textContent =
-            selectedZikirIds.size === 0 ? 'Seçim yok' : `${selectedZikirIds.size} zikir seçili`;
+            selectedZikirIds.size === 0
+                ? t('home.selectNone')
+                : t('home.selectedZikirs', { count: selectedZikirIds.size });
     }
     if (zikirSelectDeleteBtn) {
         zikirSelectDeleteBtn.disabled = selectedZikirIds.size === 0;
@@ -1883,6 +1555,7 @@ function exitZikirSelectMode(skipRender) {
 }
 
 function onFolderLongPressSelect(id) {
+    if (activeListDrag) return;
     if (!folderSelectMode) {
         folderSelectMode = true;
         selectedFolderIds = new Set([id]);
@@ -1902,6 +1575,7 @@ function onFolderLongPressSelect(id) {
 }
 
 function onZikirLongPressSelect(id) {
+    if (activeListDrag) return;
     if (!zikirSelectMode) {
         zikirSelectMode = true;
         selectedZikirIds = new Set([id]);
@@ -1943,8 +1617,8 @@ async function deleteSelectedFolders() {
     if (ids.length === 0) return;
     const blocked = ids.filter((fid) => PROTECTED_FOLDER_IDS.has(fid));
     if (blocked.length > 0) {
-        await showAppAlert('“Varsayılan Zikirler” ve “Esma\'ül Hüsna” klasörleri silinemez. Seçimden çıkarın.', {
-            title: 'Silinemez'
+        await showAppAlert(t('confirm.protectedFoldersMsg'), {
+            title: t('confirm.protectedFoldersTitle')
         });
         folderSelectBarVisible = false;
         setMultiSelectBarShown(folderMultiSelectBar, false);
@@ -1956,11 +1630,12 @@ async function deleteSelectedFolders() {
     );
     const nFolders = ids.length;
     const nZikirs = zikirIdsToRemove.size;
-    const msg = `Seçilen ${nFolders} klasör ve içindeki ${nZikirs} zikir kalıcı olarak silinsin mi? Bu işlem geri alınamaz.`;
-    if (!(await showAppConfirm(msg, { title: 'Klasörleri sil', confirmLabel: 'Sil' }))) {
-        folderSelectBarVisible = false;
-        setMultiSelectBarShown(folderMultiSelectBar, false);
-        renderFolders();
+    const msg = t('confirm.deleteFoldersMsg', { folderCount: nFolders, zikirCount: nZikirs });
+    if (!(await showAppConfirm(msg, {
+        title: t('confirm.deleteFoldersTitle'),
+        confirmLabel: t('confirm.deleteLabel')
+    }))) {
+        exitFolderSelectMode(false);
         return;
     }
     if (isPremium()) {
@@ -1993,11 +1668,12 @@ async function deleteSelectedFolders() {
 async function deleteSelectedZikirs() {
     const ids = [...selectedZikirIds];
     if (ids.length === 0) return;
-    const msg = `Seçilen ${ids.length} zikir kalıcı olarak silinsin mi? Okuma geçmişi bu zikirler için temizlenir. Bu işlem geri alınamaz.`;
-    if (!(await showAppConfirm(msg, { title: 'Zikirleri sil', confirmLabel: 'Sil' }))) {
-        zikirSelectBarVisible = false;
-        setMultiSelectBarShown(zikirMultiSelectBar, false);
-        renderFolderDetail();
+    const msg = t('confirm.deleteZikirsMsg', { count: ids.length });
+    if (!(await showAppConfirm(msg, {
+        title: t('confirm.deleteZikirsTitle'),
+        confirmLabel: t('confirm.deleteLabel')
+    }))) {
+        exitZikirSelectMode(false);
         return;
     }
     if (isPremium()) {
@@ -2071,12 +1747,13 @@ function closeAllOverlays() {
         trashOverlay,
         libraryFolderSelectOverlay,
         libraryDetailOverlay,
-        settingsOverlay,
         zikirStatsOverlay
     ].forEach((el) => {
         if (el) el.classList.remove('active');
     });
 }
+
+const SCROLLABLE_OVERLAY_IDS = new Set(['trashOverlay']);
 
 function openOverlay(overlayId, { onOpen } = {}) {
     const el = document.getElementById(overlayId);
@@ -2090,6 +1767,9 @@ function openOverlay(overlayId, { onOpen } = {}) {
         // ignore
     }
     el.classList.add('active');
+    if (SCROLLABLE_OVERLAY_IDS.has(overlayId)) {
+        void applyModalOverlayBottomInset(el);
+    }
     if (typeof onOpen === 'function') onOpen();
 }
 
@@ -2144,7 +1824,6 @@ function goBackInApp({ fallbackViewId = 'homeView' } = {}) {
         'trashOverlay',
         'libraryFolderSelectOverlay',
         'libraryDetailOverlay',
-        'settingsOverlay',
         'zikirStatsOverlay'
     ];
     for (const oid of overlayIds) {
@@ -2167,6 +1846,10 @@ function goBackInApp({ fallbackViewId = 'homeView' } = {}) {
 
 function showView(viewId, param = null, options = {}) {
     const { push = true } = options || {};
+    if (viewId === 'premiumView' && !PREMIUM_UI_VISIBLE) {
+        viewId = 'homeView';
+        param = null;
+    }
     const nextState = getViewState(viewId, param);
     const prevState = currentViewId ? getViewState(currentViewId, (
         currentViewId === 'folderDetailView' ? currentFolderId :
@@ -2186,6 +1869,8 @@ function showView(viewId, param = null, options = {}) {
         }
         pushInAppStack(nextState);
     }
+
+    if (viewId !== 'settingsView') setLocalePickerOpen(false);
 
     if (viewId !== 'counterView' && zikirStatsOverlay) zikirStatsOverlay.classList.remove('active');
 
@@ -2248,6 +1933,9 @@ function showView(viewId, param = null, options = {}) {
         renderLibrary();
     } else if (viewId === 'premiumView') {
         renderPremium();
+    } else if (viewId === 'settingsView') {
+        setLocalePickerOpen(false);
+        syncSettingsUI();
     }
 
     currentViewId = viewId;
@@ -2256,14 +1944,14 @@ function showView(viewId, param = null, options = {}) {
 function renderPremium() {
     const el = document.getElementById('premiumTeaserLine');
     if (!el) return;
-    const teasers = [
-        'Premium ile çöp kutusu (geri al) + daha geniş kütüphane açılacak.',
-        'Yakında: Premium ile silinen zikirleri geri al ve kütüphanede daha fazla içerik gör.',
-        'Premium: daha geniş kütüphane + daha güvenli silme (çöp kutusu).',
-        'Premium geldiğinde çöp kutusu ve geniş kütüphane burada aktif olacak.'
+    const teaserKeys = [
+        'premium.teaser0',
+        'premium.teaser1',
+        'premium.teaser2',
+        'premium.teaser3'
     ];
-    const pick = teasers[Math.floor(Math.random() * teasers.length)];
-    el.textContent = pick;
+    const pick = teaserKeys[Math.floor(Math.random() * teaserKeys.length)];
+    el.textContent = t(pick);
 }
 
 // ===================== VIEWS =====================
@@ -2277,6 +1965,8 @@ const LIST_DRAG_LONG_MS = 520;
 const LIST_DRAG_MOVE_CANCEL_PX_MOUSE = 22;
 const LIST_DRAG_MOVE_CANCEL_PX_TOUCH = 72;
 let activeListDrag = null;
+/** Sıralama tutamacından başlayan dokunuşlar; uzun basımla seçim moduna girmeyi engeller. */
+const listDragHandlePointerIds = new Set();
 
 function setDragReorderLock(on) {
     document.documentElement.classList.toggle('drag-reorder-lock', !!on);
@@ -2379,18 +2069,19 @@ function moveListDragGhost(clientY) {
 
 function teardownListDrag() {
     if (!activeListDrag) return;
-    const { removeDocListeners, ghost, sourceEl, container } = activeListDrag;
+    const { removeDocListeners, ghost, sourceEl, container, pointerId } = activeListDrag;
     clearListDragTransforms(container);
     removeDocListeners();
     ghost.remove();
     sourceEl.classList.remove('drag-reorder-source', 'drag-reorder-pending');
+    listDragHandlePointerIds.delete(pointerId);
     setDragReorderLock(false);
     activeListDrag = null;
 }
 
 function completeListDrag(clientY) {
     if (!activeListDrag) return;
-    const { id, sourceEl, container, getSortedIds, onCommit, ghost, removeDocListeners } = activeListDrag;
+    const { id, sourceEl, container, getSortedIds, onCommit, ghost, removeDocListeners, pointerId } = activeListDrag;
     removeDocListeners();
     clearListDragTransforms(container);
     const sortedIds = getSortedIds();
@@ -2402,6 +2093,7 @@ function completeListDrag(clientY) {
 
     ghost.remove();
     sourceEl.classList.remove('drag-reorder-source', 'drag-reorder-pending');
+    listDragHandlePointerIds.delete(pointerId);
     setDragReorderLock(false);
     activeListDrag = null;
     suppressListNavigation = true;
@@ -2424,11 +2116,13 @@ function beginListDrag(sourceEl, id, container, getSortedIds, onCommit, pointerI
         inp.disabled = true;
         inp.style.pointerEvents = 'none';
     });
-    if (
+    const inSelectMode =
         container.classList.contains('folder-grid--select-mode') ||
-        container.classList.contains('zikir-list--select-mode')
-    ) {
+        container.classList.contains('zikir-list--select-mode');
+    if (inSelectMode) {
         ghost.classList.add('drag-reorder-ghost--select');
+    } else {
+        ghost.querySelectorAll('.folder-card__check, .zikir-row__check').forEach((node) => node.remove());
     }
     document.body.appendChild(ghost);
 
@@ -2491,8 +2185,10 @@ function attachListDragLongPress(el, { id, container, getSortedIds, onCommit, sh
         (e) => {
             if (shouldIgnoreDown && shouldIgnoreDown(e.target)) return;
             if (e.pointerType === 'mouse' && e.button !== 0) return;
+            e.stopPropagation();
 
             const pid = e.pointerId;
+            listDragHandlePointerIds.add(pid);
             const ptrKind = e.pointerType;
             const startX = e.clientX;
             const startY = e.clientY;
@@ -2505,8 +2201,13 @@ function attachListDragLongPress(el, { id, container, getSortedIds, onCommit, sh
 
             rowEl.classList.add('drag-reorder-pending');
 
-            function removePending() {
+            function clearDragHandlePointer() {
+                listDragHandlePointerIds.delete(pid);
+            }
+
+            function removePending(keepHandlePointer = false) {
                 rowEl.classList.remove('drag-reorder-pending');
+                if (!keepHandlePointer) clearDragHandlePointer();
                 if (longTimer) {
                     clearTimeout(longTimer);
                     longTimer = null;
@@ -2537,7 +2238,7 @@ function attachListDragLongPress(el, { id, container, getSortedIds, onCommit, sh
 
             longTimer = setTimeout(() => {
                 longTimer = null;
-                removePending();
+                removePending(true);
                 beginListDrag(rowEl, id, container, getSortedIds, onCommit, pid, lastClientY);
             }, LIST_DRAG_LONG_MS);
 
@@ -2545,7 +2246,7 @@ function attachListDragLongPress(el, { id, container, getSortedIds, onCommit, sh
             document.addEventListener('pointerup', onPendingUp, { capture: true });
             document.addEventListener('pointercancel', onPendingUp, { capture: true });
         },
-        { passive: true }
+        { capture: true, passive: true }
     );
 }
 
@@ -2556,12 +2257,21 @@ function shouldIgnoreSelectLongPressTarget(target) {
     );
 }
 
+function isListDragHandlePointerEvent(e) {
+    if (shouldIgnoreSelectLongPressTarget(e.target)) return true;
+    if (typeof e.composedPath === 'function') {
+        return e.composedPath().some((node) => node?.classList?.contains?.('row-drag-handle'));
+    }
+    return false;
+}
+
 /** Çoklu silme: seçim moduna geçirir veya seçimi günceller. */
 function attachLongPressSelect(el, id, { onEnter }) {
     el.addEventListener(
         'pointerdown',
         (e) => {
-            if (shouldIgnoreSelectLongPressTarget(e.target)) return;
+            if (isListDragHandlePointerEvent(e)) return;
+            if (listDragHandlePointerIds.has(e.pointerId)) return;
             if (e.pointerType === 'mouse' && e.button !== 0) return;
 
             const pid = e.pointerId;
@@ -2606,6 +2316,10 @@ function attachLongPressSelect(el, id, { onEnter }) {
 
             longTimer = setTimeout(() => {
                 longTimer = null;
+                if (listDragHandlePointerIds.has(pid) || activeListDrag) {
+                    removePending();
+                    return;
+                }
                 removePending();
                 onEnter(id);
             }, LIST_DRAG_LONG_MS);
@@ -2635,13 +2349,9 @@ function renderFolders() {
     updateFolderSelectChrome();
 
     if (folderHomeDragHint) {
-        if (!folderSelectMode) {
-            folderHomeDragHint.textContent =
-                'Silmek için klasöre uzun basın. Sıralamak için en soldaki üç çizgiyi tutup sürükleyin.';
-        } else {
-            folderHomeDragHint.textContent =
-                'Kutucuğa tik veya satıra dokunarak seçin; sileceklerinizi işaretledikten sonra alttan Sil’e dokunun. Vazgeç: İptal. Sıralama: üç çizgi.';
-        }
+        folderHomeDragHint.textContent = folderSelectMode
+            ? t('home.folderDragHintSelect')
+            : t('home.folderDragHint');
     }
 
     const sortedFolders = [...folders].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
@@ -2653,7 +2363,7 @@ function renderFolders() {
         card.dataset.dragOrderItem = 'folder';
         const checked = selectedFolderIds.has(f.id) ? 'checked' : '';
         card.innerHTML = `
-            <button type="button" class="row-drag-handle icon-btn" aria-label="Sıralamak için basılı tutup sürükleyin">
+            <button type="button" class="row-drag-handle icon-btn" aria-label="${escapeAttr(t('zikir.dragAria'))}">
                 ${GRIP_3LINES_HTML}
             </button>
             <label class="folder-card__check" aria-hidden="true">
@@ -2763,15 +2473,15 @@ function renderFolderDetail() {
     if (!zikirSelectMode) zikirSelectBarVisible = false;
     folderDetailTitle.textContent = folder.name;
 
-    const q = (folderSearchQuery || '').trim().toLocaleLowerCase('tr-TR');
+    const q = (folderSearchQuery || '').trim().toLocaleLowerCase(getLocaleTag());
     const fZikirsAll = zikirs.filter(z => z.folderId === currentFolderId);
     const fZikirs = fZikirsAll.filter(z => {
         if (folderFavOnly && !z.favorite) return false;
         if (!q) return true;
-        const name = (z.name || '').toLocaleLowerCase('tr-TR');
-        const meaning = (z.meaning || '').toLocaleLowerCase('tr-TR');
+        const name = (z.name || '').toLocaleLowerCase(getLocaleTag());
+        const meaning = (z.meaning || '').toLocaleLowerCase(getLocaleTag());
         const arabic = (z.arabic || '');
-        const fz = getEffectiveFazilet(z).toLocaleLowerCase('tr-TR');
+        const fz = getEffectiveFazilet(z).toLocaleLowerCase(getLocaleTag());
         return name.includes(q) || meaning.includes(q) || arabic.includes(q) || fz.includes(q);
     }).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     const canDragZikir = !q && !folderFavOnly;
@@ -2779,21 +2489,15 @@ function renderFolderDetail() {
     if (folderZikirDragHint) {
         if (canDragZikir) {
             folderZikirDragHint.classList.remove('drag-hint--muted');
-            if (!zikirSelectMode) {
-                folderZikirDragHint.textContent =
-                    'Silmek için satıra uzun basın. Sıralamak için en soldaki üç çizgiyi tutup sürükleyin.';
-            } else {
-                folderZikirDragHint.textContent =
-                    'Kutucuğa tik veya satıra dokunarak seçin; sileceklerinizi işaretledikten sonra alttan Sil’e dokunun. Vazgeç: İptal. Sıralama: üç çizgi.';
-            }
+            folderZikirDragHint.textContent = zikirSelectMode
+                ? t('folder.zikirDragHintSelect')
+                : t('folder.zikirDragHint');
         } else {
             if (zikirSelectMode) {
                 folderZikirDragHint.classList.remove('drag-hint--muted');
-                folderZikirDragHint.textContent =
-                    'Kutucuğa tik veya satıra dokunarak seçin; sileceklerinizi işaretledikten sonra alttan Sil’e dokunun. Vazgeç: İptal. Arama veya favori açıkken sıralama kapalı.';
+                folderZikirDragHint.textContent = t('folder.zikirDragHintSelectNoReorder');
             } else {
-                folderZikirDragHint.textContent =
-                    'Sıralamak için aramayı temizleyin ve favori filtresini kapatın.';
+                folderZikirDragHint.textContent = t('folder.zikirDragHintReorderDisabled');
                 folderZikirDragHint.classList.add('drag-hint--muted');
             }
         }
@@ -2815,7 +2519,7 @@ function renderFolderDetail() {
         const li = document.createElement('li');
         li.dataset.zikirId = z.id;
         const favIcon = z.favorite ? 'star' : 'star_border';
-        const favTitle = z.favorite ? 'Favoriden çıkar' : 'Favorilere ekle';
+        const favTitle = z.favorite ? t('zikir.favRemove') : t('zikir.favAdd');
         const meaningPrev = z.meaning
             ? z.meaning.length > 40
                 ? z.meaning.substring(0, 40) + '…'
@@ -2827,7 +2531,7 @@ function renderFolderDetail() {
             : '';
         const zChecked = selectedZikirIds.has(z.id) ? 'checked' : '';
         const dragBtnHtml = canDragZikir
-            ? `<button type="button" class="row-drag-handle icon-btn" aria-label="Sıralamak için basılı tutup sürükleyin">${GRIP_3LINES_HTML}</button>`
+            ? `<button type="button" class="row-drag-handle icon-btn" aria-label="${escapeAttr(t('zikir.dragAria'))}">${GRIP_3LINES_HTML}</button>`
             : '';
         li.innerHTML = `
             ${dragBtnHtml}
@@ -2846,11 +2550,11 @@ function renderFolderDetail() {
                 </div>
                 ${meaningBlock}
                 <div class="meta">
-                    <span>Hedef: ${z.target} 
-                        <button class="edit-target-btn" data-id="${escapeAttr(z.id)}"><span class="material-icons-outlined" style="font-size:16px;">edit</span></button>
-                        <button class="edit-target-btn copy-btn" data-id="${escapeAttr(z.id)}"><span class="material-icons-outlined" style="font-size:16px;">content_copy</span></button>
+                    <span>${escapeHtml(t('zikir.metaTarget'))} ${z.target} 
+                        <button class="edit-target-btn" data-id="${escapeAttr(z.id)}" aria-label="${escapeAttr(t('zikir.editAria'))}" title="${escapeAttr(t('zikir.editAria'))}"><span class="material-icons-outlined" style="font-size:16px;">edit</span></button>
+                        <button class="edit-target-btn copy-btn" data-id="${escapeAttr(z.id)}" aria-label="${escapeAttr(t('zikir.copyAria'))}" title="${escapeAttr(t('zikir.copyAria'))}"><span class="material-icons-outlined" style="font-size:16px;">content_copy</span></button>
                     </span>
-                    <span>Okunan: ${z.count}</span>
+                    <span>${escapeHtml(t('zikir.metaRead'))} ${z.count}</span>
                 </div>
             </div>
         `;
@@ -2977,9 +2681,12 @@ function updateCounterUI() {
     if (zikirNote) {
         const m = (zikir.meaning && String(zikir.meaning).trim()) || '';
         const fz = getEffectiveFazilet(zikir);
-        zikirNote.textContent = fz ? (m ? `${m}\n\nFazilet: ${fz}` : `Fazilet: ${fz}`) : m;
+        const virtueLbl = t('counter.virtueLabel');
+        zikirNote.textContent = fz ? (m ? `${m}\n\n${virtueLbl}: ${fz}` : `${virtueLbl}: ${fz}`) : m;
         zikirNote.classList.toggle('zikir-note--esma-detail', !!fz);
     }
+    const zikirHeaderScroll = document.getElementById('zikirHeaderScroll');
+    if (zikirHeaderScroll) zikirHeaderScroll.scrollTop = 0;
     
     // Mevcut turdaki okuma: tam tur sonrası (33, 66…) yeni turun başı → 0 göster;
     // geri alınca önce 0, bir basım daha önceki turun son adımına düşer.
@@ -3140,7 +2847,7 @@ function maybeRefreshZikirStatsModal() {
 // ===================== LIBRARY LOGIC =====================
 function libraryItemSearchHaystack(z) {
     const kw = (z.keywords != null ? String(z.keywords) : '');
-    return `${z.name} ${z.meaning} ${z.context} ${z.source} ${kw}`.toLocaleLowerCase('tr-TR');
+    return `${z.name} ${z.meaning} ${z.context} ${z.source} ${kw}`.toLocaleLowerCase(getLocaleTag());
 }
 
 const LIBRARY_CARD_CONTEXT_MAX = 120;
@@ -3163,7 +2870,7 @@ function libraryMatchesSearch(z, rawQuery) {
     const q = (rawQuery || '').trim();
     if (!q) return true;
     const hay = libraryItemSearchHaystack(z);
-    const tokens = q.toLocaleLowerCase('tr-TR').split(/\s+/).filter(Boolean);
+    const tokens = q.toLocaleLowerCase(getLocaleTag()).split(/\s+/).filter(Boolean);
     return tokens.every(t => hay.includes(t));
 }
 
@@ -3171,7 +2878,7 @@ function renderLibrary() {
     libraryGrid.innerHTML = '';
     const q = (librarySearchQuery || '').trim();
     const searchActive = q.length > 0;
-    const baseLib = isPremium() ? [...ZIKIR_LIBRARY, ...PREMIUM_LIBRARY_EXTRA] : ZIKIR_LIBRARY;
+    const baseLib = getZikirLibrary(isPremium());
     const filteredBase = searchActive
         ? baseLib
         : baseLib.filter(z => z.category === activeLibraryCat);
@@ -3182,7 +2889,7 @@ function renderLibrary() {
         card.className = 'library-card';
         const badge = document.createElement('span');
         badge.className = 'material-icons-outlined lib-badge';
-        badge.title = 'Kaynaklı';
+        badge.title = t('library.verifiedTitle');
         badge.textContent = 'verified';
         const h3 = document.createElement('h3');
         h3.textContent = z.name;
@@ -3202,32 +2909,211 @@ function openLibraryDetail(z) {
     libDetailMeaning.textContent = z.meaning;
     if (libDetailContextLabel) {
         libDetailContextLabel.textContent =
-            z.category === 'zikir' ? 'Fazilet' : 'Fazileti / Okuma durumu';
+            z.category === 'zikir' ? t('library.detailVirtueZikir') : t('library.detailVirtueDua');
     }
     libDetailContext.textContent = z.context || '';
     openOverlay('libraryDetailOverlay');
 }
 
 // ===================== STATS LOGIC =====================
+const CHART_INNER_HEIGHT_PX = 118;
+
 function dayHistoryTotal(dayKey) {
     const block = history && history[dayKey];
     if (!block || typeof block !== 'object') return 0;
     return Object.values(block).reduce((sum, v) => sum + (Number(v) || 0), 0);
 }
 
+function formatDateKey(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function getLastNDayKeys(n) {
+    const keys = [];
+    for (let i = n - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        keys.push(formatDateKey(d));
+    }
+    return keys;
+}
+
+function getDaysInYear(year = new Date().getFullYear()) {
+    const keys = [];
+    const cur = new Date(year, 0, 1);
+    const end = year === new Date().getFullYear() ? new Date() : new Date(year, 11, 31);
+    while (cur <= end) {
+        keys.push(formatDateKey(cur));
+        cur.setDate(cur.getDate() + 1);
+    }
+    return keys;
+}
+
+function getYearMonthKeys(year = new Date().getFullYear()) {
+    return Array.from({ length: 12 }, (_, i) => `${year}-${String(i + 1).padStart(2, '0')}`);
+}
+
+function zikirClicksOnDay(dayKey, zid) {
+    const v = history && history[dayKey] && history[dayKey][zid];
+    return v ? Number(v) || 0 : 0;
+}
+
+function totalClicksForMonth(ym, zid) {
+    let sum = 0;
+    const prefix = `${ym}-`;
+    if (!history || typeof history !== 'object') return 0;
+    Object.keys(history).forEach((day) => {
+        if (!day.startsWith(prefix)) return;
+        sum += zid ? zikirClicksOnDay(day, zid) : dayHistoryTotal(day);
+    });
+    return sum;
+}
+
+function totalClicksForYear(year, zid) {
+    let sum = 0;
+    const prefix = `${year}-`;
+    if (!history || typeof history !== 'object') return 0;
+    Object.keys(history).forEach((day) => {
+        if (!day.startsWith(prefix)) return;
+        sum += zid ? zikirClicksOnDay(day, zid) : dayHistoryTotal(day);
+    });
+    return sum;
+}
+
+/** Yıllık grafik: son 5 takvim yılı (ör. 2022–2026). */
+function getHistoryYearRange(count = 5) {
+    const current = new Date().getFullYear();
+    const start = current - (count - 1);
+    const out = [];
+    for (let y = start; y <= current; y++) out.push(String(y));
+    return out;
+}
+
+function getStatPeriodDayKeys(tab) {
+    if (tab === 'daily') return [getTodayString()];
+    if (tab === 'weekly') return getLastNDayKeys(7);
+    return getDaysInYear();
+}
+
+function sumClicksInDayKeys(dayKeys, zid) {
+    return dayKeys.reduce((acc, ds) => acc + (zid ? zikirClicksOnDay(ds, zid) : dayHistoryTotal(ds)), 0);
+}
+
+function buildChartBuckets(tab, zid) {
+    const today = getTodayString();
+    const locale = getLocaleTag();
+
+    if (tab === 'daily' || tab === 'weekly') {
+        const days = getLastNDayKeys(7);
+        return {
+            density: 'default',
+            headingKey: 'stats.chartLast7Days',
+            buckets: days.map((ds) => {
+                const d = new Date(`${ds}T12:00:00`);
+                return {
+                    label: d.toLocaleDateString(locale, { weekday: 'short' }),
+                    val: zid ? zikirClicksOnDay(ds, zid) : dayHistoryTotal(ds),
+                    highlight: ds === today
+                };
+            })
+        };
+    }
+    if (tab === 'monthly') {
+        const months = getYearMonthKeys();
+        const curMonth = today.slice(0, 7);
+        return {
+            density: 'months',
+            headingKey: 'stats.chartYearMonths',
+            buckets: months.map((ym) => {
+                const d = new Date(`${ym}-01T12:00:00`);
+                return {
+                    label: d.toLocaleDateString(locale, { month: 'short' }),
+                    val: totalClicksForMonth(ym, zid),
+                    highlight: ym === curMonth
+                };
+            })
+        };
+    }
+
+    const years = getHistoryYearRange();
+    const curYear = String(new Date().getFullYear());
+    return {
+        density: 'years',
+        headingKey: 'stats.chartByYear',
+        buckets: years.map((year) => ({
+            label: year,
+            val: totalClicksForYear(year, zid),
+            highlight: year === curYear
+        }))
+    };
+}
+
+/** Dönem içi min–max ölçek: 500 ile 600 arasında da fark görünsün */
+function computeBarHeightPx(val, allValues) {
+    if (!val || val <= 0) return 4;
+    const positives = allValues.filter((v) => v > 0);
+    const max = Math.max(...allValues, 0);
+    if (max <= 0) return 4;
+    const min = positives.length ? Math.min(...positives) : 0;
+    const span = max - min;
+    const floorPx = 6;
+    if (span <= 0) return CHART_INNER_HEIGHT_PX;
+    const t = (val - min) / span;
+    return Math.max(floorPx, Math.round(floorPx + t * (CHART_INNER_HEIGHT_PX - floorPx)));
+}
+
+function chartYAxisLabels(values) {
+    const max = Math.max(...values, 0);
+    const positives = values.filter((v) => v > 0);
+    const min = positives.length ? Math.min(...positives) : 0;
+    if (max <= 0) return { top: 1, mid: 0, bottom: 0 };
+    if (max === min) return { top: max, mid: Math.ceil(max / 2), bottom: min };
+    const mid = Math.round((max + min) / 2);
+    return { top: max, mid, bottom: min };
+}
+
+function renderBarChart(chartEl, yAxisEl, buckets, density) {
+    const values = buckets.map((b) => b.val);
+    const axis = chartYAxisLabels(values);
+
+    if (yAxisEl) {
+        yAxisEl.innerHTML = `
+            <span>${axis.top}</span>
+            <span>${axis.mid}</span>
+            <span>${axis.bottom}</span>
+        `;
+    }
+    if (!chartEl) return;
+
+    chartEl.innerHTML = '';
+    chartEl.classList.remove('css-chart--dense', 'css-chart--months', 'css-chart--years');
+    if (density === 'dense') chartEl.classList.add('css-chart--dense');
+    if (density === 'months') chartEl.classList.add('css-chart--months');
+    if (density === 'years') chartEl.classList.add('css-chart--years');
+
+    buckets.forEach((dt) => {
+        const group = document.createElement('div');
+        group.className = 'chart-bar-group';
+        const barH = computeBarHeightPx(dt.val, values);
+        const col = dt.val === 0 ? 'var(--glass-border)' : 'var(--primary-green)';
+        const bar = document.createElement('div');
+        bar.className = 'chart-bar';
+        if (dt.highlight) bar.classList.add('chart-bar--today');
+        bar.dataset.tooltip = t('stats.chartTooltip', { count: dt.val });
+        bar.style.height = `${barH}px`;
+        bar.style.background = col;
+        const lab = document.createElement('div');
+        lab.className = 'chart-label';
+        lab.textContent = dt.label;
+        group.appendChild(bar);
+        group.appendChild(lab);
+        chartEl.appendChild(group);
+    });
+}
+
 function renderStats() {
     if (!statMostClicked || !statMostClickedCount || !statLastClicked || !activityChart) return;
-    let targetDays = [];
-    if (activeStatTab === 'daily') {
-        targetDays = [getTodayString()];
-    } else {
-        // Last 7 days
-        for(let i=6; i>=0; i--){
-            const d = new Date();
-            d.setDate(d.getDate() - i);
-            targetDays.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
-        }
-    }
+    const targetDays = getStatPeriodDayKeys(activeStatTab);
 
     // 1) En Çok Çekilen ve Son çekilen
     let totalClicksPerZikir = {};
@@ -3250,11 +3136,11 @@ function renderStats() {
 
     if (topZikirId) {
         const z = zikirs.find(x => x.id === topZikirId);
-        statMostClicked.textContent = z ? z.name : 'Bilinmeyen';
-        statMostClickedCount.textContent = `${topZikirCount} kez`;
+        statMostClicked.textContent = z ? z.name : t('stats.unknown');
+        statMostClickedCount.textContent = t('stats.clicksUnit', { count: topZikirCount });
     } else {
         statMostClicked.textContent = '-';
-        statMostClickedCount.textContent = 'Veri yok';
+        statMostClickedCount.textContent = t('stats.noData');
     }
 
     // Son çekilen (genel)
@@ -3265,81 +3151,39 @@ function renderStats() {
         statLastClicked.textContent = '-';
     }
 
-    // Kayıtlı tüm günlük toplamlar içinden en yüksek gün (genel)
+    // Seçili dönemde en yüksek gün
     let bestDayKey = null;
     let bestDayTotal = 0;
-    if (history && typeof history === 'object') {
-        Object.keys(history).forEach((dayKey) => {
-            const tot = dayHistoryTotal(dayKey);
-            if (tot > bestDayTotal) {
-                bestDayTotal = tot;
-                bestDayKey = dayKey;
-            } else if (tot === bestDayTotal && tot > 0 && bestDayKey != null && dayKey > bestDayKey) {
-                bestDayKey = dayKey;
-            }
-        });
-    }
+    targetDays.forEach((dayKey) => {
+        const tot = dayHistoryTotal(dayKey);
+        if (tot > bestDayTotal) {
+            bestDayTotal = tot;
+            bestDayKey = dayKey;
+        } else if (tot === bestDayTotal && tot > 0 && bestDayKey != null && dayKey > bestDayKey) {
+            bestDayKey = dayKey;
+        }
+    });
     if (statBestDayDate && statBestDayCount) {
         if (bestDayKey && bestDayTotal > 0) {
             const bd = new Date(`${bestDayKey}T12:00:00`);
-            statBestDayDate.textContent = bd.toLocaleDateString('tr-TR', {
+            statBestDayDate.textContent = bd.toLocaleDateString(getLocaleTag(), {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
             });
-            statBestDayCount.textContent = `${bestDayTotal.toLocaleString('tr-TR')} çekim`;
+            statBestDayCount.textContent = t('stats.dayTotal', {
+                count: bestDayTotal.toLocaleString(getLocaleTag())
+            });
         } else {
             statBestDayDate.textContent = '-';
-            statBestDayCount.textContent = 'Veri yok';
+            statBestDayCount.textContent = t('stats.noData');
         }
     }
 
-    // 2) Grafik Render
-    // Son 7 Günlük basit veri oluştur
-    activityChart.innerHTML = '';
-    const last7Days = [];
-    for(let i=6; i>=0; i--){
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        last7Days.push(d);
-    }
-
-    let maxDayCount = 1;
-    let dayTotals = last7Days.map(d => {
-        const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-        let tot = 0;
-        if(history[ds]) Object.values(history[ds]).forEach(v => tot += v);
-        if(tot > maxDayCount) maxDayCount = tot;
-        return { label: d.toLocaleDateString('tr-TR', {weekday: 'short'}), val: tot };
-    });
-
-    // Determine nice Y-axis max (e.g. nearest 10, 50, 100, 500)
-    let yMax = 10;
-    if(maxDayCount > 10) yMax = Math.ceil(maxDayCount / 10) * 10;
-    if(maxDayCount > 100) yMax = Math.ceil(maxDayCount / 100) * 100;
-    if(maxDayCount > 1000) yMax = Math.ceil(maxDayCount / 500) * 500;
-
-    const chartYAxis = document.getElementById('chartYAxis');
-    if (chartYAxis) {
-        chartYAxis.innerHTML = `
-            <span>${yMax}</span>
-            <span>${Math.floor(yMax / 2)}</span>
-            <span>0</span>
-        `;
-    }
-
-    dayTotals.forEach(dt => {
-        const group = document.createElement('div');
-        group.className = 'chart-bar-group';
-        const hPct = Math.max((dt.val / yMax)*100, 3); // min 3% height to show it exists if 0 is 0
-        const barH = dt.val === 0 ? '4px' : `${hPct}%`;
-        const col = dt.val === 0 ? 'var(--glass-border)' : 'var(--primary-green)';
-        group.innerHTML = `
-            <div class="chart-bar" data-tooltip="${dt.val} Zikir" style="height: ${barH}; background: ${col}"></div>
-            <div class="chart-label">${dt.label}</div>
-        `;
-        activityChart.appendChild(group);
-    });
+    const chartPack = buildChartBuckets(activeStatTab);
+    const statsChartHeading = document.getElementById('statsChartHeading');
+    if (statsChartHeading) statsChartHeading.textContent = t(chartPack.headingKey);
+    renderBarChart(activityChart, document.getElementById('chartYAxis'), chartPack.buckets, chartPack.density);
 }
 
 function renderZikirStats() {
@@ -3347,87 +3191,32 @@ function renderZikirStats() {
     if (!zid || !zikirActivityChart) return;
     const z = zikirs.find((x) => x.id === zid);
     if (zikirStatsTitle) {
-        zikirStatsTitle.textContent = z ? z.name : 'İstatistik';
+        zikirStatsTitle.textContent = z ? z.name : t('stats.titleFallback');
     }
 
-    const today = getTodayString();
-    const last7 = [];
-    for (let i = 6; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        last7.push(
-            `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-        );
-    }
-
-    const todayCount = history[today] && history[today][zid] ? history[today][zid] : 0;
-    const weekSum = last7.reduce((acc, ds) => {
-        const v = history[ds] && history[ds][zid] ? history[ds][zid] : 0;
-        return acc + v;
-    }, 0);
+    const periodKeys = getStatPeriodDayKeys(activeZikirStatTab);
+    const periodSum = sumClicksInDayKeys(periodKeys, zid);
 
     if (zikirStatsSummaryLabel && zikirStatsSummaryValue && zikirStatsSummarySub) {
-        if (activeZikirStatTab === 'daily') {
-            zikirStatsSummaryLabel.textContent = 'Bugün';
-            zikirStatsSummaryValue.textContent = String(todayCount);
-            zikirStatsSummarySub.textContent = 'çekim kaydı';
-        } else {
-            zikirStatsSummaryLabel.textContent = 'Son 7 gün';
-            zikirStatsSummaryValue.textContent = String(weekSum);
-            zikirStatsSummarySub.textContent = 'toplam çekim';
-        }
-    }
-
-    if (zikirStatsChartHeading) {
-        zikirStatsChartHeading.textContent = 'Son 7 gün — günlük dağılım (bu zikir)';
-    }
-
-    let maxDayCount = 1;
-    const dayTotals = last7.map((ds) => {
-        const val = history[ds] && history[ds][zid] ? history[ds][zid] : 0;
-        if (val > maxDayCount) maxDayCount = val;
-        const d = new Date(`${ds}T12:00:00`);
-        return {
-            ds,
-            label: d.toLocaleDateString('tr-TR', { weekday: 'short' }),
-            val,
-            isToday: ds === today
+        const labelKeys = {
+            daily: 'stats.summaryToday',
+            weekly: 'stats.summaryWeek',
+            monthly: 'stats.summaryMonth',
+            yearly: 'stats.summaryYear'
         };
-    });
-
-    let yMax = 10;
-    if (maxDayCount > 10) yMax = Math.ceil(maxDayCount / 10) * 10;
-    if (maxDayCount > 100) yMax = Math.ceil(maxDayCount / 100) * 100;
-    if (maxDayCount > 1000) yMax = Math.ceil(maxDayCount / 500) * 500;
-
-    if (zikirChartYAxis) {
-        zikirChartYAxis.innerHTML = `
-            <span>${yMax}</span>
-            <span>${Math.floor(yMax / 2)}</span>
-            <span>0</span>
-        `;
+        zikirStatsSummaryLabel.textContent = t(labelKeys[activeZikirStatTab] || labelKeys.daily);
+        zikirStatsSummaryValue.textContent = String(
+            activeZikirStatTab === 'daily' ? zikirClicksOnDay(getTodayString(), zid) : periodSum
+        );
+        zikirStatsSummarySub.textContent =
+            activeZikirStatTab === 'daily' ? t('stats.summarySubRecord') : t('stats.summarySubTotal');
     }
 
-    zikirActivityChart.innerHTML = '';
-    dayTotals.forEach((dt) => {
-        const group = document.createElement('div');
-        group.className = 'chart-bar-group';
-        const hPct = Math.max((dt.val / yMax) * 100, 3);
-        const barH = dt.val === 0 ? '4px' : `${hPct}%`;
-        const col = dt.val === 0 ? 'var(--glass-border)' : 'var(--primary-green)';
-        const bar = document.createElement('div');
-        bar.className = 'chart-bar';
-        if (activeZikirStatTab === 'daily' && dt.isToday) bar.classList.add('chart-bar--today');
-        bar.dataset.tooltip = `${dt.val} çekim`;
-        bar.style.height = barH;
-        bar.style.background = col;
-        const lab = document.createElement('div');
-        lab.className = 'chart-label';
-        lab.textContent = dt.label;
-        group.appendChild(bar);
-        group.appendChild(lab);
-        zikirActivityChart.appendChild(group);
-    });
+    const chartPack = buildChartBuckets(activeZikirStatTab, zid);
+    if (zikirStatsChartHeading) {
+        zikirStatsChartHeading.textContent = `${t(chartPack.headingKey)} — ${t('stats.chartZikirSuffix')}`;
+    }
+    renderBarChart(zikirActivityChart, zikirChartYAxis, chartPack.buckets, chartPack.density);
 }
 
 // ===================== EVENT LISTENERS & MODALS =====================
@@ -3462,52 +3251,8 @@ function setupEventListeners() {
             btn.addEventListener('click', () => {
                 if (btn.disabled) return;
                 const view = btn.getAttribute('data-view');
-                const action = btn.getAttribute('data-action');
-                if (action === 'settings') {
-                    if (settingsOverlay) settingsOverlay.classList.add('active');
-                    return;
-                }
                 if (view) showView(view);
             });
-        });
-    }
-
-    const openTrashBtn = document.getElementById('openTrashBtn');
-    if (openTrashBtn) {
-        openTrashBtn.addEventListener('click', async () => {
-            if (!isPremium()) {
-                await showAppAlert('Çöp Kutusu Premium ile açılacak.', { title: 'Premium' });
-                showView('premiumView');
-                return;
-            }
-            openOverlay('trashOverlay', { onOpen: renderTrashOverlay });
-        });
-    }
-
-    const trashClearBtn = document.getElementById('trashClearBtn');
-    if (trashClearBtn) trashClearBtn.addEventListener('click', () => {
-        if (!isPremium()) return;
-        void clearTrashAll().then(() => renderTrashOverlay());
-    });
-    const trashList = document.getElementById('trashList');
-    if (trashList) {
-        trashList.addEventListener('click', async (e) => {
-            if (!isPremium()) return;
-            const btn = e.target && e.target.closest ? e.target.closest('[data-trash-action]') : null;
-            if (!btn) return;
-            const action = btn.getAttribute('data-trash-action');
-            const idx = parseInt(btn.getAttribute('data-trash-index') || '', 10);
-            if (!Number.isFinite(idx)) return;
-            if (action === 'restore') {
-                restoreTrashEntry(idx);
-                renderTrashOverlay();
-                return;
-            }
-            if (action === 'delete') {
-                if (!(await showAppConfirm('Bu öğe çöp kutusundan kalıcı olarak silinsin mi? Bu işlem geri alınamaz.', { title: 'Kalıcı sil', confirmLabel: 'Sil' }))) return;
-                deleteTrashEntry(idx);
-                renderTrashOverlay();
-            }
         });
     }
 
@@ -3644,9 +3389,9 @@ function setupEventListeners() {
         const z = zikirs.find(x => x.id === currentZikirId);
         if (
             z &&
-            (await showAppConfirm(`'${z.name}' sıfırlanacak. Onaylıyor musunuz?`, {
-                title: 'Sayaç sıfırla',
-                confirmLabel: 'Sıfırla'
+            (await showAppConfirm(t('confirm.resetCounterMsg', { name: z.name }), {
+                title: t('confirm.resetCounterTitle'),
+                confirmLabel: t('confirm.resetLabel')
             }))
         ) {
             z.count = 0;
@@ -3657,8 +3402,7 @@ function setupEventListeners() {
 
     // Settings
     if (openSettingsBtn) openSettingsBtn.addEventListener('click', () => {
-        syncTrashButtonUI();
-        openOverlay('settingsOverlay');
+        showView('settingsView');
     });
     
     const updateSettings = () => {
@@ -3689,6 +3433,28 @@ function setupEventListeners() {
             applyAppTheme(choice);
             syncThemeUI();
             saveData();
+        });
+    });
+
+    if (localeToggleBtn) {
+        localeToggleBtn.addEventListener('click', () => {
+            const isOpen = localeSetting && localeSetting.classList.contains('is-open');
+            setLocalePickerOpen(!isOpen);
+        });
+    }
+
+    localeChoiceBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const choice = btn.getAttribute('data-locale-choice');
+            if (!SUPPORTED_LOCALES.some((l) => l.code === choice)) return;
+            if (appSettings.locale === choice) {
+                setLocalePickerOpen(false);
+                return;
+            }
+            applyAppLocale(choice);
+            syncLocaleUI();
+            saveData();
+            setLocalePickerOpen(false);
         });
     });
 
@@ -3724,7 +3490,6 @@ function setupEventListeners() {
     if (reminderTimeInput) reminderTimeInput.addEventListener('change', updateReminders);
 
     if (openPrivacyBtn) openPrivacyBtn.addEventListener('click', () => {
-        closeOverlayPreferHistory('settingsOverlay');
         showView('privacyView');
     });
 
@@ -3755,16 +3520,16 @@ function setupEventListeners() {
 
     saveZikirBtn.addEventListener('click', async () => {
         const n = document.getElementById('newZikirName').value.trim();
-        const t = parseInt(document.getElementById('newZikirTarget').value);
+        const targetVal = parseInt(document.getElementById('newZikirTarget').value, 10);
         const m = document.getElementById('newZikirMeaning').value.trim();
         const ar = document.getElementById('newZikirArabic').value.trim();
         
         if(!n) {
-            await showAppAlert('Zikir adı gerekli.', { title: 'Eksik bilgi' });
+            await showAppAlert(t('confirm.nameRequired'), { title: t('confirm.missingNameTitle') });
             return;
         }
-        if(isNaN(t) || t < 1) {
-            await showAppAlert('Geçerli hedef yazın.', { title: 'Geçersiz hedef' });
+        if(isNaN(targetVal) || targetVal < 1) {
+            await showAppAlert(t('confirm.invalidTarget'), { title: t('confirm.invalidTargetTitle') });
             return;
         }
 
@@ -3776,7 +3541,7 @@ function setupEventListeners() {
             folderId: currentFolderId,
             name: n,
             arabic: ar,
-            target: t, meaning: m, count: 0, lastClicked: 0,
+            target: targetVal, meaning: m, count: 0, lastClicked: 0,
             order: maxOrder + 1
         });
         saveData();
@@ -3795,12 +3560,12 @@ function setupEventListeners() {
         if (!editingZikirIdMap) return;
         const nameVal = editZikirNameInp ? editZikirNameInp.value.trim() : '';
         if (!nameVal) {
-            await showAppAlert('Zikir adı boş olamaz.', { title: 'Eksik bilgi' });
+            await showAppAlert(t('confirm.nameEmpty'), { title: t('confirm.missingNameTitle') });
             return;
         }
         const val = parseInt(editZikirTargetInp.value, 10);
         if (isNaN(val) || val < 1) {
-            await showAppAlert('Geçerli bir hedef sayısı yazın.', { title: 'Geçersiz hedef' });
+            await showAppAlert(t('confirm.invalidTargetNumber'), { title: t('confirm.invalidTargetTitle') });
             return;
         }
         const z = zikirs.find((x) => x.id === editingZikirIdMap);

@@ -266,6 +266,147 @@ html[data-theme="black"] .premium-hero {
     color: var(--primary-green);
     font-size: 1.125rem;
 }
+/* Dil: tek satır buton, açılınca seçenek listesi */
+.locale-setting {
+    --locale-ease: cubic-bezier(0.32, 0.72, 0, 1);
+    --locale-duration: 0.38s;
+    margin-bottom: 0.8rem;
+}
+.locale-setting__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 1rem;
+    background: var(--surface-card);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--surface-radius);
+    box-shadow: var(--surface-shadow);
+    color: var(--text-white);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+        background 0.15s ease,
+        border-color var(--locale-duration) var(--locale-ease),
+        border-radius var(--locale-duration) var(--locale-ease),
+        box-shadow var(--locale-duration) var(--locale-ease);
+}
+.locale-setting__toggle:active {
+    background: var(--icon-hover-bg, rgba(255, 255, 255, 0.06));
+}
+.locale-setting.is-open .locale-setting__toggle {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-color: transparent;
+    box-shadow: none;
+}
+.locale-setting__toggle-main {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: var(--text-base);
+    font-weight: 500;
+}
+.locale-setting__toggle-main .material-icons-outlined {
+    color: var(--primary-green);
+    font-size: 1.125rem;
+}
+.locale-setting__toggle-value {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    min-width: 0;
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+.locale-setting__chevron {
+    font-size: 1.25rem !important;
+    transition: transform var(--locale-duration) var(--locale-ease);
+}
+.locale-setting.is-open .locale-setting__chevron {
+    transform: rotate(180deg);
+}
+.locale-setting__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--locale-duration) var(--locale-ease);
+    pointer-events: none;
+}
+.locale-setting.is-open .locale-setting__panel {
+    grid-template-rows: 1fr;
+    pointer-events: auto;
+}
+.locale-setting__panel-inner {
+    overflow: hidden;
+    min-height: 0;
+}
+.locale-setting__options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0 0.45rem 0.45rem;
+    background: var(--surface-card);
+    border: 1px solid var(--surface-border);
+    border-top: none;
+    border-radius: 0 0 var(--surface-radius) var(--surface-radius);
+    box-shadow: var(--surface-shadow);
+    opacity: 0;
+    transform: translateY(-6px);
+    transition:
+        opacity calc(var(--locale-duration) * 0.85) ease,
+        transform var(--locale-duration) var(--locale-ease);
+}
+.locale-setting.is-open .locale-setting__options {
+    opacity: 1;
+    transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+    .locale-setting__panel,
+    .locale-setting__options,
+    .locale-setting__chevron,
+    .locale-setting__toggle {
+        transition: none !important;
+    }
+}
+.locale-setting__option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.72rem 0.85rem;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-gray);
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.locale-setting__option:hover,
+.locale-setting__option:focus-visible {
+    background: var(--icon-hover-bg, rgba(255, 255, 255, 0.06));
+    color: var(--text-white);
+}
+.locale-setting__option.active {
+    background: var(--alpha-04);
+    border-color: var(--surface-border);
+    color: var(--text-white);
+}
+.locale-setting__option.active::after {
+    content: "check";
+    font-family: "Material Icons Outlined";
+    font-size: 1.1rem;
+    color: var(--primary-green);
+    line-height: 1;
+}
 .theme-segment {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));

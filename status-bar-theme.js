@@ -1,4 +1,5 @@
 import { Capacitor } from '@capacitor/core';
+import { SystemChrome } from './system-chrome.js';
 
 /** Üst durum çubuğu (saat, şarj): açık zeminde koyu ikon, koyu zeminde açık ikon. */
 const STATUS_BAR_BY_THEME = {
@@ -7,10 +8,23 @@ const STATUS_BAR_BY_THEME = {
     black: { style: 'Dark', bg: '#000000' }
 };
 
+function themeKey(theme) {
+    return theme === 'light' ? 'light' : theme === 'black' ? 'black' : 'navy';
+}
+
+async function applyNativeNavigationBarTheme(theme) {
+    if (!Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'android') return;
+    try {
+        await SystemChrome.applyNavigationBarTheme({ theme: themeKey(theme) });
+    } catch (e) {
+        console.warn('navigation-bar theme', e);
+    }
+}
+
 export async function applyNativeStatusBarTheme(theme) {
     if (!Capacitor.isNativePlatform()) return;
 
-    const key = theme === 'light' ? 'light' : theme === 'black' ? 'black' : 'navy';
+    const key = themeKey(theme);
     const cfg = STATUS_BAR_BY_THEME[key];
 
     try {
@@ -24,4 +38,6 @@ export async function applyNativeStatusBarTheme(theme) {
     } catch (e) {
         console.warn('status-bar theme', e);
     }
+
+    await applyNativeNavigationBarTheme(theme);
 }

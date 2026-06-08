@@ -11,6 +11,7 @@ public class MainActivity extends BridgeActivity {
         // WebView içeriği sistem gezinme çubuğunun (3 tuş / hareket) altına kaçmasın.
         // Bazı API 35 / edge-to-edge kombinasyonlarında alt sekme alanı tıklanamaz olabiliyordu.
         WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
+        registerPlugin(SystemChromePlugin.class);
         super.onCreate(savedInstanceState);
     }
 }

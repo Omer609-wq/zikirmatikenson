@@ -1,0 +1,68 @@
+[
+  {
+    "id": "plib_01",
+    "category": "dua",
+    "name": "Sefer Duası",
+    "arabic": "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هٰذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلٰى رَبِّنَا لَمُنْقَلِبُونَ",
+    "meaning": "Bunu bize boyun eğdiren Allah’ı tesbih ederiz; biz buna güç yetiremezdik. Biz mutlaka Rabbimize döneceğiz.",
+    "context": "Yolculuğa binerken okunur; teslimiyet ve emniyet duygusunu güçlendirir.",
+    "source": "Kur'an, Zuhruf 13-14",
+    "target": 1,
+    "keywords": "sefer yolculuk binerken emniyet teslimiyet"
+  },
+  {
+    "id": "plib_02",
+    "category": "dua",
+    "name": "Sıkıntı Anında Dua",
+    "arabic": "لَا إِلٰهَ إِلَّا اللهُ الْعَظِيمُ الْحَلِيمُ لَا إِلٰهَ إِلَّا اللهُ رَبُّ الْعَرْشِ الْعَظِيمِ",
+    "meaning": "Azîm ve Halîm olan Allah’tan başka ilah yoktur. Büyük Arş’ın Rabbi Allah’tan başka ilah yoktur.",
+    "context": "Zor anlarda kalbi sakinleştiren bir zikir/dua.",
+    "source": "Buhari, Daavât",
+    "target": 1,
+    "keywords": "sıkıntı stres korku sakin"
+  },
+  {
+    "id": "plib_03",
+    "category": "zikir",
+    "name": "Hasbiyallahu lâ ilâhe illâ Hû",
+    "arabic": "حَسْبِيَ اللهُ لَا إِلٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
+    "meaning": "Allah bana yeter. O’ndan başka ilah yoktur. O’na tevekkül ettim. O büyük Arş’ın Rabbidir.",
+    "context": "Tevekkül ve güven zikri; gün içinde tekrar edilebilir.",
+    "source": "Kur'an, Tevbe 129",
+    "target": 7,
+    "keywords": "hasbiyallahu tevekkül güven arş"
+  },
+  {
+    "id": "plib_04",
+    "category": "zikir",
+    "name": "Estağfirullah el-azîm (Tevbe)",
+    "arabic": "أَسْتَغْفِرُ اللهَ الْعَظِيمَ",
+    "meaning": "Azîm olan Allah’tan bağışlanma dilerim.",
+    "context": "Gün içinde istiğfar; niyete göre sayılı tekrar edilir.",
+    "source": "Genel rivayet",
+    "target": 100,
+    "keywords": "istiğfar tevbe günah bağışlanma"
+  },
+  {
+    "id": "plib_05",
+    "category": "dua",
+    "name": "Anne-Baba Duası",
+    "arabic": "رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا",
+    "meaning": "Rabbim! Küçüklüğümde beni yetiştirdikleri gibi onlara merhamet et.",
+    "context": "Anne-baba için okunur.",
+    "source": "Kur'an, İsra 24",
+    "target": 1,
+    "keywords": "anne baba merhamet isrâ"
+  },
+  {
+    "id": "plib_06",
+    "category": "zikir",
+    "name": "Sübhânallâhi’l-azîm",
+    "arabic": "سُبْحَانَ اللهِ الْعَظِيمِ",
+    "meaning": "Azîm olan Allah’ı tesbih ederim.",
+    "context": "Kısa tesbih; gün içine yayılabilir.",
+    "source": "Genel rivayet",
+    "target": 33,
+    "keywords": "tesbih azîm kısa"
+  }
+]
