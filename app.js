@@ -78,6 +78,8 @@ import {
     syncQuranTabVisibility
 } from './quran.js';
 
+const STORAGE_KEY = 'zikirmatik_data_v2';
+
 // ===================== DATA MODELS =====================
 function getDefaultFolders() {
     return [
@@ -488,6 +490,7 @@ let appSettings = {
 let reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
 let entitlements = { premium: false };
 let trash = { v: 1, entries: [] }; // soft-deleted items
+let storageWritesBlockedForSession = false;
 
 let currentFolderId = null;
 let currentZikirId = null;
@@ -967,6 +970,57 @@ function isPlainObject(v) {
     if (!v || typeof v !== 'object') return false;
     const p = Object.getPrototypeOf(v);
     return p === Object.prototype || p === null;
+}
+
+function getDefaultAppSettings() {
+    return {
+        vibrationTap: true,
+        vibrationTarget: true,
+        sound: false,
+        wakeLock: false,
+        counterNativeNumerals: false,
+        arabicSublineFontStep: 0,
+        theme: 'navy',
+        locale: 'tr',
+        quranMeal: 'diyanet',
+        quranReadMode: 'meal-ar'
+    };
+}
+
+function loadDefaultSessionData() {
+    folders = [...getDefaultFolders()];
+    zikirs = [...DEFAULT_ZIKIRS];
+    history = {};
+    appSettings = getDefaultAppSettings();
+    reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
+    entitlements = { premium: false };
+    trash = { v: 1, entries: [] };
+    quranAyahFavorites = [];
+}
+
+function blockStorageWritesForSession(reason, error) {
+    if (!storageWritesBlockedForSession) {
+        console.error(reason, error || '');
+    }
+    storageWritesBlockedForSession = true;
+}
+
+function hasOwn(obj, key) {
+    return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
+function isStoredDataShapeTrusted(d) {
+    if (!isPlainObject(d)) return false;
+    if (!Array.isArray(d.zikirs)) return false;
+    if (hasOwn(d, 'folders') && !Array.isArray(d.folders)) return false;
+    if (hasOwn(d, 'history') && !isPlainObject(d.history)) return false;
+    if (hasOwn(d, 'settings') && !isPlainObject(d.settings)) return false;
+    if (hasOwn(d, 'reminders') && !isPlainObject(d.reminders)) return false;
+    if (hasOwn(d, 'reminderSettings') && !isPlainObject(d.reminderSettings)) return false;
+    if (hasOwn(d, 'entitlements') && !isPlainObject(d.entitlements)) return false;
+    if (hasOwn(d, 'trash') && !isPlainObject(d.trash)) return false;
+    if (hasOwn(d, 'quranAyahFavorites') && !Array.isArray(d.quranAyahFavorites)) return false;
+    return true;
 }
 
 function coerceString(v, maxLen = 240) {
@@ -1612,37 +1666,27 @@ function syncSettingsUI() {
 }
 
 function loadData() {
-    const sv = localStorage.getItem('zikirmatik_data_v2');
-    if (sv) {
+    const sv = localStorage.getItem(STORAGE_KEY);
+    const hasStoredData = sv !== null;
+    if (hasStoredData) {
         let d;
         try {
             d = JSON.parse(sv);
         } catch (e) {
-            console.error('zikirmatik_data_v2 okunamadı, varsayılan veri:', e);
-            folders = [...getDefaultFolders()];
-            zikirs = [...DEFAULT_ZIKIRS];
-            history = {};
-            appSettings = {
-                vibrationTap: true,
-                vibrationTarget: true,
-                sound: false,
-                wakeLock: false,
-                counterNativeNumerals: false,
-                arabicSublineFontStep: 0,
-                theme: 'navy',
-                locale: 'tr',
-                quranMeal: 'diyanet',
-                quranReadMode: 'meal-ar'
-            };
-            reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
-            entitlements = { premium: false };
-            trash = { v: 1, entries: [] };
+            blockStorageWritesForSession(`${STORAGE_KEY} okunamadi; mevcut kayit korunacak.`, e);
+            loadDefaultSessionData();
+            syncSettingsUI();
+            return;
+        }
+        if (!isStoredDataShapeTrusted(d)) {
+            blockStorageWritesForSession(`${STORAGE_KEY} beklenen veri yapisinda degil; mevcut kayit korunacak.`);
+            loadDefaultSessionData();
             syncSettingsUI();
             return;
         }
         const sanitized = sanitizeLoadedData(d);
         folders = sanitized.folders.length ? sanitized.folders : [...getDefaultFolders()];
-        zikirs = sanitized.zikirs.length ? sanitized.zikirs : [...DEFAULT_ZIKIRS];
+        zikirs = sanitized.zikirs;
         zikirs.forEach((z) => {
             const inferred = inferLibraryIdForZikir(z);
             if (inferred) z.libraryId = inferred;
@@ -1675,37 +1719,39 @@ function loadData() {
         });
         if (touched) saveData();
 
-        // Migration for Esma folder (for existing users)
-        if (!folders.find(f => f.id === 'f_esma')) {
-            folders.push({ id: 'f_esma', name: 'Esma\'ül Hüsna' });
-            ESMA_LIST.forEach((esma, index) => {
-                zikirs.push({
-                    id: 'z_e_' + index, folderId: 'f_esma',
-                    name: esma.name, arabic: esma.arabic || '', target: esma.target, meaning: esma.meaning,
-                    count: 0, lastClicked: 0
-                });
-            });
-            saveData();
-        } else {
-            // Ensure all Esma items exist (if ESMA_LIST was expanded in later versions)
-            let changed = false;
-            ESMA_LIST.forEach((esma, index) => {
-                const id = 'z_e_' + index;
-                if (!zikirs.find(z => z.id === id)) {
+        if (zikirs.length > 0) {
+            // Migration for Esma folder (for existing users)
+            if (!folders.find(f => f.id === 'f_esma')) {
+                folders.push({ id: 'f_esma', name: 'Esma\'ül Hüsna' });
+                ESMA_LIST.forEach((esma, index) => {
                     zikirs.push({
-                        id,
-                        folderId: 'f_esma',
-                        name: esma.name,
-                        arabic: esma.arabic || '',
-                        target: esma.target,
-                        meaning: esma.meaning,
-                        count: 0,
-                        lastClicked: 0
+                        id: 'z_e_' + index, folderId: 'f_esma',
+                        name: esma.name, arabic: esma.arabic || '', target: esma.target, meaning: esma.meaning,
+                        count: 0, lastClicked: 0
                     });
-                    changed = true;
-                }
-            });
-            if (changed) saveData();
+                });
+                saveData();
+            } else {
+                // Ensure all Esma items exist (if ESMA_LIST was expanded in later versions).
+                let changed = false;
+                ESMA_LIST.forEach((esma, index) => {
+                    const id = 'z_e_' + index;
+                    if (!zikirs.find(z => z.id === id)) {
+                        zikirs.push({
+                            id,
+                            folderId: 'f_esma',
+                            name: esma.name,
+                            arabic: esma.arabic || '',
+                            target: esma.target,
+                            meaning: esma.meaning,
+                            count: 0,
+                            lastClicked: 0
+                        });
+                        changed = true;
+                    }
+                });
+                if (changed) saveData();
+            }
         }
 
         // Arapça metin yoksa Esma / varsayılan zikirlere doldur (eski kayıtlar)
@@ -1728,15 +1774,16 @@ function loadData() {
 
         if (sanitizeHistory() || pruneHistory()) saveData();
     } else {
-        folders = [...getDefaultFolders()];
-        zikirs = [...DEFAULT_ZIKIRS];
-        history = {};
-        trash = { v: 1, entries: [] };
+        loadDefaultSessionData();
     }
 
     syncSettingsUI();
 }
 function saveData() {
+    if (storageWritesBlockedForSession) {
+        console.warn('saveData skipped: loaded storage is not trusted for this session.');
+        return;
+    }
     const payload = {
         folders,
         zikirs,
@@ -1748,7 +1795,7 @@ function saveData() {
         quranAyahFavorites
     };
     try {
-        localStorage.setItem('zikirmatik_data_v2', JSON.stringify(payload));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     } catch (e) {
         const isQuota =
             e &&
@@ -1757,7 +1804,7 @@ function saveData() {
                 e.code === 1014);
         if (isQuota && (pruneHistory() || sanitizeHistory())) {
             try {
-                localStorage.setItem('zikirmatik_data_v2', JSON.stringify(payload));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
             } catch (e2) {
                 console.error('saveData: kota dolu, eski geçmiş budandıktan sonra da yazılamadı.', e2);
             }
