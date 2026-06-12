@@ -1,0 +1,319 @@
+{
+  "mealId": "diyanet",
+  "n": 55,
+  "ayahCount": 78,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Rahman olan Allah Kuran'ı öğretti;"
+    },
+    {
+      "n": 2,
+      "tr": "Rahman olan Allah Kuran'ı öğretti;"
+    },
+    {
+      "n": 3,
+      "tr": "İnsanı yarattı, ona konuşmayı öğretti."
+    },
+    {
+      "n": 4,
+      "tr": "İnsanı yarattı, ona konuşmayı öğretti."
+    },
+    {
+      "n": 5,
+      "tr": "Güneş ve ayın hareketleri bir hesaba göredir."
+    },
+    {
+      "n": 6,
+      "tr": "Bitkiler ve ağaçlar O'nun buyruğuna boyun eğerler."
+    },
+    {
+      "n": 7,
+      "tr": "O, göğü yükseltmiştir; tartıyı koymuştur."
+    },
+    {
+      "n": 8,
+      "tr": "Artık tartıda tecavüz etmeyin."
+    },
+    {
+      "n": 9,
+      "tr": "Tartmayı doğru yapın, tartıyı eksik tutmayın."
+    },
+    {
+      "n": 10,
+      "tr": "Allah, yeri yaratıkları için meydana getirmiştir."
+    },
+    {
+      "n": 11,
+      "tr": "Orada meyveler, salkımlı hurma ağaçları, kabuklu taneler, güzel kokulu otlar vardır."
+    },
+    {
+      "n": 12,
+      "tr": "Orada meyveler, salkımlı hurma ağaçları, kabuklu taneler, güzel kokulu otlar vardır."
+    },
+    {
+      "n": 13,
+      "tr": "Ey insanlar ve cinler! Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 14,
+      "tr": "O, insanı pişmiş çamur gibi kuru balçıktan yaratmıştır."
+    },
+    {
+      "n": 15,
+      "tr": "Cinleri de yalın bir alevden yaratmıştır."
+    },
+    {
+      "n": 16,
+      "tr": "Öyleyken; Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 17,
+      "tr": "O, iki doğunun Rabbidir, iki batının Rabbidir."
+    },
+    {
+      "n": 18,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 19,
+      "tr": "Acı ve tatlı sulu iki denizi birbirine kavuşmamak üzere salıvermiştir."
+    },
+    {
+      "n": 20,
+      "tr": "Aralarında bir engel vardır; birbirinin sınırını aşamazlar."
+    },
+    {
+      "n": 21,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 22,
+      "tr": "Bu iki denizden de inci ve mercan çıkar."
+    },
+    {
+      "n": 23,
+      "tr": "Öyleyken Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 24,
+      "tr": "Denizde yürüyen dağlar gibi gemiler O'nundur."
+    },
+    {
+      "n": 25,
+      "tr": "Öyleyken Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 26,
+      "tr": "Yeryüzünde bulunan her şey fanidir."
+    },
+    {
+      "n": 27,
+      "tr": "Ancak, yüce ve cömert olan Rabbinin varlığı bakidir."
+    },
+    {
+      "n": 28,
+      "tr": "Öyleyken Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 29,
+      "tr": "Göklerde ve yerde olan kimseler her şeyi O'ndan isterler; O her an kainata tasarruf etmektedir."
+    },
+    {
+      "n": 30,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 31,
+      "tr": "Ey insan ve cin toplulukları! Sizin de hesabınızı ele alacağız."
+    },
+    {
+      "n": 32,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 33,
+      "tr": "Ey cin ve insan toplulukları! Göklerin ve yerin çevresini aşıp geçmeye gücünüz yetiyorsa geçin! Ama Allah'ın verdiği bir güç olmaksızın geçemezsiniz ki!"
+    },
+    {
+      "n": 34,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 35,
+      "tr": "Ey insanlar ve cinler! Üzerinize dumansız bir alev ve ateşsiz bir duman gönderilir de kurtulamazsınız."
+    },
+    {
+      "n": 36,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 37,
+      "tr": "Gök yarılıp da, gül gibi kızardığı, yağ gibi eridiği zaman haliniz nice olur?"
+    },
+    {
+      "n": 38,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 39,
+      "tr": "O gün ne insana ve ne cine suçu sorulur."
+    },
+    {
+      "n": 40,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 41,
+      "tr": "Suçlular simalarından tanınırlar da, alın saçlarından ve ayaklarından yakalanırlar."
+    },
+    {
+      "n": 42,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 43,
+      "tr": "İşte suçluların yalanladıkları cehennem budur."
+    },
+    {
+      "n": 44,
+      "tr": "Onlar, cehennem ateşiyle kaynar su arasında dolaşır dururlar."
+    },
+    {
+      "n": 45,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 46,
+      "tr": "Rabbine karşı durmaktan korkan kimseye iki cennet vardır."
+    },
+    {
+      "n": 47,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 48,
+      "tr": "Bu iki cennet türlü ağaçlarla doludur."
+    },
+    {
+      "n": 49,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 50,
+      "tr": "Bu cennetlerden akan iki kaynak vardır."
+    },
+    {
+      "n": 51,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 52,
+      "tr": "Bu cennetlerde türlü meyveden çift çift vardır."
+    },
+    {
+      "n": 53,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 54,
+      "tr": "Orada, örtüleri parlak atlastan yataklara yaslanırlar; iki cennetin meyvelerini de kolayca toplarlar."
+    },
+    {
+      "n": 55,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 56,
+      "tr": "Orada, bakışlarını yalnız eşlerine çevirmiş, daha önce ne insan ve ne de cinlerin dokunmuş olduğu eşler vardır."
+    },
+    {
+      "n": 57,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 58,
+      "tr": "Onlar yakut ve mercan gibidirler."
+    },
+    {
+      "n": 59,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 60,
+      "tr": "İyiliğin karşılığı ancak iyilik değil midir?"
+    },
+    {
+      "n": 61,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 62,
+      "tr": "Bu iki cennetten başka iki cennet daha vardır."
+    },
+    {
+      "n": 63,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 64,
+      "tr": "Renkleri koyu yeşildir."
+    },
+    {
+      "n": 65,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 66,
+      "tr": "İkisinde de durmadan fışkıran iki kaynak vardır."
+    },
+    {
+      "n": 67,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 68,
+      "tr": "İkisinde de türlü türlü meyveler, hurmalıklar ve nar ağaçları vardır."
+    },
+    {
+      "n": 69,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 70,
+      "tr": "Oralarda iyi huylu güzel kadınlar vardır."
+    },
+    {
+      "n": 71,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 72,
+      "tr": "Çadırlar içinde ceylan gözlüler vardır."
+    },
+    {
+      "n": 73,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 74,
+      "tr": "Onlara daha önce insan da, cin de dokunmamıştır."
+    },
+    {
+      "n": 75,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 76,
+      "tr": "Cennetlikler orada yeşil yastıklara ve harikulade işlemeli döşeklere yaslanırlar."
+    },
+    {
+      "n": 77,
+      "tr": "Öyleyken, Rabbinizin nimetlerinden hangisini yalanlarsınız?"
+    },
+    {
+      "n": 78,
+      "tr": "Büyük ve pek cömert olan Rabbinin adı ne yücedir!"
+    }
+  ]
+}

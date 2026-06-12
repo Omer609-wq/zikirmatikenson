@@ -1,0 +1,39 @@
+{
+  "translitId": "translit-tr",
+  "n": 99,
+  "ayahCount": 8,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "İẕâ zülzileti-l'arḍu zilzâlehâ"
+    },
+    {
+      "n": 2,
+      "lat": "Veaḫraceti-l'arḍu eŝḳâlehâ"
+    },
+    {
+      "n": 3,
+      "lat": "Veḳâle-l'insânü mâ lehâ"
+    },
+    {
+      "n": 4,
+      "lat": "Yevmeiẕin tüḥaddiŝü aḫbârahâ"
+    },
+    {
+      "n": 5,
+      "lat": "Bienne rabbeke evḥâ lehâ"
+    },
+    {
+      "n": 6,
+      "lat": "Yevmeiẕiy yaṣdüru-nnâsü eştâtel liyürav a`mâlehüm"
+    },
+    {
+      "n": 7,
+      "lat": "Femey ya`mel miŝḳâle ẕerratin ḫayray yerah"
+    },
+    {
+      "n": 8,
+      "lat": "Vemey ya`mel miŝḳâle ẕerratin şerray yerah"
+    }
+  ]
+}

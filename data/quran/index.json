@@ -1,0 +1,686 @@
+[
+  {
+    "n": 1,
+    "nameAr": "الفاتحة",
+    "nameTr": "Fatiha",
+    "ayahCount": 7
+  },
+  {
+    "n": 2,
+    "nameAr": "البقرة",
+    "nameTr": "Bakara",
+    "ayahCount": 286
+  },
+  {
+    "n": 3,
+    "nameAr": "آل عمران",
+    "nameTr": "Âl-i İmrân",
+    "ayahCount": 200
+  },
+  {
+    "n": 4,
+    "nameAr": "النساء",
+    "nameTr": "Nisâ",
+    "ayahCount": 176
+  },
+  {
+    "n": 5,
+    "nameAr": "المائدة",
+    "nameTr": "Mâide",
+    "ayahCount": 120
+  },
+  {
+    "n": 6,
+    "nameAr": "الأنعام",
+    "nameTr": "En'âm",
+    "ayahCount": 165
+  },
+  {
+    "n": 7,
+    "nameAr": "الأعراف",
+    "nameTr": "A'râf",
+    "ayahCount": 206
+  },
+  {
+    "n": 8,
+    "nameAr": "الأنفال",
+    "nameTr": "Enfâl",
+    "ayahCount": 75
+  },
+  {
+    "n": 9,
+    "nameAr": "التوبة",
+    "nameTr": "Tevbe",
+    "ayahCount": 129
+  },
+  {
+    "n": 10,
+    "nameAr": "يونس",
+    "nameTr": "Yûnus",
+    "ayahCount": 109
+  },
+  {
+    "n": 11,
+    "nameAr": "هود",
+    "nameTr": "Hûd",
+    "ayahCount": 123
+  },
+  {
+    "n": 12,
+    "nameAr": "يوسف",
+    "nameTr": "Yûsuf",
+    "ayahCount": 111
+  },
+  {
+    "n": 13,
+    "nameAr": "الرعد",
+    "nameTr": "Ra'd",
+    "ayahCount": 43
+  },
+  {
+    "n": 14,
+    "nameAr": "ابراهيم",
+    "nameTr": "İbrahim",
+    "ayahCount": 52
+  },
+  {
+    "n": 15,
+    "nameAr": "الحجر",
+    "nameTr": "Hicr",
+    "ayahCount": 99
+  },
+  {
+    "n": 16,
+    "nameAr": "النحل",
+    "nameTr": "Nahl",
+    "ayahCount": 128
+  },
+  {
+    "n": 17,
+    "nameAr": "الإسراء",
+    "nameTr": "İsrâ",
+    "ayahCount": 111
+  },
+  {
+    "n": 18,
+    "nameAr": "الكهف",
+    "nameTr": "Kehf",
+    "ayahCount": 110
+  },
+  {
+    "n": 19,
+    "nameAr": "مريم",
+    "nameTr": "Meryem",
+    "ayahCount": 98
+  },
+  {
+    "n": 20,
+    "nameAr": "طه",
+    "nameTr": "Tâhâ",
+    "ayahCount": 135
+  },
+  {
+    "n": 21,
+    "nameAr": "الأنبياء",
+    "nameTr": "Enbiyâ",
+    "ayahCount": 112
+  },
+  {
+    "n": 22,
+    "nameAr": "الحج",
+    "nameTr": "Hac",
+    "ayahCount": 78
+  },
+  {
+    "n": 23,
+    "nameAr": "المؤمنون",
+    "nameTr": "Mü'minûn",
+    "ayahCount": 118
+  },
+  {
+    "n": 24,
+    "nameAr": "النور",
+    "nameTr": "Nûr",
+    "ayahCount": 64
+  },
+  {
+    "n": 25,
+    "nameAr": "الفرقان",
+    "nameTr": "Furkan",
+    "ayahCount": 77
+  },
+  {
+    "n": 26,
+    "nameAr": "الشعراء",
+    "nameTr": "Şuarâ",
+    "ayahCount": 227
+  },
+  {
+    "n": 27,
+    "nameAr": "النمل",
+    "nameTr": "Neml",
+    "ayahCount": 93
+  },
+  {
+    "n": 28,
+    "nameAr": "القصص",
+    "nameTr": "Kasas",
+    "ayahCount": 88
+  },
+  {
+    "n": 29,
+    "nameAr": "العنكبوت",
+    "nameTr": "Ankebût",
+    "ayahCount": 69
+  },
+  {
+    "n": 30,
+    "nameAr": "الروم",
+    "nameTr": "Rûm",
+    "ayahCount": 60
+  },
+  {
+    "n": 31,
+    "nameAr": "لقمان",
+    "nameTr": "Lokmân",
+    "ayahCount": 34
+  },
+  {
+    "n": 32,
+    "nameAr": "السجدة",
+    "nameTr": "Secde",
+    "ayahCount": 30
+  },
+  {
+    "n": 33,
+    "nameAr": "الأحزاب",
+    "nameTr": "Ahzâb",
+    "ayahCount": 73
+  },
+  {
+    "n": 34,
+    "nameAr": "سبإ",
+    "nameTr": "Sebe",
+    "ayahCount": 54
+  },
+  {
+    "n": 35,
+    "nameAr": "فاطر",
+    "nameTr": "Fâtır",
+    "ayahCount": 45
+  },
+  {
+    "n": 36,
+    "nameAr": "يس",
+    "nameTr": "Yâsîn",
+    "ayahCount": 83
+  },
+  {
+    "n": 37,
+    "nameAr": "الصافات",
+    "nameTr": "Sâffât",
+    "ayahCount": 182
+  },
+  {
+    "n": 38,
+    "nameAr": "ص",
+    "nameTr": "Sâd",
+    "ayahCount": 88
+  },
+  {
+    "n": 39,
+    "nameAr": "الزمر",
+    "nameTr": "Zümer",
+    "ayahCount": 75
+  },
+  {
+    "n": 40,
+    "nameAr": "غافر",
+    "nameTr": "Mü'min",
+    "ayahCount": 85
+  },
+  {
+    "n": 41,
+    "nameAr": "فصلت",
+    "nameTr": "Fussilet",
+    "ayahCount": 54
+  },
+  {
+    "n": 42,
+    "nameAr": "الشورى",
+    "nameTr": "Şûrâ",
+    "ayahCount": 53
+  },
+  {
+    "n": 43,
+    "nameAr": "الزخرف",
+    "nameTr": "Zuhruf",
+    "ayahCount": 89
+  },
+  {
+    "n": 44,
+    "nameAr": "الدخان",
+    "nameTr": "Duhân",
+    "ayahCount": 59
+  },
+  {
+    "n": 45,
+    "nameAr": "الجاثية",
+    "nameTr": "Câsiye",
+    "ayahCount": 37
+  },
+  {
+    "n": 46,
+    "nameAr": "الأحقاف",
+    "nameTr": "Ahkâf",
+    "ayahCount": 35
+  },
+  {
+    "n": 47,
+    "nameAr": "محمد",
+    "nameTr": "Muhammed",
+    "ayahCount": 38
+  },
+  {
+    "n": 48,
+    "nameAr": "الفتح",
+    "nameTr": "Fetih",
+    "ayahCount": 29
+  },
+  {
+    "n": 49,
+    "nameAr": "الحجرات",
+    "nameTr": "Hucurât",
+    "ayahCount": 18
+  },
+  {
+    "n": 50,
+    "nameAr": "ق",
+    "nameTr": "Kâf",
+    "ayahCount": 45
+  },
+  {
+    "n": 51,
+    "nameAr": "الذاريات",
+    "nameTr": "Zâriyât",
+    "ayahCount": 60
+  },
+  {
+    "n": 52,
+    "nameAr": "الطور",
+    "nameTr": "Tûr",
+    "ayahCount": 49
+  },
+  {
+    "n": 53,
+    "nameAr": "النجم",
+    "nameTr": "Necm",
+    "ayahCount": 62
+  },
+  {
+    "n": 54,
+    "nameAr": "القمر",
+    "nameTr": "Kamer",
+    "ayahCount": 55
+  },
+  {
+    "n": 55,
+    "nameAr": "الرحمن",
+    "nameTr": "Rahmân",
+    "ayahCount": 78
+  },
+  {
+    "n": 56,
+    "nameAr": "الواقعة",
+    "nameTr": "Vâkıa",
+    "ayahCount": 96
+  },
+  {
+    "n": 57,
+    "nameAr": "الحديد",
+    "nameTr": "Hadîd",
+    "ayahCount": 29
+  },
+  {
+    "n": 58,
+    "nameAr": "المجادلة",
+    "nameTr": "Mücâdele",
+    "ayahCount": 22
+  },
+  {
+    "n": 59,
+    "nameAr": "الحشر",
+    "nameTr": "Haşr",
+    "ayahCount": 24
+  },
+  {
+    "n": 60,
+    "nameAr": "الممتحنة",
+    "nameTr": "Mümtehine",
+    "ayahCount": 13
+  },
+  {
+    "n": 61,
+    "nameAr": "الصف",
+    "nameTr": "Saff",
+    "ayahCount": 14
+  },
+  {
+    "n": 62,
+    "nameAr": "الجمعة",
+    "nameTr": "Cum'a",
+    "ayahCount": 11
+  },
+  {
+    "n": 63,
+    "nameAr": "المنافقون",
+    "nameTr": "Münâfikûn",
+    "ayahCount": 11
+  },
+  {
+    "n": 64,
+    "nameAr": "التغابن",
+    "nameTr": "Teğâbün",
+    "ayahCount": 18
+  },
+  {
+    "n": 65,
+    "nameAr": "الطلاق",
+    "nameTr": "Talâk",
+    "ayahCount": 12
+  },
+  {
+    "n": 66,
+    "nameAr": "التحريم",
+    "nameTr": "Tahrîm",
+    "ayahCount": 12
+  },
+  {
+    "n": 67,
+    "nameAr": "الملك",
+    "nameTr": "Mülk",
+    "ayahCount": 30
+  },
+  {
+    "n": 68,
+    "nameAr": "القلم",
+    "nameTr": "Kalem",
+    "ayahCount": 52
+  },
+  {
+    "n": 69,
+    "nameAr": "الحاقة",
+    "nameTr": "Hâkka",
+    "ayahCount": 52
+  },
+  {
+    "n": 70,
+    "nameAr": "المعارج",
+    "nameTr": "Meâric",
+    "ayahCount": 44
+  },
+  {
+    "n": 71,
+    "nameAr": "نوح",
+    "nameTr": "Nûh",
+    "ayahCount": 28
+  },
+  {
+    "n": 72,
+    "nameAr": "الجن",
+    "nameTr": "Cin",
+    "ayahCount": 28
+  },
+  {
+    "n": 73,
+    "nameAr": "المزمل",
+    "nameTr": "Müzzemmil",
+    "ayahCount": 20
+  },
+  {
+    "n": 74,
+    "nameAr": "المدثر",
+    "nameTr": "Müddessir",
+    "ayahCount": 56
+  },
+  {
+    "n": 75,
+    "nameAr": "القيامة",
+    "nameTr": "Kıyâmet",
+    "ayahCount": 40
+  },
+  {
+    "n": 76,
+    "nameAr": "الانسان",
+    "nameTr": "İnsan",
+    "ayahCount": 31
+  },
+  {
+    "n": 77,
+    "nameAr": "المرسلات",
+    "nameTr": "Mürselât",
+    "ayahCount": 50
+  },
+  {
+    "n": 78,
+    "nameAr": "النبإ",
+    "nameTr": "Nebe",
+    "ayahCount": 40
+  },
+  {
+    "n": 79,
+    "nameAr": "النازعات",
+    "nameTr": "Nâziât",
+    "ayahCount": 46
+  },
+  {
+    "n": 80,
+    "nameAr": "عبس",
+    "nameTr": "Abese",
+    "ayahCount": 42
+  },
+  {
+    "n": 81,
+    "nameAr": "التكوير",
+    "nameTr": "Tekvîr",
+    "ayahCount": 29
+  },
+  {
+    "n": 82,
+    "nameAr": "الإنفطار",
+    "nameTr": "İnfitâr",
+    "ayahCount": 19
+  },
+  {
+    "n": 83,
+    "nameAr": "المطففين",
+    "nameTr": "Mutaffifîn",
+    "ayahCount": 36
+  },
+  {
+    "n": 84,
+    "nameAr": "الإنشقاق",
+    "nameTr": "İnşikâk",
+    "ayahCount": 25
+  },
+  {
+    "n": 85,
+    "nameAr": "البروج",
+    "nameTr": "Burûc",
+    "ayahCount": 22
+  },
+  {
+    "n": 86,
+    "nameAr": "الطارق",
+    "nameTr": "Târık",
+    "ayahCount": 17
+  },
+  {
+    "n": 87,
+    "nameAr": "الأعلى",
+    "nameTr": "A'lâ",
+    "ayahCount": 19
+  },
+  {
+    "n": 88,
+    "nameAr": "الغاشية",
+    "nameTr": "Gâşiye",
+    "ayahCount": 26
+  },
+  {
+    "n": 89,
+    "nameAr": "الفجر",
+    "nameTr": "Fecr",
+    "ayahCount": 30
+  },
+  {
+    "n": 90,
+    "nameAr": "البلد",
+    "nameTr": "Beled",
+    "ayahCount": 20
+  },
+  {
+    "n": 91,
+    "nameAr": "الشمس",
+    "nameTr": "Şems",
+    "ayahCount": 15
+  },
+  {
+    "n": 92,
+    "nameAr": "الليل",
+    "nameTr": "Leyl",
+    "ayahCount": 21
+  },
+  {
+    "n": 93,
+    "nameAr": "الضحى",
+    "nameTr": "Duha",
+    "ayahCount": 11
+  },
+  {
+    "n": 94,
+    "nameAr": "الشرح",
+    "nameTr": "İnşirâh",
+    "ayahCount": 8
+  },
+  {
+    "n": 95,
+    "nameAr": "التين",
+    "nameTr": "Tîn",
+    "ayahCount": 8
+  },
+  {
+    "n": 96,
+    "nameAr": "العلق",
+    "nameTr": "Alak",
+    "ayahCount": 19
+  },
+  {
+    "n": 97,
+    "nameAr": "القدر",
+    "nameTr": "Kadr",
+    "ayahCount": 5
+  },
+  {
+    "n": 98,
+    "nameAr": "البينة",
+    "nameTr": "Beyyine",
+    "ayahCount": 8
+  },
+  {
+    "n": 99,
+    "nameAr": "الزلزلة",
+    "nameTr": "Zilzâl",
+    "ayahCount": 8
+  },
+  {
+    "n": 100,
+    "nameAr": "العاديات",
+    "nameTr": "Âdiyât",
+    "ayahCount": 11
+  },
+  {
+    "n": 101,
+    "nameAr": "القارعة",
+    "nameTr": "Kâria",
+    "ayahCount": 11
+  },
+  {
+    "n": 102,
+    "nameAr": "التكاثر",
+    "nameTr": "Tekâsür",
+    "ayahCount": 8
+  },
+  {
+    "n": 103,
+    "nameAr": "العصر",
+    "nameTr": "Asr",
+    "ayahCount": 3
+  },
+  {
+    "n": 104,
+    "nameAr": "الهمزة",
+    "nameTr": "Hümeze",
+    "ayahCount": 9
+  },
+  {
+    "n": 105,
+    "nameAr": "الفيل",
+    "nameTr": "Fîl",
+    "ayahCount": 5
+  },
+  {
+    "n": 106,
+    "nameAr": "قريش",
+    "nameTr": "Kureyş",
+    "ayahCount": 4
+  },
+  {
+    "n": 107,
+    "nameAr": "الماعون",
+    "nameTr": "Mâûn",
+    "ayahCount": 7
+  },
+  {
+    "n": 108,
+    "nameAr": "الكوثر",
+    "nameTr": "Kevser",
+    "ayahCount": 3
+  },
+  {
+    "n": 109,
+    "nameAr": "الكافرون",
+    "nameTr": "Kâfirûn",
+    "ayahCount": 6
+  },
+  {
+    "n": 110,
+    "nameAr": "النصر",
+    "nameTr": "Nasr",
+    "ayahCount": 3
+  },
+  {
+    "n": 111,
+    "nameAr": "المسد",
+    "nameTr": "Tebbet",
+    "ayahCount": 5
+  },
+  {
+    "n": 112,
+    "nameAr": "الإخلاص",
+    "nameTr": "İhlâs",
+    "ayahCount": 4
+  },
+  {
+    "n": 113,
+    "nameAr": "الفلق",
+    "nameTr": "Felak",
+    "ayahCount": 5
+  },
+  {
+    "n": 114,
+    "nameAr": "الناس",
+    "nameTr": "Nâs",
+    "ayahCount": 6
+  }
+]

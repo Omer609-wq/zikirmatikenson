@@ -1,0 +1,90 @@
+[
+  {
+    "id": "ahmedali",
+    "nameTr": "Urduca meal (Ahmed Ali)",
+    "nameUr": "احمد علی لاہوری",
+    "translator": "Ahmed Ali Lahori",
+    "language": "ur",
+    "source": "Tanzil.net",
+    "license": "See Tanzil.net translation terms"
+  },
+  {
+    "id": "basmeih",
+    "nameTr": "Melayu meal (Basmeih)",
+    "nameMs": "Abdullah Basmeih",
+    "translator": "Abdullah Basmeih",
+    "language": "ms",
+    "source": "Tanzil.net",
+    "license": "See Tanzil.net translation terms"
+  },
+  {
+    "id": "bn",
+    "nameTr": "Bengalce meal",
+    "nameBn": "বাংলা অনুবাদ",
+    "translator": "Tanzil Bengali",
+    "language": "bn",
+    "source": "Tanzil.net",
+    "license": "See Tanzil.net translation terms"
+  },
+  {
+    "id": "diyanet",
+    "nameTr": "Diyanet İşleri",
+    "translator": "Diyanet İşleri",
+    "language": "tr",
+    "source": "Tanzil.net",
+    "license": "See Tanzil.net translation terms"
+  },
+  {
+    "id": "hamidullah",
+    "nameTr": "Fransızca meal (Hamidullah)",
+    "nameFr": "Muhammad Hamidullah",
+    "translator": "Muhammad Hamidullah",
+    "language": "fr",
+    "source": "Tanzil.net",
+    "license": "See Tanzil.net translation terms"
+  },
+  {
+    "id": "indonesian",
+    "nameTr": "Endonezce meal",
+    "nameId": "Terjemahan Indonesia",
+    "translator": "Kementerian Agama RI",
+    "language": "id",
+    "source": "Tanzil.net",
+    "license": "See Tanzil.net translation terms"
+  },
+  {
+    "id": "jalandhry",
+    "nameTr": "Urduca meal (Jalandhry)",
+    "nameUr": "فتح محمد جالندھری",
+    "translator": "Fateh Muhammad Jalandhry",
+    "language": "ur",
+    "source": "Tanzil.net",
+    "license": "See Tanzil.net translation terms"
+  },
+  {
+    "id": "muyassar",
+    "nameTr": "Muyesser (Arapça tefsir)",
+    "nameAr": "التفسير الميسر",
+    "translator": "King Fahd Complex (Muyassar)",
+    "language": "ar",
+    "source": "Tanzil.net",
+    "license": "See Tanzil.net translation terms"
+  },
+  {
+    "id": "sahih",
+    "nameTr": "İngilizce meal (Sahih)",
+    "nameEn": "Sahih International",
+    "translator": "Sahih International",
+    "language": "en",
+    "source": "Tanzil.net",
+    "license": "See Tanzil.net translation terms"
+  },
+  {
+    "id": "vakfi",
+    "nameTr": "Diyanet Vakfı",
+    "language": "tr",
+    "source": "Tanzil.net",
+    "translator": "Diyanet Vakfı",
+    "license": "See Tanzil.net translation terms"
+  }
+]

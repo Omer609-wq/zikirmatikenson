@@ -1,0 +1,51 @@
+{
+  "mealId": "diyanet",
+  "n": 93,
+  "ayahCount": 11,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Kuşluk vaktine and olsun;"
+    },
+    {
+      "n": 2,
+      "tr": "Sükun erdiği zaman geceye and olsun ki,"
+    },
+    {
+      "n": 3,
+      "tr": "Rabbin seni ne bıraktı ve ne de sana darıldı."
+    },
+    {
+      "n": 4,
+      "tr": "Doğrusu ahiret senin için dünyadan daha hayırlıdır."
+    },
+    {
+      "n": 5,
+      "tr": "Rabbin şüphesiz sana verecek ve sen de hoşnut olacaksın."
+    },
+    {
+      "n": 6,
+      "tr": "Seni öksüz bulup da barındırmadı mı?"
+    },
+    {
+      "n": 7,
+      "tr": "Seni şaşırmış bulup, doğru yola eriştirmedi mi?"
+    },
+    {
+      "n": 8,
+      "tr": "Seni fakir bulup zenginleştirmedi mi?"
+    },
+    {
+      "n": 9,
+      "tr": "Öyleyse sakın öksüze kötü muamele etme;"
+    },
+    {
+      "n": 10,
+      "tr": "Ve sakın bir şey isteyeni azarlama;"
+    },
+    {
+      "n": 11,
+      "tr": "Yalnızca Rabbinin nimetini anlat."
+    }
+  ]
+}

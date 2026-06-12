@@ -1,0 +1,43 @@
+{
+  "mealId": "vakfi",
+  "n": 104,
+  "ayahCount": 9,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Arkadan çekiştirmeyi, yüze karşı eğlenmeyi adet edinen herkesin vay haline!"
+    },
+    {
+      "n": 2,
+      "tr": "O ki, toplamış ve onu sayıp durmuştur."
+    },
+    {
+      "n": 3,
+      "tr": "(O), malının kendisini ebedi kılacağını zanneder."
+    },
+    {
+      "n": 4,
+      "tr": "Hayır! Andolsun ki o, Hutame'ye atılacaktır."
+    },
+    {
+      "n": 5,
+      "tr": "Hutame'nin ne olduğunu bilir misin?"
+    },
+    {
+      "n": 6,
+      "tr": "Allah'ın, tutuşturulmuş ateşidir."
+    },
+    {
+      "n": 7,
+      "tr": "(Yandıkça) tırmanıp kalplerin ta üstüne çıkar."
+    },
+    {
+      "n": 8,
+      "tr": "O, onların üzerine kapatılıp kilitlenecektir."
+    },
+    {
+      "n": 9,
+      "tr": "(Bu ateşin içinde) uzatılmış sütunlara bağlanmışlar."
+    }
+  ]
+}

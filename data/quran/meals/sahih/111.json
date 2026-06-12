@@ -1,0 +1,27 @@
+{
+  "mealId": "sahih",
+  "n": 111,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "May the hands of Abu Lahab be ruined, and ruined is he."
+    },
+    {
+      "n": 2,
+      "tr": "His wealth will not avail him or that which he gained."
+    },
+    {
+      "n": 3,
+      "tr": "He will [enter to] burn in a Fire of [blazing] flame"
+    },
+    {
+      "n": 4,
+      "tr": "And his wife [as well] - the carrier of firewood."
+    },
+    {
+      "n": 5,
+      "tr": "Around her neck is a rope of [twisted] fiber."
+    }
+  ]
+}

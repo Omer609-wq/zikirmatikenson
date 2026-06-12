@@ -1,0 +1,215 @@
+{
+  "translitId": "translit-en",
+  "n": 69,
+  "ayahCount": 52,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Alhaqqatu"
+    },
+    {
+      "n": 2,
+      "lat": "Ma alhaqqatu"
+    },
+    {
+      "n": 3,
+      "lat": "Wama adraka ma alhaqqatu"
+    },
+    {
+      "n": 4,
+      "lat": "Kaththabat thamoodu waAAadun bialqariAAati"
+    },
+    {
+      "n": 5,
+      "lat": "Faamma thamoodu faohlikoo bialttaghiyati"
+    },
+    {
+      "n": 6,
+      "lat": "Waamma AAadun faohlikoo bireehin sarsarin AAatiyatin"
+    },
+    {
+      "n": 7,
+      "lat": "Sakhkharaha AAalayhim sabAAa layalin wathamaniyata ayyamin husooman fatara alqawma feeha sarAAa kaannahum aAAjazu nakhlin khawiyatun"
+    },
+    {
+      "n": 8,
+      "lat": "Fahal tara lahum min baqiyatin"
+    },
+    {
+      "n": 9,
+      "lat": "Wajaa firAAawnu waman qablahu waalmutafikatu bialkhatiati"
+    },
+    {
+      "n": 10,
+      "lat": "FaAAasaw rasoola rabbihim faakhathahum akhthatan rabiyatan"
+    },
+    {
+      "n": 11,
+      "lat": "Inna lamma tagha almao hamalnakum fee aljariyati"
+    },
+    {
+      "n": 12,
+      "lat": "LinajAAalaha lakum tathkiratan wataAAiyaha othunun waAAiyatun"
+    },
+    {
+      "n": 13,
+      "lat": "Faitha nufikha fee alssoori nafkhatun wahidatun"
+    },
+    {
+      "n": 14,
+      "lat": "Wahumilati alardu waaljibalu fadukkata dakkatan wahidatan"
+    },
+    {
+      "n": 15,
+      "lat": "Fayawmaithin waqaAAati alwaqiAAatu"
+    },
+    {
+      "n": 16,
+      "lat": "Wainshaqqati alssamao fahiya yawmaithin wahiyatun"
+    },
+    {
+      "n": 17,
+      "lat": "Waalmalaku AAala arjaiha wayahmilu AAarsha rabbika fawqahum yawmaithin thamaniyatun"
+    },
+    {
+      "n": 18,
+      "lat": "Yawmaithin tuAAradoona la takhfa minkum khafiyatun"
+    },
+    {
+      "n": 19,
+      "lat": "Faamma man ootiya kitabahu biyameenihi fayaqoolu haomu iqraoo kitabiyah"
+    },
+    {
+      "n": 20,
+      "lat": "Innee thanantu annee mulaqin hisabiyah"
+    },
+    {
+      "n": 21,
+      "lat": "Fahuwa fee AAeeshatin radiyatin"
+    },
+    {
+      "n": 22,
+      "lat": "Fee jannatin AAaliyatin"
+    },
+    {
+      "n": 23,
+      "lat": "Qutoofuha daniyatun"
+    },
+    {
+      "n": 24,
+      "lat": "Kuloo waishraboo haneean bima aslaftum fee alayyami alkhaliyati"
+    },
+    {
+      "n": 25,
+      "lat": "Waamma man ootiya kitabahu bishimalihi fayaqoolu ya laytanee lam oota kitabiyah"
+    },
+    {
+      "n": 26,
+      "lat": "Walam adri ma hisabiyah"
+    },
+    {
+      "n": 27,
+      "lat": "Ya laytaha kanati alqadiyatu"
+    },
+    {
+      "n": 28,
+      "lat": "Ma aghna AAannee maliyah"
+    },
+    {
+      "n": 29,
+      "lat": "Halaka AAannee sultaniyah"
+    },
+    {
+      "n": 30,
+      "lat": "Khuthoohu faghulloohu"
+    },
+    {
+      "n": 31,
+      "lat": "Thumma aljaheema salloohu"
+    },
+    {
+      "n": 32,
+      "lat": "Thumma fee silsilatin tharAAuha sabAAoona thiraAAan faoslukoohu"
+    },
+    {
+      "n": 33,
+      "lat": "Innahu kana la yuminu biAllahi alAAatheemi"
+    },
+    {
+      "n": 34,
+      "lat": "Wala yahuddu AAala taAAami almiskeeni"
+    },
+    {
+      "n": 35,
+      "lat": "Falaysa lahu alyawma hahuna hameemun"
+    },
+    {
+      "n": 36,
+      "lat": "Wala taAAamun illa min ghisleenin"
+    },
+    {
+      "n": 37,
+      "lat": "La yakuluhu illa alkhatioona"
+    },
+    {
+      "n": 38,
+      "lat": "Fala oqsimu bima tubsiroona"
+    },
+    {
+      "n": 39,
+      "lat": "Wama la tubsiroona"
+    },
+    {
+      "n": 40,
+      "lat": "Innahu laqawlu rasoolin kareemin"
+    },
+    {
+      "n": 41,
+      "lat": "Wama huwa biqawli shaAAirin qaleelan ma tuminoona"
+    },
+    {
+      "n": 42,
+      "lat": "Wala biqawli kahinin qaleelan ma tathakkaroona"
+    },
+    {
+      "n": 43,
+      "lat": "Tanzeelun min rabbi alAAalameena"
+    },
+    {
+      "n": 44,
+      "lat": "Walaw taqawwala AAalayna baAAda alaqaweeli"
+    },
+    {
+      "n": 45,
+      "lat": "Laakhathna minhu bialyameeni"
+    },
+    {
+      "n": 46,
+      "lat": "Thumma laqataAAna minhu alwateena"
+    },
+    {
+      "n": 47,
+      "lat": "Fama minkum min ahadin AAanhu hajizeena"
+    },
+    {
+      "n": 48,
+      "lat": "Wainnahu latathkiratun lilmuttaqeena"
+    },
+    {
+      "n": 49,
+      "lat": "Wainna lanaAAlamu anna minkum mukaththibeena"
+    },
+    {
+      "n": 50,
+      "lat": "Wainnahu lahasratun AAala alkafireena"
+    },
+    {
+      "n": 51,
+      "lat": "Wainnahu lahaqqu alyaqeeni"
+    },
+    {
+      "n": 52,
+      "lat": "Fasabbih biismi rabbika alAAatheemi"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "translitId": "translit-tr",
+  "n": 94,
+  "ayahCount": 8,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Elem neşraḥ leke ṣadrak"
+    },
+    {
+      "n": 2,
+      "lat": "Veveḍa`nâ `anke vizrak"
+    },
+    {
+      "n": 3,
+      "lat": "Elleẕî enḳaḍa żahrak"
+    },
+    {
+      "n": 4,
+      "lat": "Verafa`nâ leke ẕikrak"
+    },
+    {
+      "n": 5,
+      "lat": "Feinne me`a-l`usri yüsrâ"
+    },
+    {
+      "n": 6,
+      "lat": "İnne me`a-l`usri yüsrâ"
+    },
+    {
+      "n": 7,
+      "lat": "Feiẕâ feragte fenṣab"
+    },
+    {
+      "n": 8,
+      "lat": "Veilâ rabbike fergab"
+    }
+  ]
+}

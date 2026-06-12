@@ -1,0 +1,39 @@
+{
+  "translitId": "translit-tr",
+  "n": 102,
+  "ayahCount": 8,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Elhâkümü-ttekâŝür"
+    },
+    {
+      "n": 2,
+      "lat": "Ḥattâ zürtümü-lmeḳâbir"
+    },
+    {
+      "n": 3,
+      "lat": "Kellâ sevfe ta`lemûn"
+    },
+    {
+      "n": 4,
+      "lat": "Ŝümme kellâ sevfe ta`lemûn"
+    },
+    {
+      "n": 5,
+      "lat": "Kellâ lev ta`lemûne `ilme-lyeḳîn"
+    },
+    {
+      "n": 6,
+      "lat": "Leteravunne-lceḥîm"
+    },
+    {
+      "n": 7,
+      "lat": "Ŝümme leteravunnehâ `ayne-lyeḳîn"
+    },
+    {
+      "n": 8,
+      "lat": "Ŝümme letüs'elünne yevmeiẕin `ani-nne`îm"
+    }
+  ]
+}

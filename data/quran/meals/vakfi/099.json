@@ -1,0 +1,39 @@
+{
+  "mealId": "vakfi",
+  "n": 99,
+  "ayahCount": 8,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Yerküre kendine has sarsıntısıyla sallandığı,"
+    },
+    {
+      "n": 2,
+      "tr": "Toprak ağırlıklarını dışarı çıkardığı,"
+    },
+    {
+      "n": 3,
+      "tr": "Ve insan \"Ne oluyor buna!\" dediği vakit,"
+    },
+    {
+      "n": 4,
+      "tr": "İşte o gün (yer) haberlerini anlatır,"
+    },
+    {
+      "n": 5,
+      "tr": "Rabbinin ona bildirmesiyle."
+    },
+    {
+      "n": 6,
+      "tr": "O gün insanlar amellerini görmeleri (karşılığını almaları) için darmadağınık geri dönüp gelirler."
+    },
+    {
+      "n": 7,
+      "tr": "Kim zerre miktarı hayır yapmışsa onu görür."
+    },
+    {
+      "n": 8,
+      "tr": "Kim de zerre miktarı şer işlemişse onu görür."
+    }
+  ]
+}

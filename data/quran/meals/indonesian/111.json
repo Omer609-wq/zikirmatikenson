@@ -1,0 +1,27 @@
+{
+  "mealId": "indonesian",
+  "n": 111,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Binasalah kedua tangan Abu Lahab dan sesungguhnya dia akan binasa."
+    },
+    {
+      "n": 2,
+      "tr": "Tidaklah berfaedah kepadanya harta bendanya dan apa yang ia usahakan."
+    },
+    {
+      "n": 3,
+      "tr": "Kelak dia akan masuk ke dalam api yang bergejolak."
+    },
+    {
+      "n": 4,
+      "tr": "Dan (begitu pula) istrinya, pembawa kayu bakar."
+    },
+    {
+      "n": 5,
+      "tr": "Yang di lehernya ada tali dari sabut."
+    }
+  ]
+}

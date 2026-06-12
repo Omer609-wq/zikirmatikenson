@@ -1,0 +1,39 @@
+{
+  "mealId": "vakfi",
+  "n": 94,
+  "ayahCount": 8,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Biz senin göğsünü açıp genişletmedik mi?"
+    },
+    {
+      "n": 2,
+      "tr": "Yükünü senden alıp atmadık mı?"
+    },
+    {
+      "n": 3,
+      "tr": "O senin belini büken yükü."
+    },
+    {
+      "n": 4,
+      "tr": "Senin şanını ve ününü yüceltmedik mi?"
+    },
+    {
+      "n": 5,
+      "tr": "Elbette zorluğun yanında bir kolaylık vardır."
+    },
+    {
+      "n": 6,
+      "tr": "Gerçekten, zorlukla beraber bir kolaylık daha vardır."
+    },
+    {
+      "n": 7,
+      "tr": "Boş kaldın mı hemen (başka) işe koyul,"
+    },
+    {
+      "n": 8,
+      "tr": "Yalnız Rabbine yönel."
+    }
+  ]
+}

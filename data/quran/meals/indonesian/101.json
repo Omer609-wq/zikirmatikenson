@@ -1,0 +1,51 @@
+{
+  "mealId": "indonesian",
+  "n": 101,
+  "ayahCount": 11,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Hari Kiamat,"
+    },
+    {
+      "n": 2,
+      "tr": "apakah hari Kiamat itu?"
+    },
+    {
+      "n": 3,
+      "tr": "Tahukah kamu apakah hari Kiamat itu?"
+    },
+    {
+      "n": 4,
+      "tr": "Pada hari itu manusia adalah seperti anai-anai yang bertebaran,"
+    },
+    {
+      "n": 5,
+      "tr": "dan gunung-gunung adalah seperti bulu yang dihambur-hamburkan."
+    },
+    {
+      "n": 6,
+      "tr": "Dan adapun orang-orang yang berat timbangan (kebaikan)nya,"
+    },
+    {
+      "n": 7,
+      "tr": "maka dia berada dalam kehidupan yang memuaskan."
+    },
+    {
+      "n": 8,
+      "tr": "Dan adapun orang-orang yang ringan timbangan (kebaikan)nya,"
+    },
+    {
+      "n": 9,
+      "tr": "maka tempat kembalinya adalah neraka Hawiyah."
+    },
+    {
+      "n": 10,
+      "tr": "Tahukah kamu apakah neraka Hawiyah itu?"
+    },
+    {
+      "n": 11,
+      "tr": "(Yaitu) api yang sangat panas."
+    }
+  ]
+}

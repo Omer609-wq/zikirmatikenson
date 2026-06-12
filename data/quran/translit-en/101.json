@@ -1,0 +1,51 @@
+{
+  "translitId": "translit-en",
+  "n": 101,
+  "ayahCount": 11,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "AlqariAAatu"
+    },
+    {
+      "n": 2,
+      "lat": "Ma alqariAAatu"
+    },
+    {
+      "n": 3,
+      "lat": "Wama adraka ma alqariAAatu"
+    },
+    {
+      "n": 4,
+      "lat": "Yawma yakoonu alnnasu kaalfarashi almabthoothi"
+    },
+    {
+      "n": 5,
+      "lat": "Watakoonu aljibalu kaalAAihni almanfooshi"
+    },
+    {
+      "n": 6,
+      "lat": "Faamma man thaqulat mawazeenuhu"
+    },
+    {
+      "n": 7,
+      "lat": "Fahuwa fee AAeeshatin radiyatin"
+    },
+    {
+      "n": 8,
+      "lat": "Waamma man khaffat mawazeenuhu"
+    },
+    {
+      "n": 9,
+      "lat": "Faommuhu hawiyatun"
+    },
+    {
+      "n": 10,
+      "lat": "Wama adraka ma hiyah"
+    },
+    {
+      "n": 11,
+      "lat": "Narun hamiyatun"
+    }
+  ]
+}

@@ -1,0 +1,319 @@
+{
+  "translitId": "translit-en",
+  "n": 55,
+  "ayahCount": 78,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Alrrahmanu"
+    },
+    {
+      "n": 2,
+      "lat": "AAallama alqurana"
+    },
+    {
+      "n": 3,
+      "lat": "Khalaqa alinsana"
+    },
+    {
+      "n": 4,
+      "lat": "AAallamahu albayana"
+    },
+    {
+      "n": 5,
+      "lat": "Alshshamsu waalqamaru bihusbanin"
+    },
+    {
+      "n": 6,
+      "lat": "Waalnnajmu waalshshajaru yasjudani"
+    },
+    {
+      "n": 7,
+      "lat": "Waalssamaa rafaAAaha wawadaAAa almeezana"
+    },
+    {
+      "n": 8,
+      "lat": "Alla tatghaw fee almeezani"
+    },
+    {
+      "n": 9,
+      "lat": "Waaqeemoo alwazna bialqisti wala tukhsiroo almeezana"
+    },
+    {
+      "n": 10,
+      "lat": "Waalarda wadaAAaha lilanami"
+    },
+    {
+      "n": 11,
+      "lat": "Feeha fakihatun waalnnakhlu thatu alakmami"
+    },
+    {
+      "n": 12,
+      "lat": "Waalhabbu thoo alAAasfi waalrrayhani"
+    },
+    {
+      "n": 13,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 14,
+      "lat": "Khalaqa alinsana min salsalin kaalfakhkhari"
+    },
+    {
+      "n": 15,
+      "lat": "Wakhalaqa aljanna min marijin min narin"
+    },
+    {
+      "n": 16,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 17,
+      "lat": "Rabbu almashriqayni warabbu almaghribayni"
+    },
+    {
+      "n": 18,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 19,
+      "lat": "Maraja albahrayni yaltaqiyani"
+    },
+    {
+      "n": 20,
+      "lat": "Baynahuma barzakhun la yabghiyani"
+    },
+    {
+      "n": 21,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 22,
+      "lat": "Yakhruju minhuma alluluo waalmarjanu"
+    },
+    {
+      "n": 23,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 24,
+      "lat": "Walahu aljawari almunshaatu fee albahri kaalaAAlami"
+    },
+    {
+      "n": 25,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 26,
+      "lat": "Kullu man AAalayha fanin"
+    },
+    {
+      "n": 27,
+      "lat": "Wayabqa wajhu rabbika thoo aljalali waalikrami"
+    },
+    {
+      "n": 28,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 29,
+      "lat": "Yasaluhu man fee alssamawati waalardi kulla yawmin huwa fee shanin"
+    },
+    {
+      "n": 30,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 31,
+      "lat": "Sanafrughu lakum ayyuha alththaqalani"
+    },
+    {
+      "n": 32,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 33,
+      "lat": "Ya maAAshara aljinni waalinsi ini istataAAtum an tanfuthoo min aqtari alssamawati waalardi faonfuthoo la tanfuthoona illa bisultanin"
+    },
+    {
+      "n": 34,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 35,
+      "lat": "Yursalu AAalaykuma shuwathun min narin wanuhasun fala tantasirani"
+    },
+    {
+      "n": 36,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 37,
+      "lat": "Faitha inshaqqati alssamao fakanat wardatan kaalddihani"
+    },
+    {
+      "n": 38,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 39,
+      "lat": "Fayawmaithin la yusalu AAan thanbihi insun wala jannun"
+    },
+    {
+      "n": 40,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 41,
+      "lat": "YuAArafu almujrimoona biseemahum fayukhathu bialnnawasee waalaqdami"
+    },
+    {
+      "n": 42,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 43,
+      "lat": "Hathihi jahannamu allatee yukaththibu biha almujrimoona"
+    },
+    {
+      "n": 44,
+      "lat": "Yatoofoona baynaha wabayna hameemin anin"
+    },
+    {
+      "n": 45,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 46,
+      "lat": "Waliman khafa maqama rabbihi jannatani"
+    },
+    {
+      "n": 47,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 48,
+      "lat": "Thawata afnanin"
+    },
+    {
+      "n": 49,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 50,
+      "lat": "Feehima AAaynani tajriyani"
+    },
+    {
+      "n": 51,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 52,
+      "lat": "Feehima min kulli fakihatin zawjani"
+    },
+    {
+      "n": 53,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 54,
+      "lat": "Muttakieena AAala furushin batainuha min istabraqin wajana aljannatayni danin"
+    },
+    {
+      "n": 55,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 56,
+      "lat": "Feehinna qasiratu alttarfi lam yatmithhunna insun qablahum wala jannun"
+    },
+    {
+      "n": 57,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 58,
+      "lat": "Kaannahunna alyaqootu waalmarjanu"
+    },
+    {
+      "n": 59,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 60,
+      "lat": "Hal jazao alihsani illa alihsanu"
+    },
+    {
+      "n": 61,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 62,
+      "lat": "Wamin doonihima jannatani"
+    },
+    {
+      "n": 63,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 64,
+      "lat": "Mudhammatani"
+    },
+    {
+      "n": 65,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 66,
+      "lat": "Feehima AAaynani naddakhatani"
+    },
+    {
+      "n": 67,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 68,
+      "lat": "Feehima fakihatun wanakhlun warummanun"
+    },
+    {
+      "n": 69,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 70,
+      "lat": "Feehinna khayratun hisanun"
+    },
+    {
+      "n": 71,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 72,
+      "lat": "Hoorun maqsooratun fee alkhiyami"
+    },
+    {
+      "n": 73,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 74,
+      "lat": "Lam yatmithhunna insun qablahum wala jannun"
+    },
+    {
+      "n": 75,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 76,
+      "lat": "Muttakieena AAala rafrafin khudrin waAAabqariyyin hisanin"
+    },
+    {
+      "n": 77,
+      "lat": "Fabiayyi alai rabbikuma tukaththibani"
+    },
+    {
+      "n": 78,
+      "lat": "Tabaraka ismu rabbika thee aljalali waalikrami"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "translitId": "translit-en",
+  "n": 111,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Tabbat yada abee lahabin watabba"
+    },
+    {
+      "n": 2,
+      "lat": "Ma aghna AAanhu maluhu wama kasaba"
+    },
+    {
+      "n": 3,
+      "lat": "Sayasla naran thata lahabin"
+    },
+    {
+      "n": 4,
+      "lat": "Waimraatuhu hammalata alhatabi"
+    },
+    {
+      "n": 5,
+      "lat": "Fee jeediha hablun min masadin"
+    }
+  ]
+}

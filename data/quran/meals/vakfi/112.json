@@ -1,0 +1,23 @@
+{
+  "mealId": "vakfi",
+  "n": 112,
+  "ayahCount": 4,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "De ki: O, Allah birdir."
+    },
+    {
+      "n": 2,
+      "tr": "Allah sameddir."
+    },
+    {
+      "n": 3,
+      "tr": "O, doğurmamış ve doğmamıştır."
+    },
+    {
+      "n": 4,
+      "tr": "Onun hiçbir dengi yoktur."
+    }
+  ]
+}

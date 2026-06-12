@@ -1,0 +1,23 @@
+{
+  "translitId": "translit-tr",
+  "n": 112,
+  "ayahCount": 4,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Ḳul hüve-llâhü eḥad"
+    },
+    {
+      "n": 2,
+      "lat": "Allâhu-ṣṣamed"
+    },
+    {
+      "n": 3,
+      "lat": "Lem yelid velem yûled"
+    },
+    {
+      "n": 4,
+      "lat": "Velem yekül lehû küfüven eḥad"
+    }
+  ]
+}

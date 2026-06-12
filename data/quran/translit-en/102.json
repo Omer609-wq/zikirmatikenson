@@ -1,0 +1,39 @@
+{
+  "translitId": "translit-en",
+  "n": 102,
+  "ayahCount": 8,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Alhakumu alttakathuru"
+    },
+    {
+      "n": 2,
+      "lat": "Hatta zurtumu almaqabira"
+    },
+    {
+      "n": 3,
+      "lat": "Kalla sawfa taAAlamoona"
+    },
+    {
+      "n": 4,
+      "lat": "Thumma kalla sawfa taAAlamoona"
+    },
+    {
+      "n": 5,
+      "lat": "Kalla law taAAlamoona AAilma alyaqeeni"
+    },
+    {
+      "n": 6,
+      "lat": "Latarawunna aljaheema"
+    },
+    {
+      "n": 7,
+      "lat": "Thumma latarawunnaha AAayna alyaqeeni"
+    },
+    {
+      "n": 8,
+      "lat": "Thumma latusalunna yawmaithin AAani alnnaAAeemi"
+    }
+  ]
+}

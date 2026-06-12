@@ -1,0 +1,27 @@
+{
+  "mealId": "vakfi",
+  "n": 111,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Ebu Leheb'in iki eli kurusun! Kurudu da."
+    },
+    {
+      "n": 2,
+      "tr": "Malı ve kazandıkları ona fayda vermedi."
+    },
+    {
+      "n": 3,
+      "tr": "O, alevli bir ateşte yanacak."
+    },
+    {
+      "n": 4,
+      "tr": "Odun taşıyıcı olarak karısı da (ateşe girecek)."
+    },
+    {
+      "n": 5,
+      "tr": "Ve boynunda hurma lifinden bükülmüş bir ip olduğu halde."
+    }
+  ]
+}

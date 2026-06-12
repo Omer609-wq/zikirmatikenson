@@ -1,0 +1,27 @@
+{
+  "translitId": "translit-en",
+  "n": 105,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Alam tara kayfa faAAala rabbuka biashabi alfeeli"
+    },
+    {
+      "n": 2,
+      "lat": "Alam yajAAal kaydahum fee tadleelin"
+    },
+    {
+      "n": 3,
+      "lat": "Waarsala AAalayhim tayran ababeela"
+    },
+    {
+      "n": 4,
+      "lat": "Tarmeehim bihijaratin min sijjeelin"
+    },
+    {
+      "n": 5,
+      "lat": "FajaAAalahum kaAAasfin makoolin"
+    }
+  ]
+}

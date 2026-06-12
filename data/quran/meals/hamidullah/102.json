@@ -1,0 +1,39 @@
+{
+  "mealId": "hamidullah",
+  "n": 102,
+  "ayahCount": 8,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "La course aux richesses vous distrait,"
+    },
+    {
+      "n": 2,
+      "tr": "jusqu'à ce que vous visitiez les tombes."
+    },
+    {
+      "n": 3,
+      "tr": "Mais non! Vous saurez bientôt!"
+    },
+    {
+      "n": 4,
+      "tr": "(Encore une fois)! Vous saurez bientôt!"
+    },
+    {
+      "n": 5,
+      "tr": "Sûrement! Si vous saviez de science certaine."
+    },
+    {
+      "n": 6,
+      "tr": "Vous verrez, certes, la Fournaise."
+    },
+    {
+      "n": 7,
+      "tr": "Puis, vous la verrez certes, avec l'œil de la certitude."
+    },
+    {
+      "n": 8,
+      "tr": "Puis, assurément, vous serez interrogés, ce jour-là, sur les délices."
+    }
+  ]
+}

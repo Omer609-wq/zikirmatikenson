@@ -1,0 +1,51 @@
+{
+  "mealId": "hamidullah",
+  "n": 101,
+  "ayahCount": 11,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Le fracas!"
+    },
+    {
+      "n": 2,
+      "tr": "Qu'est-ce que le fracas?"
+    },
+    {
+      "n": 3,
+      "tr": "Et qui te dira ce qu'est le fracas?"
+    },
+    {
+      "n": 4,
+      "tr": "C'est le jour où les gens seront comme des papillons éparpillés,"
+    },
+    {
+      "n": 5,
+      "tr": "et les montagnes comme de la laine cardée;"
+    },
+    {
+      "n": 6,
+      "tr": "quant à celui dont la balance sera lourde"
+    },
+    {
+      "n": 7,
+      "tr": "il sera dans une vie agréable;"
+    },
+    {
+      "n": 8,
+      "tr": "et quant à celui dont la balance sera légère,"
+    },
+    {
+      "n": 9,
+      "tr": "sa mère [destination] est un abîme très profond."
+    },
+    {
+      "n": 10,
+      "tr": "Et qui te dira ce que c'est?"
+    },
+    {
+      "n": 11,
+      "tr": "C'est un Feu ardent."
+    }
+  ]
+}

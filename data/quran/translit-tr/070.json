@@ -1,0 +1,183 @@
+{
+  "translitId": "translit-tr",
+  "n": 70,
+  "ayahCount": 44,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Seele sâilüm bi`aẕâbiv vâḳi"
+    },
+    {
+      "n": 2,
+      "lat": "Lilkâfirîne leyse lehû dâfi"
+    },
+    {
+      "n": 3,
+      "lat": "Mine-llâhi ẕi-lme`âric"
+    },
+    {
+      "n": 4,
+      "lat": "Ta`rucü-lmelâiketü verrûḥu ileyhi fî yevmin kâne miḳdâruhû ḫamsîne elfe seneh"
+    },
+    {
+      "n": 5,
+      "lat": "Faṣbir ṣabran cemîlâ"
+    },
+    {
+      "n": 6,
+      "lat": "İnnehüm yeravnehû be`îdâ"
+    },
+    {
+      "n": 7,
+      "lat": "Venerâhü ḳarîbâ"
+    },
+    {
+      "n": 8,
+      "lat": "Yevme tekûnü-ssemâü kelmühl"
+    },
+    {
+      "n": 9,
+      "lat": "Vetekûnü-lcibâlü kel`ihn"
+    },
+    {
+      "n": 10,
+      "lat": "Velâ yes'elü ḥamîmün ḥamîmâ"
+    },
+    {
+      "n": 11,
+      "lat": "Yübeṣṣarûnehüm. Yeveddü-lmücrimü lev yeftedî min `aẕâbi yevmiiẕim bibenîh"
+    },
+    {
+      "n": 12,
+      "lat": "Veṣâḥibetihî veeḫîh"
+    },
+    {
+      "n": 13,
+      "lat": "Vefeṣîletihi-lletî tü'vîh"
+    },
+    {
+      "n": 14,
+      "lat": "Vemen fi-l'arḍi cemî`an ŝümme yüncîh"
+    },
+    {
+      "n": 15,
+      "lat": "Kellâ. İnnehâ leżâ"
+    },
+    {
+      "n": 16,
+      "lat": "Nezzâ`atel lişşevâ"
+    },
+    {
+      "n": 17,
+      "lat": "Ted`û men edbera vetevellâ"
+    },
+    {
+      "n": 18,
+      "lat": "Veceme`a feev`â"
+    },
+    {
+      "n": 19,
+      "lat": "İnne-l'insâne ḫuliḳa helû`â"
+    },
+    {
+      "n": 20,
+      "lat": "İẕâ messehü-şşerru cezû`â"
+    },
+    {
+      "n": 21,
+      "lat": "Veiẕâ messehü-lḫayru menû`â"
+    },
+    {
+      "n": 22,
+      "lat": "İlle-lmüṣallîn"
+    },
+    {
+      "n": 23,
+      "lat": "Elleẕîne hüm `alâ ṣalâtihim dâimûn"
+    },
+    {
+      "n": 24,
+      "lat": "Velleẕîne fî emvâlihim ḥaḳḳum ma`lûm"
+    },
+    {
+      "n": 25,
+      "lat": "Lissâili velmaḥrûm"
+    },
+    {
+      "n": 26,
+      "lat": "Velleẕîne yüṣaddiḳûne biyevmi-ddîn"
+    },
+    {
+      "n": 27,
+      "lat": "Velleẕîne hüm min `aẕâbi rabbihim müşfiḳûn"
+    },
+    {
+      "n": 28,
+      "lat": "İnne `aẕâbe rabbihim gayru me'mûn"
+    },
+    {
+      "n": 29,
+      "lat": "Velleẕîne hüm lifürûcihim ḥâfiżûn"
+    },
+    {
+      "n": 30,
+      "lat": "İllâ `alâ ezvâcihim ev mâ meleket eymânühüm feinnehüm gayru melûmîn"
+    },
+    {
+      "n": 31,
+      "lat": "Femeni-btegâ verâe ẕâlike feülâike hümü-l`âdûn"
+    },
+    {
+      "n": 32,
+      "lat": "Velleẕîne hüm liemânâtihim ve`ahdihim râ`ûn"
+    },
+    {
+      "n": 33,
+      "lat": "Velleẕîne hüm bişehâdetihim ḳâimûn"
+    },
+    {
+      "n": 34,
+      "lat": "Velleẕîne hüm `alâ ṣalâtihim yüḥâfiżûn"
+    },
+    {
+      "n": 35,
+      "lat": "Ülâike fî cennâtim mükramûn"
+    },
+    {
+      "n": 36,
+      "lat": "Femâ lilleẕîne keferû ḳibeleke mühti`în"
+    },
+    {
+      "n": 37,
+      "lat": "Ani-lyemîni ve`ani-şşimâli `izîn"
+    },
+    {
+      "n": 38,
+      "lat": "Eyaṭme`u küllü-mriim minhüm ey yüdḫale cennete ne`îm"
+    },
+    {
+      "n": 39,
+      "lat": "Kellâ. İnnâ ḫalaḳnâhüm mimmâ ya`lemûn"
+    },
+    {
+      "n": 40,
+      "lat": "Felâ uḳsimü birabbi-lmeşâriḳi velmegâribi innâ leḳâdirûn"
+    },
+    {
+      "n": 41,
+      "lat": "Alâ en nübeddile ḫayram minhüm vemâ naḥnü bimesbûḳîn"
+    },
+    {
+      "n": 42,
+      "lat": "Feẕerhüm yeḫûḍû veyel`abû ḥattâ yülâḳû yevmehümü-lleẕî yû`adûn"
+    },
+    {
+      "n": 43,
+      "lat": "Yevme yaḫrucûne mine-l'ecdâŝi sirâ`an keennehüm ilâ nüṣubiy yûfiḍûn"
+    },
+    {
+      "n": 44,
+      "lat": "Ḫâşi`aten ebṣâruhüm terheḳuhüm ẕilleh. Ẕâlike-lyevmü-lleẕî kânû yû`adûn"
+    }
+  ]
+}

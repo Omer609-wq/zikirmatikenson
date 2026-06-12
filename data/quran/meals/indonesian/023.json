@@ -1,0 +1,479 @@
+{
+  "mealId": "indonesian",
+  "n": 23,
+  "ayahCount": 118,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Sesungguhnya beruntunglah orang-orang yang beriman,"
+    },
+    {
+      "n": 2,
+      "tr": "(yaitu) orang-orang yang khusyu' dalam sembahyangnya,"
+    },
+    {
+      "n": 3,
+      "tr": "dan orang-orang yang menjauhkan diri dari (perbuatan dan perkataan) yang tiada berguna,"
+    },
+    {
+      "n": 4,
+      "tr": "dan orang-orang yang menunaikan zakat,"
+    },
+    {
+      "n": 5,
+      "tr": "dan orang-orang yang menjaga kemaluannya,"
+    },
+    {
+      "n": 6,
+      "tr": "kecuali terhadap isteri-isteri mereka atau budak yang mereka miliki; maka sesungguhnya mereka dalam hal ini tiada tercela."
+    },
+    {
+      "n": 7,
+      "tr": "Barangsiapa mencari yang di balik itu maka mereka itulah orang-orang yang melampaui batas."
+    },
+    {
+      "n": 8,
+      "tr": "Dan orang-orang yang memelihara amanat-amanat (yang dipikulnya) dan janjinya."
+    },
+    {
+      "n": 9,
+      "tr": "dan orang-orang yang memelihara sembahyangnya."
+    },
+    {
+      "n": 10,
+      "tr": "Mereka itulah orang-orang yang akan mewarisi,"
+    },
+    {
+      "n": 11,
+      "tr": "(yakni) yang akan mewarisi surga Firdaus. Mereka kekal di dalamnya."
+    },
+    {
+      "n": 12,
+      "tr": "Dan sesungguhnya Kami telah menciptakan manusia dari suatu saripati (berasal) dari tanah."
+    },
+    {
+      "n": 13,
+      "tr": "Kemudian Kami jadikan saripati itu air mani (yang disimpan) dalam tempat yang kokoh (rahim)."
+    },
+    {
+      "n": 14,
+      "tr": "Kemudian air mani itu Kami jadikan segumpal darah, lalu segumpal darah itu Kami jadikan segumpal daging, dan segumpal daging itu Kami jadikan tulang belulang, lalu tulang belulang itu Kami bungkus dengan daging. Kemudian Kami jadikan dia makhluk yang (berbentuk) lain. Maka Maha sucilah Allah, Pencipta Yang Paling Baik."
+    },
+    {
+      "n": 15,
+      "tr": "Kemudian, sesudah itu, sesungguhnya kamu sekalian benar-benar akan mati."
+    },
+    {
+      "n": 16,
+      "tr": "Kemudian, sesungguhnya kamu sekalian akan dibangkitkan (dari kuburmu) di hari kiamat."
+    },
+    {
+      "n": 17,
+      "tr": "Dan sesungguhnya Kami telah menciptakan di atas kamu tujuh buah jalan (tujuh buah langit); dan Kami tidaklah lengah terhadap ciptaan (Kami)."
+    },
+    {
+      "n": 18,
+      "tr": "Dan Kami turunkan air dari langit menurut suatu ukuran; lalu Kami jadikan air itu menetap di bumi, dan sesungguhnya Kami benar-benar berkuasa menghilangkannya."
+    },
+    {
+      "n": 19,
+      "tr": "Lalu dengan air itu, Kami tumbuhkan untuk kamu kebun-kebun kurma dan anggur; di dalam kebun-kebun itu kamu peroleh buah-buahan yang banyak dan sebahagian dari buah-buahan itu kamu makan,"
+    },
+    {
+      "n": 20,
+      "tr": "dan pohon kayu keluar dari Thursina (pohon zaitun), yang menghasilkan minyak, dan pemakan makanan bagi orang-orang yang makan."
+    },
+    {
+      "n": 21,
+      "tr": "Dan sesungguhnya pada binatang-binatang ternak, benar-benar terdapat pelajaran yang penting bagi kamu, Kami memberi minum kamu dari air susu yang ada dalam perutnya, dan (juga) pada binatang-binatang ternak itu terdapat faedah yang banyak untuk kamu, dan sebagian daripadanya kamu makan,"
+    },
+    {
+      "n": 22,
+      "tr": "dan di atas punggung binatang-binatang ternak itu dan (juga) di atas perahu-perahu kamu diangkut."
+    },
+    {
+      "n": 23,
+      "tr": "Dan sesungguhnya Kami telah mengutus Nuh kepada kaumnya, lalu ia berkata: \"Hai kaumku, sembahlah oleh kamu Allah, (karena) sekali-kali tidak ada Tuhan bagimu selain Dia. Maka mengapa kamu tidak bertakwa (kepada-Nya)?\""
+    },
+    {
+      "n": 24,
+      "tr": "Maka pemuka-pemuka orang yang kafir di antara kaumnya menjawab: \"Orang ini tidak lain hanyalah manusia seperti kamu, yang bermaksud hendak menjadi seorang yang lebih tinggi dari kamu. Dan kalau Allah menghendaki, tentu Dia mengutus beberapa orang malaikat. Belum pernah kami mendengar (seruan yang seperti) ini pada masa nenek moyang kami yang dahulu."
+    },
+    {
+      "n": 25,
+      "tr": "la tidak lain hanyalah seorang laki-laki yang berpenyakit gila, maka tunggulah (sabarlah) terhadapnya sampai suatu waktu\"."
+    },
+    {
+      "n": 26,
+      "tr": "Nuh berdoa: \"Ya Tuhanku, tolonglah aku, karena mereka mendustakan aku\"."
+    },
+    {
+      "n": 27,
+      "tr": "Lalu Kami wahyukan kepadanya: \"Buatlah bahtera di bawah penilikan dan petunjuk Kami, maka apabila perintah Kami telah datang dan tanur telah memancarkan air, maka masukkanlah ke dalam bahtera itu sepasang dari tiap-tiap (jenis), dan (juga) keluargamu, kecuali orang yang telah lebih dahulu ditetapkan (akan ditimpa azab) di antara mereka. Dan janganlah kamu bicarakan dengan Aku tentang orang-orang yang zalim, karena sesungguhnya mereka itu akan ditenggelamkan."
+    },
+    {
+      "n": 28,
+      "tr": "Apabila kamu dan orang-orang yang bersamamu telah berada di atas bahtera itu, maka ucapkanlah: \"Segala puji bagi Allah yang telah menyelamatkan kami dari orang-orang yang zalim\"."
+    },
+    {
+      "n": 29,
+      "tr": "Dan berdoalah: Ya Tuhanku, tempatkanlah aku pada tempat yang diberkati, dan Engkau adalah sebaik-baik Yang memberi tempat\"."
+    },
+    {
+      "n": 30,
+      "tr": "Sesungguhnya pada (kejadian) itu benar-benar terdapat beberapa tanda (kebesaran Allah), dan sesungguhnya Kami menimpakan azab (kepada kaum Nuh itu)."
+    },
+    {
+      "n": 31,
+      "tr": "Kemudian, Kami jadikan sesudah mereka umat yang lain."
+    },
+    {
+      "n": 32,
+      "tr": "Lalu Kami utus kepada mereka, seorang rasul dari kalangan mereka sendiri (yang berkata): \"Sembahlah Allah oleh kamu sekalian, sekali-kali tidak ada Tuhan selain daripada-Nya. Maka mengapa kamu tidak bertakwa (kepada-Nya)."
+    },
+    {
+      "n": 33,
+      "tr": "Dan berkatalah pemuka-pemuka yang kafir di antara kaumnya dan yang mendustakan akan menemui hari akhirat (kelak) dan yang telah Kami mewahkan mereka dalam kehidupan di dunia: \"(Orang) ini tidak lain hanyalah manusia seperti kamu, dia makan dari apa yang kamu makan, dan meminum dari apa yang kamu minum."
+    },
+    {
+      "n": 34,
+      "tr": "Dan sesungguhnya jika kamu sekalian mentaati manusia yang seperti kamu, niscaya bila demikian, kamu benar-benar (menjadi) orang-orang yang merugi."
+    },
+    {
+      "n": 35,
+      "tr": "Apakah ia menjanjikan kepada kamu sekalian, bahwa bila kamu telah mati dan telah menjadi tanah dan tulang belulang, kamu sesungguhnya akan dikeluarkan (dari kuburmu)?"
+    },
+    {
+      "n": 36,
+      "tr": "jauh, jauh sekali (dari kebenaran) apa yang diancamkan kepada kamu itu,"
+    },
+    {
+      "n": 37,
+      "tr": "kehidupan itu tidak lain hanyalah kehidupan kita di dunia ini, kita mati dan kita hidup dan sekali-kali tidak akan dibangkitkan lagi,"
+    },
+    {
+      "n": 38,
+      "tr": "Ia tidak lain hanyalah seorang yang mengada-adakan kebohongan terhadap Allah, dan kami sekali-kali tidak akan beriman kepadanya\"."
+    },
+    {
+      "n": 39,
+      "tr": "Rasul itu berdoa: \"Ya Tuhanku, tolonglah aku karena mereka mendustakanku\"."
+    },
+    {
+      "n": 40,
+      "tr": "Allah berfirman: \"Dalam sedikit waktu lagi pasti mereka akan menjadi orang-orang yang menyesal\"."
+    },
+    {
+      "n": 41,
+      "tr": "Maka dimusnahkanlah mereka oleh suara yang mengguntur dengan hak dan Kami jadikan mereka (sebagai) sampah banjir maka kebinasaanlah bagi orang-orang yang zalim itu."
+    },
+    {
+      "n": 42,
+      "tr": "Kemudian Kami ciptakan sesudah mereka umat-umat yang lain."
+    },
+    {
+      "n": 43,
+      "tr": "Tidak (dapat) sesuatu umatpun mendahului ajalnya, dan tidak (dapat pula) mereka terlambat (dari ajalnya itu)."
+    },
+    {
+      "n": 44,
+      "tr": "Kemudian Kami utus (kepada umat-umat itu) rasul-rasul Kami berturut-turut. Tiap-tiap seorang rasul datang kepada umatnya, umat itu mendustakannya, maka Kami perikutkan sebagian mereka dengan sebagian yang lain. Dan Kami jadikan mereka buah tutur (manusia), maka kebinasaanlah bagi orang-orang yang tidak beriman."
+    },
+    {
+      "n": 45,
+      "tr": "Kemudian Kami utus Musa dan saudaranya Harun dengan membawa tanda-tanda (Kebesaran) Kami, dan bukti yang nyata,"
+    },
+    {
+      "n": 46,
+      "tr": "kepada Fir'aun dan pembesar-pembesar kaumnya, maka mereka ini takbur dan mereka adalah orang-orang yang sombong."
+    },
+    {
+      "n": 47,
+      "tr": "Dan mereka berkata: \"Apakah (patut) kita percaya kepada dua orang manusia seperti kita (juga), padahal kaum mereka (Bani Israil) adalah orang-orang yang menghambakan diri kepada kita?\""
+    },
+    {
+      "n": 48,
+      "tr": "Maka (tetaplah) mereka mendustakan keduanya, sebab itu mereka adalah termasuk orang-orang yang dibinasakan."
+    },
+    {
+      "n": 49,
+      "tr": "Dan sesungguhnya telah Kami berikan Al Kitab (Taurat) kepada Musa, agar mereka (Bani Israil) mendapat petunjuk."
+    },
+    {
+      "n": 50,
+      "tr": "Dan telah Kami jadikan (Isa) putera Maryam beserta ibunya suatu bukti yang nyata bagi (kekuasaan Kami), dan Kami melindungi mereka di suatu tanah tinggi yang datar yang banyak terdapat padang-padang rumput dan sumber-sumber air bersih yang mengalir."
+    },
+    {
+      "n": 51,
+      "tr": "Hai rasul-rasul, makanlah dari makanan yang baik-baik, dan kerjakanlah amal yang saleh. Sesungguhnya Aku Maha Mengetahui apa yang kamu kerjakan."
+    },
+    {
+      "n": 52,
+      "tr": "Sesungguhnya (agama tauhid) ini, adalah agama kamu semua, agama yang satu, dan Aku adalah Tuhanmu, maka bertakwalah kepada-Ku."
+    },
+    {
+      "n": 53,
+      "tr": "Kemudian mereka (pengikut-pengikut rasul itu) menjadikan agama mereka terpecah belah menjadi beberapa pecahan. Tiap-tiap golongan merasa bangga dengan apa yang ada pada sisi mereka (masing-masing)."
+    },
+    {
+      "n": 54,
+      "tr": "Maka biarkanlah mereka dalam kesesatannya sampai suatu waktu."
+    },
+    {
+      "n": 55,
+      "tr": "Apakah mereka mengira bahwa harta dan anak-anak yang Kami berikan kepada mereka itu (berarti bahwa),"
+    },
+    {
+      "n": 56,
+      "tr": "Kami bersegera memberikan kebaikan-kebaikan kepada mereka? Tidak, sebenarnya mereka tidak sadar."
+    },
+    {
+      "n": 57,
+      "tr": "Sesungguhnya orang-orang yang berhati-hati karena takut akan (azab) Tuhan mereka,"
+    },
+    {
+      "n": 58,
+      "tr": "Dan orang-orang yang beriman dengan ayat-ayat Tuhan mereka,"
+    },
+    {
+      "n": 59,
+      "tr": "Dan orang-orang yang tidak mempersekutukan dengan Tuhan mereka (sesuatu apapun),"
+    },
+    {
+      "n": 60,
+      "tr": "Dan orang-orang yang memberikan apa yang telah mereka berikan, dengan hati yang takut, (karena mereka tahu bahwa) sesungguhnya mereka akan kembali kepada Tuhan mereka,"
+    },
+    {
+      "n": 61,
+      "tr": "mereka itu bersegera untuk mendapat kebaikan-kebaikan, dan merekalah orang-orang yang segera memperolehnya."
+    },
+    {
+      "n": 62,
+      "tr": "Kami tiada membebani seseorang melainkan menurut kesanggupannya, dan pada sisi Kami ada suatu kitab yang membicarakan kebenaran, dan mereka tidak dianiaya."
+    },
+    {
+      "n": 63,
+      "tr": "Tetapi hati orang-orang kafir itu dalam kesesatan dari (memahami kenyataan) ini, dan mereka banyak mengerjakan perbuatan-perbuatan (buruk) selain daripada itu, mereka tetap mengerjakannya."
+    },
+    {
+      "n": 64,
+      "tr": "Hingga apabila Kami timpakan azab, kepada orang-orang yang hidup mewah di antara mereka, dengan serta merta mereka memekik minta tolong."
+    },
+    {
+      "n": 65,
+      "tr": "Janganlah kamu memekik minta tolong pada hari ini. Sesungguhnya kamu tiada akan mendapat pertolongan dari Kami."
+    },
+    {
+      "n": 66,
+      "tr": "Sesungguhnya ayat-ayat-Ku (Al Quran) selalu dibacakan kepada kamu sekalian, maka kamu selalu berpaling ke belakang,"
+    },
+    {
+      "n": 67,
+      "tr": "dengan menyombongkan diri terhadap Al Quran itu dan mengucapkan perkataan-perkataan keji terhadapnya di waktu kamu bercakap-cakap di malam hari."
+    },
+    {
+      "n": 68,
+      "tr": "Maka apakah mereka tidak memperhatikan perkataan (Kami), atau apakah telah datang kepada mereka apa yang tidak pernah datang kepada nenek moyang mereka dahulu?"
+    },
+    {
+      "n": 69,
+      "tr": "Ataukah mereka tidak mengenal rasul mereka, karena itu mereka memungkirinya?"
+    },
+    {
+      "n": 70,
+      "tr": "Atau (apakah patut) mereka berkata: \"Padanya (Muhammad) ada penyakit gila\". Sebenarnya dia telah membawa kebenaran kepada mereka, dan kebanyakan mereka benci kepada kebenaran itu."
+    },
+    {
+      "n": 71,
+      "tr": "Andaikata kebenaran itu menuruti hawa nafsu mereka, pasti binasalah langit dan bumi ini, dan semua yang ada di dalamnya. Sebenarnya Kami telah mendatangkan kepada mereka kebanggaan (Al Quran) mereka tetapi mereka berpaling dari kebanggaan itu."
+    },
+    {
+      "n": 72,
+      "tr": "Atau kamu meminta upah kepada mereka?\", maka upah dari Tuhanmu adalah lebih baik, dan Dia adalah Pemberi rezeki Yang Paling Baik."
+    },
+    {
+      "n": 73,
+      "tr": "Dan sesungguhnya kamu benar-benar menyeru mereka kepada jalan yang lurus."
+    },
+    {
+      "n": 74,
+      "tr": "Dan sesungguhnya orang-orang yang tidak beriman kepada negeri akhirat benar-benar menyimpang dari jalan (yang lurus)."
+    },
+    {
+      "n": 75,
+      "tr": "Andaikata mereka Kami belas kasihani, dan Kami lenyapkan kemudharatan yang mereka alami, benar-benar mereka akan terus menerus terombang-ambing dalam keterlaluan mereka."
+    },
+    {
+      "n": 76,
+      "tr": "Dan sesungguhnya Kami telah pernah menimpakan azab kepada mereka, maka mereka tidak tunduk kepada Tuhan mereka, dan (juga) tidak memohon (kepada-Nya) dengan merendahkan diri."
+    },
+    {
+      "n": 77,
+      "tr": "Hingga apabila Kami bukakan untuk mereka suatu pintu tempat azab yang amat sangat (di waktu itulah) tiba-tiba mereka menjadi putus asa."
+    },
+    {
+      "n": 78,
+      "tr": "Dan Dialah yang telah menciptakan bagi kamu sekalian, pendengaran, penglihatan dan hati. Amat sedikitlah kamu bersyukur."
+    },
+    {
+      "n": 79,
+      "tr": "Dan Dialah yang menciptakan serta mengembang biakkan kamu di bumi ini dan kepada-Nya-lah kamu akan dihimpunkan."
+    },
+    {
+      "n": 80,
+      "tr": "Dan Dialah yang menghidupkan dan mematikan, dan Dialah yang (mengatur) pertukaran malam dan siang. Maka apakah kamu tidak memahaminya?"
+    },
+    {
+      "n": 81,
+      "tr": "Sebenarnya mereka mengucapkan perkataan yang serupa dengan perkataan yang diucapkan oleh orang-orang dahulu kala."
+    },
+    {
+      "n": 82,
+      "tr": "Mereka berkata: \"Apakah betul, apabila kami telah mati dan kami telah menjadi tanah dan tulang belulang, apakah sesungguhnya kami benar-benar akan dibangkitkan?"
+    },
+    {
+      "n": 83,
+      "tr": "Sesungguhnya kami dan bapak-bapak kami telah diberi ancaman (dengan) ini dahulu, ini tidak lain hanyalah dongengan orang-orang dahulu kala!\"."
+    },
+    {
+      "n": 84,
+      "tr": "Katakanlah: \"Kepunyaan siapakah bumi ini, dan semua yang ada padanya, jika kamu mengetahui?\""
+    },
+    {
+      "n": 85,
+      "tr": "Mereka akan menjawab: \"Kepunyaan Allah\". Katakanlah: \"Maka apakah kamu tidak ingat?\""
+    },
+    {
+      "n": 86,
+      "tr": "Katakanlah: \"Siapakah Yang Empunya langit yang tujuh dan Yang Empunya 'Arsy yang besar?\""
+    },
+    {
+      "n": 87,
+      "tr": "Mereka akan menjawab: \"Kepunyaan Allah\". Katakanlah: \"Maka apakah kamu tidak bertakwa?\""
+    },
+    {
+      "n": 88,
+      "tr": "Katakanlah: \"Siapakah yang di tangan-Nya berada kekuasaan atas segala sesuatu sedang Dia melindungi, tetapi tidak ada yang dapat dilindungi dari (azab)-Nya, jika kamu mengetahui?\""
+    },
+    {
+      "n": 89,
+      "tr": "Mereka akan menjawab: \"Kepunyaan Allah\". Katakanlah: \"(Kalau demikian), maka dari jalan manakah kamu ditipu?\""
+    },
+    {
+      "n": 90,
+      "tr": "Sebenarnya Kami telah membawa kebenaran kepada mereka, dan sesungguhnya mereka benar-benar orang-orang yang berdusta."
+    },
+    {
+      "n": 91,
+      "tr": "Allah sekali-kali tidak mempunyai anak, dan sekali-kali tidak ada tuhan (yang lain) beserta-Nya, kalau ada tuhan beserta-Nya, masing-masing tuhan itu akan membawa makhluk yang diciptakannya, dan sebagian dari tuhan-tuhan itu akan mengalahkan sebagian yang lain. Maha Suci Allah dari apa yang mereka sifatkan itu,"
+    },
+    {
+      "n": 92,
+      "tr": "Yang mengetahui semua yang ghaib dan semua yang nampak, maka Maha Tinggilah Dia dari apa yang mereka persekutukan."
+    },
+    {
+      "n": 93,
+      "tr": "Katakanlah: \"Ya Tuhanku, jika Engkau sungguh-sungguh hendak memperlihatkan kepadaku azab yang diancamkan kepada mereka,"
+    },
+    {
+      "n": 94,
+      "tr": "ya Tuhanku, maka janganlah Engkau jadikan aku berada di antara orang-orang yang zalim\"."
+    },
+    {
+      "n": 95,
+      "tr": "Dan sesungguhnya Kami benar-benar kuasa untuk memperlihatkan kepadamu apa yang Kami ancamkan kepada mereka."
+    },
+    {
+      "n": 96,
+      "tr": "Tolaklah perbuatan buruk mereka dengan yang lebih baik. Kami lebih mengetahui apa yang mereka sifatkan."
+    },
+    {
+      "n": 97,
+      "tr": "Dan katakanlah: \"Ya Tuhanku aku berlindung kepada Engkau dari bisikan-bisikan syaitan."
+    },
+    {
+      "n": 98,
+      "tr": "Dan aku berlindung (pula) kepada Engkau ya Tuhanku, dari kedatangan mereka kepadaku\"."
+    },
+    {
+      "n": 99,
+      "tr": "(Demikianlah keadaan orang-orang kafir itu), hingga apabila datang kematian kepada seseorang dari mereka, dia berkata: \"Ya Tuhanku kembalikanlah aku (ke dunia),"
+    },
+    {
+      "n": 100,
+      "tr": "agar aku berbuat amal yang saleh terhadap yang telah aku tinggalkan. Sekali-kali tidak. Sesungguhnya itu adalah perkataan yang diucapkannya saja. Dan di hadapan mereka ada dinding sampal hari mereka dibangkitkan."
+    },
+    {
+      "n": 101,
+      "tr": "Apabila sangkakala ditiup maka tidaklah ada lagi pertalian nasab di antara mereka pada hari itu, dan tidak ada pula mereka saling bertanya."
+    },
+    {
+      "n": 102,
+      "tr": "Barangsiapa yang berat timbangan (kebaikan)nya, maka mereka itulah orang-orang yang dapat keberuntungan."
+    },
+    {
+      "n": 103,
+      "tr": "Dan barangsiapa yang ringan timbangannya, maka mereka itulah orang-orang yang merugikan dirinya sendiri, mereka kekal di dalam neraka Jahannam."
+    },
+    {
+      "n": 104,
+      "tr": "Muka mereka dibakar api neraka, dan mereka di dalam neraka itu dalam keadaan cacat."
+    },
+    {
+      "n": 105,
+      "tr": "Bukankah ayat-ayat-Ku telah dibacakan kepadamu sekalian, tetapi kamu selalu mendustakannya?"
+    },
+    {
+      "n": 106,
+      "tr": "Mereka berkata: \"Ya Tuhan kami, kami telah dikuasai oleh kejahatan kami, dan adalah kami orang-orang yang sesat."
+    },
+    {
+      "n": 107,
+      "tr": "Ya Tuhan kami, keluarkanlah kami daripadanya (dan kembalikanlah kami ke dunia), maka jika kami kembali (juga kepada kekafiran), sesungguhnya kami adalah orang-orang yang zalim\"."
+    },
+    {
+      "n": 108,
+      "tr": "Allah berfirman: \"Tinggallah dengan hina di dalamnya, dan janganlah kamu berbicara dengan Aku."
+    },
+    {
+      "n": 109,
+      "tr": "Sesungguhnya, ada segolongan dari hamba-hamba-Ku berdoa (di dunia): \"Ya Tuhan kami, kami telah beriman, maka ampunilah kami dan berilah kami rahmat dan Engkau adalah Pemberi rahmat Yang Paling Baik."
+    },
+    {
+      "n": 110,
+      "tr": "Lalu kamu menjadikan mereka buah ejekan, sehingga (kesibukan) kamu mengejek mereka, menjadikan kamu lupa mengingat Aku, dan adalah kamu selalu mentertawakan mereka,"
+    },
+    {
+      "n": 111,
+      "tr": "Sesungguhnya Aku memberi balasan kepada mereka di hari ini, karena kesabaran mereka; sesungguhnya mereka itulah orang-orang yang menang\"."
+    },
+    {
+      "n": 112,
+      "tr": "Allah bertanya: \"Berapa tahunkah lamanya kamu tinggal di bumi?\""
+    },
+    {
+      "n": 113,
+      "tr": "Mereka menjawab: \"Kami tinggal (di bumi) sehari atau setengah hari, maka tanyakanlah kepada orang-orang yang menghitung\"."
+    },
+    {
+      "n": 114,
+      "tr": "Allah berfirman: \"Kamu tidak tinggal (di bumi) melainkan sebentar saja, kalau kamu sesungguhnya mengetahui\""
+    },
+    {
+      "n": 115,
+      "tr": "Maka apakah kamu mengira, bahwa sesungguhnya Kami menciptakan kamu secara main-main (saja), dan bahwa kamu tidak akan dikembalikan kepada Kami?"
+    },
+    {
+      "n": 116,
+      "tr": "Maka Maha Tinggi Allah, Raja Yang Sebenarnya; tidak ada Tuhan selain Dia, Tuhan (Yang mempunyai) 'Arsy yang mulia."
+    },
+    {
+      "n": 117,
+      "tr": "Dan barangsiapa menyembah tuhan yang lain di samping Allah, padahal tidak ada suatu dalilpun baginya tentang itu, maka sesungguhnya perhitungannya di sisi Tuhannya. Sesungguhnya orang-orang yang kafir itu tiada beruntung."
+    },
+    {
+      "n": 118,
+      "tr": "Dan katakanlah: \"Ya Tuhanku berilah ampun dan berilah rahmat, dan Engkau adalah Pemberi rahmat Yang Paling baik\"."
+    }
+  ]
+}

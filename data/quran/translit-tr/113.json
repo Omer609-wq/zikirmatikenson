@@ -1,0 +1,27 @@
+{
+  "translitId": "translit-tr",
+  "n": 113,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Ḳul e`ûẕü birabbi-lfeleḳ"
+    },
+    {
+      "n": 2,
+      "lat": "Min şerri mâ ḫaleḳ"
+    },
+    {
+      "n": 3,
+      "lat": "Vemin şerri gâsiḳin iẕâ veḳab"
+    },
+    {
+      "n": 4,
+      "lat": "Vemin şerri-nneffâŝâti fi-l`uḳad"
+    },
+    {
+      "n": 5,
+      "lat": "Vemin şerri ḥâsidin iẕâ ḥased"
+    }
+  ]
+}

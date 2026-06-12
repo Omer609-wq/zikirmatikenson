@@ -1,0 +1,39 @@
+{
+  "translitId": "translit-tr",
+  "n": 95,
+  "ayahCount": 8,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Vettîni vezzeytûn"
+    },
+    {
+      "n": 2,
+      "lat": "Veṭûri sînîn"
+    },
+    {
+      "n": 3,
+      "lat": "Vehâẕe-lbeledi-l'emîn"
+    },
+    {
+      "n": 4,
+      "lat": "Leḳad ḫalaḳne-l'insâne fî aḥseni taḳvîm"
+    },
+    {
+      "n": 5,
+      "lat": "Ŝümme radednâhü esfele sâfilîn"
+    },
+    {
+      "n": 6,
+      "lat": "İlle-lleẕîne âmenû ve`amilu-ṣṣâliḥâti felehüm ecrun gayru memnûn"
+    },
+    {
+      "n": 7,
+      "lat": "Femâ yükeẕẕibüke ba`dü biddîn"
+    },
+    {
+      "n": 8,
+      "lat": "Eleyse-llâhü biaḥkemi-lḥâkimîn"
+    }
+  ]
+}

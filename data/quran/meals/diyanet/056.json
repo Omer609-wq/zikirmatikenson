@@ -1,0 +1,391 @@
+{
+  "mealId": "diyanet",
+  "n": 56,
+  "ayahCount": 96,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Kıyamet koptuğunda kimini alçaltacak ve kimini yükseltecek olan o hadisenin yalan olmadığı ortaya çıkacaktır."
+    },
+    {
+      "n": 2,
+      "tr": "Kıyamet koptuğunda kimini alçaltacak ve kimini yükseltecek olan o hadisenin yalan olmadığı ortaya çıkacaktır."
+    },
+    {
+      "n": 3,
+      "tr": "Kıyamet koptuğunda kimini alçaltacak ve kimini yükseltecek olan o hadisenin yalan olmadığı ortaya çıkacaktır."
+    },
+    {
+      "n": 4,
+      "tr": "Ey insanlar! Yer sarsıldıkça sarsıldığı, dağlar ufalandıkça ufalanıp da toz duman haline geldiği zaman, siz de üç sınıf olursunuz."
+    },
+    {
+      "n": 5,
+      "tr": "Ey insanlar! Yer sarsıldıkça sarsıldığı, dağlar ufalandıkça ufalanıp da toz duman haline geldiği zaman, siz de üç sınıf olursunuz."
+    },
+    {
+      "n": 6,
+      "tr": "Ey insanlar! Yer sarsıldıkça sarsıldığı, dağlar ufalandıkça ufalanıp da toz duman haline geldiği zaman, siz de üç sınıf olursunuz."
+    },
+    {
+      "n": 7,
+      "tr": "Ey insanlar! Yer sarsıldıkça sarsıldığı, dağlar ufalandıkça ufalanıp da toz duman haline geldiği zaman, siz de üç sınıf olursunuz."
+    },
+    {
+      "n": 8,
+      "tr": "İyi işler işlediklerini belirtmek için, amel defterleri sağdan verilenler; ne mutlu o sağcılara!"
+    },
+    {
+      "n": 9,
+      "tr": "Kötülük işlediklerini belirtmek üzere, amel defterleri soldan verilenler; ne yazık o solculara!"
+    },
+    {
+      "n": 10,
+      "tr": "İyilik işlemekte önde olanlar, karşılıklarını almakta da önde olanlardır."
+    },
+    {
+      "n": 11,
+      "tr": "Naim cennetlerinde Allah'a en çok yaklaştırılmış olanlar işte bunlardır."
+    },
+    {
+      "n": 12,
+      "tr": "Naim cennetlerinde Allah'a en çok yaklaştırılmış olanlar işte bunlardır."
+    },
+    {
+      "n": 13,
+      "tr": "Onların büyük kısmı eski ümmetlerden, bir kısmı da sonrakilerdendir."
+    },
+    {
+      "n": 14,
+      "tr": "Onların büyük kısmı eski ümmetlerden, bir kısmı da sonrakilerdendir."
+    },
+    {
+      "n": 15,
+      "tr": "Mücevheratla işlenmiş tahtlara karşılıklı olarak yaslanırlar."
+    },
+    {
+      "n": 16,
+      "tr": "Mücevheratla işlenmiş tahtlara karşılıklı olarak yaslanırlar."
+    },
+    {
+      "n": 17,
+      "tr": "Ölümsüz gençler yanlarında, baş ağrısı ve dönmesi vermeyen bembeyaz bir kaynaktan doldurulmuş kaseler, ibrikler, kadehler; seçecekleri meyveler, arzulayacakları kuş eti ile dolaşırlar."
+    },
+    {
+      "n": 18,
+      "tr": "Ölümsüz gençler yanlarında, baş ağrısı ve dönmesi vermeyen bembeyaz bir kaynaktan doldurulmuş kaseler, ibrikler, kadehler; seçecekleri meyveler, arzulayacakları kuş eti ile dolaşırlar."
+    },
+    {
+      "n": 19,
+      "tr": "Ölümsüz gençler yanlarında, baş ağrısı ve dönmesi vermeyen bembeyaz bir kaynaktan doldurulmuş kaseler, ibrikler, kadehler; seçecekleri meyveler, arzulayacakları kuş eti ile dolaşırlar."
+    },
+    {
+      "n": 20,
+      "tr": "Ölümsüz gençler yanlarında, baş ağrısı ve dönmesi vermeyen bembeyaz bir kaynaktan doldurulmuş kaseler, ibrikler, kadehler; seçecekleri meyveler, arzulayacakları kuş eti ile dolaşırlar."
+    },
+    {
+      "n": 21,
+      "tr": "Ölümsüz gençler yanlarında, baş ağrısı ve dönmesi vermeyen bembeyaz bir kaynaktan doldurulmuş kaseler, ibrikler, kadehler; seçecekleri meyveler, arzulayacakları kuş eti ile dolaşırlar."
+    },
+    {
+      "n": 22,
+      "tr": "İşlediklerine karşılık olarak, sedefteki inciler gibi ceylan gözlüler vardır. Orada boş ve günaha sokacak bir söz duymazlar."
+    },
+    {
+      "n": 23,
+      "tr": "İşlediklerine karşılık olarak, sedefteki inciler gibi ceylan gözlüler vardır. Orada boş ve günaha sokacak bir söz duymazlar."
+    },
+    {
+      "n": 24,
+      "tr": "İşlediklerine karşılık olarak, sedefteki inciler gibi ceylan gözlüler vardır. Orada boş ve günaha sokacak bir söz duymazlar."
+    },
+    {
+      "n": 25,
+      "tr": "Sadece selama karşılık selam sözü işitirler."
+    },
+    {
+      "n": 26,
+      "tr": "Defterleri sağdan verilenler; ne mutlu o sağcılara!"
+    },
+    {
+      "n": 27,
+      "tr": "Onlar dikensiz sedir ağaçları, salkımları sarkmış muz ağaçları, uzamış gölge altında, çağlayarak akan sular kenarlarında; bitip tükenmeyen ve yasak da edilmeyen bol meyveler arasında; yüksek döşekler üzerindedirler."
+    },
+    {
+      "n": 28,
+      "tr": "Onlar dikensiz sedir ağaçları, salkımları sarkmış muz ağaçları, uzamış gölge altında, çağlayarak akan sular kenarlarında; bitip tükenmeyen ve yasak da edilmeyen bol meyveler arasında; yüksek döşekler üzerindedirler."
+    },
+    {
+      "n": 29,
+      "tr": "Onlar dikensiz sedir ağaçları, salkımları sarkmış muz ağaçları, uzamış gölge altında, çağlayarak akan sular kenarlarında; bitip tükenmeyen ve yasak da edilmeyen bol meyveler arasında; yüksek döşekler üzerindedirler."
+    },
+    {
+      "n": 30,
+      "tr": "Onlar dikensiz sedir ağaçları, salkımları sarkmış muz ağaçları, uzamış gölge altında, çağlayarak akan sular kenarlarında; bitip tükenmeyen ve yasak da edilmeyen bol meyveler arasında; yüksek döşekler üzerindedirler."
+    },
+    {
+      "n": 31,
+      "tr": "Onlar dikensiz sedir ağaçları, salkımları sarkmış muz ağaçları, uzamış gölge altında, çağlayarak akan sular kenarlarında; bitip tükenmeyen ve yasak da edilmeyen bol meyveler arasında; yüksek döşekler üzerindedirler."
+    },
+    {
+      "n": 32,
+      "tr": "Onlar dikensiz sedir ağaçları, salkımları sarkmış muz ağaçları, uzamış gölge altında, çağlayarak akan sular kenarlarında; bitip tükenmeyen ve yasak da edilmeyen bol meyveler arasında; yüksek döşekler üzerindedirler."
+    },
+    {
+      "n": 33,
+      "tr": "Onlar dikensiz sedir ağaçları, salkımları sarkmış muz ağaçları, uzamış gölge altında, çağlayarak akan sular kenarlarında; bitip tükenmeyen ve yasak da edilmeyen bol meyveler arasında; yüksek döşekler üzerindedirler."
+    },
+    {
+      "n": 34,
+      "tr": "Onlar dikensiz sedir ağaçları, salkımları sarkmış muz ağaçları, uzamış gölge altında, çağlayarak akan sular kenarlarında; bitip tükenmeyen ve yasak da edilmeyen bol meyveler arasında; yüksek döşekler üzerindedirler."
+    },
+    {
+      "n": 35,
+      "tr": "Biz ceylan gözlüleri, defterleri sağdan verilenler için yeniden yaratmışızdır; onları bakire, eşlerine düşkün ve hepsini bir yaşta kılmışızdır."
+    },
+    {
+      "n": 36,
+      "tr": "Biz ceylan gözlüleri, defterleri sağdan verilenler için yeniden yaratmışızdır; onları bakire, eşlerine düşkün ve hepsini bir yaşta kılmışızdır."
+    },
+    {
+      "n": 37,
+      "tr": "Biz ceylan gözlüleri, defterleri sağdan verilenler için yeniden yaratmışızdır; onları bakire, eşlerine düşkün ve hepsini bir yaşta kılmışızdır."
+    },
+    {
+      "n": 38,
+      "tr": "Biz ceylan gözlüleri, defterleri sağdan verilenler için yeniden yaratmışızdır; onları bakire, eşlerine düşkün ve hepsini bir yaşta kılmışızdır."
+    },
+    {
+      "n": 39,
+      "tr": "Bunların bir kısmı eski ümmetlerden, bir kısmı da sonrakilerdendir."
+    },
+    {
+      "n": 40,
+      "tr": "Bunların bir kısmı eski ümmetlerden, bir kısmı da sonrakilerdendir."
+    },
+    {
+      "n": 41,
+      "tr": "Defterleri soldan verilenler; ne yazık o solculara!"
+    },
+    {
+      "n": 42,
+      "tr": "İnsanın içine işleyen bir sıcaklık ve kaynar su içinde, serinliği ve hoşluğu olmayan kara bir dumanın gölgesinde bulunurlar."
+    },
+    {
+      "n": 43,
+      "tr": "İnsanın içine işleyen bir sıcaklık ve kaynar su içinde, serinliği ve hoşluğu olmayan kara bir dumanın gölgesinde bulunurlar."
+    },
+    {
+      "n": 44,
+      "tr": "İnsanın içine işleyen bir sıcaklık ve kaynar su içinde, serinliği ve hoşluğu olmayan kara bir dumanın gölgesinde bulunurlar."
+    },
+    {
+      "n": 45,
+      "tr": "Çünkü onlar, bundan önce, dünyada, nimet içinde bulunurlar iken, büyük günah işlemekte direnir dururlardı."
+    },
+    {
+      "n": 46,
+      "tr": "Çünkü onlar, bundan önce, dünyada, nimet içinde bulunurlar iken, büyük günah işlemekte direnir dururlardı."
+    },
+    {
+      "n": 47,
+      "tr": "Şöyle söylerlerdi: \"Öldüğümüzde, toprak ve kemik yığını olduğumuzda mı, biz mi tekrar dirileceğiz?\""
+    },
+    {
+      "n": 48,
+      "tr": "\"Önce gelip geçmiş babalarımız da mı?\""
+    },
+    {
+      "n": 49,
+      "tr": "De ki: \"Şüphesiz öncekiler de, sonrakiler de belli bir günün belirli bir vaktinde toplanacaklardır.\""
+    },
+    {
+      "n": 50,
+      "tr": "De ki: \"Şüphesiz öncekiler de, sonrakiler de belli bir günün belirli bir vaktinde toplanacaklardır.\""
+    },
+    {
+      "n": 51,
+      "tr": "Sonra, siz ey sapıklar, yalanlayanlar!"
+    },
+    {
+      "n": 52,
+      "tr": "Doğrusu bir zakkum ağacından yiyeceksiniz."
+    },
+    {
+      "n": 53,
+      "tr": "Karınlarınızı onunla dolduracaksınız;"
+    },
+    {
+      "n": 54,
+      "tr": "Onun üzerine kaynar su içeceksiniz;"
+    },
+    {
+      "n": 55,
+      "tr": "Hem de susamış develerin suya saldırışı gibi içeceksiniz;"
+    },
+    {
+      "n": 56,
+      "tr": "İşte onlara, ceza günü sunulacak konukluk budur."
+    },
+    {
+      "n": 57,
+      "tr": "Sizi yaratan Biziz; hala tasdik etmez misiniz?"
+    },
+    {
+      "n": 58,
+      "tr": "Söyleyin; akıttığınız meniden insanı yaratan siz misiniz, yoksa Biz mi yaratmaktayız?"
+    },
+    {
+      "n": 59,
+      "tr": "Söyleyin; akıttığınız meniden insanı yaratan siz misiniz, yoksa Biz mi yaratmaktayız?"
+    },
+    {
+      "n": 60,
+      "tr": "Ölümü aranızda Biz tayin ettik; sizi ortadan kaldırıp benzerlerinizi yerinize getirmeyi, sizi bilmediğiniz şekilde var etmeyi dilesek kimse önümüze geçemez."
+    },
+    {
+      "n": 61,
+      "tr": "Ölümü aranızda Biz tayin ettik; sizi ortadan kaldırıp benzerlerinizi yerinize getirmeyi, sizi bilmediğiniz şekilde var etmeyi dilesek kimse önümüze geçemez."
+    },
+    {
+      "n": 62,
+      "tr": "And olsun ki, ilk yaratmayı bilirsiniz, yine de düşünmez misiniz?"
+    },
+    {
+      "n": 63,
+      "tr": "Söyleyin, ektiklerinizi yerden bitirenler sizler misiniz, yoksa Biz mi bitiriyoruz?"
+    },
+    {
+      "n": 64,
+      "tr": "Söyleyin, ektiklerinizi yerden bitirenler sizler misiniz, yoksa Biz mi bitiriyoruz?"
+    },
+    {
+      "n": 65,
+      "tr": "Dilersek Biz onu çerçöp yaparız, şaşar kalırsınız; \"Doğrusu borç altına girdik, hatta yoksun kaldık\"."
+    },
+    {
+      "n": 66,
+      "tr": "Dilersek Biz onu çerçöp yaparız, şaşar kalırsınız; \"Doğrusu borç altına girdik, hatta yoksun kaldık\"."
+    },
+    {
+      "n": 67,
+      "tr": "Dilersek Biz onu çerçöp yaparız, şaşar kalırsınız; \"Doğrusu borç altına girdik, hatta yoksun kaldık\"."
+    },
+    {
+      "n": 68,
+      "tr": "Söyleyin; içtiğiniz suyu buluttan indirenler sizler misiniz yoksa onu Biz mi indiririz?"
+    },
+    {
+      "n": 69,
+      "tr": "Söyleyin; içtiğiniz suyu buluttan indirenler sizler misiniz yoksa onu Biz mi indiririz?"
+    },
+    {
+      "n": 70,
+      "tr": "Dileseydik onu acılaştırırdık; hala şükretmez misiniz?"
+    },
+    {
+      "n": 71,
+      "tr": "Söyleyin; yaktığınız ateşin ağacını var eden sizler misiniz, yoksa onu Biz mi var ederiz?"
+    },
+    {
+      "n": 72,
+      "tr": "Söyleyin; yaktığınız ateşin ağacını var eden sizler misiniz, yoksa onu Biz mi var ederiz?"
+    },
+    {
+      "n": 73,
+      "tr": "Biz onu bir ibret ve çölde konaklayanlar için yararlı kıldık."
+    },
+    {
+      "n": 74,
+      "tr": "Öyleyse çok büyük Rabbinin adını tesbih et."
+    },
+    {
+      "n": 75,
+      "tr": "Hayır; yıldızların yerleri üzerine yemin ederim; ki bunun ne büyük yemin olduğunu bir bilseniz!"
+    },
+    {
+      "n": 76,
+      "tr": "Hayır; yıldızların yerleri üzerine yemin ederim; ki bunun ne büyük yemin olduğunu bir bilseniz!"
+    },
+    {
+      "n": 77,
+      "tr": "Doğrusu bu Kitap, sadece arınmış olanların dokunabileceği, saklı bir Kitap'da mevcutken Alemlerin Rabbi tarafından indirilmiş olan Kuranı Kerim'dir."
+    },
+    {
+      "n": 78,
+      "tr": "Doğrusu bu Kitap, sadece arınmış olanların dokunabileceği, saklı bir Kitap'da mevcutken Alemlerin Rabbi tarafından indirilmiş olan Kuranı Kerim'dir."
+    },
+    {
+      "n": 79,
+      "tr": "Doğrusu bu Kitap, sadece arınmış olanların dokunabileceği, saklı bir Kitap'da mevcutken Alemlerin Rabbi tarafından indirilmiş olan Kuranı Kerim'dir."
+    },
+    {
+      "n": 80,
+      "tr": "Doğrusu bu Kitap, sadece arınmış olanların dokunabileceği, saklı bir Kitap'da mevcutken Alemlerin Rabbi tarafından indirilmiş olan Kuranı Kerim'dir."
+    },
+    {
+      "n": 81,
+      "tr": "Siz bu sözü mü hor görüyorsunuz?"
+    },
+    {
+      "n": 82,
+      "tr": "Rızkınıza şükredeceğiniz yere onu vereni mi yalanlıyorsunuz?"
+    },
+    {
+      "n": 83,
+      "tr": "Kişinin canı boğaza dayanınca ve siz o zaman bakıp kalırken, Biz o kişiye sizden daha yakınızdır, ama görmezsiniz."
+    },
+    {
+      "n": 84,
+      "tr": "Kişinin canı boğaza dayanınca ve siz o zaman bakıp kalırken, Biz o kişiye sizden daha yakınızdır, ama görmezsiniz."
+    },
+    {
+      "n": 85,
+      "tr": "Kişinin canı boğaza dayanınca ve siz o zaman bakıp kalırken, Biz o kişiye sizden daha yakınızdır, ama görmezsiniz."
+    },
+    {
+      "n": 86,
+      "tr": "Siz dirilip yaptıklarınıza karşılık görmeyecekseniz ve eğer bu sözünüzde samimi iseniz, o çıkmak üzere olan canı geri çevirsenize!"
+    },
+    {
+      "n": 87,
+      "tr": "Siz dirilip yaptıklarınıza karşılık görmeyecekseniz ve eğer bu sözünüzde samimi iseniz, o çıkmak üzere olan canı geri çevirsenize!"
+    },
+    {
+      "n": 88,
+      "tr": "Eğer ölen o kişi, gözdelerden ise, rahatlık, hoşluk ve nimet cenneti onundur."
+    },
+    {
+      "n": 89,
+      "tr": "Eğer ölen o kişi, gözdelerden ise, rahatlık, hoşluk ve nimet cenneti onundur."
+    },
+    {
+      "n": 90,
+      "tr": "Eğer defteri sağdan verilenlerden ise,"
+    },
+    {
+      "n": 91,
+      "tr": "\"Ey sağcılardan olan kişi, sana selam olsun!\" denir."
+    },
+    {
+      "n": 92,
+      "tr": "Eğer, sapık yalancılardan ise,"
+    },
+    {
+      "n": 93,
+      "tr": "Ona kaynar sudan konukluk sunulur."
+    },
+    {
+      "n": 94,
+      "tr": "Cehenneme sokulur."
+    },
+    {
+      "n": 95,
+      "tr": "Doğrusu kesin gerçek budur."
+    },
+    {
+      "n": 96,
+      "tr": "Öyleyse çok büyük Rabbinin adını tesbih et."
+    }
+  ]
+}

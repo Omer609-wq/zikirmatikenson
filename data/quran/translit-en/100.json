@@ -1,0 +1,51 @@
+{
+  "translitId": "translit-en",
+  "n": 100,
+  "ayahCount": 11,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "WaalAAadiyati dabhan"
+    },
+    {
+      "n": 2,
+      "lat": "Faalmooriyati qadhan"
+    },
+    {
+      "n": 3,
+      "lat": "Faalmugheerati subhan"
+    },
+    {
+      "n": 4,
+      "lat": "Faatharna bihi naqAAan"
+    },
+    {
+      "n": 5,
+      "lat": "Fawasatna bihi jamAAan"
+    },
+    {
+      "n": 6,
+      "lat": "Inna alinsana lirabbihi lakanoodun"
+    },
+    {
+      "n": 7,
+      "lat": "Wainnahu AAala thalika lashaheedun"
+    },
+    {
+      "n": 8,
+      "lat": "Wainnahu lihubbi alkhayri lashadeedun"
+    },
+    {
+      "n": 9,
+      "lat": "Afala yaAAlamu itha buAAthira ma fee alquboori"
+    },
+    {
+      "n": 10,
+      "lat": "Wahussila ma fee alssudoori"
+    },
+    {
+      "n": 11,
+      "lat": "Inna rabbahum bihim yawmaithin lakhabeerun"
+    }
+  ]
+}

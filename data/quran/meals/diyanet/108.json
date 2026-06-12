@@ -1,0 +1,19 @@
+{
+  "mealId": "diyanet",
+  "n": 108,
+  "ayahCount": 3,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Doğrusu sana pek çok nimet vermişizdir."
+    },
+    {
+      "n": 2,
+      "tr": "Öyleyse Rabbin için namaz kıl, kurban kes."
+    },
+    {
+      "n": 3,
+      "tr": "Doğrusu adı sanı ortadan kalkacak olan, sana kin tutan kimsedir."
+    }
+  ]
+}

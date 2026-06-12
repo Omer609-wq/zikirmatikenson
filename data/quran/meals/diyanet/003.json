@@ -1,0 +1,807 @@
+{
+  "mealId": "diyanet",
+  "n": 3,
+  "ayahCount": 200,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Elif, Lam, Mim."
+    },
+    {
+      "n": 2,
+      "tr": "Allah, Ondan başka tanrı olmayan, diri, her an yaratıklarını gözetip durandır."
+    },
+    {
+      "n": 3,
+      "tr": "Kendisinden önceki Kitapları tasdik eden Hak Kitap'ı sana indirdi. Önceden insanlara yol gösterici olarak Tevrat ve İncil'i de indirmişti. O, doğruyu yanlıştan ayıran Kitap'ı indirdi. Doğrusu Allah'ın ayetlerini inkar edenler için şiddetli azab vardır. Allah güçlüdür, mazlumların öcünü alır."
+    },
+    {
+      "n": 4,
+      "tr": "Kendisinden önceki Kitapları tasdik eden Hak Kitap'ı sana indirdi. Önceden insanlara yol gösterici olarak Tevrat ve İncil'i de indirmişti. O, doğruyu yanlıştan ayıran Kitap'ı indirdi. Doğrusu Allah'ın ayetlerini inkar edenler için şiddetli azab vardır. Allah güçlüdür, mazlumların öcünü alır."
+    },
+    {
+      "n": 5,
+      "tr": "Şüphesiz gökte ve yerde hiçbir şey Allah'tan gizli kalmaz."
+    },
+    {
+      "n": 6,
+      "tr": "Ana rahminde sizi dilediği gibi şekillendiren O'dur. O'ndan başka tanrı yoktur, güçlüdür, Hakim'dir."
+    },
+    {
+      "n": 7,
+      "tr": "Sana Kitap'ı indiren O'dur. Onda Kitap'ın temeli olan kesin anlamlı ayetler vardır, diğerleri de çeşitli anlamlıdırlar. Kalblerinde eğrilik olan kimseler, fitne çıkarmak, kendilerine göre yorumlamak için onların çeşitli anlamlı olanlarına uyarlar. Oysa onların yorumunu ancak Allah bilir. İlimde derinleşmiş olanlar: \"Ona inandık, hepsi Rabbimiz'in katındandır\" derler. Bunu ancak akıl sahipleri düşünür;"
+    },
+    {
+      "n": 8,
+      "tr": "Rabbimiz! Bizi doğru yola erdirdikten sonra kalblerimizi eğriltme, katından bize rahmet bağışla; şüphesiz Sen sonsuz bağışta bulunansın."
+    },
+    {
+      "n": 9,
+      "tr": "Rabbimiz! Doğrusu geleceği şüphe götürmeyen günde, insanları toplayacak olan Sensin. Şüphesiz ki Allah verdiği sözden caymaz."
+    },
+    {
+      "n": 10,
+      "tr": "İnkar edenlerin malları ve çocukları, Allah'a karşı onlara bir şey sağlamaz. İşte onlar ateşin yakıtlarıdır."
+    },
+    {
+      "n": 11,
+      "tr": "Bunların tutumu, Firavun ailesinin ve onlardan öncekilerin tutumu gibi ki, ayetlerimizi yalanladılar da Allah onları günahlarından dolayı yok (helak) etti. Allah'ın cezalandırması şiddetlidir."
+    },
+    {
+      "n": 12,
+      "tr": "İnkar edenlere: \"Yenileceksiniz, toplanıp cehenneme sürüleceksiniz, orası ne kötü döşektir\" de."
+    },
+    {
+      "n": 13,
+      "tr": "Karşı karşıya gelen iki topluluğun durumlarında sizin için ibret vardır; biri Allah yolunda savaşanlardır, diğeri inkarcılardır ki, bunlar karşı tarafı gözleriyle kendilerinin iki misli görüyorlardı. Allah dilediğini yardımıyla destekler. Bunda görebilenler için ibret vardır."
+    },
+    {
+      "n": 14,
+      "tr": "Kadınlara, oğullara, kantar kantar altın ve gümüşe, nişanlı atlar ve develere, ekinlere karşı aşırı sevgi beslemek insanlara güzel gösterilmiştir. Bunlar dünya hayatının nimetleridir, oysa gidilecek yerin güzeli Allah katındadır."
+    },
+    {
+      "n": 15,
+      "tr": "De ki: Bundan daha iyisini size haber vereyim mi? Allah'a karşı gelmekten sakınanlara, Rab'lerinin katında, altlarından ırmaklar akan ve orada temelli kalacakları cennetler, tertemiz eşler ve Allah'ın rızası vardır. Allah kullarını hakkiyle görücüdür."
+    },
+    {
+      "n": 16,
+      "tr": "Onlar ki, \"Rabbimiz! Biz şüphesiz inandık, bunun için günahlarımızı bize bağışla ve bizi ateşin azabından koru\" diyen, sabreden, doğru olan, gönülden kulluk eden, hayra sarfeden ve seher vakitlerinde bağışlanma dileyenlerdir."
+    },
+    {
+      "n": 17,
+      "tr": "Onlar ki, \"Rabbimiz! Biz şüphesiz inandık, bunun için günahlarımızı bize bağışla ve bizi ateşin azabından koru\" diyen, sabreden, doğru olan, gönülden kulluk eden, hayra sarfeden ve seher vakitlerinde bağışlanma dileyenlerdir."
+    },
+    {
+      "n": 18,
+      "tr": "Allah, melekler ve adaleti yerine getiren ilim sahibleri, O'ndan başka tanrı olmadığına şahidlik etmişlerdir. O'ndan başka tanrı yoktur, O güçlüdür, Hakim'dir."
+    },
+    {
+      "n": 19,
+      "tr": "Allah katında din, şüphesiz İslam'dır. Ancak, Kitap verilenler, kendilerine ilim geldikten sonra, aralarındaki ihtiras yüzünden ayrılığa düştüler. Allah'ın ayetlerini kim inkar ederse bilsin ki, Allah hesabı çabuk görür."
+    },
+    {
+      "n": 20,
+      "tr": "Eğer seninle tartışmaya girişirlerse, \"Ben bana uyanlarla birlikte kendimi Allah'a verdim\" de. Kendilerine Kitap verilenlere ve kitapsızlara: \"Siz de İslam oldunuz mu?\" de, şayet İslam olurlarsa doğru yola girmişlerdir, yüz çevirirlerse, sana yalnız tebliğ etmek düşer. Allah kullarını görür."
+    },
+    {
+      "n": 21,
+      "tr": "Allah'ın ayetlerini inkar edenlere, haksız yere peygamberleri öldürenlere, insanlardan adaleti emredenleri öldürenlere elem verici bir azabı müjdele."
+    },
+    {
+      "n": 22,
+      "tr": "Onlar, dünya ve ahirette işleri boşa çıkacak olanlardır. Onların hiç yardımcıları da yoktur."
+    },
+    {
+      "n": 23,
+      "tr": "Kendilerine Kitapdan bir pay verilenleri, görmedin mi? Onlar aralarında hüküm vermek için Allah'ın Kitabına çağırılmışlar, sonra onlardan bir takımı dönmüşlerdir. Onlar temelli yüz çevirenlerdir."
+    },
+    {
+      "n": 24,
+      "tr": "Bu, onların: \"Bize ateş sadece sayılı birkaç gün değecektir\" demelerindendir. Uydurup durdukları şeyler, onları dinlerinde yanıltmıştır."
+    },
+    {
+      "n": 25,
+      "tr": "Geleceğinden şüphe olmayan günde, onları topladığımız ve haksızlık yapılmayarak herkese kazandığı eksiksiz verildiği zaman, nasıl olacak?"
+    },
+    {
+      "n": 26,
+      "tr": "De ki: \"Mülkün sahibi olan Allah'ım! Mülkü dilediğine verirsin; dilediğinden çekip alırsın; dilediğini aziz kılar, dilediğini alçaltırsın; iyilik elindedir. Doğrusu Sen, her şeye Kadir'sin."
+    },
+    {
+      "n": 27,
+      "tr": "Geceyi gündüze, gündüzü geceye geçirirsin; ölüden diri, diriden ölü çıkarırsın; dilediğini hesapsız rızıklandırırsın\"."
+    },
+    {
+      "n": 28,
+      "tr": "Müminler, müminleri bırakıp kafirleri dost edinmesinler; kim böyle yaparsa Allah katında bir değeri yoktur, ancak, onlardan sakınmanız hali müstesnadır. Allah sizi Kendisiyle korkutur, dönüş Allah'adır."
+    },
+    {
+      "n": 29,
+      "tr": "De ki: \"İçinizde olanı gizleseniz de açıklasanız da Allah onu bilir. Göklerde olanları da, yerde olanları da bilir. Allah her şeye Kadir'dir\"."
+    },
+    {
+      "n": 30,
+      "tr": "Her kişinin yaptığı iyiliği ve yaptığı kötülüğü, ki kendisiyle o kötülük arasında uzun bir mesafe olmasını diler, hazır bulacağı günü bir düşünün. Kullarına karşı şefkatli olan Allah size kendinden korkmanızı emreder."
+    },
+    {
+      "n": 31,
+      "tr": "De ki: \"Allah'ı seviyorsanız bana uyun. Allah da sizi sevsin ve günahlarınızı bağışlasın. Allah affeder ve merhamet eder\"."
+    },
+    {
+      "n": 32,
+      "tr": "De ki: \"Allah'a ve Peygambere itaat edin\". Yüz çevirirlerse bilsinler ki, Allah inkar edenleri sevmez."
+    },
+    {
+      "n": 33,
+      "tr": "Allah, Adem'i, Nuh'u, İbrahim ailesini, İmran ailesini birbirinin soyundan olarak alemlere tercih etti. Allah işitendir, bilendir."
+    },
+    {
+      "n": 34,
+      "tr": "Allah, Adem'i, Nuh'u, İbrahim ailesini, İmran ailesini birbirinin soyundan olarak alemlere tercih etti. Allah işitendir, bilendir."
+    },
+    {
+      "n": 35,
+      "tr": "İmran'ın karısı: \"Ya Rabbi! Karnımda olanı, sadece sana hizmet etmek üzere adadım, benden kabul buyur, doğrusu işiten ve bilen ancak Sensin\" demişti."
+    },
+    {
+      "n": 36,
+      "tr": "Onu doğurduğunda, Allah onun ne doğurduğunu bilirken \"Ya Rabbi! Kız doğurdum. Erkek, kız gibi değildir, ben ona Meryem adını verdim, ben onu da soyunu da, kovulmuş şeytandan Sana sığındırırım\" dedi."
+    },
+    {
+      "n": 37,
+      "tr": "Rabbi onu güzel bir kabulle karşıladı, güzel bir bitki gibi yetiştirdi; onu Zekeriya'nın himayesine bıraktı. Zekeriya mabedde onun yanına her girişinde, yanında bir yiyecek bulurdu. \"Ey Meryem! Bu sana nereden geldi?\" demiş, o da: Bu, Allah'ın katındandır\" cevabını vermişti. Doğrusu Allah dilediğini hesapsız rızıklandırır."
+    },
+    {
+      "n": 38,
+      "tr": "Orada Zekeriya Rabbine dua etti: \"Ya Rabbi! Bana kendi katından temiz bir soy bahşet, doğrusu Sen duayı işitirsin\"."
+    },
+    {
+      "n": 39,
+      "tr": "Mabedde namaz kılarken melekler ona seslendiler: \"Allah sana Allah'ın emriyle (vücud bulan İsa'yı) tasdik eden, efendi, iffetli, iyilerden bir peygamber olarak Yahya'yı müjdeler\"."
+    },
+    {
+      "n": 40,
+      "tr": "\"Ya Rabbi! Ben artık iyice kocamış, karım da kısırken nasıl oğlum olabilir?\" dedi. Allah: \"Böyledir, Allah dilediğini yapar\" dedi."
+    },
+    {
+      "n": 41,
+      "tr": "\"Ya Rabbi! Bana bir alamet ver\" dedi, \"Alametin, üç gün, işaretle anlaşma dışında insanlarla konuşmamandır; Rabbini çok an, akşam sabah hamd et\" dedi."
+    },
+    {
+      "n": 42,
+      "tr": "Melekler şöyle demişti: \"Ey Meryem! Allah seni seçip temizledi. Dünyaların kadınlarından seni üstün tuttu.\""
+    },
+    {
+      "n": 43,
+      "tr": "\"Ey Meryem! Rabbine gönülden boyun eğ, secde et, rüku edenlerle birlikte rüku et.\""
+    },
+    {
+      "n": 44,
+      "tr": "Bu Sana vahyettiğimiz gayb haberlerindendir. Meryem'e hangisi kefil olacak diye kalemlerini atarlarken sen yanlarında değildin, çekişirlerken de orada bulunmadın."
+    },
+    {
+      "n": 45,
+      "tr": "Melekler demişti ki: \"Ey Meryem! Allah sana, Kendinden bir sözü, adı Meryem oğlu İsa olan Mesihi, dünya ve ahirette şerefli ve Allah'a yakın kılınanlardan olarak müjdeler\"."
+    },
+    {
+      "n": 46,
+      "tr": "\"İnsanlarla, beşikte iken de, yetişkin iken de konuşacaktır ve o, iyilerdendir\"."
+    },
+    {
+      "n": 47,
+      "tr": "Meryem: \"Rabbim! Bana bir insan dokunmamışken nasıl çocuğum olabilir?\" demişti. Melekler şöyle dediler: \"Allah dilediğini böylece yaratır. Bir işin olmasını dilerse ona ol der ve olur\"."
+    },
+    {
+      "n": 48,
+      "tr": "Ona Kitabı, hikmeti, Tevrat'ı ve İncil'i öğretecek, İsrailoğullarına şöyle diyen bir peygamber kılacak: \"Ben size Rabbinizden bir ayet getirdim. Ben size çamurdan kuş gibi bir şey yapıp ona üfleyeceğim, Allah'ın izniyle, hemen kuş olacaktır; anadan doğma körleri, alacalıları iyi edeceğim; Allah'ın izniyle, ölüleri dirilteceğim; yediklerinizi ve evlerinizde sakladıklarınızı da size haber vereceğim. İnanmışsanız bunda size delil vardır\"."
+    },
+    {
+      "n": 49,
+      "tr": "Ona Kitabı, hikmeti, Tevrat'ı ve İncil'i öğretecek, İsrailoğullarına şöyle diyen bir peygamber kılacak: \"Ben size Rabbinizden bir ayet getirdim. Ben size çamurdan kuş gibi bir şey yapıp ona üfleyeceğim, Allah'ın izniyle, hemen kuş olacaktır; anadan doğma körleri, alacalıları iyi edeceğim; Allah'ın izniyle, ölüleri dirilteceğim; yediklerinizi ve evlerinizde sakladıklarınızı da size haber vereceğim. İnanmışsanız bunda size delil vardır\"."
+    },
+    {
+      "n": 50,
+      "tr": "\"Benden önce gelen Tevrat'ı tasdik etmekle beraber size yasak edilenlerin bir kısmını helal kılmak üzere, Rabbinizden size bir ayet getirdim. Allah'tan sakının ve bana itaat edin; çünkü Allah benim de Rabbim, sizin de Rabbinizdir. O'na kulluk edin, bu doğru yoldur\"."
+    },
+    {
+      "n": 51,
+      "tr": "\"Benden önce gelen Tevrat'ı tasdik etmekle beraber size yasak edilenlerin bir kısmını helal kılmak üzere, Rabbinizden size bir ayet getirdim. Allah'tan sakının ve bana itaat edin; çünkü Allah benim de Rabbim, sizin de Rabbinizdir. O'na kulluk edin, bu doğru yoldur\"."
+    },
+    {
+      "n": 52,
+      "tr": "İsa onların inkarlarını hissedince: \"Allah uğrunda yardımcılarım kimlerdir?\" dedi. Havariler şöyle dediler: \"Biz Allah'ın yardımcılarıyız, Allah'a inandık, O'na teslim olduğumuza şahid ol\"."
+    },
+    {
+      "n": 53,
+      "tr": "\"Rabbimiz! İndirdiğine inandık, Peygambere uyduk; bizi sahid olanlarla beraber yaz\"."
+    },
+    {
+      "n": 54,
+      "tr": "Fakat (inkarcılar) hile yaptılar. Allah da onları cezalandırdı. Allah, hile yapanların cezasını en iyi verendir."
+    },
+    {
+      "n": 55,
+      "tr": "Allah demişti ki: \"Ey İsa! Ben seni eceline yetireceğim, seni kendime yükselteceğim, inkar edenlerden seni tertemiz ayıracağım; sana uyanları, kıyamet gününe kadar, inkar edenlerin üstünde tutacağım. Sonra dönüşünüz Banadır. Ayrılığa düştüğünüz hususlarda aranızda hükmedeceğim. İnkar edenleri de dünya ve ahirette şiddetli azaba uğratacağım. Onların hiç yardımcıları olmayacaktır.\""
+    },
+    {
+      "n": 56,
+      "tr": "Allah demişti ki: \"Ey İsa! Ben seni eceline yetireceğim, seni kendime yükselteceğim, inkar edenlerden seni tertemiz ayıracağım; sana uyanları, kıyamet gününe kadar, inkar edenlerin üstünde tutacağım. Sonra dönüşünüz Banadır. Ayrılığa düştüğünüz hususlarda aranızda hükmedeceğim. İnkar edenleri de dünya ve ahirette şiddetli azaba uğratacağım. Onların hiç yardımcıları olmayacaktır.\""
+    },
+    {
+      "n": 57,
+      "tr": "İnanıp yararlı iş işleyenlerin ecirleri ise tastamam verilecektir. Allah zalimleri sevmez."
+    },
+    {
+      "n": 58,
+      "tr": "Sana okuduğumuz bunlar, ayetlerden ve hikmet dolu Kuran'dandır."
+    },
+    {
+      "n": 59,
+      "tr": "Allah'ın katında İsa'nın durumu kendisini topraktan yaratıp sonra ol demesiyle olmuş olan Adem'in durumu gibidir."
+    },
+    {
+      "n": 60,
+      "tr": "Gerçek Rabb'indendir, o halde şüphelenenlerden olma."
+    },
+    {
+      "n": 61,
+      "tr": "Sana ilim geldikten sonra, bu hususta seninle kim tartışacak olursa, de ki: \"Gelin, oğullarımızı, oğullarınızı, kadınlarımızı, kadınlarınızı, kendimizi ve kendinizi çağıralım, sonra lanetleşelim de, Allah'ın lanetinin yalancılara olmasını dileyelim\"."
+    },
+    {
+      "n": 62,
+      "tr": "Şüphesiz bu anlatılanlar gerçek olaylardır. Allah'tan başka tanrı yoktur. Doğrusu Allah güçlüdür, Hakim'dir."
+    },
+    {
+      "n": 63,
+      "tr": "Eğer yüz çevirirlerse, şüphesiz Allah bozguncuları bilir."
+    },
+    {
+      "n": 64,
+      "tr": "De ki: \"Ey Kitap ehli! Ancak Allah'a kulluk etmek, O'na bir şeyi eş koşmamak, Allah'ı bırakıp birbirimizi rab olarak benimsememek üzere, bizimle sizin aranızda müşterek bir söze gelin\". Eğer yüz çevirirlerse: \"Bizim müslüman olduğumuza şahid olun\" deyin."
+    },
+    {
+      "n": 65,
+      "tr": "Ey Kitap ehli! İbrahim hakkında niçin tartışıyorsunuz? Tevrat da, İncil de şüphesiz ondan sonra indirilmiştir. Akletmiyor musunuz?"
+    },
+    {
+      "n": 66,
+      "tr": "Siz, hadi bilginiz olan şey üzerinde tartışanlarsınız. Ama bilginiz olmayan şey hakkında niçin tartışırsınız? Oysa Allah bilir, sizler bilmezsiniz."
+    },
+    {
+      "n": 67,
+      "tr": "İbrahim, yahudi de, hıristiyan da değildi, ama doğruya yönelen bir müslimdi; ortak koşanlardan değildi."
+    },
+    {
+      "n": 68,
+      "tr": "Doğrusu İbrahim'e en yakın olanlar, ona uyanlar, bu Peygamber ve inananlardır. Allah inananların dostudur."
+    },
+    {
+      "n": 69,
+      "tr": "Kitap ehlinden bir takımı sizi sapıtmak isterler; oysa kendilerini saptırırlar da farkına varmazlar."
+    },
+    {
+      "n": 70,
+      "tr": "Ey Kitap ehli! Sizler göz göre göre Allah'ın ayetlerini niçin inkar ediyorsunuz?"
+    },
+    {
+      "n": 71,
+      "tr": "Ey Kitap ehli! Niçin hakkı batıla karıştırıyor ve bile bile hakkı gizliyorsunuz?"
+    },
+    {
+      "n": 72,
+      "tr": "Kitap ehlinden bir takımı şöyle dedi: \"İnananlara indirilene günün başında inanın, sonunda inkar edin ki, belki dönerler ve dininize uyanlardan başkasına inanmayın\". De ki: \"Doğru yol Allah'ın yoludur\". Ve yine başkasına da verildiğine veya Rabbinizin katında Müslümanların karşı delil getirip sizi alt edeceğine inanmayın, derler. De ki: \"Doğrusu bol nimet Allah'ın elindedir, onu dilediğine verir. Allah'ın fazlı her şeyi kaplar, O her şeyi bilir\"."
+    },
+    {
+      "n": 73,
+      "tr": "Kitap ehlinden bir takımı şöyle dedi: \"İnananlara indirilene günün başında inanın, sonunda inkar edin ki, belki dönerler ve dininize uyanlardan başkasına inanmayın\". De ki: \"Doğru yol Allah'ın yoludur\". Ve yine başkasına da verildiğine veya Rabbinizin katında Müslümanların karşı delil getirip sizi alt edeceğine inanmayın, derler. De ki: \"Doğrusu bol nimet Allah'ın elindedir, onu dilediğine verir. Allah'ın fazlı her şeyi kaplar, O her şeyi bilir\"."
+    },
+    {
+      "n": 74,
+      "tr": "\"Rahmetini dilediğine tahsis eder, Allah büyük, bol nimet sahibidir\"."
+    },
+    {
+      "n": 75,
+      "tr": "Kitap ehli arasında kantarla emanet bıraksan onu sana ödeyen ve bir lira emanet etsen, tepesine dikilmedikçe onu sana ödemeyen vardır. Bu, onların: \"Kitapsızlara karşı üzerimize bir sorumluluk yoktur\" demelerindendir. Onlar bile bile Allah'a karşı yalan söylemektedirler."
+    },
+    {
+      "n": 76,
+      "tr": "Hayır, öyle değil; ahdini yerine getiren ve günahtan sakınan bilsin ki, Allah sakınanları şüphesiz sever."
+    },
+    {
+      "n": 77,
+      "tr": "Allah'ın ahdini ve yeminlerini az bir değere değişenlerin, işte onların, ahirette bir payları yoktur. Allah onlara kıyamet günü hitab etmeyecek, onlara bakmayacak, onları temize çıkarmayacaktır. Elem verici azab onlar içindir."
+    },
+    {
+      "n": 78,
+      "tr": "Onlardan bir takımı, Kitapta olmadığı halde Kitaptan zannedesiniz diye dillerini eğip bükerler. O, Allah katından olmadığı halde: \"Allah katındandır\" derler, bile bile Allah'a karşı yalan söylerler."
+    },
+    {
+      "n": 79,
+      "tr": "Allah'ın kendisine Kitap'ı, hükmü, peygamberliği verdiği insanoğluna: \"Allah'ı bırakıp bana kulluk edin\" demek yaraşmaz, fakat: \"Kitabı öğrettiğinize, okuduğunuza göre Rabb'e kul olun\" demek yaraşır."
+    },
+    {
+      "n": 80,
+      "tr": "Size melekleri, peygamberleri Rab olarak benimsemenizi emretmesi de yaraşmaz. Siz müslüman olduktan sonra, size inkar etmeyi mi emredecek?"
+    },
+    {
+      "n": 81,
+      "tr": "Allah peygamberlerden ahid almıştı: \"And olsun ki size Kitap, hikmet verdim; sizde olanı tasdik eden bir peygamber gelecek, ona mutlaka inanacaksınız ve ona mutlaka yardım edeceksiniz, ikrar edip bu ahdi kabul ettiniz mi?\" demişti. \"İkrar ettik\" demişlerdi de: \"Şahid olun, Ben de sizinle beraber şahidlerdenim\" demişti."
+    },
+    {
+      "n": 82,
+      "tr": "Bunun ardından yüz çeviren var ya, işte onlar fasık olanlardır."
+    },
+    {
+      "n": 83,
+      "tr": "Allah'ın dininden başka bir din mi arzu ediyorlar? Oysa göklerde ve yerde kim varsa, ister istemez O'na teslim olmuştur, O'na döneceklerdir."
+    },
+    {
+      "n": 84,
+      "tr": "\"Allah'a, bize indirilene, İbrahim'e, İsmail'e, İshak'a, Yakub'a ve torunlarına indirilene, Rableri tarafından Musa, İsa ve peygamberlere verilene inandık, onları birbirinden ayırt etmeyiz, biz O'na teslim olanlarız\" de."
+    },
+    {
+      "n": 85,
+      "tr": "Kim İslam'dan başka bir dine yönelirse, onunki kabul edilmeyecektir. O ahirette de kaybedenlerdendir."
+    },
+    {
+      "n": 86,
+      "tr": "İnandıktan, peygamberin hak olduğuna şehadet ettikten, kendilerine belgeler geldikten sonra inkar eden bir milleti Allah nasıl doğru yola eriştirir? Allah zalimleri doğru yola eriştirmez."
+    },
+    {
+      "n": 87,
+      "tr": "İşte bunların cezası, Allah'ın, meleklerin, insanların hepsinin lanetine uğramalarıdır."
+    },
+    {
+      "n": 88,
+      "tr": "Orada temellidirler; onlardan azab hafifletilmez; onların azabı geciktirilmez."
+    },
+    {
+      "n": 89,
+      "tr": "Ancak bunun ardından tevbe edip düzelenler müstesnadır. Doğrusu Allah bağışlar ve merhamet eder."
+    },
+    {
+      "n": 90,
+      "tr": "İnandıktan sonra inkar edip, inkarda aşırı gidenler var ya, onların tevbeleri kabul edilmeyecektir. İşte sapıklar onlardır."
+    },
+    {
+      "n": 91,
+      "tr": "Doğrusu inkar edip, inkarcı olarak ölenlerin hiçbirinden, yeryüzünü dolduracak kadar altını fidye vermiş olsa bile, bu kabul edilmeyecektir. İşte elem verici azab onlaradır, onların hiç yardımcıları da yoktur."
+    },
+    {
+      "n": 92,
+      "tr": "Sevdiğiniz şeylerden sarfetmedikçe iyiliğe erişemezsiniz. Her ne sarfederseniz, şüphesiz Allah onu bilir."
+    },
+    {
+      "n": 93,
+      "tr": "Tevrat'ın indirilmesinden önce İsrail'in kendisine haram ettiğinden başka bütün yiyecekler İsrailoğullarına helal idi. De ki: \"Doğru sözlü iseniz Tevrat'ı getirip okuyun\"."
+    },
+    {
+      "n": 94,
+      "tr": "Bundan sonra Allah'a karşı kim yalan isnad ederse, işte onlar zalimlerdir."
+    },
+    {
+      "n": 95,
+      "tr": "De ki: \"Allah doğru söyledi, doğruya meyleden İbrahim'in dinine uyun; O, puta tapanlardan değildi\"."
+    },
+    {
+      "n": 96,
+      "tr": "Doğrusu insanlar için ilk kurulan ev, Mekke'de, dünyalar için mübarek ve doğru yol gösteren Kabe'dir."
+    },
+    {
+      "n": 97,
+      "tr": "Orada apaçık deliller vardır, İbrahim'in makamı vardır; kim oraya girerse, güvenlik içinde olur; oraya yol bulabilen insana Allah için Kabe'yi haccetmesi gereklidir. Kim inkar ederse, bilsin ki; doğrusu Allah alemlerden müstağnidir."
+    },
+    {
+      "n": 98,
+      "tr": "De ki: \"Ey Kitap ehli! Allah yaptıklarınızı görüp dururken, niçin Allah'ın ayetlerini inkar ediyorsunuz?\""
+    },
+    {
+      "n": 99,
+      "tr": "De ki: \"Ey Kitap ehli! Siz doğru olduğuna şahidken, niçin inananları Allah'ın yolunu eğri göstermeğe yeltenerek ondan çeviriyorsunuz? Allah işlediklerinizden gafil değildir\"."
+    },
+    {
+      "n": 100,
+      "tr": "Ey İnananlar! Kitap verilenlerin bir takımına uyarsanız, inanmanızdan sonra sizi kafir olmağa çevirirler."
+    },
+    {
+      "n": 101,
+      "tr": "Allah'ın ayetleri size okunur, aranızda da Peygamberi bulunurken nasıl inkar edersiniz? Kim Allah'ın Kitabına sarılırsa şüphesiz doğru yola erişir."
+    },
+    {
+      "n": 102,
+      "tr": "Ey inananlar! Allah'tan, sakınılması gerektiği gibi sakının, sizler ancak müslüman olarak can verin."
+    },
+    {
+      "n": 103,
+      "tr": "Toptan Allah'ın ipine sarılın, ayrılmayın. Allah'ın size olan nimetini anın: Düşmandınız, kalblerinizin arasını uzlaştırdı da onun nimeti sayesinde kardeş oldunuz. Bir ateş çukurunun kenarında idiniz, sizi oradan kurtardı. Allah, doğru yola erişesiniz diye size böylece ayetlerini açıklar."
+    },
+    {
+      "n": 104,
+      "tr": "Sizden, iyiye çağıran, doğruluğu emreden ve fenalıktan meneden bir cemaat olsun. İşte başarıya erişenler yalnız onlardır."
+    },
+    {
+      "n": 105,
+      "tr": "Kendilerine belgeler geldikten sonra ayrılan ve ayrılığa düşenler gibi olmayın. Bir takım yüzlerin ağaracağı ve bir takım yüzlerin kararacağı günde büyük azab onlaradır. Yüzleri kararanlara: \"İnanmanızdan sonra inkar eder misiniz? İnkar etmenizden dolayı tadın azabı\" denecektir."
+    },
+    {
+      "n": 106,
+      "tr": "Kendilerine belgeler geldikten sonra ayrılan ve ayrılığa düşenler gibi olmayın. Bir takım yüzlerin ağaracağı ve bir takım yüzlerin kararacağı günde büyük azab onlaradır. Yüzleri kararanlara: \"İnanmanızdan sonra inkar eder misiniz? İnkar etmenizden dolayı tadın azabı\" denecektir."
+    },
+    {
+      "n": 107,
+      "tr": "Yüzleri ağaranlar ise Allah'ın rahmetindedirler. Onlar orada temellidirler."
+    },
+    {
+      "n": 108,
+      "tr": "İşte bunlar, sana doğru olarak okuduğumuz Allah'ın ayetleridir. Allah hiç kimseye zulmetmek istemez."
+    },
+    {
+      "n": 109,
+      "tr": "Göklerde olanlar da, yerde olanlar da Allah'ındır. İşler Allah'a varacaktır."
+    },
+    {
+      "n": 110,
+      "tr": "Siz, insanlar için ortaya çıkarılan, doğruluğu emreden, fenalıktan alıkoyan, Allah'a inanan hayırlı bir ümmetsiniz. Kitap ehli inanmış olsalardı, kendileri için daha hayırlı olurdu; içlerinde inananlar olmakla beraber, çoğu yoldan çıkmıştır."
+    },
+    {
+      "n": 111,
+      "tr": "Onlar incitmekten başka size bir zarar veremezler. Sizinle savaşa koyulurlarsa, geri dönüp kaçarlar. Sonra kendilerine yardım da edilmez."
+    },
+    {
+      "n": 112,
+      "tr": "Nerede bulunsalar Allah'ın ve inanan insanların himayesinde olanlar müstesna onlara alçaklık damgası vurulmuştur. Allah'tan bir gazaba uğradılar, onlara aşağılık damgası vuruldu. Bu, Allah'ın ayetlerini inkar etmeleri ve haksız yere peygamberleri öldürmelerindendir. Bu, karşı gelmeleri ve taşkınlık yapmalarındandır."
+    },
+    {
+      "n": 113,
+      "tr": "Kitap ehlinin hepsi bir değildir: Onlardan geceleri secdeye kapanarak Allah'ın ayetlerini okuyup duranlar vardır; bunlar Allah'a ve ahiret gününe inanır, kötülükten meneder, iyiliklere koşarlar. İşte onlar iyilerdendir."
+    },
+    {
+      "n": 114,
+      "tr": "Kitap ehlinin hepsi bir değildir: Onlardan geceleri secdeye kapanarak Allah'ın ayetlerini okuyup duranlar vardır; bunlar Allah'a ve ahiret gününe inanır, kötülükten meneder, iyiliklere koşarlar. İşte onlar iyilerdendir."
+    },
+    {
+      "n": 115,
+      "tr": "Ne iyilik yaparlarsa, karşılığını bulacaklardır. Allah sakınanları bilir."
+    },
+    {
+      "n": 116,
+      "tr": "İnkar eden kimselerin malları ve çocukları, Allah'tan yana, onlara bir fayda vermeyecektir. İşte onlar cehennemliklerdir, onlar orada temellidirler."
+    },
+    {
+      "n": 117,
+      "tr": "Bu dünya hayatında sarfettiklerinin durumu, kendilerine zulmeden kimselerin ekinlerine isabetle kavurup mahveden soğuk bir rüzgarın durumu gibidir. Allah onlara zulmetmedi, onlar kendilerine yazık ettiler."
+    },
+    {
+      "n": 118,
+      "tr": "Ey İnananlar! Sizden olmayanı sırdaş edinmeyin, onlar sizi şaşırtmaktan geri durmazlar, sıkıntıya düşmenizi isterler. Onların öfkesi ağızlarından taşmaktadır, kalblerinin gizlediği ise daha büyüktür. Eğer aklediyorsanız, şüphesiz size ayetleri açıkladık."
+    },
+    {
+      "n": 119,
+      "tr": "İşte siz, onlar sizi sevmezken onları seven ve Kitapların bütününe inanan kimselersiniz. Size rastladıkları zaman: \"İnandık\" derler, yalnız kaldıklarında da, size öfkelerinden parmaklarını ısırırlar. De ki: \"Öfkenizden çatlayın\". Allah kalblerde olanı bilir."
+    },
+    {
+      "n": 120,
+      "tr": "Size bir iyilik gelse, onların fenasına gider; başınıza bir kötülük gelse buna sevinirler. Sabreder ve sakınırsanız, onların hilesi size hiçbir zarar vermez. Allah işlediklerinin hepsini ilmiyle kuşatmıştır."
+    },
+    {
+      "n": 121,
+      "tr": "Sen inananları savaş için duracakları yerlere yerleştirmek üzere, erkenden evinden ayrılmıştın. Allah işitir ve bilir."
+    },
+    {
+      "n": 122,
+      "tr": "Sizden iki takım bozulup geri çekilmek üzere idi; oysa Allah onların dostu idi, inananlar yalnız Allah'a güvensinler."
+    },
+    {
+      "n": 123,
+      "tr": "And olsun ki, siz düşkün bir durumda iken, Bedir'de, Allah size yardım etmişti; Allah'tan sakının ki şükredebilesiniz."
+    },
+    {
+      "n": 124,
+      "tr": "İnananlara: \"Rabbinizin size gönderilmiş üç bin melekle yardım etmesi size yetmeyecek mi?\" diyordun. Evet, eğer sabrederseniz, sakınırsanız ve onlar de hemen üzerinize gelirlerse Rabbiniz size, nişanlı beş bin melekle imdat edecektir."
+    },
+    {
+      "n": 125,
+      "tr": "İnananlara: \"Rabbinizin size gönderilmiş üç bin melekle yardım etmesi size yetmeyecek mi?\" diyordun. Evet, eğer sabrederseniz, sakınırsanız ve onlar de hemen üzerinize gelirlerse Rabbiniz size, nişanlı beş bin melekle imdat edecektir."
+    },
+    {
+      "n": 126,
+      "tr": "Allah bunu, ancak size müjde olsun ve böylece kalbleriniz yatışsın diye yapmıştır. İnkar edenlerin bir kısmını kesmek veya ümidsiz olarak geri dönecek şekilde bozguna uğratmak için gereken yardım, ancak Güçlü ve Hakim olan Allah katından olur."
+    },
+    {
+      "n": 127,
+      "tr": "Allah bunu, ancak size müjde olsun ve böylece kalbleriniz yatışsın diye yapmıştır. İnkar edenlerin bir kısmını kesmek veya ümidsiz olarak geri dönecek şekilde bozguna uğratmak için gereken yardım, ancak Güçlü ve Hakim olan Allah katından olur."
+    },
+    {
+      "n": 128,
+      "tr": "Allah'ın, onların tevbelerini kabul veya onlara azab etmesi işiyle senin bir ilişiğin yoktur; çünkü onlar zalimlerdir."
+    },
+    {
+      "n": 129,
+      "tr": "Göklerde olanlar da, yerde olanlar da Allah'ındır. Dilediğini bağışlar, dilediğine azab eder. Allah bağışlayandır, merhamet edendir."
+    },
+    {
+      "n": 130,
+      "tr": "Ey İnananlar! Faizi kat kat alarak yemeyin. Allah'tan sakının ki başarıya erişesiniz."
+    },
+    {
+      "n": 131,
+      "tr": "İnkar edenler için hazırlanmış ateşten sakının."
+    },
+    {
+      "n": 132,
+      "tr": "Size merhamet edilmesi için, Allah'a ve Peygamber'e itaat edin."
+    },
+    {
+      "n": 133,
+      "tr": "Rabbinizin mağfiretine ve Allah'a karşı gelmekten sakınanlar için hazırlanmış eni gökler ve yer kadar olan cennete koşuşun."
+    },
+    {
+      "n": 134,
+      "tr": "Onlar bollukta ve darlıkta sarfederler, öfkelerini yenerler, insanların kusurlarını affederler. Allah iyilik yapanları sever."
+    },
+    {
+      "n": 135,
+      "tr": "Onlar fena bir şey yaptıklarında veya kendilerine zulmettiklerinde Allah'ı anarlar, günahlarının bağışlanmasını dilerler. Günahları Allah'tan başka bağışlayan kim vardır? Onlar, yaptıklarında bile bile direnmezler."
+    },
+    {
+      "n": 136,
+      "tr": "Onların hareketlerinin karşılığı Rablerinden bağışlanma ve altlarından ırmaklar akan, içinde temelli kalacakları cennetlerdir. İyi davrananların ne güzel ecri vardır!"
+    },
+    {
+      "n": 137,
+      "tr": "Sizden önce neler gelip geçmiştir. Yeryüzünde gezin de, yalancıların sonunun ne olduğuna bir bakın."
+    },
+    {
+      "n": 138,
+      "tr": "Bu Kuran, insanlara bir açıklama, sakınanlara yol gösterme ve bir öğüttür."
+    },
+    {
+      "n": 139,
+      "tr": "Gevşemeyin, üzülmeyin, inanmışsanız, mutlaka siz en üstünsünüzdür."
+    },
+    {
+      "n": 140,
+      "tr": "Eğer siz (Uhud'da) bir yara almışsanız, (size düşman olan) o topluluk da (Bedir'de) benzeri bir yara almıştı. Böylece biz, Allah'ın gerçek müminleri ortaya çıkarması ve içinizden şahitler edinmesi için, bu günleri bazen lehe, bazen de aleyhe döndürüp duruyoruz. Allah, zulmedenleri sevmez."
+    },
+    {
+      "n": 141,
+      "tr": "Bir de Allah, böylece iman edenleri günahlardan arıtmak, inkarcıları ise yok etmek ister."
+    },
+    {
+      "n": 142,
+      "tr": "Yoksa içinizden Allah cihad edenleri ve sabredenleri belirtmeden cennete gireceğinizi mi sanıyordunuz?"
+    },
+    {
+      "n": 143,
+      "tr": "And olsun ki, ölümle karşılaşmadan önce onu temenni ediyordunuz; işte onu gözlerinizle bakarak gördünüz."
+    },
+    {
+      "n": 144,
+      "tr": "Muhammed ancak bir peygamberdir. Ondan önce de peygamberler geçmişti. Ölür veya öldürülürse geriye mi döneceksiniz? Geriye dönen, Allah'a hiçbir zarar vermez. Allah şükredenlerin mükafatını verecektir."
+    },
+    {
+      "n": 145,
+      "tr": "Hiçbir kimse Allah'ın izni olmadan ölmez; o, belli bir vakte bağlanmıştır. Kim dünya nimetini isterse ona ondan veririz; ve kim ahiret nimetini isterse ona ondan veririz. Şükredenlerin mükafatını vereceğiz."
+    },
+    {
+      "n": 146,
+      "tr": "Nice peygamberlerin yanında Rabbe kul olmuş pek çok kimse savaşmıştır. Allah yolunda başlarına gelenlerden ötürü gevşememişler, yılmamışlar ve boyun eğmemişlerdi. Allah, sabredenleri sever."
+    },
+    {
+      "n": 147,
+      "tr": "Dedikleri ancak şu idi: \"Rabbimiz! Günahlarımızı, işimizdeki aşırılıklarımızı bize bağışla, sebatımızı arttır, inkarcı topluluğa karşı bize yardım et\"."
+    },
+    {
+      "n": 148,
+      "tr": "Bu yüzden Allah onlara dünya nimetini de ahiret nimetini de fazlasiyle verdi. Allah işlerini iyi yapanları sever."
+    },
+    {
+      "n": 149,
+      "tr": "Ey İnananlar! İnkar edenlere itaat ederseniz, sizi geriye döndürürler de kayba uğrarsınız."
+    },
+    {
+      "n": 150,
+      "tr": "Halbuki Mevlanız Allah'tır. O, yardımcıların en iyisidir."
+    },
+    {
+      "n": 151,
+      "tr": "Hakkında hiçbir delil indirmediği şeyi Allah'a ortak koşmalarından ötürü, inkar edenlerin kalbine korku salacağız. Onların varacağı yer cehennemdir. Zalimlerin durağı ne kötüdür!"
+    },
+    {
+      "n": 152,
+      "tr": "And olsun ki, Allah, size verdiği sözde durdu. Onun izniyle kafirleri kırıp biçiyordunuz, ama Allah size arzuladığınız zaferi gösterdikten sonra gevşeyip bu hususta çekiştiniz ve isyan ettiniz; sizden kimi dünyayı, kimi ahireti istiyordu; derken denemek için Allah sizi geri çevirip bozguna uğrattı. And olsun ki O, sizi bağışladı. Allah'ın inananlara nimeti boldur."
+    },
+    {
+      "n": 153,
+      "tr": "Peygamber arkanızdan sizi çağırırken, kimseye bakmadan kaçıyordunuz; kaybettiğinize ve başınıza gelene üzülmeyesiniz diye, Allah sizi kederden kedere uğrattı. Allah, işlediklerinizden haberdardır."
+    },
+    {
+      "n": 154,
+      "tr": "Kederden sonra, bir takımınızı kendinden geçirecek şekilde size huzur ve emniyet indirdi; oysa bir takımınız da kendi derdlerine düşmüşlerdi. Haksız yere Allah hakkında, cahiliye devrinde olduğu gibi inanıyorlar. \"Bu işte bizim bir fikrimiz var mı?\" diyorlardı; De ki: \"Buyruğun hepsi Allah'ındır\". Sana açmadıklarını içlerinde gizliyorlar. \"Bu işte bizim fikrimiz alınsaydı, burada öldürülmezdik\" diyorlar. De ki: Evlerinizde olsaydınız, haklarında ölüm yazılı olan kimseler, yine de devrilecekleri yere varırlardı. Bu, Allah'ın içinizde olanı denemesi, kalblerinizde olanı arıtması içindir. Allah gönüllerde olanı bilir."
+    },
+    {
+      "n": 155,
+      "tr": "İki topluluğun karşılaştığı gün, içinizden yüz çevirenlerin, yaptıklarının bir kısmından ötürü şeytan ayaklarını kaydırıp yoldan çıkarmak istemişti. Allah, and olsun ki, onları affetti. Allah bağışlayandır. Halim'dir."
+    },
+    {
+      "n": 156,
+      "tr": "Ey İnananlar! Yolculuğa çıkan veya savaşa giden kardeşleri hakkında: \"Onlar yanımızda olsalardı ölmezler ve öldürülmezlerdi\" diyen inkarcılar gibi olmayın ki, Allah bunu onların kalblerinde bir hasret olarak bıraksın. Dirilten de öldüren de Allah'tır. Allah işlediklerinizi görür."
+    },
+    {
+      "n": 157,
+      "tr": "Allah yolunda öldürülür veya ölürseniz, size Allah'tan onların topladıklarından hayırlı bir mağfiret ve rahmet vardır."
+    },
+    {
+      "n": 158,
+      "tr": "And olsun ki, ölseniz de, öldürülseniz de Allah katında toplanacaksınız."
+    },
+    {
+      "n": 159,
+      "tr": "Allah'ın rahmetinden dolayı, sen onlara karşı yumuşak davrandın. Eğer kaba ve katı kalbli olsaydın, şüphesiz etrafından dağılır giderlerdi. Onları affet, onlara mağfiret dile, iş hakkında onlara danış, fakat karar verdin mi Allah'a güven, doğrusu Allah güvenenleri sever."
+    },
+    {
+      "n": 160,
+      "tr": "Allah size yardım ederse, sizi yenecek yoktur; eğer sizi yardımsız bırakıverirse, O'ndan başka size yardım edecek kimdir? İnananlar yalnız Allah'a güvensinler."
+    },
+    {
+      "n": 161,
+      "tr": "Hiçbir peygambere ganimete ve millet malına hiyanet yaraşmaz; haksızlık kim yaparsa, kıyamet günü yaptığı ile gelir, sonra, haksızlık yapılmaksızın herkese kazanmış olduğu ödenir."
+    },
+    {
+      "n": 162,
+      "tr": "Allah'ın rızasına uyan kimse, Allah'ın hışmına uğrayan gibi midir? Bu kimsenin varacağı yer cehennemdir; o ne kötü varılacak yerdir!"
+    },
+    {
+      "n": 163,
+      "tr": "Onlar Allah katında derece derecedir. Allah, işlediklerini görmektedir."
+    },
+    {
+      "n": 164,
+      "tr": "And olsun ki Allah, inananlara, ayetlerini okuyan, onları arıtan, onlara Kitap ve hikmeti öğreten, kendilerinden bir peygamber göndermekle iyilikte bulunmuştur. Halbuki onlar, önceleri apaçık sapıklıkta idiler."
+    },
+    {
+      "n": 165,
+      "tr": "Başkalarını iki misline uğrattığınız bir musibete kendiniz uğrayınca mı: \"Bu nereden?\" dersiniz? De ki: \"O, kendi tarafınızdandır\". Doğrusu Allah her şeye Kadir'dir."
+    },
+    {
+      "n": 166,
+      "tr": "İki topluluğun karşılaştığı günde başınıza gelen, Allah'ın izniyledir. Bu, inananları da, münafıklık edenleri de belirtmesi içindir. Münafıklık edenlere: \"gelin, Allah yolunda savaşın, veya hiç olmazsa savunmada bulunun\" dendiği zaman: \"Eğer savaşmayı bilseydik, ardınızdan gelirdik\" dediler. O gün, onlar imandan çok inkara yakındılar. Kalblerinde olmayanı ağızlarıyla söylüyorlar. Allah gizlediklerini onlardan iyi bilir."
+    },
+    {
+      "n": 167,
+      "tr": "İki topluluğun karşılaştığı günde başınıza gelen, Allah'ın izniyledir. Bu, inananları da, münafıklık edenleri de belirtmesi içindir. Münafıklık edenlere: \"gelin, Allah yolunda savaşın, veya hiç olmazsa savunmada bulunun\" dendiği zaman: \"Eğer savaşmayı bilseydik, ardınızdan gelirdik\" dediler. O gün, onlar imandan çok inkara yakındılar. Kalblerinde olmayanı ağızlarıyla söylüyorlar. Allah gizlediklerini onlardan iyi bilir."
+    },
+    {
+      "n": 168,
+      "tr": "Onlar oturup, kardeşleri için: \"Bize itaat etselerdi öldürülmezlerdi\" dediler. De ki: \"Eğer doğru sözlü iseniz, ölümü kendinizden savın\"."
+    },
+    {
+      "n": 169,
+      "tr": "Allah yolunda öldürülenleri ölü saymayın, bilakis Rableri katında diridirler. Allah'ın bol nimetinden onlara verdiği şeylerle sevinç içinde rızıklanırlar, arkalarından kendilerine ulaşamayan kimselere, kendilerine korku olmadığını ve kendilerinin üzülmeyeceklerini müjde etmek isterler."
+    },
+    {
+      "n": 170,
+      "tr": "Allah yolunda öldürülenleri ölü saymayın, bilakis Rableri katında diridirler. Allah'ın bol nimetinden onlara verdiği şeylerle sevinç içinde rızıklanırlar, arkalarından kendilerine ulaşamayan kimselere, kendilerine korku olmadığını ve kendilerinin üzülmeyeceklerini müjde etmek isterler."
+    },
+    {
+      "n": 171,
+      "tr": "Onlar Allah'tan olan bir nimeti, bolluğu ve Allah'ın, müminlerin ecrini zayi etmeyeceğini müjdelemek isterler."
+    },
+    {
+      "n": 172,
+      "tr": "Kendileri savaşta yara aldıktan sonra Allah ve Peygamberin çağrısına koşanlara, hele onlardan iyilik edip sakınanlara büyük ecir vardır."
+    },
+    {
+      "n": 173,
+      "tr": "İnsanlar onlara: \"Düşmanınız olan insanlar size karşı bir ordu topladılar, onlardan korkun\" dediler. Bu, onların imanını artırdı da: \"Allah bize yeter. O ne güzel Vekil'dir\" dediler."
+    },
+    {
+      "n": 174,
+      "tr": "Bu yüzden kendilerine bir fenalık dokunmadan, Allah'tan nimet ve bollukla geri döndüler; Allah'ın rızasına uydular. Allah büyük, bol nimet sahibidir."
+    },
+    {
+      "n": 175,
+      "tr": "İşte o şeytan ancak kendi dostlarını korkutur, inanmışsanız onlardan korkmayın, Benden korkun."
+    },
+    {
+      "n": 176,
+      "tr": "Küfürde yarışanlar seni üzmesin; şüphesiz onlar Allah'a bir zarar veremezler. Allah ahirette onlara bir pay vermemek istiyor; onlara büyük azab vardır."
+    },
+    {
+      "n": 177,
+      "tr": "İmanı inkara değişenler, şüphesiz Allah’a bir zarar veremiyeceklerdir. Elem verici azab onlaradır."
+    },
+    {
+      "n": 178,
+      "tr": "İnkar edenler, kendilerine vermiş olduğumuz mühletin sakın kendileri için hayırlı olduğunu sanmasınlar. Biz onlara ancak, günahları çoğalsın diye mühlet veriyoruz. Küçültücü azab onlaradır."
+    },
+    {
+      "n": 179,
+      "tr": "Allah inananları sizin durumunuzda bırakacak değildir, temizi pisten ayıracaktır. Allah size gaybı bildirecek değildir; fakat Allah peygamberlerinden dilediğini seçip, ona gaybı bildirir. Artık Allah'a ve peygamberlerine inanın; inanır ve sakınırsanız size büyük ecir vardır."
+    },
+    {
+      "n": 180,
+      "tr": "Allah'ın bol nimetinden verdiklerinde cimrilik edenler, sakın bunun kendileri için hayırlı olduğunu sanmasınlar, bilakis bu onların kötülüğünedir. Cimrilik yaptıkları şey, kıyamet günü boyunlarına dolanacaktır. Göklerin ve yerin mirası Allah'ındır. Allah işlediklerinizden haberdardır."
+    },
+    {
+      "n": 181,
+      "tr": "And olsun ki, Allah: \"Allah fakir; biz zenginiz\" diyenlerin sözünü işitmiştir. Dediklerini ve haksız yere peygamberleri öldürdüklerini elbette yazacağız, \"Yakıcı azabı tadın\" diyeceğiz."
+    },
+    {
+      "n": 182,
+      "tr": "\"Bu, yaptığınızın karşılığıdır\". Yoksa Allah kullara asla zulmetmez."
+    },
+    {
+      "n": 183,
+      "tr": "\"Doğrusu, ateşin yiyeceği bir kurban getirmedikçe hiçbir peygambere inanmamak üzere Allah bize ahid verdi\" diyenlere sen, de ki: \"Benden önce peygamberler size belgeler ve dediğiniz şeyi getirdi. Doğru sözlü iseniz niçin onları öldürdünüz?\""
+    },
+    {
+      "n": 184,
+      "tr": "Seni yalancı saydılarsa, senden önce belgeler, sahifeler ve aydınlatıcı kitap getiren peygamberler de yalanlanmıştı."
+    },
+    {
+      "n": 185,
+      "tr": "Her insan ölümü tadacaktır. Kıyamet günü, ecirleriniz size mutlaka ödenecektir. Ateşten uzaklaştırılıp cennete sokulan kimse artık kurtulmuştur. Dünya hayatı, zaten, sadece aldatıcı bir geçinmeden ibarettir."
+    },
+    {
+      "n": 186,
+      "tr": "And olsun ki mallarınız ve canlarınızla sınanacaksınız; hiç şüphesiz, sizden önce Kitap verilenlerden ve Allah'a eş koşanlardan çok üzücü sözler işiteceksiniz. Sabreder ve Allah'a karşı gelmekten sakınırsanız bilin ki, bu üzerinde sebat edilecek işlerdendir."
+    },
+    {
+      "n": 187,
+      "tr": "Allah, Kitap verilenlerden, onu insanlara açıklayacaksınız ve gizlemeyeceksiniz, diye ahid almıştı. Onlar ise, onu arkalarına atıp az bir değere değiştiler. Alış verişleri ne kötüdür!"
+    },
+    {
+      "n": 188,
+      "tr": "Ettiklerine sevinen ve yapmadıklarıyla övülmekten hoşlananların, sakın onların azabdan kurtulacaklarını sanma; elem verici azab onlaradır."
+    },
+    {
+      "n": 189,
+      "tr": "Göklerin ve yerin hükümranlığı Allah'ındır. Allah her şeye Kadir'dir."
+    },
+    {
+      "n": 190,
+      "tr": "Göklerin ve yerin yaratılışında, gece ile gündüzün birbiri ardınca gelmesinde akıl sahiblerine şüphesiz deliller vardır."
+    },
+    {
+      "n": 191,
+      "tr": "Onlar ayakta iken, otururken, yan yatarken Allah'ı anarlar; göklerin ve yerin yaratılışını düşünürler: \"Rabbimiz! Sen bunu boşuna yaratmadın, Sen münezzehsin. Bizi ateşin azabından koru\""
+    },
+    {
+      "n": 192,
+      "tr": "\"Rabbimiz! Sen ateşe kimi sokarsan, onu şüphesiz rezil etmiş olursun, zulmedenlerin hiç yardımcıları yoktur\"."
+    },
+    {
+      "n": 193,
+      "tr": "\"Rabbimiz! Doğrusu biz Rabbinize inanın diye inanmaya çağıran bir çağırıcıyı işittik de iman ettik. Rabbimiz! Günahlarımızı bize bağışla, kötülüklerimizi ört, canımızi iyilerle beraber al\"."
+    },
+    {
+      "n": 194,
+      "tr": "\"Rabbimiz! Peygamberlerinle vadettiklerini bize ver, kıyamet günü bizi rezil etme. Sen şüphesiz sözünden caymazsın\"."
+    },
+    {
+      "n": 195,
+      "tr": "Rableri dualarını kabul etti: \"Birbirinizden meydana gelen sizlerden, erkek olsun, kadın olsun, iş yapanın işini boşa çıkarmam. Hicret edenlerin, memleketlerinden çıkarılanların, yolumda ezaya uğratılanların, savaşan ve öldürülenlerin günahlarını elbette örteceğim. And olsun ki, Allah katından bir nimet olarak, onları içlerinden ırmaklar akan cennetlere koyacağım. Nimetin güzeli Allah katındadır\"."
+    },
+    {
+      "n": 196,
+      "tr": "İnkar edenlerin diyar diyar gezip refah içinde dolaşması sakın seni aldatmasın; az bir faydalanmadan sonra onların varacakları yer cehennemdir. O ne kötü duraktır!.."
+    },
+    {
+      "n": 197,
+      "tr": "İnkar edenlerin diyar diyar gezip refah içinde dolaşması sakın seni aldatmasın; az bir faydalanmadan sonra onların varacakları yer cehennemdir. O ne kötü duraktır!.."
+    },
+    {
+      "n": 198,
+      "tr": "Fakat Rablerinden sakınanlara, Allah katından konukluklar bulunan, içlerinden ırmaklar akan, içinde temelli kalacakları cennetler vardır. Allah katındaki şeyler, iyi olanlar için daha hayırlıdır."
+    },
+    {
+      "n": 199,
+      "tr": "Kitap ehlinden Allah'a huşu duyarak inanıp, Allah'ın ayetlerini az bir değere değişmeyenler vardır. İşte onların ecirleri Rablerinin katındadır. Şüphesiz Allah'ın hesabı çabuktur."
+    },
+    {
+      "n": 200,
+      "tr": "Ey İnananlar! Sabredin, düşmanlarınızdan daha sabırlı olun, cihada hazır bulunun, Allah'a karşı gelmekten sakının ki başarıya erişebilesiniz."
+    }
+  ]
+}

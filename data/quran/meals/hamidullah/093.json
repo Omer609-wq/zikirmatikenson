@@ -1,0 +1,51 @@
+{
+  "mealId": "hamidullah",
+  "n": 93,
+  "ayahCount": 11,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Par le Jour Montant!"
+    },
+    {
+      "n": 2,
+      "tr": "Et par la nuit quand elle couvre tout!"
+    },
+    {
+      "n": 3,
+      "tr": "Ton Seigneur ne t'a ni abandonné, ni détesté."
+    },
+    {
+      "n": 4,
+      "tr": "La vie dernière t'est, certes, meilleure que la vie présente."
+    },
+    {
+      "n": 5,
+      "tr": "Ton Seigneur t'accordera certes [Ses faveurs], et alors tu seras satisfait."
+    },
+    {
+      "n": 6,
+      "tr": "Ne t'a-t-Il pas trouvé orphelin? Alors Il t'a accueilli!"
+    },
+    {
+      "n": 7,
+      "tr": "Ne t'a-t-Il pas trouvé égaré? Alors Il t'a guidé."
+    },
+    {
+      "n": 8,
+      "tr": "Ne t'a-t-Il pas trouvé pauvre? Alors Il t'a enrichi."
+    },
+    {
+      "n": 9,
+      "tr": "Quant à l'orphelin, donc, ne le maltraite pas."
+    },
+    {
+      "n": 10,
+      "tr": "Quant au demandeur, ne le repousse pas."
+    },
+    {
+      "n": 11,
+      "tr": "Et quant au bienfait de ton Seigneur, proclame-le."
+    }
+  ]
+}

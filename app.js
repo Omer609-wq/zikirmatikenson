@@ -3,7 +3,8 @@ import {
     applyNativeBottomInsetVar,
     isCapacitorNative,
     refreshNativeBottomInsetVar,
-    syncNativeDailyReminder
+    syncNativeDailyReminder,
+    openExactAlarmSettings
 } from './native-reminders.js';
 import {
     clearUpdateBannerDom,
@@ -14,16 +15,68 @@ import { applyNativeStatusBarTheme } from './status-bar-theme.js';
 import { runCounterVibration, runDragReorderNudge } from './haptics.js';
 import { pickRandomQuote, REMINDER_FIXED_BODY } from './quotes.js';
 import { ESMA_DEFAULT_FAZILET } from './esma-fazilet.js';
+import { ESMA_MEANING_EN } from './esma-meanings-en.js';
+import { ESMA_NAME_EN } from './esma-names-en.js';
+import { ESMA_NAME_BN } from './esma-names-bn.js';
 import {
     applyLocaleToDocument,
     tForLocale,
     getLocaleTag,
     getZikirLibrary,
+    getKnownLibraryFaziletTexts,
+    getKnownLibraryMeaningTexts,
+    getKnownLibraryNameTexts,
+    getLibraryFaziletForLocale,
+    getLibraryMeaningForLocale,
+    getLibraryNameForLocale,
+    inferLibraryIdForZikir,
     initI18n,
+    localeUsesEnglishMeals,
+    localeUsesArabicScript,
+    localeUsesRtlUiScript,
+    localeSupportsNativeNumerals,
+    formatCounterNumber,
+    clampArabicSublineFontStep,
+    applyArabicSublineFontStep,
+    ARABIC_SUBLINE_FONT_STEP_MIN,
+    ARABIC_SUBLINE_FONT_STEP_MAX,
     normalizeAppLocale,
     SUPPORTED_LOCALES,
     t
 } from './i18n.js';
+import { closeTafsirBridgeSheet } from './tafsir-bridge.js';
+import {
+    bindQuranAyahExpandOverlay,
+    bindQuranTafsirBridgeOverlay,
+    closeAyahExpandView,
+    bindQuranMealSelect,
+    bindQuranReaderMenu,
+    bindQuranSearchInput,
+    bindQuranViewTabs,
+    clearQuranSearch,
+    closeQuranReaderDrawer,
+    normalizeQuranMeal,
+    normalizeQuranReadMode,
+    normalizeQuranReadModeForLocale,
+    syncQuranSettingsForLocale,
+    clearQuranSurahCache,
+    localeHasQuranMeal,
+    getDefaultQuranReadModeForLocale,
+    getQuranViewTab,
+    renderQuranFavoritesList,
+    renderQuranSurahDetail,
+    renderQuranSurahList,
+    setQuranAyahFavoritesApi,
+    setQuranViewTab,
+    teardownQuranReader,
+    setQuranMealChangeHandler,
+    setQuranNavigateToSurah,
+    setQuranReadModeChangeHandler,
+    fetchSurahAyahs,
+    resolveQuranSurahInput,
+    syncQuranAyahFavoriteButtons,
+    syncQuranTabVisibility
+} from './quran.js';
 
 // ===================== DATA MODELS =====================
 function getDefaultFolders() {
@@ -163,6 +216,82 @@ function classicZikirMeaningKey(zid) {
     return `defaults.zikirMeaning.${zid}`;
 }
 
+function classicZikirNameKey(zid) {
+    return `defaults.zikirName.${zid}`;
+}
+
+function getKnownClassicZikirNames(zid) {
+    const known = new Set();
+    const ar = DEFAULT_ZIKIR_ARABIC_BY_ID[zid];
+    if (ar && String(ar).trim()) known.add(String(ar).trim());
+    for (const loc of SUPPORTED_LOCALES) {
+        const text = tForLocale(loc.code, classicZikirNameKey(zid));
+        if (text) known.add(text.trim());
+    }
+    return known;
+}
+
+function getLocalizedClassicZikirName(zid) {
+    if (localeUsesArabicScript(appSettings.locale)) {
+        return DEFAULT_ZIKIR_ARABIC_BY_ID[zid] || '';
+    }
+    const text = t(classicZikirNameKey(zid));
+    const key = classicZikirNameKey(zid);
+    return text !== key ? text : (tForLocale('tr', key) || '');
+}
+
+function shouldShowZikirArabicSubline(z, displayName) {
+    const ar = z && z.arabic && String(z.arabic).trim();
+    if (!ar) return false;
+    return ar !== String(displayName || '').trim();
+}
+
+function applyArabicTextAttrs(el, on) {
+    if (!el) return;
+    if (on) {
+        const code = normalizeAppLocale(appSettings.locale);
+        el.classList.add('arabic-text');
+        el.setAttribute('dir', 'rtl');
+        el.setAttribute('lang', code === 'ur' ? 'ur' : 'ar');
+    } else {
+        el.classList.remove('arabic-text');
+        el.removeAttribute('dir');
+        el.removeAttribute('lang');
+    }
+}
+
+function resolveLibraryBackedName(z) {
+    if (!z || !z.libraryId) return null;
+    const cur = String(z.name || '').trim();
+    const known = getKnownLibraryNameTexts(z.libraryId);
+    const canonical = getLibraryNameForLocale(z.libraryId, appSettings.locale);
+    if (!cur || known.has(cur)) return canonical;
+    return cur;
+}
+
+/** Görüntüleme adı: kütüphane/klasik 4 locale okunuşu; kullanıcı zikirleri saklanan ad. */
+function getZikirDisplayName(z) {
+    if (!z) return '';
+    const fromLib = resolveLibraryBackedName(z);
+    if (fromLib != null) return fromLib;
+    if (CLASSIC_ZIKIR_IDS.includes(z.id)) {
+        return getLocalizedClassicZikirName(z.id);
+    }
+    const esmaIdx = parseEsmaZikirIndex(z);
+    if (esmaIdx >= 0) {
+        const cur = String(z.name || '').trim();
+        const known = getKnownEsmaNames(esmaIdx);
+        const canonical = getEsmaNameForLocale(esmaIdx);
+        if (!cur || known.has(cur)) return canonical;
+        return cur;
+    }
+    if (localeUsesArabicScript(appSettings.locale)) {
+        const ar = String(z.arabic || '').trim();
+        if (ar) return ar;
+    }
+    return String(z.name || '').trim();
+}
+
 function getKnownClassicZikirMeanings(zid) {
     const known = new Set();
     for (const loc of SUPPORTED_LOCALES) {
@@ -178,19 +307,138 @@ function getLocalizedClassicZikirMeaning(zid) {
     return text !== key ? text : (tForLocale('tr', key) || '');
 }
 
+function getKnownEsmaMeanings(index) {
+    const known = new Set();
+    const tr = ESMA_LIST[index] && ESMA_LIST[index].meaning;
+    const en = ESMA_MEANING_EN[index];
+    if (tr && String(tr).trim()) known.add(String(tr).trim());
+    if (en && String(en).trim()) known.add(String(en).trim());
+    return known;
+}
+
+function getKnownEsmaNames(index) {
+    const known = new Set();
+    const tr = ESMA_LIST[index] && ESMA_LIST[index].name;
+    const ar = ESMA_ARABIC[index];
+    const en = ESMA_NAME_EN[index];
+    const bn = ESMA_NAME_BN[index];
+    if (tr && String(tr).trim()) known.add(String(tr).trim());
+    if (ar && String(ar).trim()) known.add(String(ar).trim());
+    if (en && String(en).trim()) known.add(String(en).trim());
+    if (bn && String(bn).trim()) known.add(String(bn).trim());
+    return known;
+}
+
+function getEsmaMeaningForLocale(index, locale) {
+    if (normalizeAppLocale(locale ?? appSettings.locale) === 'tr') {
+        return (ESMA_LIST[index] && ESMA_LIST[index].meaning) || '';
+    }
+    return ESMA_MEANING_EN[index] || '';
+}
+
+function getEsmaNameForLocale(index, locale) {
+    const code = normalizeAppLocale(locale ?? appSettings.locale);
+    if (code === 'tr') {
+        return (ESMA_LIST[index] && ESMA_LIST[index].name) || '';
+    }
+    if (code === 'ar') {
+        return ESMA_ARABIC[index] || '';
+    }
+    if (code === 'bn') {
+        return ESMA_NAME_BN[index] || ESMA_NAME_EN[index] || (ESMA_LIST[index] && ESMA_LIST[index].name) || '';
+    }
+    return ESMA_NAME_EN[index] || (ESMA_LIST[index] && ESMA_LIST[index].name) || '';
+}
+
+function parseEsmaZikirIndex(z) {
+    const m = /^z_e_(\d+)$/.exec(z && z.id != null ? String(z.id) : '');
+    return m ? parseInt(m[1], 10) : -1;
+}
+
+function resolveLibraryBackedMeaning(z) {
+    if (!z || !z.libraryId) return null;
+    const cur = String(z.meaning || '').trim();
+    const known = getKnownLibraryMeaningTexts(z.libraryId);
+    const canonical = getLibraryMeaningForLocale(z.libraryId, appSettings.locale);
+    if (!cur || known.has(cur)) return canonical;
+    return cur;
+}
+
+/** Görüntüleme mealı: kütüphane kaynaklı → locale kanonu; klasik 4 dil başına; Esma EN; diğerleri saklanan. */
+function getZikirDisplayMeaning(z) {
+    if (!z) return '';
+    const fromLib = resolveLibraryBackedMeaning(z);
+    if (fromLib != null) return fromLib;
+    if (!localeUsesEnglishMeals(appSettings.locale)) {
+        return String(z.meaning || '').trim();
+    }
+    if (CLASSIC_ZIKIR_IDS.includes(z.id)) {
+        return getLocalizedClassicZikirMeaning(z.id);
+    }
+    const m = /^z_e_(\d+)$/.exec(z.id || '');
+    if (m) {
+        const idx = parseInt(m[1], 10);
+        const en = ESMA_MEANING_EN[idx];
+        if (en) return en;
+    }
+    return String(z.meaning || '').trim();
+}
+
 function syncLocalizedDefaults({ persist = false } = {}) {
     const df = folders.find((f) => f.id === 'f_default');
     if (df) df.name = t('defaults.folderDefault');
     const esma = folders.find((f) => f.id === 'f_esma');
     if (esma) esma.name = t('defaults.folderEsma');
 
+    const localeIsTr = normalizeAppLocale(appSettings.locale) === 'tr';
+
     for (const zid of CLASSIC_ZIKIR_IDS) {
         const z = zikirs.find((x) => x.id === zid);
         if (!z) continue;
-        const cur = String(z.meaning || '').trim();
-        const known = getKnownClassicZikirMeanings(zid);
-        if (!cur || known.has(cur)) {
+        const curM = String(z.meaning || '').trim();
+        const knownM = getKnownClassicZikirMeanings(zid);
+        if (!curM || knownM.has(curM)) {
             z.meaning = getLocalizedClassicZikirMeaning(zid);
+        }
+        const curN = String(z.name || '').trim();
+        const knownN = getKnownClassicZikirNames(zid);
+        if (!curN || knownN.has(curN)) {
+            z.name = getLocalizedClassicZikirName(zid);
+        }
+    }
+
+    for (const z of zikirs) {
+        const idx = parseEsmaZikirIndex(z);
+        if (idx < 0) continue;
+        const curM = String(z.meaning || '').trim();
+        const knownM = getKnownEsmaMeanings(idx);
+        const nextM = getEsmaMeaningForLocale(idx);
+        if (!curM || knownM.has(curM)) z.meaning = nextM;
+        const curN = String(z.name || '').trim();
+        const knownN = getKnownEsmaNames(idx);
+        const nextN = getEsmaNameForLocale(idx);
+        if (!curN || knownN.has(curN)) z.name = nextN;
+    }
+
+    for (const z of zikirs) {
+        if (!z.libraryId) continue;
+        const curM = String(z.meaning || '').trim();
+        const knownM = getKnownLibraryMeaningTexts(z.libraryId);
+        const nextM = getLibraryMeaningForLocale(z.libraryId, appSettings.locale);
+        if (!curM || knownM.has(curM)) z.meaning = nextM;
+
+        const curN = String(z.name || '').trim();
+        const knownN = getKnownLibraryNameTexts(z.libraryId);
+        const nextN = getLibraryNameForLocale(z.libraryId, appSettings.locale);
+        if (!curN || knownN.has(curN)) z.name = nextN;
+
+        const knownF = getKnownLibraryFaziletTexts(z.libraryId);
+        const nextF = localeIsTr ? getLibraryFaziletForLocale(z.libraryId) : '';
+        const curF = z.fazilet != null ? String(z.fazilet).trim() : '';
+        if (localeIsTr) {
+            if (nextF && (!curF || knownF.has(curF))) z.fazilet = nextF;
+        } else if (curF && knownF.has(curF)) {
+            delete z.fazilet;
         }
     }
 
@@ -230,8 +478,12 @@ let appSettings = {
     vibrationTarget: true,
     sound: false,
     wakeLock: false,
+    counterNativeNumerals: false,
+    arabicSublineFontStep: 0,
     theme: 'navy',
-    locale: 'tr'
+    locale: 'tr',
+    quranMeal: 'diyanet',
+    quranReadMode: 'meal-ar'
 };
 let reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
 let entitlements = { premium: false };
@@ -239,6 +491,18 @@ let trash = { v: 1, entries: [] }; // soft-deleted items
 
 let currentFolderId = null;
 let currentZikirId = null;
+let currentQuranSurahId = null;
+let quranAyahFavorites = [];
+const QURAN_COUNTER_LAYOUTS = ['classic', 'compact', 'text-only'];
+
+function isQuranZikir(z) {
+    return !!(z?.quranRef && Number.isFinite(Number(z.quranRef.s)));
+}
+
+function normalizeQuranCounterLayout(layout) {
+    const v = String(layout || '').trim();
+    return QURAN_COUNTER_LAYOUTS.includes(v) ? v : 'classic';
+}
 let activeStatTab = 'daily';
 let activeZikirStatTab = 'daily';
 let folderSearchQuery = '';
@@ -359,7 +623,9 @@ const libraryCategoryTabs = document.querySelectorAll('#libraryCategoryTabs .tab
 const librarySearchInput = document.getElementById('librarySearchInput');
 const libraryDetailOverlay = document.getElementById('libraryDetailOverlay');
 const libDetailName = document.getElementById('libDetailName');
+const libDetailArabic = document.getElementById('libDetailArabic');
 const libDetailMeaning = document.getElementById('libDetailMeaning');
+const libDetailContextWrap = document.getElementById('libDetailContextWrap');
 const libDetailContext = document.getElementById('libDetailContext');
 const libDetailContextLabel = document.getElementById('libDetailContextLabel');
 const prepLibraryAddBtn = document.getElementById('prepLibraryAddBtn');
@@ -378,6 +644,11 @@ const cbVibrationTap = document.getElementById('settingVibrationTap');
 const cbVibrationTarget = document.getElementById('settingVibrationTarget');
 const cbSound = document.getElementById('settingSound');
 const cbWakeLock = document.getElementById('settingWakeLock');
+const cbCounterNativeNumerals = document.getElementById('settingCounterNativeNumerals');
+const nativeNumeralsSetting = document.getElementById('nativeNumeralsSetting');
+const arabicFontSetting = document.getElementById('arabicFontSetting');
+const arabicFontStepDown = document.getElementById('arabicFontStepDown');
+const arabicFontStepUp = document.getElementById('arabicFontStepUp');
 const openPrivacyBtn = document.getElementById('openPrivacyBtn');
 const cbReminderEnabled = document.getElementById('settingReminderEnabled');
 const reminderTimeInput = document.getElementById('settingReminderTime');
@@ -388,7 +659,35 @@ const localeToggleBtn = document.getElementById('localeToggleBtn');
 const localeOptionsPanel = document.getElementById('localeOptionsPanel');
 const localeOptionsList = document.getElementById('localeOptionsList');
 const localeCurrentLabel = document.getElementById('localeCurrentLabel');
+const localeCurrentFlag = document.getElementById('localeCurrentFlag');
 const localeChoiceBtns = document.querySelectorAll('.locale-setting__option[data-locale-choice]');
+
+function localeFlagUrl(flagCode) {
+    return new URL(`assets/flags/${flagCode}.svg`, document.baseURI).href;
+}
+
+function setLocaleFlagElement(el, flagCode) {
+    if (!el || !flagCode) return;
+    let img = el.querySelector('img');
+    if (!img) {
+        img = document.createElement('img');
+        img.alt = '';
+        img.decoding = 'async';
+        img.draggable = false;
+        el.appendChild(img);
+    }
+    const next = localeFlagUrl(flagCode);
+    if (img.getAttribute('src') !== next) img.src = next;
+}
+
+function initLocaleOptionFlags() {
+    localeChoiceBtns.forEach((btn) => {
+        const code = btn.getAttribute('data-locale-choice');
+        const meta = SUPPORTED_LOCALES.find((l) => l.code === code);
+        const flagEl = btn.querySelector('.locale-setting__flag');
+        if (meta && flagEl) setLocaleFlagElement(flagEl, meta.flag);
+    });
+}
 const THEME_META_COLORS = { navy: '#0a0e16', light: '#faf8f5', black: '#000000' };
 
 /** @returns {'navy'|'light'|'black'} */
@@ -561,6 +860,10 @@ function init() {
                 App.addListener('appStateChange', ({ isActive }) => {
                     if (isActive) void refreshNativeBottomInsetVar();
                 });
+                App.addListener('backButton', () => {
+                    if (canNavigateBackInApp()) goBackInApp();
+                    else App.exitApp();
+                });
             })
             .catch(() => {});
     }
@@ -598,7 +901,13 @@ function init() {
             if (st.overlayId === 'zikirStatsOverlay') renderZikirStats();
             return;
         }
-        if (!st || typeof st !== 'object' || typeof st.viewId !== 'string') return;
+        if (!st || typeof st !== 'object' || typeof st.viewId !== 'string') {
+            const home = getViewState('homeView', null);
+            setInAppStackTo(home);
+            showView('homeView', null, { push: false });
+            return;
+        }
+        syncInAppStackToHistoryState(st);
         showView(st.viewId, st.param ?? null, { push: false });
     });
     // Some WebViews don't produce reliable history for internal tabs; keep a robust fallback stack.
@@ -613,6 +922,9 @@ function init() {
     });
     if (ESMA_LIST.length !== ESMA_ARABIC.length) {
         console.warn('Zikirmatik: ESMA_LIST ile ESMA_ARABIC uzunlukları eşleşmiyor.');
+    }
+    if (ESMA_LIST.length !== ESMA_NAME_EN.length || ESMA_LIST.length !== ESMA_NAME_BN.length) {
+        console.warn('Zikirmatik: Esma isim dizileri ESMA_LIST ile eşleşmiyor.');
     }
 
     refreshUpdateBannerConfig().then(() => {
@@ -708,7 +1020,29 @@ function sanitizeLoadedData(d) {
             lastClicked: clampNumber(z.lastClicked, { min: 0, max: 9e15, fallback: 0 }),
             order: (typeof z.order === 'number' && Number.isFinite(z.order)) ? z.order : idx,
             favorite: typeof z.favorite === 'boolean' ? z.favorite : false,
-            fazilet: z.fazilet != null ? coerceString(z.fazilet, 2000) : undefined
+            fazilet: z.fazilet != null ? coerceString(z.fazilet, 2000) : undefined,
+            libraryId: z.libraryId ? coerceId(z.libraryId, 'lib') : undefined,
+            quranRef:
+                z.quranRef && isPlainObject(z.quranRef)
+                    ? {
+                          s: clampNumber(z.quranRef.s, { min: 1, max: 114, fallback: 1 }),
+                          a: clampNumber(z.quranRef.a, { min: 1, max: 300, fallback: 1 }),
+                          ayahs: Array.isArray(z.quranRef.ayahs)
+                              ? z.quranRef.ayahs
+                                    .map((n) => clampNumber(n, { min: 1, max: 300, fallback: 0 }))
+                                    .filter((n) => n > 0)
+                                    .slice(0, 3)
+                              : undefined
+                      }
+                    : undefined,
+            quranDisplayMode:
+                z.quranDisplayMode != null && String(z.quranDisplayMode).trim()
+                    ? normalizeQuranReadMode(z.quranDisplayMode)
+                    : undefined,
+            quranCounterLayout:
+                z.quranCounterLayout != null && String(z.quranCounterLayout).trim()
+                    ? normalizeQuranCounterLayout(z.quranCounterLayout)
+                    : undefined
         }));
 
     // history (keep existing pruning rules later too)
@@ -737,9 +1071,14 @@ function sanitizeLoadedData(d) {
         vibrationTarget: (typeof s.vibrationTarget === 'boolean') ? s.vibrationTarget : oldVib,
         sound: (typeof s.sound === 'boolean') ? s.sound : false,
         wakeLock: (typeof s.wakeLock === 'boolean') ? s.wakeLock : false,
+        counterNativeNumerals: (typeof s.counterNativeNumerals === 'boolean') ? s.counterNativeNumerals : false,
+        arabicSublineFontStep: clampArabicSublineFontStep(s.arabicSublineFontStep),
         theme: normalizeAppTheme(s.theme),
-        locale: normalizeAppLocale(s.locale)
+        locale: normalizeAppLocale(s.locale),
+        quranMeal: s.quranMeal,
+        quranReadMode: s.quranReadMode
     };
+    syncQuranSettingsForLocale(settingsOut);
 
     const r = isPlainObject(safe.reminders) ? safe.reminders : (isPlainObject(safe.reminderSettings) ? safe.reminderSettings : {});
     const remindersOut = {
@@ -811,6 +1150,26 @@ function sanitizeLoadedData(d) {
         if (!folderIds.has(z.folderId)) z.folderId = 'f_default';
     });
 
+    let favArr = Array.isArray(safe.quranAyahFavorites) ? safe.quranAyahFavorites : [];
+    const favSeen = new Set();
+    const quranFavOut = [];
+    favArr.forEach((item) => {
+        if (!isPlainObject(item)) return;
+        const s = clampNumber(item.s, { min: 1, max: 114, fallback: 0 });
+        const a = clampNumber(item.a, { min: 1, max: 300, fallback: 0 });
+        if (!s || !a) return;
+        const key = `${s}:${a}`;
+        if (favSeen.has(key)) return;
+        favSeen.add(key);
+        quranFavOut.push({
+            s,
+            a,
+            t: clampNumber(item.t, { min: 0, max: 9e15, fallback: Date.now() })
+        });
+    });
+    quranFavOut.sort((x, y) => y.t - x.t);
+    if (quranFavOut.length > 500) quranFavOut.length = 500;
+
     return {
         folders: fArr,
         zikirs: zArr,
@@ -818,8 +1177,248 @@ function sanitizeLoadedData(d) {
         settings: settingsOut,
         reminders: remindersOut,
         entitlements: entOut,
-        trash: trashOut
+        trash: trashOut,
+        quranAyahFavorites: quranFavOut
     };
+}
+
+function isQuranAyahFavorite(surahN, ayahN) {
+    const s = Number(surahN);
+    const a = Number(ayahN);
+    return quranAyahFavorites.some((f) => f.s === s && f.a === a);
+}
+
+function toggleQuranAyahFavorite(surahN, ayahN) {
+    const s = Number(surahN);
+    const a = Number(ayahN);
+    if (!Number.isFinite(s) || !Number.isFinite(a)) return false;
+    const idx = quranAyahFavorites.findIndex((f) => f.s === s && f.a === a);
+    if (idx >= 0) {
+        quranAyahFavorites.splice(idx, 1);
+        saveData();
+        syncQuranAyahFavoriteButtons();
+        if (getQuranViewTab() === 'favorites') void renderQuranFavoritesList(appSettings.quranMeal, quranAyahFavorites);
+        return false;
+    }
+    quranAyahFavorites.unshift({ s, a, t: Date.now() });
+    if (quranAyahFavorites.length > 500) quranAyahFavorites.length = 500;
+    saveData();
+    syncQuranAyahFavoriteButtons();
+    if (getQuranViewTab() === 'favorites') void renderQuranFavoritesList(appSettings.quranMeal, quranAyahFavorites);
+    return true;
+}
+
+function setQuranDrawerFolderError(message) {
+    const el = document.getElementById('quranDrawerFolderError');
+    if (!el) return;
+    if (message) {
+        el.textContent = message;
+        el.hidden = false;
+    } else {
+        el.textContent = '';
+        el.hidden = true;
+    }
+}
+
+function syncQuranDrawerFolderModeUI(mode) {
+    const hasMeal = localeHasQuranMeal(appSettings.locale);
+    document.querySelectorAll('#quranDrawerFolderModeList .quran-folder-add__mode').forEach((btn) => {
+        const readModeId = btn.getAttribute('data-read-mode');
+        if (readModeId === 'meal-ar') btn.hidden = !hasMeal;
+        const on = normalizeQuranReadModeForLocale(readModeId, appSettings.locale) === mode;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
+}
+
+function getQuranDrawerFolderSelectedMode() {
+    const active = document.querySelector('#quranDrawerFolderModeList .quran-folder-add__mode.active');
+    return normalizeQuranReadModeForLocale(
+        active?.getAttribute('data-read-mode') || getDefaultQuranReadModeForLocale(appSettings.locale),
+        appSettings.locale
+    );
+}
+
+function syncQuranDrawerCounterLayoutUI(layout) {
+    document.querySelectorAll('#quranDrawerFolderLayoutList .quran-folder-add__mode').forEach((btn) => {
+        const on = normalizeQuranCounterLayout(btn.getAttribute('data-counter-layout')) === layout;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
+}
+
+function getQuranDrawerCounterLayoutSelected() {
+    const active = document.querySelector('#quranDrawerFolderLayoutList .quran-folder-add__mode.active');
+    return normalizeQuranCounterLayout(active?.getAttribute('data-counter-layout') || 'classic');
+}
+
+function parseQuranDrawerAyahSelection(ayahCount) {
+    const raw = String(document.getElementById('quranDrawerFolderAyahsInput')?.value || '').trim();
+    if (!raw) throw new Error(t('quran.folderAddNeedAyah'));
+    const nums = [];
+    raw.split(/[,،\s]+/).forEach((part) => {
+        const token = String(part || '').trim();
+        if (!token) return;
+        const n = Number(token);
+        if (!Number.isFinite(n) || n < 1 || n > ayahCount) {
+            throw new Error(t('quran.folderAddInvalidAyah', { max: ayahCount }));
+        }
+        if (!nums.includes(n)) nums.push(n);
+    });
+    if (!nums.length) throw new Error(t('quran.folderAddNeedAyah'));
+    if (nums.length > 3) throw new Error(t('quran.folderAddMaxAyahs'));
+    nums.sort((a, b) => a - b);
+    return nums;
+}
+
+function populateQuranDrawerFolderSelect() {
+    const select = document.getElementById('quranDrawerFolderDestSelect');
+    if (!select) return false;
+    select.innerHTML = '';
+    folders.forEach((f) => {
+        const opt = document.createElement('option');
+        opt.value = f.id;
+        opt.textContent = f.name;
+        select.appendChild(opt);
+    });
+    return select.options.length > 0;
+}
+
+function resetQuranDrawerFolderForm() {
+    const ayahsInp = document.getElementById('quranDrawerFolderAyahsInput');
+    if (ayahsInp) ayahsInp.value = '';
+    setQuranDrawerFolderError('');
+    syncQuranDrawerFolderModeUI(getDefaultQuranReadModeForLocale(appSettings.locale));
+    syncQuranDrawerCounterLayoutUI('classic');
+}
+
+function setQuranDrawerFolderPanelOpen(open) {
+    const panel = document.getElementById('quranDrawerFolderPanel');
+    const toggle = document.getElementById('quranDrawerFolderToggle');
+    if (!panel || !toggle) return;
+    const isOpen = !!open;
+    panel.hidden = !isOpen;
+    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    toggle.classList.toggle('quran-drawer-folder-toggle--open', isOpen);
+    if (isOpen) populateQuranDrawerFolderSelect();
+    else resetQuranDrawerFolderForm();
+}
+
+function ayahArabicForZikir(ayah) {
+    const bism = ayah.bismillah && String(ayah.bismillah).trim();
+    const ar = String(ayah.ar || '').trim();
+    if (bism && ar) return `${bism}\n${ar}`;
+    return bism || ar;
+}
+
+function buildQuranZikirContent(ayahRows, displayMode) {
+    const sep = '\n\n';
+    const arabicParts = [];
+    const subParts = [];
+    ayahRows.forEach((ayah) => {
+        const ar = ayahArabicForZikir(ayah);
+        if (ar) arabicParts.push(ar);
+        if (displayMode === 'meal-ar') {
+            const tr = String(ayah.tr || '').trim();
+            if (tr) subParts.push(tr);
+        } else if (displayMode === 'translit-ar') {
+            const lat = String(ayah.lat || '').trim();
+            if (lat) subParts.push(lat);
+        }
+    });
+    return {
+        arabic: arabicParts.join(sep),
+        meaning: subParts.join(sep)
+    };
+}
+
+function formatQuranZikirName(nameTr, ayahNums) {
+    if (ayahNums.length === 1) return `${nameTr} ${ayahNums[0]}`;
+    return `${nameTr} ${ayahNums.join(', ')}`;
+}
+
+function addQuranAyahsBatchToFolder(destId, batch, ayahNums, displayMode, counterLayout) {
+    if (!destId || !batch) return false;
+    const rows = ayahNums
+        .map((n) => batch.ayahs.find((a) => a.n === n))
+        .filter(Boolean);
+    if (!rows.length) return false;
+
+    const { arabic, meaning } = buildQuranZikirContent(rows, displayMode);
+    const newZ = {
+        id: 'z_' + Date.now(),
+        folderId: destId,
+        name: formatQuranZikirName(batch.nameTr, ayahNums),
+        arabic,
+        target: 33,
+        meaning,
+        count: 0,
+        lastClicked: 0,
+        quranRef: { s: batch.surah, a: ayahNums[0], ayahs: ayahNums },
+        quranDisplayMode: displayMode,
+        quranCounterLayout: normalizeQuranCounterLayout(counterLayout),
+        order:
+            zikirs
+                .filter((x) => x.folderId === destId)
+                .reduce((m2, x) => Math.max(m2, typeof x.order === 'number' ? x.order : -1), -1) + 1
+    };
+    zikirs.push(newZ);
+    saveData();
+    return true;
+}
+
+async function saveQuranDrawerFolderAdd() {
+    const surahRaw = document.getElementById('quranDrawerFolderSurahInput')?.value;
+    const surahResult = resolveQuranSurahInput(surahRaw);
+    if (!surahResult.ok) {
+        setQuranDrawerFolderError(surahResult.message);
+        return false;
+    }
+
+    const mealId = normalizeQuranMeal(appSettings.quranMeal, appSettings.locale);
+    const surah = await fetchSurahAyahs(surahResult.surah, mealId, appSettings.locale);
+    if (!surah) {
+        setQuranDrawerFolderError(t('quran.loadError'));
+        return false;
+    }
+
+    const ayahCount = surah.ayahCount || surah.ayahs?.length || 1;
+    let ayahNums;
+    try {
+        ayahNums = parseQuranDrawerAyahSelection(ayahCount);
+    } catch (err) {
+        setQuranDrawerFolderError(err.message || t('quran.folderAddNeedAyah'));
+        return false;
+    }
+
+    if (!populateQuranDrawerFolderSelect()) {
+        setQuranDrawerFolderError('');
+        await showAppAlert('Lütfen önce bir klasör oluşturun.', { title: 'Klasör yok' });
+        return false;
+    }
+    const resolvedDestId = document.getElementById('quranDrawerFolderDestSelect')?.value;
+    if (!resolvedDestId) return false;
+
+    const destCount = zikirs.filter((x) => x.folderId === resolvedDestId).length;
+    const maxPerFolder = getMaxZikirsPerFolder();
+    if (Number.isFinite(maxPerFolder) && destCount >= maxPerFolder) {
+        await showAppAlert(`Hedef klasör dolu (en fazla ${maxPerFolder} zikir).`, { title: 'Klasör dolu' });
+        return false;
+    }
+
+    const batch = {
+        surah: surahResult.surah,
+        nameTr: surah.nameTr || t('quran.surahFallback', { n: surahResult.surah }),
+        ayahs: surah.ayahs || []
+    };
+    const displayMode = getQuranDrawerFolderSelectedMode();
+    const counterLayout = getQuranDrawerCounterLayoutSelected();
+    addQuranAyahsBatchToFolder(resolvedDestId, batch, ayahNums, displayMode, counterLayout);
+    setQuranDrawerFolderPanelOpen(false);
+    closeQuranReaderDrawer();
+    await showAppAlert(t('quran.addedToFolder'), { title: t('quran.addToFolder') });
+    showView('folderDetailView', resolvedDestId);
+    return true;
 }
 
 // Günlük tıklama geçmişi: grafik ~7 gün kullanır; eski günleri tutmak istatistik için faydalı,
@@ -899,8 +1498,28 @@ function applyAppLocale(locale) {
     appSettings.locale = normalizeAppLocale(locale);
     applyLocaleToDocument(appSettings.locale);
     syncLocalizedDefaults({ persist: true });
+    syncQuranSettingsForLocale(appSettings);
+    syncQuranTabVisibility();
+    clearQuranSurahCache();
+    syncQuranDrawerFolderModeUI(appSettings.quranReadMode);
     const libView = document.getElementById('libraryView');
     if (libView && !libView.classList.contains('hidden')) renderLibrary();
+    const qv = document.getElementById('quranView');
+    if (qv && qv.classList.contains('active')) {
+        if (getQuranViewTab() === 'favorites') {
+            void renderQuranFavoritesList(appSettings.quranMeal, quranAyahFavorites);
+        } else {
+            renderQuranSurahList();
+        }
+    }
+    const qsv = document.getElementById('quranSurahView');
+    if (qsv && qsv.classList.contains('active') && currentQuranSurahId != null) {
+        void renderQuranSurahDetail(
+            currentQuranSurahId,
+            appSettings.quranMeal,
+            appSettings.quranReadMode
+        );
+    }
     const statsView = document.getElementById('statsView');
     if (statsView && !statsView.classList.contains('hidden')) renderStats();
     if (zikirStatsOverlay && zikirStatsOverlay.classList.contains('active')) renderZikirStats();
@@ -928,20 +1547,62 @@ function syncLocaleUI() {
     if (localeCurrentLabel && current) {
         localeCurrentLabel.textContent = t(current.labelKey);
     }
+    if (localeCurrentFlag && current) {
+        setLocaleFlagElement(localeCurrentFlag, current.flag);
+    }
     localeChoiceBtns.forEach((btn) => {
         const on = btn.getAttribute('data-locale-choice') === loc;
         btn.classList.toggle('active', on);
         btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-        const labelKey = btn.getAttribute('data-i18n');
-        if (labelKey) btn.textContent = t(labelKey);
     });
+    syncNativeNumeralsSettingVisibility();
+    syncArabicFontSettingVisibility();
+}
+
+function formatCounterDisplay(value) {
+    return formatCounterNumber(value, appSettings.locale, !!appSettings.counterNativeNumerals);
+}
+
+function setSettingsBlockHidden(el, hidden) {
+    if (!el) return;
+    el.hidden = hidden;
+    if (hidden) el.setAttribute('hidden', '');
+    else el.removeAttribute('hidden');
+}
+
+function syncNativeNumeralsSettingVisibility() {
+    if (!nativeNumeralsSetting) return;
+    const show = localeSupportsNativeNumerals(appSettings.locale);
+    setSettingsBlockHidden(nativeNumeralsSetting, !show);
+    if (cbCounterNativeNumerals) cbCounterNativeNumerals.checked = !!appSettings.counterNativeNumerals;
+}
+
+function syncArabicFontSettingVisibility() {
+    if (!arabicFontSetting) return;
+    const show = !localeUsesArabicScript(appSettings.locale);
+    setSettingsBlockHidden(arabicFontSetting, !show);
+}
+
+function syncArabicFontSettingUI() {
+    const step = applyArabicSublineFontStep(appSettings.arabicSublineFontStep);
+    appSettings.arabicSublineFontStep = step;
+    if (arabicFontStepDown) {
+        arabicFontStepDown.disabled = step <= ARABIC_SUBLINE_FONT_STEP_MIN;
+    }
+    if (arabicFontStepUp) {
+        arabicFontStepUp.disabled = step >= ARABIC_SUBLINE_FONT_STEP_MAX;
+    }
+    syncArabicFontSettingVisibility();
 }
 
 function syncSettingsUI() {
+    initLocaleOptionFlags();
     if (cbVibrationTap) cbVibrationTap.checked = !!appSettings.vibrationTap;
     if (cbVibrationTarget) cbVibrationTarget.checked = !!appSettings.vibrationTarget;
     if (cbSound) cbSound.checked = !!appSettings.sound;
     if (cbWakeLock) cbWakeLock.checked = !!appSettings.wakeLock;
+    syncNativeNumeralsSettingVisibility();
+    syncArabicFontSettingUI();
     if (cbReminderEnabled) cbReminderEnabled.checked = !!reminderSettings.enabled;
     if (reminderTimeInput) reminderTimeInput.value = reminderSettings.time || '21:00';
     applyAppTheme(appSettings.theme);
@@ -966,8 +1627,12 @@ function loadData() {
                 vibrationTarget: true,
                 sound: false,
                 wakeLock: false,
+                counterNativeNumerals: false,
+                arabicSublineFontStep: 0,
                 theme: 'navy',
-                locale: 'tr'
+                locale: 'tr',
+                quranMeal: 'diyanet',
+                quranReadMode: 'meal-ar'
             };
             reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
             entitlements = { premium: false };
@@ -978,8 +1643,13 @@ function loadData() {
         const sanitized = sanitizeLoadedData(d);
         folders = sanitized.folders.length ? sanitized.folders : [...getDefaultFolders()];
         zikirs = sanitized.zikirs.length ? sanitized.zikirs : [...DEFAULT_ZIKIRS];
+        zikirs.forEach((z) => {
+            const inferred = inferLibraryIdForZikir(z);
+            if (inferred) z.libraryId = inferred;
+        });
         history = sanitized.history || {};
         appSettings = sanitized.settings || appSettings;
+        syncQuranSettingsForLocale(appSettings);
         reminderSettings = {
             enabled: false,
             time: '21:00',
@@ -988,6 +1658,7 @@ function loadData() {
         };
         entitlements = sanitized.entitlements || { premium: false };
         trash = sanitized.trash || { v: 1, entries: [] };
+        quranAyahFavorites = sanitized.quranAyahFavorites || [];
 
         // Ordering (folders + zikirs)
         let touched = false;
@@ -1073,7 +1744,8 @@ function saveData() {
         settings: appSettings,
         reminders: reminderSettings,
         entitlements,
-        trash
+        trash,
+        quranAyahFavorites
     };
     try {
         localStorage.setItem('zikirmatik_data_v2', JSON.stringify(payload));
@@ -1236,7 +1908,7 @@ function renderPremiumTrash() {
 
     entries.slice(0, 60).forEach((e, i) => {
         const title =
-            e.kind === 'zikir' ? (e.zikir && e.zikir.name ? e.zikir.name : 'Zikir') :
+            e.kind === 'zikir' ? (e.zikir ? getZikirDisplayName(e.zikir) || 'Zikir' : 'Zikir') :
             e.kind === 'folder' ? (e.folder && e.folder.name ? e.folder.name : 'Klasör') :
             'Öğe';
         const sub =
@@ -1278,7 +1950,7 @@ function renderTrashOverlay() {
 
     entries.slice(0, 80).forEach((e, i) => {
         const title =
-            e.kind === 'zikir' ? (e.zikir && e.zikir.name ? e.zikir.name : 'Zikir') :
+            e.kind === 'zikir' ? (e.zikir ? getZikirDisplayName(e.zikir) || 'Zikir' : 'Zikir') :
             e.kind === 'folder' ? (e.folder && e.folder.name ? e.folder.name : 'Klasör') :
             'Öğe';
         const sub =
@@ -1316,7 +1988,7 @@ function maybeRequestNotificationPermission() {
 }
 
 function reminderNotificationPayload() {
-    const base = new URL('icon.svg', window.location.href).href;
+    const base = new URL('assets/icons/icon-192.webp', document.baseURI).href;
     /* Başlık boş: ana sayfa hadis şeridindeki gibi yalnızca hadis/ayet metni öne çıksın (OS kendi satırında uygulama adını gösterebilir). */
     return {
         title: '',
@@ -1427,9 +2099,10 @@ async function ensureReminderSchedule() {
             );
         } else if (reminderSettings.enabled && r.warnExactAlarm) {
             await showAppAlert(
-                'Hatırlatıcının seçtiğin saatte çalışması için tam zamanlı alarm izni gerekli.\n\nAndroid: Ayarlar → Uygulamalar → Zikirmatik → Zamanlanmış alarmlar veya Bildirimler → tam zamanlı alarmları aç.',
-                { title: 'Alarm izni' }
+                'Hatırlatıcının seçtiğin saatte çalışması için tam zamanlı alarm iznini açman gerekir.\n\nAşağıdaki düğmeye basınca ilgili ayar sayfasına gideceksin.',
+                { title: 'Alarm izni', okLabel: 'Ayarlara git' }
             );
+            await openExactAlarmSettings();
         } else if (reminderSettings.enabled && !r.ok && r.reason === 'schedule') {
             await showAppAlert(
                 'Günlük hatırlatıcı zamanlanamadı. Uygulamayı güncelleyip tekrar dene; sorun sürerse Ayarlar → Bildirimler bölümünü kontrol et.',
@@ -1713,6 +2386,13 @@ function clearLibrarySearch() {
     if (librarySearchInput) librarySearchInput.value = '';
 }
 
+function resetLibraryCategoryTab() {
+    libraryCategoryTabs.forEach((b) => {
+        const cat = b.getAttribute('data-cat');
+        b.classList.toggle('active', cat === activeLibraryCat);
+    });
+}
+
 let currentViewId = null;
 let inAppViewStack = [];
 
@@ -1814,19 +2494,72 @@ function pushInAppStack(state) {
     inAppViewStack.push(state);
 }
 
+function syncInAppStackToHistoryState(st) {
+    if (!st || typeof st.viewId !== 'string') return;
+    const idx = inAppViewStack.findIndex((entry) => viewStateEquals(entry, st));
+    if (idx >= 0) {
+        inAppViewStack = inAppViewStack.slice(0, idx + 1);
+        return;
+    }
+    if (inAppViewStack.length) inAppViewStack[inAppViewStack.length - 1] = st;
+    else inAppViewStack = [st];
+}
+
+const IN_APP_BACK_OVERLAY_IDS = [
+    'appDialogOverlay',
+    'copyModalOverlay',
+    'editModalOverlay',
+    'addModalOverlay',
+    'trashOverlay',
+    'libraryFolderSelectOverlay',
+    'libraryDetailOverlay',
+    'zikirStatsOverlay'
+];
+
+function canNavigateBackInApp() {
+    const ayahExpand = document.getElementById('quranAyahExpandOverlay');
+    if (ayahExpand && !ayahExpand.hidden) return true;
+
+    const tafsirOverlay = document.getElementById('quranTafsirBridgeOverlay');
+    if (tafsirOverlay && !tafsirOverlay.hidden) return true;
+
+    const drawer = document.getElementById('quranReaderDrawer');
+    if (drawer && drawer.classList.contains('quran-reader-drawer--open')) return true;
+
+    for (const oid of IN_APP_BACK_OVERLAY_IDS) {
+        if (isOverlayActive(document.getElementById(oid))) return true;
+    }
+
+    if (inAppViewStack.length >= 2) return true;
+
+    try {
+        if (history.length > 1) return true;
+    } catch (_) {
+        /* ignore */
+    }
+    return false;
+}
+
 function goBackInApp({ fallbackViewId = 'homeView' } = {}) {
-    // Prefer closing overlays first (they manage their own history too).
-    const overlayIds = [
-        'appDialogOverlay',
-        'copyModalOverlay',
-        'editModalOverlay',
-        'addModalOverlay',
-        'trashOverlay',
-        'libraryFolderSelectOverlay',
-        'libraryDetailOverlay',
-        'zikirStatsOverlay'
-    ];
-    for (const oid of overlayIds) {
+    const ayahExpand = document.getElementById('quranAyahExpandOverlay');
+    if (ayahExpand && !ayahExpand.hidden) {
+        closeAyahExpandView();
+        return;
+    }
+
+    const tafsirOverlay = document.getElementById('quranTafsirBridgeOverlay');
+    if (tafsirOverlay && !tafsirOverlay.hidden) {
+        closeTafsirBridgeSheet();
+        return;
+    }
+
+    const drawer = document.getElementById('quranReaderDrawer');
+    if (drawer && drawer.classList.contains('quran-reader-drawer--open')) {
+        closeQuranReaderDrawer();
+        return;
+    }
+
+    for (const oid of IN_APP_BACK_OVERLAY_IDS) {
         const el = document.getElementById(oid);
         if (isOverlayActive(el)) {
             closeOverlayPreferHistory(oid);
@@ -1835,13 +2568,29 @@ function goBackInApp({ fallbackViewId = 'homeView' } = {}) {
     }
 
     if (inAppViewStack.length >= 2) {
-        // Drop current, go to previous.
-        inAppViewStack.pop();
-        const prev = inAppViewStack[inAppViewStack.length - 1];
-        showView(prev.viewId, prev.param ?? null, { push: false });
-        return;
+        try {
+            history.back();
+            return;
+        } catch (_) {
+            inAppViewStack.pop();
+            const prev = inAppViewStack[inAppViewStack.length - 1];
+            showView(prev.viewId, prev.param ?? null, { push: false });
+            return;
+        }
     }
-    showView(fallbackViewId, null, { push: false });
+
+    try {
+        if (history.length > 1 && history.state && typeof history.state.viewId === 'string') {
+            history.back();
+            return;
+        }
+    } catch (_) {
+        /* ignore */
+    }
+
+    const fallback = fallbackViewId || 'homeView';
+    setInAppStackTo(getViewState(fallback, null));
+    showView(fallback, null, { push: false });
 }
 
 function showView(viewId, param = null, options = {}) {
@@ -1854,6 +2603,7 @@ function showView(viewId, param = null, options = {}) {
     const prevState = currentViewId ? getViewState(currentViewId, (
         currentViewId === 'folderDetailView' ? currentFolderId :
         currentViewId === 'counterView' ? currentZikirId :
+        currentViewId === 'quranSurahView' ? currentQuranSurahId :
         null
     )) : null;
 
@@ -1885,6 +2635,13 @@ function showView(viewId, param = null, options = {}) {
 
     if (viewId !== 'libraryView') {
         clearLibrarySearch();
+    }
+    if (viewId !== 'quranView' && viewId !== 'quranSurahView') {
+        clearQuranSearch();
+    }
+    if (viewId !== 'quranSurahView') {
+        closeQuranReaderDrawer();
+        if (currentViewId === 'quranSurahView') teardownQuranReader();
     }
 
     views.forEach(v => {
@@ -1930,7 +2687,31 @@ function showView(viewId, param = null, options = {}) {
     } else if (viewId === 'statsView') {
         renderStats();
     } else if (viewId === 'libraryView') {
+        resetLibraryCategoryTab();
         renderLibrary();
+    } else if (viewId === 'quranView') {
+        if (getQuranViewTab() === 'favorites') {
+            void renderQuranFavoritesList(appSettings.quranMeal, quranAyahFavorites);
+        } else {
+            renderQuranSurahList();
+        }
+    } else if (viewId === 'quranSurahView') {
+        const scrollAyah =
+            param != null && typeof param === 'object' && param.ayah != null
+                ? Number(param.ayah)
+                : Number.isFinite(Number(param?.scrollAyah))
+                  ? Number(param.scrollAyah)
+                  : null;
+        currentQuranSurahId = Number(
+            param != null && typeof param === 'object' ? param.surah : param
+        );
+        if (!Number.isFinite(currentQuranSurahId)) currentQuranSurahId = 1;
+        void renderQuranSurahDetail(
+            currentQuranSurahId,
+            appSettings.quranMeal,
+            appSettings.quranReadMode,
+            scrollAyah
+        );
     } else if (viewId === 'premiumView') {
         renderPremium();
     } else if (viewId === 'settingsView') {
@@ -2463,6 +3244,13 @@ function getEsmaDefaultFaziletForZikir(z) {
 
 function getEffectiveFazilet(z) {
     if (!z) return '';
+    if (localeUsesEnglishMeals(appSettings.locale)) return '';
+    if (z.libraryId) {
+        const knownF = getKnownLibraryFaziletTexts(z.libraryId);
+        const curF = z.fazilet != null ? String(z.fazilet).trim() : '';
+        if (curF && !knownF.has(curF)) return curF;
+        return getLibraryFaziletForLocale(z.libraryId);
+    }
     if (z.fazilet != null && String(z.fazilet).trim()) return String(z.fazilet).trim();
     return getEsmaDefaultFaziletForZikir(z);
 }
@@ -2478,8 +3266,8 @@ function renderFolderDetail() {
     const fZikirs = fZikirsAll.filter(z => {
         if (folderFavOnly && !z.favorite) return false;
         if (!q) return true;
-        const name = (z.name || '').toLocaleLowerCase(getLocaleTag());
-        const meaning = (z.meaning || '').toLocaleLowerCase(getLocaleTag());
+        const name = getZikirDisplayName(z).toLocaleLowerCase(getLocaleTag());
+        const meaning = getZikirDisplayMeaning(z).toLocaleLowerCase(getLocaleTag());
         const arabic = (z.arabic || '');
         const fz = getEffectiveFazilet(z).toLocaleLowerCase(getLocaleTag());
         return name.includes(q) || meaning.includes(q) || arabic.includes(q) || fz.includes(q);
@@ -2520,13 +3308,15 @@ function renderFolderDetail() {
         li.dataset.zikirId = z.id;
         const favIcon = z.favorite ? 'star' : 'star_border';
         const favTitle = z.favorite ? t('zikir.favRemove') : t('zikir.favAdd');
-        const meaningPrev = z.meaning
-            ? z.meaning.length > 40
-                ? z.meaning.substring(0, 40) + '…'
-                : z.meaning
+        const displayMeaning = getZikirDisplayMeaning(z);
+        const meaningPrev = displayMeaning
+            ? displayMeaning.length > 40
+                ? displayMeaning.substring(0, 40) + '…'
+                : displayMeaning
             : '';
         const meaningBlock = meaningPrev ? `<p>${escapeHtml(meaningPrev)}</p>` : '';
-        const arabicLine = (z.arabic && String(z.arabic).trim())
+        const displayName = getZikirDisplayName(z);
+        const arabicLine = shouldShowZikirArabicSubline(z, displayName)
             ? `<p class="zikir-arabic" dir="rtl" lang="ar">${escapeHtml(String(z.arabic).trim())}</p>`
             : '';
         const zChecked = selectedZikirIds.has(z.id) ? 'checked' : '';
@@ -2541,7 +3331,7 @@ function renderFolderDetail() {
             <div class="zikir-row__inner">
                 <div style="display:flex; align-items:flex-start; justify-content:space-between; gap: 12px;">
                     <div style="min-width:0; flex:1;">
-                        <h3 style="margin:0;">${escapeHtml(z.name)}</h3>
+                        <h3 style="margin:0;" class="${localeUsesRtlUiScript(appSettings.locale) ? 'arabic-text' : ''}"${localeUsesRtlUiScript(appSettings.locale) ? ` dir="rtl" lang="${normalizeAppLocale(appSettings.locale) === 'ur' ? 'ur' : 'ar'}"` : ''}>${escapeHtml(displayName)}</h3>
                         ${arabicLine}
                     </div>
                     <button class="icon-btn fav-btn" data-id="${escapeAttr(z.id)}" aria-label="${escapeAttr(favTitle)}" title="${escapeAttr(favTitle)}" style="padding:0.25rem; flex-shrink:0;">
@@ -2657,6 +3447,43 @@ function renderFolderDetail() {
     }
 }
 
+function applyQuranCounterLayout(zikir) {
+    const counterViewEl = document.getElementById('counterView');
+    const quranBody = document.getElementById('quranZikirBody');
+    const quranAr = document.getElementById('quranZikirArabic');
+    const quranSub = document.getElementById('quranZikirMeaning');
+    const isQuran = isQuranZikir(zikir);
+    const layout = isQuran ? normalizeQuranCounterLayout(zikir.quranCounterLayout) : 'classic';
+    const readMode = normalizeQuranReadModeForLocale(
+        zikir.quranDisplayMode || getDefaultQuranReadModeForLocale(appSettings.locale),
+        appSettings.locale
+    );
+
+    counterViewEl?.classList.toggle('counter-view--quran', isQuran);
+    QURAN_COUNTER_LAYOUTS.forEach((name) => {
+        counterViewEl?.classList.remove(`counter-view--quran-${name}`);
+    });
+    if (isQuran) counterViewEl?.classList.add(`counter-view--quran-${layout}`);
+
+    if (!isQuran || layout === 'classic') {
+        if (quranBody) quranBody.hidden = true;
+        return { useHeaderAyahText: isQuran };
+    }
+
+    const ar = String(zikir.arabic || '').trim();
+    const sub = String(zikir.meaning || '').trim();
+    if (quranAr) quranAr.textContent = ar;
+    if (quranSub) {
+        quranSub.textContent = sub;
+        quranSub.hidden = readMode === 'ar-only' || !sub;
+    }
+    if (quranBody) {
+        quranBody.hidden = false;
+        quranBody.scrollTop = 0;
+    }
+    return { useHeaderAyahText: false };
+}
+
 function updateCounterUI() {
     const zikir = zikirs.find(z => z.id === currentZikirId);
     if (!zikir) return;
@@ -2667,10 +3494,17 @@ function updateCounterUI() {
         saveData();
     }
 
-    if (zikirTitle) zikirTitle.textContent = zikir.name;
+    const { useHeaderAyahText } = applyQuranCounterLayout(zikir);
+    const isQuran = isQuranZikir(zikir);
+    const showHeaderZikirMeta = !isQuran || useHeaderAyahText;
+    const counterDisplayName = getZikirDisplayName(zikir);
+    if (zikirTitle) {
+        zikirTitle.textContent = counterDisplayName;
+        applyArabicTextAttrs(zikirTitle, localeUsesRtlUiScript(appSettings.locale));
+    }
     if (zikirArabicHeader) {
         const ar = zikir.arabic && String(zikir.arabic).trim();
-        if (ar) {
+        if (showHeaderZikirMeta && shouldShowZikirArabicSubline(zikir, counterDisplayName)) {
             zikirArabicHeader.textContent = ar;
             zikirArabicHeader.style.display = 'block';
         } else {
@@ -2679,10 +3513,9 @@ function updateCounterUI() {
         }
     }
     if (zikirNote) {
-        const m = (zikir.meaning && String(zikir.meaning).trim()) || '';
-        const fz = getEffectiveFazilet(zikir);
-        const virtueLbl = t('counter.virtueLabel');
-        zikirNote.textContent = fz ? (m ? `${m}\n\n${virtueLbl}: ${fz}` : `${virtueLbl}: ${fz}`) : m;
+        const m = showHeaderZikirMeta ? getZikirDisplayMeaning(zikir) : '';
+        const fz = showHeaderZikirMeta ? getEffectiveFazilet(zikir) : '';
+        zikirNote.textContent = m && fz ? `${m}\n\n${fz}` : m || fz;
         zikirNote.classList.toggle('zikir-note--esma-detail', !!fz);
     }
     const zikirHeaderScroll = document.getElementById('zikirHeaderScroll');
@@ -2696,18 +3529,18 @@ function updateCounterUI() {
         currentRoundDisplay = r === 0 ? 0 : r;
     }
     
-    if (countDisplay) countDisplay.textContent = currentRoundDisplay;
-    if (targetDisplay) targetDisplay.textContent = target;
-    if (totalDisplay) totalDisplay.textContent = zikir.count;
+    if (countDisplay) countDisplay.textContent = formatCounterDisplay(currentRoundDisplay);
+    if (targetDisplay) targetDisplay.textContent = formatCounterDisplay(target);
+    if (totalDisplay) totalDisplay.textContent = formatCounterDisplay(zikir.count);
     
     // Stealth Update
-    if (stealthZikirName) stealthZikirName.textContent = zikir.name;
-    if (stealthCounter) stealthCounter.textContent = zikir.count;
+    if (stealthZikirName) stealthZikirName.textContent = getZikirDisplayName(zikir);
+    if (stealthCounter) stealthCounter.textContent = formatCounterDisplay(zikir.count);
 
     const completedRounds = Math.floor(zikir.count / target);
     if (roundDisplay) {
         if (completedRounds > 0) {
-            roundDisplay.textContent = completedRounds;
+            roundDisplay.textContent = formatCounterDisplay(completedRounds);
             roundDisplay.classList.toggle('round-badge--compact', completedRounds >= 1000);
             roundDisplay.classList.add('visible');
         } else {
@@ -2784,8 +3617,8 @@ document.addEventListener('visibilitychange', () => {
 });
 
 let audioCtx = null;
-function playTickSound(isTarget) {
-    if (!appSettings.sound) return;
+function playTickSound(isTarget, { force = false } = {}) {
+    if (!force && !appSettings.sound) return;
     try {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if(audioCtx.state === 'suspended') audioCtx.resume();
@@ -2893,6 +3726,7 @@ function renderLibrary() {
         badge.textContent = 'verified';
         const h3 = document.createElement('h3');
         h3.textContent = z.name;
+        applyArabicTextAttrs(h3, localeUsesRtlUiScript(appSettings.locale));
         const p = document.createElement('p');
         p.textContent = libraryCardSubtitle(z);
         card.appendChild(badge);
@@ -2905,13 +3739,37 @@ function renderLibrary() {
 
 function openLibraryDetail(z) {
     selectedLibraryItem = z;
-    libDetailName.textContent = z.name;
-    libDetailMeaning.textContent = z.meaning;
-    if (libDetailContextLabel) {
-        libDetailContextLabel.textContent =
-            z.category === 'zikir' ? t('library.detailVirtueZikir') : t('library.detailVirtueDua');
+    const detailName = z.name || '';
+    libDetailName.textContent = detailName;
+    applyArabicTextAttrs(libDetailName, localeUsesRtlUiScript(appSettings.locale));
+    const ar = z.arabic && String(z.arabic).trim();
+    if (libDetailArabic) {
+        if (shouldShowZikirArabicSubline(z, detailName) && ar) {
+            libDetailArabic.textContent = ar;
+            libDetailArabic.hidden = false;
+        } else {
+            libDetailArabic.textContent = '';
+            libDetailArabic.hidden = true;
+        }
     }
-    libDetailContext.textContent = z.context || '';
+    const meaning = z.meaning && String(z.meaning).trim();
+    if (libDetailMeaning) {
+        libDetailMeaning.textContent = meaning || '';
+        libDetailMeaning.hidden = !meaning;
+    }
+    const ctx = z.context && String(z.context).trim();
+    if (libDetailContextLabel) {
+        const localeIsTr = normalizeAppLocale(appSettings.locale) === 'tr';
+        if (z.category === 'zikir') {
+            libDetailContextLabel.textContent = t('library.detailVirtueZikir');
+        } else {
+            libDetailContextLabel.textContent = t(
+                localeIsTr ? 'library.detailVirtueDua' : 'library.detailWhenDua'
+            );
+        }
+    }
+    if (libDetailContext) libDetailContext.textContent = ctx || '';
+    if (libDetailContextWrap) libDetailContextWrap.hidden = !ctx;
     openOverlay('libraryDetailOverlay');
 }
 
@@ -3048,33 +3906,36 @@ function buildChartBuckets(tab, zid) {
     };
 }
 
-/** Dönem içi min–max ölçek: 500 ile 600 arasında da fark görünsün */
-function computeBarHeightPx(val, allValues) {
+/** Sol eksen üst sınırı: veriye göre yukarı yuvarla (6849 → 6900). */
+function ceilToChartTop(n) {
+    const v = Number(n) || 0;
+    if (v <= 0) return 100;
+    return Math.ceil(v / 100) * 100;
+}
+
+function chartScaleMax(values) {
+    return ceilToChartTop(Math.max(...values, 0));
+}
+
+function computeBarHeightPx(val, scaleMax) {
     if (!val || val <= 0) return 4;
-    const positives = allValues.filter((v) => v > 0);
-    const max = Math.max(...allValues, 0);
-    if (max <= 0) return 4;
-    const min = positives.length ? Math.min(...positives) : 0;
-    const span = max - min;
+    const max = scaleMax > 0 ? scaleMax : 100;
     const floorPx = 6;
-    if (span <= 0) return CHART_INNER_HEIGHT_PX;
-    const t = (val - min) / span;
+    const t = Math.min(1, val / max);
     return Math.max(floorPx, Math.round(floorPx + t * (CHART_INNER_HEIGHT_PX - floorPx)));
 }
 
-function chartYAxisLabels(values) {
-    const max = Math.max(...values, 0);
-    const positives = values.filter((v) => v > 0);
-    const min = positives.length ? Math.min(...positives) : 0;
-    if (max <= 0) return { top: 1, mid: 0, bottom: 0 };
-    if (max === min) return { top: max, mid: Math.ceil(max / 2), bottom: min };
-    const mid = Math.round((max + min) / 2);
-    return { top: max, mid, bottom: min };
+function chartYAxisLabels(values, scaleMax) {
+    const top = scaleMax > 0 ? scaleMax : chartScaleMax(values);
+    if (top <= 0) return { top: 100, mid: 50, bottom: 0 };
+    const mid = Math.max(50, Math.round(top / 2 / 100) * 100);
+    return { top, mid, bottom: 0 };
 }
 
 function renderBarChart(chartEl, yAxisEl, buckets, density) {
     const values = buckets.map((b) => b.val);
-    const axis = chartYAxisLabels(values);
+    const scaleMax = chartScaleMax(values);
+    const axis = chartYAxisLabels(values, scaleMax);
 
     if (yAxisEl) {
         yAxisEl.innerHTML = `
@@ -3086,24 +3947,25 @@ function renderBarChart(chartEl, yAxisEl, buckets, density) {
     if (!chartEl) return;
 
     chartEl.innerHTML = '';
-    chartEl.classList.remove('css-chart--dense', 'css-chart--months', 'css-chart--years');
+    chartEl.classList.remove('css-chart--dense', 'css-chart--months', 'css-chart--years', 'css-chart--week');
     if (density === 'dense') chartEl.classList.add('css-chart--dense');
     if (density === 'months') chartEl.classList.add('css-chart--months');
     if (density === 'years') chartEl.classList.add('css-chart--years');
+    if (density === 'default') chartEl.classList.add('css-chart--week');
 
     buckets.forEach((dt) => {
         const group = document.createElement('div');
         group.className = 'chart-bar-group';
-        const barH = computeBarHeightPx(dt.val, values);
+        const barH = computeBarHeightPx(dt.val, scaleMax);
         const col = dt.val === 0 ? 'var(--glass-border)' : 'var(--primary-green)';
         const bar = document.createElement('div');
         bar.className = 'chart-bar';
-        if (dt.highlight) bar.classList.add('chart-bar--today');
         bar.dataset.tooltip = t('stats.chartTooltip', { count: dt.val });
         bar.style.height = `${barH}px`;
         bar.style.background = col;
         const lab = document.createElement('div');
         lab.className = 'chart-label';
+        if (dt.highlight) lab.classList.add('chart-label--current');
         lab.textContent = dt.label;
         group.appendChild(bar);
         group.appendChild(lab);
@@ -3136,7 +3998,7 @@ function renderStats() {
 
     if (topZikirId) {
         const z = zikirs.find(x => x.id === topZikirId);
-        statMostClicked.textContent = z ? z.name : t('stats.unknown');
+        statMostClicked.textContent = z ? getZikirDisplayName(z) : t('stats.unknown');
         statMostClickedCount.textContent = t('stats.clicksUnit', { count: topZikirCount });
     } else {
         statMostClicked.textContent = '-';
@@ -3146,7 +4008,7 @@ function renderStats() {
     // Son çekilen (genel)
     let lastZikir = [...zikirs].sort((a,b) => b.lastClicked - a.lastClicked)[0];
     if (lastZikir && lastZikir.lastClicked > 0) {
-        statLastClicked.textContent = lastZikir.name;
+        statLastClicked.textContent = getZikirDisplayName(lastZikir);
     } else {
         statLastClicked.textContent = '-';
     }
@@ -3191,7 +4053,7 @@ function renderZikirStats() {
     if (!zid || !zikirActivityChart) return;
     const z = zikirs.find((x) => x.id === zid);
     if (zikirStatsTitle) {
-        zikirStatsTitle.textContent = z ? z.name : t('stats.titleFallback');
+        zikirStatsTitle.textContent = z ? getZikirDisplayName(z) : t('stats.titleFallback');
     }
 
     const periodKeys = getStatPeriodDayKeys(activeZikirStatTab);
@@ -3269,12 +4131,120 @@ function setupEventListeners() {
     
     libraryCategoryTabs.forEach(btn => {
         btn.addEventListener('click', () => {
+            const cat = btn.getAttribute('data-cat');
+            if (cat === 'quran') {
+                libraryCategoryTabs.forEach((b) => b.classList.remove('active'));
+                btn.classList.add('active');
+                showView('quranView');
+                return;
+            }
             libraryCategoryTabs.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            activeLibraryCat = btn.getAttribute('data-cat');
+            activeLibraryCat = cat || 'dua';
             renderLibrary();
         });
     });
+
+    bindQuranSearchInput();
+    bindQuranMealSelect();
+    bindQuranReaderMenu(appSettings.quranReadMode);
+    bindQuranAyahExpandOverlay();
+    bindQuranTafsirBridgeOverlay();
+
+    document.addEventListener('quran-reader-drawer-close', () => setQuranDrawerFolderPanelOpen(false));
+
+    const quranDrawerFolderToggle = document.getElementById('quranDrawerFolderToggle');
+    if (quranDrawerFolderToggle && quranDrawerFolderToggle.dataset.bound !== '1') {
+        quranDrawerFolderToggle.dataset.bound = '1';
+        quranDrawerFolderToggle.addEventListener('click', () => {
+            const panel = document.getElementById('quranDrawerFolderPanel');
+            setQuranDrawerFolderPanelOpen(panel?.hidden !== false);
+        });
+    }
+    const quranDrawerFolderModeList = document.getElementById('quranDrawerFolderModeList');
+    if (quranDrawerFolderModeList && quranDrawerFolderModeList.dataset.bound !== '1') {
+        quranDrawerFolderModeList.dataset.bound = '1';
+        quranDrawerFolderModeList.querySelectorAll('.quran-folder-add__mode').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                syncQuranDrawerFolderModeUI(normalizeQuranReadMode(btn.getAttribute('data-read-mode')));
+            });
+        });
+    }
+    const quranDrawerFolderLayoutList = document.getElementById('quranDrawerFolderLayoutList');
+    if (quranDrawerFolderLayoutList && quranDrawerFolderLayoutList.dataset.bound !== '1') {
+        quranDrawerFolderLayoutList.dataset.bound = '1';
+        quranDrawerFolderLayoutList.querySelectorAll('.quran-folder-add__mode').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                syncQuranDrawerCounterLayoutUI(normalizeQuranCounterLayout(btn.getAttribute('data-counter-layout')));
+            });
+        });
+    }
+    ['quranDrawerFolderSurahInput', 'quranDrawerFolderAyahsInput'].forEach((id) => {
+        const inp = document.getElementById(id);
+        if (inp && inp.dataset.bound !== '1') {
+            inp.dataset.bound = '1';
+            inp.addEventListener('input', () => setQuranDrawerFolderError(''));
+        }
+    });
+    const quranDrawerFolderSaveBtn = document.getElementById('quranDrawerFolderSaveBtn');
+    if (quranDrawerFolderSaveBtn && quranDrawerFolderSaveBtn.dataset.bound !== '1') {
+        quranDrawerFolderSaveBtn.dataset.bound = '1';
+        quranDrawerFolderSaveBtn.addEventListener('click', () => {
+            void saveQuranDrawerFolderAdd();
+        });
+    }
+    const quranZikirBody = document.getElementById('quranZikirBody');
+    if (quranZikirBody && quranZikirBody.dataset.bound !== '1') {
+        quranZikirBody.dataset.bound = '1';
+        quranZikirBody.addEventListener('click', (e) => {
+            const counterViewEl = document.getElementById('counterView');
+            if (!counterViewEl?.classList.contains('counter-view--quran-text-only')) return;
+            if (e.target.closest('button')) return;
+            incrementCounter();
+        });
+    }
+
+    bindQuranViewTabs((tab) => {
+        if (tab === 'favorites') {
+            void renderQuranFavoritesList(appSettings.quranMeal, quranAyahFavorites);
+        } else {
+            renderQuranSurahList();
+        }
+    });
+    setQuranAyahFavoritesApi({
+        isFavorite: isQuranAyahFavorite,
+        toggleFavorite: toggleQuranAyahFavorite
+    });
+    setQuranNavigateToSurah((n, ayahN) => {
+        if (ayahN != null && Number.isFinite(Number(ayahN))) {
+            showView('quranSurahView', { surah: n, ayah: Number(ayahN) });
+            return;
+        }
+        showView('quranSurahView', n);
+    });
+    setQuranMealChangeHandler((mealId) => {
+        appSettings.quranMeal = normalizeQuranMeal(mealId, appSettings.locale);
+        saveData();
+        if (currentQuranSurahId != null) {
+            void renderQuranSurahDetail(
+                currentQuranSurahId,
+                appSettings.quranMeal,
+                appSettings.quranReadMode
+            );
+        }
+    });
+    setQuranReadModeChangeHandler((readMode) => {
+        appSettings.quranReadMode = normalizeQuranReadModeForLocale(readMode, appSettings.locale);
+        saveData();
+        if (currentQuranSurahId != null) {
+            void renderQuranSurahDetail(
+                currentQuranSurahId,
+                appSettings.quranMeal,
+                appSettings.quranReadMode
+            );
+        }
+    });
+    syncQuranTabVisibility();
 
     if (librarySearchInput) librarySearchInput.addEventListener('input', () => {
         librarySearchQuery = librarySearchInput.value || '';
@@ -3314,8 +4284,9 @@ function setupEventListeners() {
         const newZ = {
             id: 'z_' + Date.now(),
             folderId: destId,
-            name: libZ.name,
-            arabic: (libZ.arabic && String(libZ.arabic).trim()) || '',
+            libraryId: libZ.id,
+            name: getLibraryNameForLocale(libZ.id, 'tr'),
+            arabic: (libZ.arabic && String(libZ.arabic).trim()) || getLibraryNameForLocale(libZ.id, 'ar') || '',
             target: libZ.target,
             meaning: libZ.meaning,
             count: 0,
@@ -3325,7 +4296,12 @@ function setupEventListeners() {
                     .filter((x) => x.folderId === destId)
                     .reduce((m2, x) => Math.max(m2, typeof x.order === 'number' ? x.order : -1), -1) + 1
         };
-        if (libZ.category === 'zikir' && libZ.context && String(libZ.context).trim()) {
+        if (
+            !localeUsesEnglishMeals(appSettings.locale) &&
+            libZ.category === 'zikir' &&
+            libZ.context &&
+            String(libZ.context).trim()
+        ) {
             newZ.fazilet = String(libZ.context).trim();
         }
         zikirs.push(newZ);
@@ -3389,7 +4365,7 @@ function setupEventListeners() {
         const z = zikirs.find(x => x.id === currentZikirId);
         if (
             z &&
-            (await showAppConfirm(t('confirm.resetCounterMsg', { name: z.name }), {
+            (await showAppConfirm(t('confirm.resetCounterMsg', { name: getZikirDisplayName(z) }), {
                 title: t('confirm.resetCounterTitle'),
                 confirmLabel: t('confirm.resetLabel')
             }))
@@ -3417,12 +4393,31 @@ function setupEventListeners() {
                 else void releaseWakeLock();
             }
         }
+        if (cbCounterNativeNumerals) {
+            appSettings.counterNativeNumerals = cbCounterNativeNumerals.checked;
+            updateCounterUI();
+        }
         saveData();
     };
     if(cbVibrationTap) cbVibrationTap.addEventListener('change', updateSettings);
     if(cbVibrationTarget) cbVibrationTarget.addEventListener('change', updateSettings);
     if(cbSound) cbSound.addEventListener('change', updateSettings);
     if(cbWakeLock) cbWakeLock.addEventListener('change', updateSettings);
+    if (cbCounterNativeNumerals) cbCounterNativeNumerals.addEventListener('change', updateSettings);
+
+    const bumpArabicFontStep = (delta) => {
+        const next = clampArabicSublineFontStep(appSettings.arabicSublineFontStep + delta);
+        if (next === appSettings.arabicSublineFontStep) return;
+        appSettings.arabicSublineFontStep = next;
+        syncArabicFontSettingUI();
+        saveData();
+    };
+    if (arabicFontStepDown) {
+        arabicFontStepDown.addEventListener('click', () => bumpArabicFontStep(-1));
+    }
+    if (arabicFontStepUp) {
+        arabicFontStepUp.addEventListener('click', () => bumpArabicFontStep(1));
+    }
 
     themeChoiceBtns.forEach((btn) => {
         btn.addEventListener('click', () => {
@@ -3453,6 +4448,7 @@ function setupEventListeners() {
             }
             applyAppLocale(choice);
             syncLocaleUI();
+            updateCounterUI();
             saveData();
             setLocalePickerOpen(false);
         });
@@ -3574,15 +4570,17 @@ function setupEventListeners() {
         z.target = val;
         z.meaning = editZikirMeaningInp.value.trim();
         if (editZikirArabicInp) z.arabic = editZikirArabicInp.value.trim();
-        const fzVal = editZikirFaziletInp ? editZikirFaziletInp.value.trim() : '';
-        const defF = getEsmaDefaultFaziletForZikir(z);
-        if (getEsmaListEntryForZikir(z)) {
-            if (!fzVal || fzVal === defF) delete z.fazilet;
-            else z.fazilet = fzVal;
-        } else if (fzVal) {
-            z.fazilet = fzVal;
-        } else {
-            delete z.fazilet;
+        if (!localeUsesEnglishMeals(appSettings.locale)) {
+            const fzVal = editZikirFaziletInp ? editZikirFaziletInp.value.trim() : '';
+            const defF = getEsmaDefaultFaziletForZikir(z);
+            if (getEsmaListEntryForZikir(z)) {
+                if (!fzVal || fzVal === defF) delete z.fazilet;
+                else z.fazilet = fzVal;
+            } else if (fzVal) {
+                z.fazilet = fzVal;
+            } else {
+                delete z.fazilet;
+            }
         }
         saveData();
         renderFolderDetail();
@@ -3605,18 +4603,28 @@ function setupEventListeners() {
     });
 }
 
+function syncEditFaziletFieldForLocale(z) {
+    const group = editZikirFaziletInp && editZikirFaziletInp.closest('.form-group');
+    const localeIsTr = !localeUsesEnglishMeals(appSettings.locale);
+    if (group) group.hidden = !localeIsTr;
+    if (!editZikirFaziletInp) return;
+    if (!localeIsTr) {
+        editZikirFaziletInp.value = '';
+        return;
+    }
+    const stored = z.fazilet != null && String(z.fazilet).trim();
+    editZikirFaziletInp.value = stored ? String(z.fazilet).trim() : getEsmaDefaultFaziletForZikir(z);
+}
+
 function openEditModal(zId) {
     const z = zikirs.find(x => x.id === zId);
     if (!z) return;
     editingZikirIdMap = zId;
-    if (editZikirNameInp) editZikirNameInp.value = z.name || '';
+    if (editZikirNameInp) editZikirNameInp.value = getZikirDisplayName(z) || '';
     editZikirTargetInp.value = z.target;
-    editZikirMeaningInp.value = z.meaning || '';
+    editZikirMeaningInp.value = getZikirDisplayMeaning(z) || '';
     if (editZikirArabicInp) editZikirArabicInp.value = z.arabic || '';
-    if (editZikirFaziletInp) {
-        const stored = z.fazilet != null && String(z.fazilet).trim();
-        editZikirFaziletInp.value = stored ? String(z.fazilet).trim() : getEsmaDefaultFaziletForZikir(z);
-    }
+    syncEditFaziletFieldForLocale(z);
     openOverlay('editModalOverlay');
 }
 

@@ -1,0 +1,35 @@
+{
+  "mealId": "diyanet",
+  "n": 1,
+  "ayahCount": 7,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Rahman ve Rahim olan Allah'ın adıyla:"
+    },
+    {
+      "n": 2,
+      "tr": "Hamd, Alemlerin Rabbi Allah'a mahsustur."
+    },
+    {
+      "n": 3,
+      "tr": "O Rahman ve Rahim'dir,"
+    },
+    {
+      "n": 4,
+      "tr": "Din Gününün sahibidir."
+    },
+    {
+      "n": 5,
+      "tr": "Ancak Sana kulluk eder ve yalnız Senden yardım dileriz."
+    },
+    {
+      "n": 6,
+      "tr": "Bizi doğru yola eriştir."
+    },
+    {
+      "n": 7,
+      "tr": "Nimete erdirdiğin kimselerin yoluna; gazaba uğrayanların, ya da sapıtanların yoluna değil."
+    }
+  ]
+}

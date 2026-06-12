@@ -1,0 +1,27 @@
+{
+  "mealId": "vakfi",
+  "n": 113,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "De ki:\"Ben ağaran sabahın Rabbine sığınırım,"
+    },
+    {
+      "n": 2,
+      "tr": "Yarattığı şeylerin şerrinden,"
+    },
+    {
+      "n": 3,
+      "tr": "Karanlığı çöktüğü zaman gecenin şerrinden,"
+    },
+    {
+      "n": 4,
+      "tr": "Ve düğümlere üfürüp büyü yapan üfürükçülerin şerrinden,"
+    },
+    {
+      "n": 5,
+      "tr": "Ve kıskandığı vakit kıskanç kişinin şerrinden sabahın Rabbine sığınırım!"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "translitId": "translit-en",
+  "n": 1,
+  "ayahCount": 7,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Bismi Allahi alrrahmani alrraheemi"
+    },
+    {
+      "n": 2,
+      "lat": "Alhamdu lillahi rabbi alAAalameena"
+    },
+    {
+      "n": 3,
+      "lat": "Alrrahmani alrraheemi"
+    },
+    {
+      "n": 4,
+      "lat": "Maliki yawmi alddeeni"
+    },
+    {
+      "n": 5,
+      "lat": "Iyyaka naAAbudu waiyyaka nastaAAeenu"
+    },
+    {
+      "n": 6,
+      "lat": "Ihdina alssirata almustaqeema"
+    },
+    {
+      "n": 7,
+      "lat": "Sirata allatheena anAAamta AAalayhim ghayri almaghdoobi AAalayhim wala alddalleena"
+    }
+  ]
+}

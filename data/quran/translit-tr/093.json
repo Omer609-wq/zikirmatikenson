@@ -1,0 +1,51 @@
+{
+  "translitId": "translit-tr",
+  "n": 93,
+  "ayahCount": 11,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Veḍḍuḥâ"
+    },
+    {
+      "n": 2,
+      "lat": "Velleyli iẕâ secâ"
+    },
+    {
+      "n": 3,
+      "lat": "Mâ vedde`ake rabbüke vemâ ḳalâ"
+    },
+    {
+      "n": 4,
+      "lat": "Velel'âḫiratü ḫayrul leke mine-l'ûlâ"
+    },
+    {
+      "n": 5,
+      "lat": "Velesevfe yü`ṭîke rabbüke feterḍâ"
+    },
+    {
+      "n": 6,
+      "lat": "Elem yecidke yetîmen feâvâ"
+    },
+    {
+      "n": 7,
+      "lat": "Vevecedeke ḍâllen fehedâ"
+    },
+    {
+      "n": 8,
+      "lat": "Vevecedeke `âilen feagnâ"
+    },
+    {
+      "n": 9,
+      "lat": "Feemme-lyetîme felâ taḳher"
+    },
+    {
+      "n": 10,
+      "lat": "Veemme-ssâile felâ tenher"
+    },
+    {
+      "n": 11,
+      "lat": "Veemmâ bini`meti rabbike feḥaddiŝ"
+    }
+  ]
+}

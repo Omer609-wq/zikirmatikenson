@@ -1,0 +1,23 @@
+{
+  "mealId": "sahih",
+  "n": 112,
+  "ayahCount": 4,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Say, \"He is Allah, [who is] One,"
+    },
+    {
+      "n": 2,
+      "tr": "Allah, the Eternal Refuge."
+    },
+    {
+      "n": 3,
+      "tr": "He neither begets nor is born,"
+    },
+    {
+      "n": 4,
+      "tr": "Nor is there to Him any equivalent.\""
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "translitId": "translit-tr",
+  "n": 111,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Tebbet yedâ ebî lehebiv vetebb"
+    },
+    {
+      "n": 2,
+      "lat": "Mâ agnâ `anhü mâlühû vemâ keseb"
+    },
+    {
+      "n": 3,
+      "lat": "Seyaṣlâ nâran ẕâte leheb"
+    },
+    {
+      "n": 4,
+      "lat": "Vemraetüh. Ḥammâlete-lḥaṭab"
+    },
+    {
+      "n": 5,
+      "lat": "Fî cîdihâ ḥablüm mim mesed"
+    }
+  ]
+}

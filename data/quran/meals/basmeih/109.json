@@ -1,0 +1,31 @@
+{
+  "mealId": "basmeih",
+  "n": 109,
+  "ayahCount": 6,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Katakanlah (wahai Muhammad): \"Hai orang-orang kafir!"
+    },
+    {
+      "n": 2,
+      "tr": "\"Aku tidak akan menyembah apa yang kamu sembah."
+    },
+    {
+      "n": 3,
+      "tr": "\"Dan kamu tidak mahu menyembah (Allah) yang aku sembah."
+    },
+    {
+      "n": 4,
+      "tr": "\"Dan aku tidak akan beribadat secara kamu beribadat."
+    },
+    {
+      "n": 5,
+      "tr": "\"Dan kamu pula tidak mahu beribadat secara aku beribadat."
+    },
+    {
+      "n": 6,
+      "tr": "\"Bagi kamu ugama kamu, dan bagiku ugamaku\"."
+    }
+  ]
+}

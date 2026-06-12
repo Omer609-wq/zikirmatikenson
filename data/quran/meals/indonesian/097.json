@@ -1,0 +1,27 @@
+{
+  "mealId": "indonesian",
+  "n": 97,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Sesungguhnya Kami telah menurunkannya (Al Quran) pada malam kemuliaan."
+    },
+    {
+      "n": 2,
+      "tr": "Dan tahukah kamu apakah malam kemuliaan itu?"
+    },
+    {
+      "n": 3,
+      "tr": "Malam kemuliaan itu lebih baik dari seribu bulan."
+    },
+    {
+      "n": 4,
+      "tr": "Pada malam itu turun malaikat-malaikat dan malaikat Jibril dengan izin Tuhannya untuk mengatur segala urusan."
+    },
+    {
+      "n": 5,
+      "tr": "Malam itu (penuh) kesejahteraan sampai terbit fajar."
+    }
+  ]
+}

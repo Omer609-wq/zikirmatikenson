@@ -1,0 +1,31 @@
+{
+  "mealId": "indonesian",
+  "n": 109,
+  "ayahCount": 6,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Katakanlah: \"Hai orang-orang kafir,"
+    },
+    {
+      "n": 2,
+      "tr": "Aku tidak akan menyembah apa yang kamu sembah."
+    },
+    {
+      "n": 3,
+      "tr": "Dan kamu bukan penyembah Tuhan yang aku sembah."
+    },
+    {
+      "n": 4,
+      "tr": "Dan aku tidak pernah menjadi penyembah apa yang kamu sembah,"
+    },
+    {
+      "n": 5,
+      "tr": "dan kamu tidak pernah (pula) menjadi penyembah Tuhan yang aku sembah."
+    },
+    {
+      "n": 6,
+      "tr": "Untukmu agamamu, dan untukkulah, agamaku\"."
+    }
+  ]
+}

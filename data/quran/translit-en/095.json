@@ -1,0 +1,39 @@
+{
+  "translitId": "translit-en",
+  "n": 95,
+  "ayahCount": 8,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Waaltteeni waalzzaytooni"
+    },
+    {
+      "n": 2,
+      "lat": "Watoori seeneena"
+    },
+    {
+      "n": 3,
+      "lat": "Wahatha albaladi alameeni"
+    },
+    {
+      "n": 4,
+      "lat": "Laqad khalaqna alinsana fee ahsani taqweemin"
+    },
+    {
+      "n": 5,
+      "lat": "Thumma radadnahu asfala safileena"
+    },
+    {
+      "n": 6,
+      "lat": "Illa allatheena amanoo waAAamiloo alssalihati falahum ajrun ghayru mamnoonin"
+    },
+    {
+      "n": 7,
+      "lat": "Fama yukaththibuka baAAdu bialddeeni"
+    },
+    {
+      "n": 8,
+      "lat": "Alaysa Allahu biahkami alhakimeena"
+    }
+  ]
+}

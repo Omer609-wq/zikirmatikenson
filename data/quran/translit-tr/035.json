@@ -1,0 +1,187 @@
+{
+  "translitId": "translit-tr",
+  "n": 35,
+  "ayahCount": 45,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Elḥamdü lillâhi fâṭiri-ssemâvâti vel'arḍi câ`ili-lmelâiketi rusülen ülî ecniḥatim meŝnâ veŝülâŝe verubâ`. Yezîdü fi-lḫalḳi mâ yeşâ'. İnne-llâhe `alâ külli şey'in ḳadîr"
+    },
+    {
+      "n": 2,
+      "lat": "Mâ yefteḥi-llâhü linnâsi mir raḥmetin felâ mümsike lehâ. Vemâ yümsik felâ mürsile lehû mim ba`dih. Vehüve-l`azîzü-lḥakîm"
+    },
+    {
+      "n": 3,
+      "lat": "Yâ eyyühe-nnâsü-ẕkürû ni`mete-llâhi `aleyküm. Hel min ḫâliḳin gayru-llâhi yerzüḳuküm mine-ssemâi vel'arḍ. Lâ ilâhe illâ hû. Feennâ tü'fekûn"
+    },
+    {
+      "n": 4,
+      "lat": "Veiy yükeẕẕibûke feḳad küẕẕibet rusülüm min ḳablik. Veile-llâhi türce`u-l'ümûr"
+    },
+    {
+      "n": 5,
+      "lat": "Yâ eyyühe-nnâsü inne va`de-llâhi ḥaḳḳun felâ tegurrannekümü-lḥayâtü-ddünyâ. Velâ yegurranneküm billâhi-lgarûr"
+    },
+    {
+      "n": 6,
+      "lat": "İnne-şşeyṭâne leküm `adüvvün fetteḫiẕûhü `adüvvâ. İnnemâ yed`û ḥizbehû liyekûnû min aṣḥâbi-sse`îr"
+    },
+    {
+      "n": 7,
+      "lat": "Elleẕîne keferû lehüm `aẕâbün şedîd. Velleẕîne âmenû ve`amilu-ṣṣâliḥâti lehüm magfiratüv veecrun kebîr"
+    },
+    {
+      "n": 8,
+      "lat": "Efemen züyyine lehû sûü `amelihî feraâhü ḥasenâ. Feinne-llâhe yüḍillü mey yeşâü veyehdî mey yeşâ'. Felâ teẕheb nefsüke `aleyhim ḥaserât. İnne-llâhe `alîmüm bimâ yaṣne`ûn"
+    },
+    {
+      "n": 9,
+      "lat": "Vellâhü-lleẕî ersele-rriyâḥa fetüŝîru seḥâben fesuḳnâhü ilâ beledim meyyitin feaḥyeynâ bihi-l'arḍa ba`de mevtihâ. Keẕâlike-nnüşûr"
+    },
+    {
+      "n": 10,
+      "lat": "Men kâne yürîdü-l`izzete felillâhi-l`izzetü cemî`â. İleyhi yaṣ`adü-lkelimu-ṭṭayyibü vel`amelu-ṣṣâliḥu yerfe`uh. Velleẕîne yemkürûne-sseyyiâti lehüm `aẕâbün şedîd. Vemekru ülâike hüve yebûr"
+    },
+    {
+      "n": 11,
+      "lat": "Vellâhü ḫaleḳaküm min türâbin ŝümme min nuṭfetin ŝümme ce`aleküm ezvâcâ. Vemâ taḥmilü min ünŝâ velâ teḍa`u illâ bi`ilmih. Vemâ yü`ammeru mim mü`ammeriv velâ yünḳaṣu min `umürihî illâ fî kitâb. İnne ẕâlike `ale-llâhi yesîr"
+    },
+    {
+      "n": 12,
+      "lat": "Vemâ yestevi-lbaḥrân. Hâẕâ `aẕbün fürâtün sâigun şerâbühû vehâẕâ milḥun ücâc. Vemin küllin te'külûne laḥmen ṭariyyev vetestaḫricûne ḥilyeten telbesûnehâ. Vetera-lfülke fîhi mevâḫira litebtegû min faḍlihî vele`alleküm teşkürûn"
+    },
+    {
+      "n": 13,
+      "lat": "Yûlicü-lleyle fi-nnehâri veyûlicü-nnehâra fi-lleyli veseḫḫara-şşemse velḳamer. Küllüy yecrî liecelim müsemmâ. Ẕâlikümü-llâhü rabbüküm lehü-lmülk. Velleẕîne ted`ûne min dûnihî mâ yemlikûne min ḳiṭmîr"
+    },
+    {
+      "n": 14,
+      "lat": "İn ted`ûhüm lâ yesme`û dü`âeküm. Velev semi`û me-stecâbû leküm. Veyevme-lḳiyâmeti yekfürûne bişirkiküm. Velâ yünebbiüke miŝlü ḫabîr"
+    },
+    {
+      "n": 15,
+      "lat": "Yâ eyyühe-nnâsü entümü-lfüḳarâü ile-llâh. Vellâhü hüve-lganiyyü-lḥamîd"
+    },
+    {
+      "n": 16,
+      "lat": "İy yeşe' yüẕhibküm veye'ti biḫalḳin cedîd"
+    },
+    {
+      "n": 17,
+      "lat": "Vemâ ẕâlike `ale-llâhi bi`azîz"
+    },
+    {
+      "n": 18,
+      "lat": "Velâ teziru vâziratüv vizra uḫrâ. Vein ted`u müŝḳaletün ilâ ḥimlihâ lâ yuḥmel minhü şey'üv velev kâne ẕâ ḳurbâ. İnnemâ tünẕiru-lleẕîne yaḫşevne rabbehüm bilgaybi veeḳâmu-ṣṣalâh. Vemen tezekkâ feinnemâ yetezekkâ linefsih. Veile-llâhi-lmeṣîr"
+    },
+    {
+      "n": 19,
+      "lat": "Vemâ yestevi-l'a`mâ velbeṣîr"
+    },
+    {
+      "n": 20,
+      "lat": "Vele-żżulümâtü vele-nnûr"
+    },
+    {
+      "n": 21,
+      "lat": "Vele-żżillü vele-lḥarûr"
+    },
+    {
+      "n": 22,
+      "lat": "Vemâ yestevi-l'aḥyâü vele-l'emvât. İnne-llâhe yüsmi`u mey yeşâ'. Vemâ ente bimüsmi`im men fi-lḳubûr"
+    },
+    {
+      "n": 23,
+      "lat": "İn ente illâ neẕîr"
+    },
+    {
+      "n": 24,
+      "lat": "İnnâ erselnâke bilḥaḳḳi beşîrav veneẕîrâ. Veim min ümmetin illâ ḫalâ fîhâ neẕîr"
+    },
+    {
+      "n": 25,
+      "lat": "Veiy yükeẕẕibûke feḳad keẕẕebe-lleẕîne min ḳablihim. Câethüm rusülühüm bilbeyyinâti vebizzübüri vebilkitâbi-lmünîr"
+    },
+    {
+      "n": 26,
+      "lat": "Ŝümme eḫaẕtü-lleẕîne keferû fekeyfe kâne nekîr"
+    },
+    {
+      "n": 27,
+      "lat": "Elem tera enne-llâhe enzele mine-ssemâi mââ. Feaḫracnâ bihî ŝemerâtim muḫtelifen elvânühâ. Vemine-lcibâli cüdedüm bîḍuv veḥumrum muḫtelifün elvânühâ vegarâbîbü sûd"
+    },
+    {
+      "n": 28,
+      "lat": "Vemine-nnâsi veddevâbbi vel'en`âmi muḫtelifün elvânühû keẕâlik. İnnemâ yaḫşe-llâhe min `ibâdihi-l`ulemâ'. İnne-llâhe `azîzün gafûr"
+    },
+    {
+      "n": 29,
+      "lat": "İnne-lleẕîne yetlûne kitâbe-llâhi veeḳâmu-ṣṣalâte veenfeḳû mimmâ razaḳnâhüm sirrav ve`alâniyetey yercûne ticâratel len tebûra"
+    },
+    {
+      "n": 30,
+      "lat": "Liyüveffiyehüm ücûrahüm veyezîdehüm min faḍlih. İnnehû gafûrun şekûr"
+    },
+    {
+      "n": 31,
+      "lat": "Velleẕî evḥaynâ ileyke mine-lkitâbi hüve-lḥaḳḳu müṣaddiḳal limâ beyne yedeyh. İnne-llâhe bi`ibâdihî leḫabîrum beṣîr"
+    },
+    {
+      "n": 32,
+      "lat": "Ŝümme evraŝne-lkitâbe-lleẕîne-ṣṭafeynâ min `ibâdinâ. Feminhüm żâlimül linefsih. Veminhüm muḳteṣid. Veminhüm sâbiḳum bilḫayrâti biiẕni-llâh. Ẕâlike hüve-lfaḍlü-lkebîr"
+    },
+    {
+      "n": 33,
+      "lat": "Cennâtü `adniy yedḫulûnehâ yüḥallevne fîhâ min esâvira min ẕehebiv velü'lüâ. Velibâsühüm fîhâ ḥarîr"
+    },
+    {
+      "n": 34,
+      "lat": "Veḳâlü-lḥamdü lillâhi-lleẕî eẕhebe `anne-lḥazen. İnne rabbenâ legafûrun şekûr"
+    },
+    {
+      "n": 35,
+      "lat": "Elleẕî eḥallenâ dâra-lmüḳâmeti min faḍlih. Lâ yemessünâ fîhâ neṣabüv velâ yemessünâ fîhâ lügûb"
+    },
+    {
+      "n": 36,
+      "lat": "Velleẕîne keferû lehüm nâru cehennem. Lâ yuḳḍâ `aleyhim feyemûtû velâ yüḫaffefü `anhüm min `aẕâbihâ. Keẕâlike neczî külle kefûr"
+    },
+    {
+      "n": 37,
+      "lat": "Vehüm yaṣṭariḫûne fîhâ. Rabbenâ aḫricnâ na`mel ṣâliḥan gayra-lleẕî künnâ na`mel. Evelem nü`ammirküm mâ yeteẕekkeru fîhi men teẕekkera vecâekümü-nneẕîr. Feẕûḳû femâ liżżâlimîne min neṣîr"
+    },
+    {
+      "n": 38,
+      "lat": "İnne-llâhe `âlimü gaybi-ssemâvâti vel'arḍ. İnnehû `alîmüm biẕâti-ṣṣudûr"
+    },
+    {
+      "n": 39,
+      "lat": "Hüve-lleẕî ce`aleküm ḫalâife fi-l'arḍ. Femen kefera fe`aleyhi küfruh. Velâ yezîdü-lkâfirîne küfruhüm `inde rabbihim illâ maḳtâ. Velâ yezîdü-lkâfirîne küfruhüm illâ ḫasârâ"
+    },
+    {
+      "n": 40,
+      "lat": "Ḳul era'eytüm şürakâekümü-lleẕîne ted`ûne min dûni-llâh. Erûnî mâẕâ ḫaleḳû mine-l'arḍi em lehüm şirkün fi-ssemâvât. Em âteynâhüm kitâben fehüm `alâ beyyinetim minh. Bel iy ye`idu-żżâlimûne ba`ḍuhüm ba`ḍan illâ gurûrâ"
+    },
+    {
+      "n": 41,
+      "lat": "İnne-llâhe yümsikü-ssemâvâti vel'arḍa en tezûlâ. Velein zâletâ in emsekehümâ min eḥadim mim ba`dih. İnnehû kâne ḥalîmen gafûrâ"
+    },
+    {
+      "n": 42,
+      "lat": "Veaḳsemû billâhi cehde eymânihim lein câehüm neẕîrul leyekûnünne ehdâ min iḥde-l'ümem. Felemmâ câehüm neẕîrum mâ zâdehüm illâ nüfûrâ"
+    },
+    {
+      "n": 43,
+      "lat": "İstikbâran fi-l'arḍi vemekra-sseyyi'. Velâ yeḥîḳu-lmekru-sseyyiü illâ biehlih. Fehel yenżurûne illâ sünnete-l'evvelîn. Felen tecide lisünneti-llâhi tebdîlâ. Velen tecide lisünneti-llâhi taḥvîlâ"
+    },
+    {
+      "n": 44,
+      "lat": "Evelem yesîrû fi-l'arḍi feyenżurû keyfe kâne `âḳibetü-lleẕîne min ḳablihim vekânû eşedde minhüm ḳuvveh. Vemâ kâne-llâhü liyü`cizehû min şey'in fi-ssemâvâti velâ fi-l'arḍ. İnnehû kâne `alîmen ḳadîrâ"
+    },
+    {
+      "n": 45,
+      "lat": "Velev yüâḫiẕü-llâhü-nnâse bimâ kesebû mâ terake `alâ żahrihâ min dâbbetiv velâkiy yü'eḫḫiruhüm ilâ ecelim müsemmâ. Feiẕâ câe ecelühüm feinne-llâhe kâne bi`ibâdihî beṣîrâ"
+    }
+  ]
+}

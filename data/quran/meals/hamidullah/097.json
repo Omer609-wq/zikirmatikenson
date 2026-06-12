@@ -1,0 +1,27 @@
+{
+  "mealId": "hamidullah",
+  "n": 97,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Nous l'avons certes, fait descendre (le Coran) pendant la nuit d'Al-Qadr."
+    },
+    {
+      "n": 2,
+      "tr": "Et qui te dira ce qu'est la nuit d'Al-Qadr?"
+    },
+    {
+      "n": 3,
+      "tr": "La nuit d'Al-Qadr est meilleure que mille mois."
+    },
+    {
+      "n": 4,
+      "tr": "Durant celle-ci descendent les Anges ainsi que l'Esprit, par permission de leur Seigneur pour tout ordre."
+    },
+    {
+      "n": 5,
+      "tr": "Elle est paix et salut jusqu'à l'apparition de l'aube."
+    }
+  ]
+}

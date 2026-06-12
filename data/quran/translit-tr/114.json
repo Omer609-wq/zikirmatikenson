@@ -1,0 +1,31 @@
+{
+  "translitId": "translit-tr",
+  "n": 114,
+  "ayahCount": 6,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Ḳul e`ûẕü birabbi-nnâs"
+    },
+    {
+      "n": 2,
+      "lat": "Meliki-nnâs"
+    },
+    {
+      "n": 3,
+      "lat": "İlâhi-nnâs"
+    },
+    {
+      "n": 4,
+      "lat": "Min şerri-lvesvâsi-lḫannâs"
+    },
+    {
+      "n": 5,
+      "lat": "Elleẕî yüvesvisü fî ṣudûri-nnâs"
+    },
+    {
+      "n": 6,
+      "lat": "Mine-lcinneti vennâs"
+    }
+  ]
+}

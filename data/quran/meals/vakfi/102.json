@@ -1,0 +1,39 @@
+{
+  "mealId": "vakfi",
+  "n": 102,
+  "ayahCount": 8,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Çokluk kuruntusu sizi o derece oyaladı ki,"
+    },
+    {
+      "n": 2,
+      "tr": "Nihayet kabirleri ziyaret ettiniz."
+    },
+    {
+      "n": 3,
+      "tr": "Hayır! Yakında bileceksiniz!"
+    },
+    {
+      "n": 4,
+      "tr": "Elbette yakında bileceksiniz!"
+    },
+    {
+      "n": 5,
+      "tr": "Gerçek öyle değil! Kesin bilgi ile bilmiş olsaydınız,"
+    },
+    {
+      "n": 6,
+      "tr": "Mutlaka cehennem ateşini görürdünüz."
+    },
+    {
+      "n": 7,
+      "tr": "Sonra ahirette onu çıplak gözle göreceksiniz."
+    },
+    {
+      "n": 8,
+      "tr": "Nihayet o gün (dünyada yararlandığınız) nimetlerden elbette ve elbette hesaba çekileceksiniz."
+    }
+  ]
+}

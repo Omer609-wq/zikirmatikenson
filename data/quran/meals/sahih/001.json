@@ -1,0 +1,35 @@
+{
+  "mealId": "sahih",
+  "n": 1,
+  "ayahCount": 7,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "In the name of Allah, the Entirely Merciful, the Especially Merciful."
+    },
+    {
+      "n": 2,
+      "tr": "[All] praise is [due] to Allah, Lord of the worlds -"
+    },
+    {
+      "n": 3,
+      "tr": "The Entirely Merciful, the Especially Merciful,"
+    },
+    {
+      "n": 4,
+      "tr": "Sovereign of the Day of Recompense."
+    },
+    {
+      "n": 5,
+      "tr": "It is You we worship and You we ask for help."
+    },
+    {
+      "n": 6,
+      "tr": "Guide us to the straight path -"
+    },
+    {
+      "n": 7,
+      "tr": "The path of those upon whom You have bestowed favor, not of those who have evoked [Your] anger or of those who are astray."
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "mealId": "diyanet",
+  "n": 94,
+  "ayahCount": 8,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Senin gönlünü açmadık mı?"
+    },
+    {
+      "n": 2,
+      "tr": "Belini büken yükünü üzerinden almadık mı?"
+    },
+    {
+      "n": 3,
+      "tr": "Belini büken yükünü üzerinden almadık mı?"
+    },
+    {
+      "n": 4,
+      "tr": "Senin şanını yükseltmedik mi?"
+    },
+    {
+      "n": 5,
+      "tr": "Elbette güçlükle beraber şüphesiz bir kolaylık vardır."
+    },
+    {
+      "n": 6,
+      "tr": "Gerçekten, güçlükle beraber bir kolaylık vardır."
+    },
+    {
+      "n": 7,
+      "tr": "Öyleyse, bir işi bitirince diğerine giriş;"
+    },
+    {
+      "n": 8,
+      "tr": "Ve ümit edeceğini yalnız Rabbinden iste."
+    }
+  ]
+}

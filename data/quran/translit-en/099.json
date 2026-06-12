@@ -1,0 +1,39 @@
+{
+  "translitId": "translit-en",
+  "n": 99,
+  "ayahCount": 8,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Itha zulzilati alardu zilzalaha"
+    },
+    {
+      "n": 2,
+      "lat": "Waakhrajati alardu athqalaha"
+    },
+    {
+      "n": 3,
+      "lat": "Waqala alinsanu ma laha"
+    },
+    {
+      "n": 4,
+      "lat": "Yawmaithin tuhaddithu akhbaraha"
+    },
+    {
+      "n": 5,
+      "lat": "Bianna rabbaka awha laha"
+    },
+    {
+      "n": 6,
+      "lat": "Yawmaithin yasduru alnnasu ashtatan liyuraw aAAmalahum"
+    },
+    {
+      "n": 7,
+      "lat": "Faman yaAAmal mithqala tharratin khayran yarahu"
+    },
+    {
+      "n": 8,
+      "lat": "Waman yaAAmal mithqala tharratin sharran yarahu"
+    }
+  ]
+}

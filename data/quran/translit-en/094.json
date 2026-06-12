@@ -1,0 +1,39 @@
+{
+  "translitId": "translit-en",
+  "n": 94,
+  "ayahCount": 8,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Alam nashrah laka sadraka"
+    },
+    {
+      "n": 2,
+      "lat": "WawadaAAna AAanka wizraka"
+    },
+    {
+      "n": 3,
+      "lat": "Allathee anqada thahraka"
+    },
+    {
+      "n": 4,
+      "lat": "WarafaAAna laka thikraka"
+    },
+    {
+      "n": 5,
+      "lat": "Fainna maAAa alAAusri yusran"
+    },
+    {
+      "n": 6,
+      "lat": "Inna maAAa alAAusri yusran"
+    },
+    {
+      "n": 7,
+      "lat": "Faitha faraghta fainsab"
+    },
+    {
+      "n": 8,
+      "lat": "Waila rabbika fairghab"
+    }
+  ]
+}

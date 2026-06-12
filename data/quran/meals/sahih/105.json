@@ -1,0 +1,27 @@
+{
+  "mealId": "sahih",
+  "n": 105,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Have you not considered, [O Muhammad], how your Lord dealt with the companions of the elephant?"
+    },
+    {
+      "n": 2,
+      "tr": "Did He not make their plan into misguidance?"
+    },
+    {
+      "n": 3,
+      "tr": "And He sent against them birds in flocks,"
+    },
+    {
+      "n": 4,
+      "tr": "Striking them with stones of hard clay,"
+    },
+    {
+      "n": 5,
+      "tr": "And He made them like eaten straw."
+    }
+  ]
+}

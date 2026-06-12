@@ -1,0 +1,51 @@
+{
+  "translitId": "translit-en",
+  "n": 93,
+  "ayahCount": 11,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Waaldduha"
+    },
+    {
+      "n": 2,
+      "lat": "Waallayli itha saja"
+    },
+    {
+      "n": 3,
+      "lat": "Ma waddaAAaka rabbuka wama qala"
+    },
+    {
+      "n": 4,
+      "lat": "Walalakhiratu khayrun laka mina aloola"
+    },
+    {
+      "n": 5,
+      "lat": "Walasawfa yuAAteeka rabbuka fatarda"
+    },
+    {
+      "n": 6,
+      "lat": "Alam yajidka yateeman faawa"
+    },
+    {
+      "n": 7,
+      "lat": "Wawajadaka dallan fahada"
+    },
+    {
+      "n": 8,
+      "lat": "Wawajadaka AAailan faaghna"
+    },
+    {
+      "n": 9,
+      "lat": "Faamma alyateema fala taqhar"
+    },
+    {
+      "n": 10,
+      "lat": "Waamma alssaila fala tanhar"
+    },
+    {
+      "n": 11,
+      "lat": "Waamma biniAAmati rabbika fahaddith"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "mealId": "diyanet",
+  "n": 99,
+  "ayahCount": 8,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Yer dehşetle sarsıldıkça sarsıldığı, yeryüzü ağırlıklarını dışarıya çıkardığı ve insanın: \"Buna ne oluyor?\" dediği zaman;"
+    },
+    {
+      "n": 2,
+      "tr": "Yer dehşetle sarsıldıkça sarsıldığı, yeryüzü ağırlıklarını dışarıya çıkardığı ve insanın: \"Buna ne oluyor?\" dediği zaman;"
+    },
+    {
+      "n": 3,
+      "tr": "Yer dehşetle sarsıldıkça sarsıldığı, yeryüzü ağırlıklarını dışarıya çıkardığı ve insanın: \"Buna ne oluyor?\" dediği zaman;"
+    },
+    {
+      "n": 4,
+      "tr": "İşte o gün, yer, Rabbinin ona vahyetmesiyle kendi haberlerini anlatır."
+    },
+    {
+      "n": 5,
+      "tr": "İşte o gün, yer, Rabbinin ona vahyetmesiyle kendi haberlerini anlatır."
+    },
+    {
+      "n": 6,
+      "tr": "O gün insanlar işlerinin kendilerine gösterilmesi için bölük bölük dönerler."
+    },
+    {
+      "n": 7,
+      "tr": "Kim zerre kadar iyilik yapmışsa onu görür."
+    },
+    {
+      "n": 8,
+      "tr": "Kim de zerre kadar kötülük yapmışsa onu görür."
+    }
+  ]
+}

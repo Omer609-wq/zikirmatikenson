@@ -1,0 +1,27 @@
+{
+  "mealId": "hamidullah",
+  "n": 105,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "N'as-tu pas vu comment ton Seigneur a agi envers les gens de l'Eléphant?"
+    },
+    {
+      "n": 2,
+      "tr": "N'a-t-Il pas rendu leur ruse complètement vaine?"
+    },
+    {
+      "n": 3,
+      "tr": "et envoyé sur eux des oiseaux par volées"
+    },
+    {
+      "n": 4,
+      "tr": "qui leur lançaient des pierres d'argile?"
+    },
+    {
+      "n": 5,
+      "tr": "Et Il les a rendus semblables à une paille mâchée."
+    }
+  ]
+}

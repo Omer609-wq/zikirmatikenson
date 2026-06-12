@@ -1,0 +1,31 @@
+{
+  "mealId": "sahih",
+  "n": 109,
+  "ayahCount": 6,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Say, \"O disbelievers,"
+    },
+    {
+      "n": 2,
+      "tr": "I do not worship what you worship."
+    },
+    {
+      "n": 3,
+      "tr": "Nor are you worshippers of what I worship."
+    },
+    {
+      "n": 4,
+      "tr": "Nor will I be a worshipper of what you worship."
+    },
+    {
+      "n": 5,
+      "tr": "Nor will you be worshippers of what I worship."
+    },
+    {
+      "n": 6,
+      "tr": "For you is your religion, and for me is my religion.\""
+    }
+  ]
+}

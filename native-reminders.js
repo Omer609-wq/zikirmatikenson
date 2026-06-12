@@ -10,6 +10,13 @@ const REMINDER_DAYS_AHEAD = 28;
 /** Eski tek-id veya önceki yığın için iptal aralığı. */
 const REMINDER_CANCEL_COUNT = 40;
 
+/** Android bildirim ikonları — res/drawable altında */
+const ANDROID_NOTIFICATION_ICONS = {
+    smallIcon: 'ic_stat_notification',
+    largeIcon: 'ic_notification_large',
+    iconColor: '#0f2918'
+};
+
 export function isCapacitorNative() {
     try {
         return Capacitor.isNativePlatform();
@@ -144,6 +151,16 @@ async function cancelReminderSlots() {
 /**
  * @returns {Promise<{ ok: boolean, reason?: string, warnExactAlarm?: boolean }>}
  */
+/** Android 12+: tam saat hatırlatıcı ayar ekranı */
+export async function openExactAlarmSettings() {
+    if (!isCapacitorNative() || Capacitor.getPlatform() !== 'android') return;
+    try {
+        await LocalNotifications.changeExactNotificationSetting();
+    } catch (e) {
+        console.error('LocalNotifications.changeExactNotificationSetting', e);
+    }
+}
+
 export async function syncNativeDailyReminder(enabled, timeStr) {
     if (!isCapacitorNative()) return { ok: true };
 
@@ -199,6 +216,9 @@ export async function syncNativeDailyReminder(enabled, timeStr) {
         if (Capacitor.getPlatform() === 'android') {
             n.schedule.allowWhileIdle = true;
             n.channelId = 'reminders';
+            n.smallIcon = ANDROID_NOTIFICATION_ICONS.smallIcon;
+            n.largeIcon = ANDROID_NOTIFICATION_ICONS.largeIcon;
+            n.iconColor = ANDROID_NOTIFICATION_ICONS.iconColor;
         }
         return n;
     });

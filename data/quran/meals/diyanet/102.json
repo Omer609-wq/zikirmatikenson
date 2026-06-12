@@ -1,0 +1,39 @@
+{
+  "mealId": "diyanet",
+  "n": 102,
+  "ayahCount": 8,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Çoğunluk olmak iddianız sizi o kadar meşgul etti ki, mezarları ziyaretle oradakileri de sayacak kadar oldunuz."
+    },
+    {
+      "n": 2,
+      "tr": "Çoğunluk olmak iddianız sizi o kadar meşgul etti ki, mezarları ziyaretle oradakileri de sayacak kadar oldunuz."
+    },
+    {
+      "n": 3,
+      "tr": "Hayır; öyle olmayın; yakında bileceksiniz."
+    },
+    {
+      "n": 4,
+      "tr": "Hayır; gözünüzü açın; yakında bileceksiniz."
+    },
+    {
+      "n": 5,
+      "tr": "Dikkat edin, şayet yaptığınızın sonucunu kesin olarak bir bilseniz!"
+    },
+    {
+      "n": 6,
+      "tr": "And olsun ki, cehennemi göreceksiniz."
+    },
+    {
+      "n": 7,
+      "tr": "And olsun ki, onu gözünüzle kesin olarak göreceksiniz."
+    },
+    {
+      "n": 8,
+      "tr": "Sonra o gün, size verilmiş olan her nimetten sorguya çekileceksiniz."
+    }
+  ]
+}

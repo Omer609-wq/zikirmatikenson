@@ -1,0 +1,23 @@
+{
+  "mealId": "indonesian",
+  "n": 112,
+  "ayahCount": 4,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Katakanlah: \"Dialah Allah, Yang Maha Esa."
+    },
+    {
+      "n": 2,
+      "tr": "Allah adalah Tuhan yang bergantung kepada-Nya segala sesuatu."
+    },
+    {
+      "n": 3,
+      "tr": "Dia tiada beranak dan tidak pula diperanakkan,"
+    },
+    {
+      "n": 4,
+      "tr": "dan tidak ada seorangpun yang setara dengan Dia\"."
+    }
+  ]
+}

@@ -84,6 +84,26 @@ html[data-theme="light"] {
     --update-banner-btn-border: color-mix(in srgb, var(--update-banner-accent) 62%, var(--surface-border));
 }
 
+html[data-theme="light"] .quran-surah-section__frame {
+    --surah-frame-border: color-mix(in srgb, var(--primary-green) 52%, #57534e);
+    --surah-frame-inner-border: color-mix(in srgb, var(--primary-green) 34%, #78716c);
+    --surah-frame-shadow:
+        0 4px 16px rgba(28, 25, 23, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    --surah-frame-radial: color-mix(in srgb, var(--primary-green) 22%, #fffefb);
+    --surah-frame-base: linear-gradient(
+        165deg,
+        color-mix(in srgb, var(--primary-green) 13%, #fffefb) 0%,
+        color-mix(in srgb, var(--primary-green) 9%, #efe8dc) 100%
+    );
+    --surah-corner-color: color-mix(in srgb, var(--primary-green) 82%, #292524);
+    --surah-badge-bg: color-mix(in srgb, var(--primary-green) 22%, #ffffff);
+    --surah-badge-border: color-mix(in srgb, var(--primary-green) 52%, #57534e);
+    --surah-name-ar-color: var(--text-arabic-header, #292524);
+    --surah-name-tr-color: var(--primary-green);
+    --surah-meta-opacity: 0.92;
+}
+
 /* Lacivert (varsayılan) — :root ile aynı; lacivert tonları değiştirilmez */
 html[data-theme="navy"],
 html[data-theme="dark"] {
@@ -317,11 +337,40 @@ html[data-theme="black"] .premium-hero {
 .locale-setting__toggle-value {
     display: flex;
     align-items: center;
-    gap: 0.15rem;
+    gap: 0.4rem;
     min-width: 0;
     color: var(--text-gray);
     font-size: 0.9rem;
     font-weight: 500;
+}
+.locale-setting__flag {
+    width: 1.375rem;
+    height: 1.375rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+.locale-setting__flag img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.locale-setting__flag--toggle {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+.locale-setting__option-main {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+}
+.locale-setting__option-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .locale-setting__chevron {
     font-size: 1.25rem !important;
@@ -436,6 +485,77 @@ html[data-theme="black"] .premium-hero {
 }
 .theme-segment__btn:active {
     transform: scale(0.98);
+}
+
+.arabic-font-setting {
+    padding: 1rem;
+    background: var(--surface-card);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--surface-radius);
+    box-shadow: var(--surface-shadow);
+    margin-bottom: 0.8rem;
+}
+.arabic-font-setting__label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: var(--text-base);
+    font-weight: 500;
+    color: var(--text-white);
+    margin-bottom: 0.75rem;
+}
+.arabic-font-setting__label .material-icons-outlined {
+    color: var(--primary-green);
+    font-size: 1.125rem;
+}
+.arabic-font-setting__controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    padding: 0.55rem 0.65rem;
+    border-radius: 12px;
+    background: var(--alpha-04);
+    border: 1px solid var(--surface-border);
+}
+.arabic-font-setting__step-btn {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 1px solid var(--surface-border);
+    background: var(--surface-card);
+    color: var(--text-white);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s, border-color 0.15s, transform 0.12s;
+}
+.arabic-font-setting__step-btn:active:not(:disabled) {
+    transform: scale(0.96);
+    background: var(--surface-card-active);
+}
+.arabic-font-setting__step-btn:disabled {
+    opacity: 0.38;
+    cursor: default;
+}
+.arabic-font-setting__step-btn .material-icons-outlined {
+    font-size: 1.25rem;
+}
+.arabic-font-setting__preview.zikir-arabic {
+    text-align: center;
+}
+.arabic-font-setting__preview {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    color: var(--text-arabic-header, rgba(203, 213, 225, 0.95));
+    font-weight: 500;
+    line-height: var(--leading-relaxed);
+    letter-spacing: 0.03em;
+    word-break: break-word;
 }
 
 /* Light: premium / dialog metinleri */

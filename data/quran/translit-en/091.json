@@ -1,0 +1,67 @@
+{
+  "translitId": "translit-en",
+  "n": 91,
+  "ayahCount": 15,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Waalshshamsi waduhaha"
+    },
+    {
+      "n": 2,
+      "lat": "Waalqamari itha talaha"
+    },
+    {
+      "n": 3,
+      "lat": "Waalnnahari itha jallaha"
+    },
+    {
+      "n": 4,
+      "lat": "Waallayli itha yaghshaha"
+    },
+    {
+      "n": 5,
+      "lat": "Waalssamai wama banaha"
+    },
+    {
+      "n": 6,
+      "lat": "Waalardi wama tahaha"
+    },
+    {
+      "n": 7,
+      "lat": "Wanafsin wama sawwaha"
+    },
+    {
+      "n": 8,
+      "lat": "Faalhamaha fujooraha wataqwaha"
+    },
+    {
+      "n": 9,
+      "lat": "Qad aflaha man zakkaha"
+    },
+    {
+      "n": 10,
+      "lat": "Waqad khaba man dassaha"
+    },
+    {
+      "n": 11,
+      "lat": "Kaththabat thamoodu bitaghwaha"
+    },
+    {
+      "n": 12,
+      "lat": "Ithi inbaAAatha ashqaha"
+    },
+    {
+      "n": 13,
+      "lat": "Faqala lahum rasoolu Allahi naqata Allahi wasuqyaha"
+    },
+    {
+      "n": 14,
+      "lat": "Fakaththaboohu faAAaqarooha fadamdama AAalayhim rabbuhum bithanbihim fasawwaha"
+    },
+    {
+      "n": 15,
+      "lat": "Wala yakhafu AAuqbaha"
+    }
+  ]
+}

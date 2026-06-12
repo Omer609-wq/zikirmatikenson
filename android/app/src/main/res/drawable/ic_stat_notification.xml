@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Üst çubuk: beyaz silüet (Android bildirim küçük ikonu) — kare kufi çerçeve -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M3.5,2.5h17v19h-17z M5.5,4.5h13v15h-13z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M6.5,7.5h11v1.1h-11z M6.5,10.2h11v1.1h-11z M6.5,12.9h11v1.1h-11z M6.5,15.6h11v1.1h-11z M9.2,7.5v9.2h1.1v-9.2z M12,7.5v9.2h1.1v-9.2z M14.8,7.5v9.2h1.1v-9.2z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M10.8,18.8h2.4v2.2h-2.4z M11.4,20.6h1.2v0.9h-1.2z" />
+</vector>

@@ -141,28 +141,33 @@
             </header>
 
             <section class="counter-container">
-                <div class="progress-ring-container" id="mainCounterBtn">
-                    <button id="enterStealthBtn" class="stealth-badge" data-i18n="counter.stealth" data-i18n-attr="aria-label" data-i18n-title="counter.stealth" aria-label="Gizli Mod" title="Gizli Mod"><span class="material-icons-outlined" style="font-size: 1.1rem;">visibility_off</span></button>
-                    <div class="round-badge" id="roundDisplay"></div>
-                    <svg class="progress-ring" width="280" height="280">
-                        <circle class="progress-ring__background" stroke-width="8" fill="transparent" r="130" cx="140" cy="140"/>
-                        <circle class="progress-ring__circle" id="progressCircle" stroke-width="12" fill="transparent" r="130" cx="140" cy="140"/>
-                    </svg>
-                    <div class="counter-content">
-                        <div class="count-display" id="countDisplay">0</div>
-                        <div class="target-display"><span data-i18n="counter.target">Hedef:</span> <span id="targetDisplay">33</span></div>
-                        <div class="total-number-display" id="totalDisplay">0</div>
-                    </div>
+                <div id="quranZikirBody" class="quran-zikir-scroll" hidden>
+                    <p id="quranZikirArabic" class="quran-zikir-scroll__ar arabic-text" dir="rtl" lang="ar"></p>
+                    <p id="quranZikirMeaning" class="quran-zikir-scroll__sub"></p>
                 </div>
-                
-                <div class="counter-actions" style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 280px; margin-left: auto; margin-right: auto;">
-                    <button id="decrementBtn" class="icon-btn" data-i18n="counter.undo" data-i18n-attr="aria-label" aria-label="Geri Al (-1)" style="background: rgba(255,255,255,0.05); border: 1px solid var(--surface-border); width: 45px; height: 45px;">
-                        <span class="material-icons-outlined">remove</span>
-                    </button>
-                    <p class="instruction-text" style="margin: 0;" data-i18n="counter.tapToCount">Dokunarak Say</p>
-                    <button id="resetBtn" class="icon-btn" data-i18n="counter.reset" data-i18n-attr="aria-label" aria-label="Sıfırla" style="background: rgba(255,255,255,0.05); border: 1px solid var(--surface-border); width: 45px; height: 45px; color: #ef4444;">
-                        <span class="material-icons-outlined">refresh</span>
-                    </button>
+                <div class="counter-dock">
+                    <div class="progress-ring-container" id="mainCounterBtn">
+                        <button id="enterStealthBtn" class="stealth-badge" data-i18n="counter.stealth" data-i18n-attr="aria-label" data-i18n-title="counter.stealth" aria-label="Gizli Mod" title="Gizli Mod"><span class="material-icons-outlined" style="font-size: 1.1rem;">visibility_off</span></button>
+                        <div class="round-badge" id="roundDisplay"></div>
+                        <svg class="progress-ring" width="280" height="280">
+                            <circle class="progress-ring__background" stroke-width="8" fill="transparent" r="130" cx="140" cy="140"/>
+                            <circle class="progress-ring__circle" id="progressCircle" stroke-width="12" fill="transparent" r="130" cx="140" cy="140"/>
+                        </svg>
+                        <div class="counter-content">
+                            <div class="count-display" id="countDisplay">0</div>
+                            <div class="target-display"><span data-i18n="counter.target">Hedef:</span> <span id="targetDisplay">33</span></div>
+                            <div class="total-number-display" id="totalDisplay">0</div>
+                        </div>
+                    </div>
+                    <div class="counter-actions">
+                        <button id="decrementBtn" class="icon-btn" data-i18n="counter.undo" data-i18n-attr="aria-label" aria-label="Geri Al (-1)">
+                            <span class="material-icons-outlined">remove</span>
+                        </button>
+                        <p class="instruction-text" data-i18n="counter.tapToCount">Dokunarak Say</p>
+                        <button id="resetBtn" class="icon-btn counter-actions__reset" data-i18n="counter.reset" data-i18n-attr="aria-label" aria-label="Sıfırla">
+                            <span class="material-icons-outlined">refresh</span>
+                        </button>
+                    </div>
                 </div>
             </section>
         </div>
@@ -220,9 +225,9 @@
         <!-- =================== SETTINGS VIEW =================== -->
         <div id="settingsView" class="view hidden">
             <header class="glass-header">
-                <div class="header-left">
-                    <h1 data-i18n="nav.settings">Ayarlar</h1>
-                </div>
+                <button type="button" class="icon-btn backBtn" data-target="homeView" aria-label="Geri"><span class="material-icons-outlined">arrow_back</span></button>
+                <h1 data-i18n="nav.settings">Ayarlar</h1>
+                <div style="width: 36px;" aria-hidden="true"></div>
             </header>
 
             <section class="main-content scrollable">
@@ -250,6 +255,7 @@
                             <span data-i18n="settings.language">Dil</span>
                         </span>
                         <span class="locale-setting__toggle-value">
+                            <span class="locale-setting__flag locale-setting__flag--toggle" id="localeCurrentFlag" aria-hidden="true"></span>
                             <span id="localeCurrentLabel">Türkçe</span>
                             <span class="material-icons-outlined locale-setting__chevron" aria-hidden="true">expand_more</span>
                         </span>
@@ -257,13 +263,93 @@
                     <div class="locale-setting__panel" id="localeOptionsPanel" aria-hidden="true">
                         <div class="locale-setting__panel-inner">
                             <div class="locale-setting__options" id="localeOptionsList">
-                                <button type="button" class="locale-setting__option active" data-locale-choice="tr" data-i18n="settings.localeTr" aria-pressed="true">Türkçe</button>
-                                <button type="button" class="locale-setting__option" data-locale-choice="id" data-i18n="settings.localeId" aria-pressed="false">Bahasa Indonesia</button>
-                                <button type="button" class="locale-setting__option" data-locale-choice="ms" data-i18n="settings.localeMs" aria-pressed="false">Bahasa Melayu</button>
-                                <button type="button" class="locale-setting__option" data-locale-choice="en" data-i18n="settings.localeEn" aria-pressed="false">English</button>
+                                <button type="button" class="locale-setting__option active" data-locale-choice="tr" aria-pressed="true">
+                                    <span class="locale-setting__option-main">
+                                        <span class="locale-setting__flag" aria-hidden="true"></span>
+                                        <span class="locale-setting__option-label" data-i18n="settings.localeTr">Türkçe</span>
+                                    </span>
+                                </button>
+                                <button type="button" class="locale-setting__option" data-locale-choice="ar" aria-pressed="false">
+                                    <span class="locale-setting__option-main">
+                                        <span class="locale-setting__flag" aria-hidden="true"></span>
+                                        <span class="locale-setting__option-label" data-i18n="settings.localeAr">العربية</span>
+                                    </span>
+                                </button>
+                                <button type="button" class="locale-setting__option" data-locale-choice="id" aria-pressed="false">
+                                    <span class="locale-setting__option-main">
+                                        <span class="locale-setting__flag" aria-hidden="true"></span>
+                                        <span class="locale-setting__option-label" data-i18n="settings.localeId">Bahasa Indonesia</span>
+                                    </span>
+                                </button>
+                                <button type="button" class="locale-setting__option" data-locale-choice="ms" aria-pressed="false">
+                                    <span class="locale-setting__option-main">
+                                        <span class="locale-setting__flag" aria-hidden="true"></span>
+                                        <span class="locale-setting__option-label" data-i18n="settings.localeMs">Bahasa Melayu</span>
+                                    </span>
+                                </button>
+                                <button type="button" class="locale-setting__option" data-locale-choice="en" aria-pressed="false">
+                                    <span class="locale-setting__option-main">
+                                        <span class="locale-setting__flag" aria-hidden="true"></span>
+                                        <span class="locale-setting__option-label" data-i18n="settings.localeEn">English</span>
+                                    </span>
+                                </button>
+                                <button type="button" class="locale-setting__option" data-locale-choice="fr" aria-pressed="false">
+                                    <span class="locale-setting__option-main">
+                                        <span class="locale-setting__flag" aria-hidden="true"></span>
+                                        <span class="locale-setting__option-label" data-i18n="settings.localeFr">Français</span>
+                                    </span>
+                                </button>
+                                <button type="button" class="locale-setting__option" data-locale-choice="bn" aria-pressed="false">
+                                    <span class="locale-setting__option-main">
+                                        <span class="locale-setting__flag" aria-hidden="true"></span>
+                                        <span class="locale-setting__option-label" data-i18n="settings.localeBn">বাংলা</span>
+                                    </span>
+                                </button>
+                                <button type="button" class="locale-setting__option" data-locale-choice="ur" aria-pressed="false">
+                                    <span class="locale-setting__option-main">
+                                        <span class="locale-setting__flag" aria-hidden="true"></span>
+                                        <span class="locale-setting__option-label" data-i18n="settings.localeUr">اردو</span>
+                                    </span>
+                                </button>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="arabic-font-setting" id="arabicFontSetting">
+                    <div class="arabic-font-setting__label">
+                        <span class="material-icons-outlined" aria-hidden="true">format_size</span>
+                        <span data-i18n="settings.arabicFontSize">Arapça yazı boyutu</span>
+                    </div>
+                    <div class="arabic-font-setting__controls">
+                        <button
+                            type="button"
+                            class="arabic-font-setting__step-btn"
+                            id="arabicFontStepDown"
+                            data-i18n="settings.arabicFontSmaller"
+                            data-i18n-attr="aria-label"
+                            aria-label="Küçült"
+                        >
+                            <span class="material-icons-outlined" aria-hidden="true">remove</span>
+                        </button>
+                        <p class="arabic-font-setting__preview zikir-arabic" dir="rtl" lang="ar" aria-hidden="true">بِسْمِ اللَّهِ</p>
+                        <button
+                            type="button"
+                            class="arabic-font-setting__step-btn"
+                            id="arabicFontStepUp"
+                            data-i18n="settings.arabicFontLarger"
+                            data-i18n-attr="aria-label"
+                            aria-label="Büyüt"
+                        >
+                            <span class="material-icons-outlined" aria-hidden="true">add</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="setting-item" id="nativeNumeralsSetting" hidden>
+                    <span><span class="material-icons-outlined">looks_one</span> <span data-i18n="settings.counterNativeNumerals">Sayaçta yerel rakamlar</span></span>
+                    <label class="switch">
+                        <input type="checkbox" id="settingCounterNativeNumerals">
+                        <span class="slider round"></span>
+                    </label>
                 </div>
                 <div class="setting-item">
                     <span><span class="material-icons-outlined">touch_app</span> <span data-i18n="settings.vibrationTap">Dokunma Titreşimi</span></span>
@@ -348,10 +434,193 @@
                 <div class="stats-tabs" id="libraryCategoryTabs">
                     <button class="tab-btn active" data-cat="dua" data-i18n="library.tabDua">Dualar</button>
                     <button class="tab-btn" data-cat="zikir" data-i18n="library.tabZikir">Zikirler</button>
+                    <button type="button" class="tab-btn" id="libraryTabSurahs" data-cat="quran" data-i18n="library.tabSurahs">Sureler</button>
                 </div>
 
                 <div class="library-list" id="libraryGrid">
                     <!-- Injected via JS -->
+                </div>
+            </section>
+        </div>
+
+        <!-- =================== QURAN SURAH VIEW =================== -->
+        <div id="quranSurahView" class="view hidden">
+            <header class="glass-header">
+                <button class="icon-btn backBtn" data-target="quranView"><span class="material-icons-outlined">arrow_back</span></button>
+                <h1 id="quranSurahTitle" class="quran-surah-header-title" data-i18n="quran.title">Kur'an-ı Kerim</h1>
+                <button type="button" class="icon-btn" id="quranReaderMenuBtn" data-i18n="quran.readerMenuAria" data-i18n-attr="aria-label" aria-label="Okuma seçenekleri" aria-expanded="false" aria-controls="quranReaderDrawerPanel">
+                    <span class="material-icons-outlined">menu</span>
+                </button>
+            </header>
+
+            <div id="quranReaderDrawer" class="quran-reader-drawer" aria-hidden="true">
+                <button type="button" class="quran-reader-drawer__backdrop" id="quranReaderDrawerBackdrop" aria-label="Kapat" tabindex="-1"></button>
+                <aside class="quran-reader-drawer__panel" id="quranReaderDrawerPanel" role="dialog" aria-modal="true" aria-labelledby="quranReaderDrawerTitle">
+                    <button type="button" class="quran-reader-drawer__help-toggle" id="quranReaderHelpToggle" aria-expanded="false" aria-controls="quranReaderHelpPanel" data-i18n="quran.guideToggleAria" data-i18n-attr="aria-label">
+                        <span class="quran-reader-drawer__help-toggle-main">
+                            <span class="material-icons-outlined" aria-hidden="true">help_outline</span>
+                            <span data-i18n="quran.guideTitle">Nasıl kullanılır?</span>
+                        </span>
+                        <span class="material-icons-outlined quran-reader-drawer__help-chevron" aria-hidden="true">expand_more</span>
+                    </button>
+                    <div id="quranReaderHelpPanel" class="quran-reader-drawer__help" hidden>
+                        <ul class="quran-reader-drawer__guide-list">
+                            <li data-i18n="quran.guideOpenLibrary">Keşfet → Sureler sekmesinden Kur'an'a girin; sure arayın veya Favoriler sekmesine göz atın.</li>
+                            <li data-i18n="quran.guideReadSurah">Bir sureye girerek ayetleri okuyun; cüz geçişleri listede gösterilir.</li>
+                            <li id="quranGuideMealSelect" hidden>Sayfanın üstünden meal kaynağını seçin.</li>
+                            <li data-i18n="quran.guideReadMode">Bu menüden görünümü değiştirin: meal + Arapça, okunuş + Arapça veya sadece Arapça.</li>
+                            <li data-i18n="quran.guideGoto">Sure ve ayet numarası yazarak doğrudan istediğiniz ayete gidin.</li>
+                            <li data-i18n="quran.guideTapExpand">Ayete kısa dokunun; büyük kartta okuyun, dışarı dokunarak kapatın.</li>
+                            <li id="quranGuideHoldTafsir" data-i18n="quran.guideHoldTafsir">Ayete basılı tutun; Türkçe tefsir kaynaklarından birini harici sitede açın.</li>
+                            <li data-i18n="quran.guideFavorite">Ayet kartındaki yıldıza dokunarak favoriye ekleyin; Favoriler sekmesinden tekrar açın.</li>
+                            <li data-i18n="quran.guideAddFolder">Zikir klasörüne ekle ile ayetleri klasörünüze kaydedin; en fazla üç ayet numarası yazabilirsiniz.</li>
+                            <li data-i18n="quran.guideCounterLayout">Kayıt görünümü ve sayaç düzeni seçin: klasik, kompakt veya sadece ayet.</li>
+                        </ul>
+                    </div>
+                    <h2 id="quranReaderDrawerTitle" class="quran-reader-drawer__title" data-i18n="quran.gotoTitle">Ayet ara</h2>
+                    <form id="quranAyahGotoForm" class="quran-ayah-goto" novalidate>
+                        <div class="quran-ayah-goto__fields">
+                            <div class="form-group quran-ayah-goto__field">
+                                <label for="quranGotoSurahInput" data-i18n="quran.gotoSurah">Sure (no veya ad)</label>
+                                <input type="text" id="quranGotoSurahInput" class="quran-ayah-goto__input" inputmode="search" data-i18n="quran.gotoSurahPlaceholder" data-i18n-placeholder placeholder="İsim veya numara" autocomplete="off" autocapitalize="off" spellcheck="false" />
+                            </div>
+                            <div class="form-group quran-ayah-goto__field">
+                                <label for="quranGotoAyahInput" data-i18n="quran.gotoAyah">Ayet</label>
+                                <input type="number" id="quranGotoAyahInput" class="quran-ayah-goto__input" min="1" inputmode="numeric" data-i18n="quran.gotoAyahPlaceholder" data-i18n-placeholder placeholder="1" autocomplete="off" />
+                            </div>
+                        </div>
+                        <p id="quranGotoError" class="quran-ayah-goto__error" hidden role="alert"></p>
+                        <button type="submit" class="primary-btn quran-ayah-goto__btn" data-i18n="quran.gotoBtn">Git</button>
+                    </form>
+                    <button type="button" class="quran-drawer-folder-toggle" id="quranDrawerFolderToggle" aria-expanded="false" aria-controls="quranDrawerFolderPanel">
+                        <span data-i18n="quran.addToFolder">Zikir klasörüne ekle</span>
+                        <span class="material-icons-outlined" aria-hidden="true">expand_more</span>
+                    </button>
+                    <div id="quranDrawerFolderPanel" class="quran-drawer-folder" hidden>
+                        <div class="quran-drawer-folder__form">
+                            <div class="form-group quran-ayah-goto__field">
+                                <label for="quranDrawerFolderSurahInput" data-i18n="quran.gotoSurah">Sure (no veya ad)</label>
+                                <input type="text" id="quranDrawerFolderSurahInput" class="quran-ayah-goto__input" inputmode="search" data-i18n="quran.gotoSurahPlaceholder" data-i18n-placeholder placeholder="İsim veya numara" autocomplete="off" autocapitalize="off" spellcheck="false" />
+                            </div>
+                            <div class="form-group">
+                                <label for="quranDrawerFolderAyahsInput" data-i18n="quran.folderAddAyahsLabel">Ayetler (en fazla 3, virgülle)</label>
+                                <input type="text" id="quranDrawerFolderAyahsInput" class="quran-ayah-goto__input" inputmode="numeric" data-i18n="quran.folderAddAyahsPlaceholder" data-i18n-placeholder placeholder="Örn: 1, 3, 5" autocomplete="off" autocapitalize="off" spellcheck="false" />
+                                <p class="quran-drawer-folder__hint" data-i18n="quran.folderAddAyahsHint">Yalnızca yazdığınız ayet numaraları eklenir (aralık değil).</p>
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="quran.folderAddModeLabel">Kayıt görünümü</label>
+                                <div class="quran-folder-add__modes" id="quranDrawerFolderModeList" role="radiogroup">
+                                    <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-read-mode="meal-ar" role="radio" aria-checked="true">
+                                        <span class="quran-read-mode-option__label" data-i18n="quran.readModeMealAr">Meal + Arapça</span>
+                                    </button>
+                                    <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-read-mode="translit-ar" role="radio" aria-checked="false">
+                                        <span class="quran-read-mode-option__label" data-i18n="quran.readModeTranslitAr">Okunuş + Arapça</span>
+                                    </button>
+                                    <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-read-mode="ar-only" role="radio" aria-checked="false">
+                                        <span class="quran-read-mode-option__label" data-i18n="quran.readModeArOnly">Sadece Arapça</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="quran.folderAddCounterLayoutLabel">Sayaç görünümü</label>
+                                <div class="quran-folder-add__modes" id="quranDrawerFolderLayoutList" role="radiogroup">
+                                    <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-counter-layout="classic" role="radio" aria-checked="true">
+                                        <span class="quran-read-mode-option__label" data-i18n="quran.folderAddCounterClassic">Klasik</span>
+                                        <span class="quran-read-mode-option__desc" data-i18n="quran.folderAddCounterClassicDesc">Ayetler için kaydırın, büyük sayaç</span>
+                                    </button>
+                                    <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-counter-layout="compact" role="radio" aria-checked="false">
+                                        <span class="quran-read-mode-option__label" data-i18n="quran.folderAddCounterCompact">Kompakt</span>
+                                        <span class="quran-read-mode-option__desc" data-i18n="quran.folderAddCounterCompactDesc">Altta küçük sayaç, üstte ayetler</span>
+                                    </button>
+                                    <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-counter-layout="text-only" role="radio" aria-checked="false">
+                                        <span class="quran-read-mode-option__label" data-i18n="quran.folderAddCounterTextOnly">Sadece ayet</span>
+                                        <span class="quran-read-mode-option__desc" data-i18n="quran.folderAddCounterTextOnlyDesc">Tam ekran ayet, dokunarak say</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="quranDrawerFolderDestSelect" data-i18n="quran.folderPickerTitle">Klasör seçin</label>
+                                <select id="quranDrawerFolderDestSelect"></select>
+                            </div>
+                            <p id="quranDrawerFolderError" class="quran-folder-add__error" hidden role="alert"></p>
+                            <button type="button" class="primary-btn quran-drawer-folder__save" id="quranDrawerFolderSaveBtn" data-i18n="quran.folderAddConfirm">Kaydet</button>
+                        </div>
+                    </div>
+                    <h2 id="quranReaderReadModeTitle" class="quran-reader-drawer__title quran-reader-drawer__title--section" data-i18n="quran.readModeTitle">Görünüm</h2>
+                    <div class="quran-read-mode-list" id="quranReadModeList" role="radiogroup" aria-labelledby="quranReaderReadModeTitle">
+                        <button type="button" class="quran-read-mode-option" data-read-mode="meal-ar" role="radio" aria-checked="true">
+                            <span class="quran-read-mode-option__label" data-i18n="quran.readModeMealAr">Meal + Arapça</span>
+                            <span class="quran-read-mode-option__desc" data-i18n="quran.readModeMealArDesc">Arapça metin ve Türkçe meal</span>
+                        </button>
+                        <button type="button" class="quran-read-mode-option" data-read-mode="translit-ar" role="radio" aria-checked="false">
+                            <span class="quran-read-mode-option__label" data-i18n="quran.readModeTranslitAr">Okunuş + Arapça</span>
+                            <span class="quran-read-mode-option__desc" data-i18n="quran.readModeTranslitArDesc">Meal kapalı; Arapça altında Türkçe latin okunuş</span>
+                        </button>
+                        <button type="button" class="quran-read-mode-option" data-read-mode="ar-only" role="radio" aria-checked="false">
+                            <span class="quran-read-mode-option__label" data-i18n="quran.readModeArOnly">Sadece Arapça</span>
+                            <span class="quran-read-mode-option__desc" data-i18n="quran.readModeArOnlyDesc">Yalnızca Arapça metin</span>
+                        </button>
+                    </div>
+                </aside>
+            </div>
+
+            <section class="main-content scrollable">
+                <div class="form-group quran-meal-picker" id="quranMealPickerWrap" style="margin-top: 0.75rem;">
+                    <label for="quranMealSelect" data-i18n="quran.mealLabel">Meal</label>
+                    <select id="quranMealSelect" class="quran-meal-select"></select>
+                </div>
+                <p id="quranSurahLoading" class="quran-surah-loading" hidden data-i18n="quran.loading">Yükleniyor…</p>
+                <div id="quranAyahList" class="quran-ayah-list"></div>
+            </section>
+
+            <div id="quranTafsirBridgeOverlay" class="quran-tafsir-bridge" hidden aria-hidden="true">
+                <button type="button" class="quran-tafsir-bridge__backdrop" id="quranTafsirBridgeBackdrop" data-i18n="quran.closeAria" data-i18n-attr="aria-label" aria-label="Kapat"></button>
+                <div class="quran-tafsir-bridge__sheet" role="dialog" aria-modal="true" aria-labelledby="quranTafsirBridgeTitle">
+                    <div class="quran-tafsir-bridge__head">
+                        <h2 id="quranTafsirBridgeTitle" class="quran-tafsir-bridge__title" data-i18n="quran.tafsirBridgeTitle">Tefsir kaynakları</h2>
+                        <span id="quranTafsirBridgeRef" class="quran-tafsir-bridge__ref" aria-hidden="true"></span>
+                    </div>
+                    <p class="quran-tafsir-bridge__hint" data-i18n="quran.tafsirBridgeHint">Kaynak seçin; sitede bu ayetin Türkçe tefsiri açılır.</p>
+                    <div id="quranTafsirBridgeList" class="quran-tafsir-bridge__list"></div>
+                </div>
+            </div>
+
+            <div id="quranAyahExpandOverlay" class="quran-ayah-expand" hidden aria-hidden="true">
+                <button type="button" class="quran-ayah-expand__backdrop" id="quranAyahExpandBackdrop" data-i18n="quran.expandCloseAria" data-i18n-attr="aria-label" aria-label="Kapat"></button>
+                <div id="quranAyahExpandCard" class="quran-ayah-expand__card" role="dialog" aria-modal="true" aria-labelledby="quranAyahExpandRef">
+                    <p id="quranAyahExpandRef" class="quran-ayah-expand__ref"></p>
+                    <p id="quranAyahExpandBism" class="quran-ayah-expand__bism arabic-text" dir="rtl" lang="ar" hidden></p>
+                    <p id="quranAyahExpandAr" class="quran-ayah-expand__ar arabic-text" dir="rtl" lang="ar"></p>
+                    <p id="quranAyahExpandTr" class="quran-ayah-expand__tr" hidden></p>
+                    <p id="quranAyahExpandLat" class="quran-ayah-expand__lat" hidden></p>
+                    <p class="quran-ayah-expand__hint" data-i18n="quran.ayahExpandSwipeHint">Önceki veya sonraki ayet için sola veya sağa kaydırın</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================== QURAN VIEW =================== -->
+        <div id="quranView" class="view hidden">
+            <header class="glass-header">
+                <button class="icon-btn backBtn" data-target="libraryView"><span class="material-icons-outlined">arrow_back</span></button>
+                <h1 data-i18n="quran.title">Kur'an-ı Kerim</h1>
+                <div style="width: 36px;"></div>
+            </header>
+
+            <section class="main-content scrollable">
+                <div class="stats-tabs" id="quranViewTabs">
+                    <button type="button" class="tab-btn active" data-quran-tab="surahs" data-i18n="quran.tabSurahs">Sureler</button>
+                    <button type="button" class="tab-btn" data-quran-tab="favorites" data-i18n="quran.tabFavorites">Favoriler</button>
+                </div>
+                <div id="quranSurahsPanel">
+                    <div class="form-group" style="margin-top: 0.75rem;">
+                        <label data-i18n="quran.search">Ara</label>
+                        <input type="text" id="quranSearchInput" data-i18n="quran.searchPlaceholder" data-i18n-placeholder placeholder="Sure adı veya numarası…" autocomplete="off" />
+                    </div>
+                    <div class="quran-surah-list" id="quranSurahList" role="list"></div>
+                </div>
+                <div id="quranFavoritesPanel" hidden>
+                    <p id="quranFavoritesLoading" class="quran-surah-loading" hidden data-i18n="quran.loading">Yükleniyor…</p>
+                    <div class="quran-favorites-list" id="quranFavoritesList" role="list"></div>
                 </div>
             </section>
         </div>
@@ -641,9 +910,10 @@
                     <span class="material-icons-outlined">verified</span> Onaylı Kaynak
                 </div>
                 <h3 id="libDetailName" class="lib-detail-name">-</h3>
-                <p id="libDetailMeaning" class="lib-detail-meaning"></p>
+                <p id="libDetailArabic" class="lib-detail-arabic zikir-arabic" dir="rtl" lang="ar" hidden></p>
+                <p id="libDetailMeaning" class="lib-detail-meaning" hidden></p>
                 
-                <div class="form-group lib-detail-block">
+                <div class="form-group lib-detail-block" id="libDetailContextWrap">
                     <label id="libDetailContextLabel">Fazileti / Okuma durumu</label>
                     <p id="libDetailContext"></p>
                 </div>

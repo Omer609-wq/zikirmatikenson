@@ -1,0 +1,455 @@
+{
+  "mealId": "diyanet",
+  "n": 21,
+  "ayahCount": 112,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "İnsanların hesap görme zamanı yaklaştı, fakat onlar hala habersiz, hakdan yüz çeviriyorlar."
+    },
+    {
+      "n": 2,
+      "tr": "Rablerinden kendilerine gelen her yeni ihtarı mutlaka, gönülleri gaflet içinde eğlenerek dinlerler. Zulmedenler, gizli toplantılarında: \"Bu zat, sizin gibi bir insandan başka bir şey midir? Siz, göz göre göre sihre mi uyarsınız?\" diye konuşurlar."
+    },
+    {
+      "n": 3,
+      "tr": "Rablerinden kendilerine gelen her yeni ihtarı mutlaka, gönülleri gaflet içinde eğlenerek dinlerler. Zulmedenler, gizli toplantılarında: \"Bu zat, sizin gibi bir insandan başka bir şey midir? Siz, göz göre göre sihre mi uyarsınız?\" diye konuşurlar."
+    },
+    {
+      "n": 4,
+      "tr": "Peygamber: \"Benim Rabbim gökte ve yerde söyleneni bilir. O, işitendir, bilendir\" dedi."
+    },
+    {
+      "n": 5,
+      "tr": "Onlar: \"Hayır; bunlar karışık rüyalardır\", \"Hayır; onu uydurmuştur\", \"Hayır; o şairdir\", \"Haydi önceki peygamberler gibi o da bize bir mucize getirsin\" dediler."
+    },
+    {
+      "n": 6,
+      "tr": "Onlardan önce yoketmiş olduğumuz kasabalar halkı inanmadılar, bunlar mı inanacaklar?"
+    },
+    {
+      "n": 7,
+      "tr": "Senden önce de, kendilerine vahyettiğimiz adamlar gönderdik. Bilmiyorsanız kitablılara sorun."
+    },
+    {
+      "n": 8,
+      "tr": "Biz onları yemek yemez birer ceset kılmadık ve onlar ölümsüz de değillerdi."
+    },
+    {
+      "n": 9,
+      "tr": "Sonra Biz onlara verdiğimiz sözü yerine getirdik, kendilerini ve dilediklerimizi kurtardık; aşırı gidenleri ise yok ettik."
+    },
+    {
+      "n": 10,
+      "tr": "And olsun ki, size şerefiniz ve öğüt veren bir Kitap indirdik; akletmiyor musunuz?"
+    },
+    {
+      "n": 11,
+      "tr": "Halkı zalim olan nice kasabaları kırıp geçirdik ve onlardan sonra başka milletler varettik."
+    },
+    {
+      "n": 12,
+      "tr": "Onlar bizim baskınımızı hissettiklerinde, oradan kaçmağa koyuluyorlardı."
+    },
+    {
+      "n": 13,
+      "tr": "\"Koşup kaçmayın; size nimet verilen yere, yurdlarınıza dönün, elbette sorguya çekileceksiniz\" dedik."
+    },
+    {
+      "n": 14,
+      "tr": "\"Vay başımıza gelenlere! Doğrusu biz haksızlık yapmış kimseleriz\" dediler."
+    },
+    {
+      "n": 15,
+      "tr": "Biz onları biçilmiş ot ve bir yığın kül haline getirinceye kadar haykırmaları devam etti."
+    },
+    {
+      "n": 16,
+      "tr": "Biz gökleri, yeri ve ikisinin arasındakileri oyun olsun diye yaratmadık."
+    },
+    {
+      "n": 17,
+      "tr": "Eğlenme dileseydik, bunu yapacak olsaydık, şanımıza uygun şekilde yapardık; ama yapmayız."
+    },
+    {
+      "n": 18,
+      "tr": "Gerçeği batılın başına çarparız ve onun beynini parçalar; böylece batıl ortadan kalkar. Allah'a yakıştırdığınız vasıflardan ötürü yazıklar olsun size!"
+    },
+    {
+      "n": 19,
+      "tr": "Göklerde ve yerde ne varsa O'nundur. Katında olanlar O'na kulluk etmekten çekinmezler ve usanmazlar."
+    },
+    {
+      "n": 20,
+      "tr": "Gece ve gündüz, bıkmadan tesbih ederler."
+    },
+    {
+      "n": 21,
+      "tr": "Yeryüzünde edindikleri tanrılar mı, onlar mı ölüleri diriltecekler?"
+    },
+    {
+      "n": 22,
+      "tr": "Eğer yerle gökte Allah'tan başka tanrılar olsaydı, ikisi de bozulurdu. Arşın Rabbi olan Allah, onların vasıflandırdıklarından münezzehtir."
+    },
+    {
+      "n": 23,
+      "tr": "O, yaptığından sorumlu değildir, onlar ise sorumlu tutulacaklardır."
+    },
+    {
+      "n": 24,
+      "tr": "O'nu bırakıp tanrılar mı edindiler? De ki: \"Kesin delilinizi getirin. İşte benim ve ümmetimin Kitap'ı ve senden öncekilerin kitapları.\" Hayır; onların çoğu gerçeği bilmez de yüz çevirirler."
+    },
+    {
+      "n": 25,
+      "tr": "Senden önce gönderdiğimiz her peygambere: \"Benden başka tanrı yoktur, Bana kulluk edin\" diye vahyetmişizdir."
+    },
+    {
+      "n": 26,
+      "tr": "\"Rahman çocuk edindi\" dediler. Haşa; hayır, melekler şerefli kılınmış kullardır."
+    },
+    {
+      "n": 27,
+      "tr": "Allah'tan önce söz söyleyemezler; ancak O'nun emri üzerine iş işlerler."
+    },
+    {
+      "n": 28,
+      "tr": "Allah, onların yaptıklarını ve yapmakta olduklarını bilir. Onlar Allah'ın hoşnut olduğu kimseden başkasına şefaat edemezler; O'nun korkusundan titrerler."
+    },
+    {
+      "n": 29,
+      "tr": "Bunlar içinde kim \"Ben, Allah'tan başka bir tanrıyım\" derse, işte onu cehennemle cezalandırırız. Zulmedenlerin cezasını böyle veririz."
+    },
+    {
+      "n": 30,
+      "tr": "İnkar edenler, gökler ve yer yapışıkken onları ayırdığımızı ve bütün canlıları sudan meydana getirdiğimizi bilmezler mi? İnanmıyorlar mı?"
+    },
+    {
+      "n": 31,
+      "tr": "Yeryüzüne, insanlar sarsılmasın diye sabit dağlar yerleştirdik; rahat gidebilsinler diye aralarında geniş yollar varettik."
+    },
+    {
+      "n": 32,
+      "tr": "Göğü karışıklıktan korunmuş bir tavan kıldık; oysa onlar bundaki delillerden yüz çeviriyorlar."
+    },
+    {
+      "n": 33,
+      "tr": "Geceyi ve gündüzü, güneşi ve ayı yaratan O'dur. Her biri bir yörüngede yürür."
+    },
+    {
+      "n": 34,
+      "tr": "Senden önce de hiçbir insanı ölümsüz kılmadık, sen ölürsün de onlar baki kalır mı?"
+    },
+    {
+      "n": 35,
+      "tr": "Her can ölümü tadacaktır. Bir imtihan olarak size iyilik ve kötülük veririz. Sonunda Bize dönersiniz."
+    },
+    {
+      "n": 36,
+      "tr": "İnkarcılar seni gördükleri zaman, şüphesiz, seni alaya almaktan başka bir şey yapmazlar. \"Sizin tanrılarınızı diline dolayan bu mudur?\" derler ve Rahman'ın Kitabını işte onlar inkar ederler."
+    },
+    {
+      "n": 37,
+      "tr": "İnsan aceleci olarak yaratılmıştır. Size ayetlerimi göstereceğim, bunu Benden acele istemeyin."
+    },
+    {
+      "n": 38,
+      "tr": "\"Doğru sözlü iseniz bildirin bu tehdit ne zamandır?\" derler."
+    },
+    {
+      "n": 39,
+      "tr": "Bu kafirler, ateşi yüzlerinden ve sırtlarından menedemeyecekleri ve yardım da göremiyecekleri zamanı keşke bilseler."
+    },
+    {
+      "n": 40,
+      "tr": "Belki aniden gelecek de onları şaşırtacaktır. Artık onu geri çeviremezler; kendileri de ertelenmez."
+    },
+    {
+      "n": 41,
+      "tr": "And olsun ki, senden önce birçok peygamber alaya alınmıştı da, alaya alanları, eğlendikleri şey mahvetmişti."
+    },
+    {
+      "n": 42,
+      "tr": "De ki: \"Geceleyin ve gündüzün sizi Rahman'dan kim koruyabilir?\" Ama onlar Rablerinin Kitabından yüz çevirmektedirler."
+    },
+    {
+      "n": 43,
+      "tr": "Yoksa kendilerini bize karşı savunacak tanrıları mı var? O tanrılar kendilerine bile yardım edemezler. Katımızdan da dostluk görmezler."
+    },
+    {
+      "n": 44,
+      "tr": "Biz bunlara ve babalarına geçimlikler verdik de ömürleri uzadı; şimdi memleketlerini her yandan eksilttiğimizi görmüyorlar mı? Üstün gelen onlar mıdır?"
+    },
+    {
+      "n": 45,
+      "tr": "De ki: \"Ben ancak sizi vahy ile uyarıyorum\" Uyarıldıkları zaman, sağırlar çağrıyı duymazlar."
+    },
+    {
+      "n": 46,
+      "tr": "Rabbinin azabından onlara bir esinti dokunsa: \"Vah bize! Doğrusu biz haksızdık\" derler."
+    },
+    {
+      "n": 47,
+      "tr": "Kıyamet günü doğru teraziler kurarız; hiçbir kimse hiçbir haksızlığa uğratılmaz. Hardal tanesi kadar olsa bile yapılanı ortaya koyarız. Hesap gören olarak Biz yeteriz."
+    },
+    {
+      "n": 48,
+      "tr": "And olsun ki, Musa ve Harun'a eğriyi doğrudan ayıran Kitap'ı sakınanlar için ışık ve öğüt olarak verdik."
+    },
+    {
+      "n": 49,
+      "tr": "Onlar görmedikleri halde Rablerinden korkarlar; kıyamet saatinden de titrerler."
+    },
+    {
+      "n": 50,
+      "tr": "İşte bu, indirdiğimiz kutsal bir Kitap'dır. Siz mi onu inkar ediyorsunuz?"
+    },
+    {
+      "n": 51,
+      "tr": "And olsun ki, daha önce İbrahim'e de akla uygun olanı göstermiştik. Biz onu biliyorduk."
+    },
+    {
+      "n": 52,
+      "tr": "İbrahim, babasına ve milletine: \"Bu tapınıp durduğunuz heykeller nedir?\" demişti."
+    },
+    {
+      "n": 53,
+      "tr": "\"Babalarımızı onlara tapar bulduk\" demişlerdi."
+    },
+    {
+      "n": 54,
+      "tr": "İbrahim: \"And olsun ki sizler de babalarınız da apaçık bir sapıklık içindesiniz\" deyince:"
+    },
+    {
+      "n": 55,
+      "tr": "\"Sen bize gerçeği mi getirdin yoksa şaka mı ediyorsun?\" dediler."
+    },
+    {
+      "n": 56,
+      "tr": "O şöyle dedi: \"Hayır; Rabbiniz, göklerin ve yerin Rabbidir ki onları O yaratmıştır. Ben de buna şahidlik edenlerdenim.\""
+    },
+    {
+      "n": 57,
+      "tr": "\"Allah'a yemin ederim ki, siz ayrıldıktan sonra, putlarınıza bir tuzak kuracağım!\""
+    },
+    {
+      "n": 58,
+      "tr": "Hepsini paramparça edip, içlerinden büyüğünü ona başvursunlar diye, sağlam bıraktı."
+    },
+    {
+      "n": 59,
+      "tr": "Milleti: \"Tanrılarımıza bunu kim yaptı? Doğrusu o zalimlerden biridir\" dediler."
+    },
+    {
+      "n": 60,
+      "tr": "Bazıları: \"İbrahim denen bir gencin onları diline doladığını duymuştuk\" deyince, \"O halde bunların şahidlik edebilmeleri için onu halkın gözü önüne getirin\" dediler."
+    },
+    {
+      "n": 61,
+      "tr": "Bazıları: \"İbrahim denen bir gencin onları diline doladığını duymuştuk\" deyince, \"O halde bunların şahidlik edebilmeleri için onu halkın gözü önüne getirin\" dediler."
+    },
+    {
+      "n": 62,
+      "tr": "İbrahim gelince, ona: \"Ey İbrahim, bunu tanrılarımıza sen mi yaptın?\" dediler."
+    },
+    {
+      "n": 63,
+      "tr": "İbrahim: \"Belki onu şu büyükleri yapmıştır, konuşabiliyorlarsa onlara sorun\" dedi."
+    },
+    {
+      "n": 64,
+      "tr": "Kendi kendilerine: \"Doğrusu siz haksızsınız\", sonra kafalarında olan eski inançlarına dönerek: \"Ey İbrahim! bunların konuşmayacağını, and olsun ki, bilirsin\" dediler."
+    },
+    {
+      "n": 65,
+      "tr": "Kendi kendilerine: \"Doğrusu siz haksızsınız\", sonra kafalarında olan eski inançlarına dönerek: \"Ey İbrahim! bunların konuşmayacağını, and olsun ki, bilirsin\" dediler."
+    },
+    {
+      "n": 66,
+      "tr": "İbrahim: \"O halde, Allah'ı bırakıp da size hiçbir fayda ve zarar veremeyecek olan putlara ne diye taparsınız? Size de, Allah'ı bırakıp taptıklarınıza da yazıklar olsun! Akletmiyor musunuz?\" dedi."
+    },
+    {
+      "n": 67,
+      "tr": "İbrahim: \"O halde, Allah'ı bırakıp da size hiçbir fayda ve zarar veremeyecek olan putlara ne diye taparsınız? Size de, Allah'ı bırakıp taptıklarınıza da yazıklar olsun! Akletmiyor musunuz?\" dedi."
+    },
+    {
+      "n": 68,
+      "tr": "Onlar: \"Bir şey yapacaksanız, şunu yakın da tanrılarınıza yardım edin\" dediler."
+    },
+    {
+      "n": 69,
+      "tr": "Biz: \"Ey ateş! İbrahim'e karşı serin ve zararsız ol\" dedik."
+    },
+    {
+      "n": 70,
+      "tr": "Ona düzen kurmak istediler, fakat Biz onları hüsrana uğrattık."
+    },
+    {
+      "n": 71,
+      "tr": "Onu da, Lut'u da, alemler için kutsal kıldığımız yere ulaştırıp kurtardık."
+    },
+    {
+      "n": 72,
+      "tr": "İbrahim'e, buna ilaveten İshak ve Yakub'u da verdik, her birini iyi kimseler kıldık."
+    },
+    {
+      "n": 73,
+      "tr": "Onları, buyruğumuz altında insanları doğru yola götüren önderler yaptık; onlara, iyi işler yapmayı, namaz kılmayı, zekat vermeyi vahyettik. Onlar, bize kulluk eden kimselerdi."
+    },
+    {
+      "n": 74,
+      "tr": "Lut'a da hüküm ve ilim verdik; onu, çirkin işler işleyen kasabadan kurtardık. Doğrusu onlar yoldan çıkmış kötü bir milletti."
+    },
+    {
+      "n": 75,
+      "tr": "Lut'u rahmetimizin içine aldık; doğrusu o iyilerdendi."
+    },
+    {
+      "n": 76,
+      "tr": "Nuh da daha önceleri Bize yalvarmıştı, onun duasını kabul edip, kendisini ve ailesini büyük sıkıntıdan kurtardık."
+    },
+    {
+      "n": 77,
+      "tr": "Ayetlerimizi yalanlayan millete karşı ona yardım ettik. Doğrusu onlar fena bir milletti, hepsini suda boğduk."
+    },
+    {
+      "n": 78,
+      "tr": "Davud ve Süleyman da milletin koyunlarının yayıldığı bir ekin hakkında hüküm veriyorlarken, Biz onların hükmüne şahiddik."
+    },
+    {
+      "n": 79,
+      "tr": "Süleyman'a bu meselenin hükmünü bildirmiştik; her birine hüküm ve ilim verdik. Davud ile beraber tesbih etsinler diye dağları ve kuşları buyruk altına aldık. Bunları Biz yapmıştık."
+    },
+    {
+      "n": 80,
+      "tr": "Ona, sizi savaşta korumak için zırh yapma sanatını öğrettik, artık şükreder misiniz?"
+    },
+    {
+      "n": 81,
+      "tr": "Bereketli kıldığımız yere doğru, Süleyman'ın emriyle yürüyen şiddetli rüzgarı, onun buyruğuna verdik. Biz herşeyi biliyorduk."
+    },
+    {
+      "n": 82,
+      "tr": "Dalgıçlık yapan ve bundan başka işler de gören şeytanlardan da onun buyruğu altına verdik. Onların hepsini gözetiyorduk."
+    },
+    {
+      "n": 83,
+      "tr": "Eyyub da: \"Başıma bir bela geldi, (Sana sığındım), Sen merhametlilerin merhametlisisin\" diye Rabbine nida etmişti."
+    },
+    {
+      "n": 84,
+      "tr": "Biz de onun duasını kabul etmiş ve başına gelenleri kaldırmıştık. Katımızdan bir rahmet ve kulluk edenlere bir hatıra olmak üzere ona tekrar ailesini ve kaybettikleriyle bir mislini daha vermiştik."
+    },
+    {
+      "n": 85,
+      "tr": "İsmail, İdris ve Zülkifl hakkında anlattığımızı da an; onların her biri sabredenlerdendi."
+    },
+    {
+      "n": 86,
+      "tr": "Onları rahmetimizin içine aldık; doğrusu onlar iyilerdendi."
+    },
+    {
+      "n": 87,
+      "tr": "Zünnun (Balık Sahibi; Yunus) hakkında söylediğimizi de an. O, öfkelenerek giderken, kendisini sıkıntıya sokmayacağımızı sanmıştı; fakat sonunda karanlıklar içinde: \"Senden başka tanrı yoktur, Sen münezzehsin, doğrusu ben haksızlık edenlerdenim\" diye seslenmişti."
+    },
+    {
+      "n": 88,
+      "tr": "Biz de ona cevap verip, onu üzüntüden kurtarmıştık. inananları böyle kurtarırız."
+    },
+    {
+      "n": 89,
+      "tr": "Zekeriya da: \"Rabbim! Beni tek Başıma bırakma, Sen varislerin en hayırlısısın\" diye nida etmişti."
+    },
+    {
+      "n": 90,
+      "tr": "Biz de ona icabet ederek, Yahya'yı bahşetmiş, eşini de doğum yapacak hale getirmiştik. Doğrusu onlar iyi işlerde yarışıyorlar, korkarak ve umarak Bize yalvarıyorlardı. Bize karşı gönülden saygı duyuyorlardı."
+    },
+    {
+      "n": 91,
+      "tr": "Mahrem yerini koruyan Meryem'e ruhumuzdan üflemiş, onu ve oğlunu, alemler için bir mucize kılmıştık."
+    },
+    {
+      "n": 92,
+      "tr": "Doğrusu tevhid dini olan Müslümanlık, bir tek din olarak sizin dininizdir ve Ben de Rabbinizim, artık Bana kulluk edin."
+    },
+    {
+      "n": 93,
+      "tr": "Ama insanlar, din konusunda aralarında bölüklere ayrıldılar, hepsi Bize döneceklerdir."
+    },
+    {
+      "n": 94,
+      "tr": "İnanmış olarak yararlı iş işleyenin ameli inkar edilmeyecektir. Biz onu yazmaktayız."
+    },
+    {
+      "n": 95,
+      "tr": "Yok ettiğimiz kasaba halkının ahirette ceza görmek üzere Bize dönmemesi imkansızdır."
+    },
+    {
+      "n": 96,
+      "tr": "Yecüc ve Mecüc'ün seddi yıkıldığı zaman her dere ve tepeden boşanırlar."
+    },
+    {
+      "n": 97,
+      "tr": "Gerçek vaad yaklaştığında, inkar edenlerin gözleri beleriverir: \"Vah bize! Bundan önce gaflet içindeydik, hem de zalimdik\" derler."
+    },
+    {
+      "n": 98,
+      "tr": "Siz ve Allah'tan başka taptıklarınız, cehennemin yakıtısınız; oraya gireceksiniz."
+    },
+    {
+      "n": 99,
+      "tr": "Eğer bunlar tanrı olsaydı cehenneme girmezlerdi; hepsi orada temelli kalacaktır."
+    },
+    {
+      "n": 100,
+      "tr": "Orada onlara ah etmek vardır; birşey de işitemezler."
+    },
+    {
+      "n": 101,
+      "tr": "Yaptıklarına karşılık katımızdan kendileri için iyi şeyler yazılmış olanlar, işte onlar cehennemden uzak tutulanlardır."
+    },
+    {
+      "n": 102,
+      "tr": "Cehennemin uğultusunu duymazlar. Canlarının istediği şeyler içinde temelli kalırlar."
+    },
+    {
+      "n": 103,
+      "tr": "En büyük korku bile onları üzmez; kendilerini melekler: \"Size söz verilen gün işte bugündür\" diye karşılarlar."
+    },
+    {
+      "n": 104,
+      "tr": "Göğü, kitap dürer gibi dürdüğümüz zaman, yaratmaya ilk başladığımız gibi katımızdan verilmiş bir söz olarak onu tekrar var edeceğiz. Doğrusu Biz yaparız."
+    },
+    {
+      "n": 105,
+      "tr": "And olsun ki, Tevrat'tan sonra Zebur'da da yeryüzüne ancak iyi kullarımın mirasçı olduğunu yazmıştık."
+    },
+    {
+      "n": 106,
+      "tr": "Doğrusu bu Kuran'da, kulluk eden kimselere bildiri vardır."
+    },
+    {
+      "n": 107,
+      "tr": "Biz seni ancak alemlere rahmet olarak gönderdik."
+    },
+    {
+      "n": 108,
+      "tr": "De ki: \"Doğrusu tanrınızın tek bir Tanrı olduğu bana şüphesiz vahyolundu. Artık müslüman olacak mısınız?\""
+    },
+    {
+      "n": 109,
+      "tr": "Eğer yüz çevirirlerse, de ki: \"Size düpedüz açıkladım; tehdit olunduğunuz şeyin yakın mı uzak mı olduğunu bilmem.\""
+    },
+    {
+      "n": 110,
+      "tr": "\"Doğrusu O, açığa vurulan sözü de bilir, gizlediklerinizi de bilir.\""
+    },
+    {
+      "n": 111,
+      "tr": "\"Bilmem; belki bu gecikme sizi denemek ve bir süreye kadar geçindirmek içindir.\""
+    },
+    {
+      "n": 112,
+      "tr": "Peygamber: \"Rabbim! Aramızda gerçekle hükmet, anlattıklarınıza karşı ancak Rahman olan Rabbimizden yardım istenir\" dedi."
+    }
+  ]
+}

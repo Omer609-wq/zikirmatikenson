@@ -1,0 +1,27 @@
+{
+  "mealId": "vakfi",
+  "n": 97,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Biz onu (Kur'an'ı) Kadir gecesinde indirdik."
+    },
+    {
+      "n": 2,
+      "tr": "Kadir gecesinin ne olduğunu sen bilir misin?"
+    },
+    {
+      "n": 3,
+      "tr": "Kadir gecesi, bin aydan hayırlıdır."
+    },
+    {
+      "n": 4,
+      "tr": "O gecede, Rablerinin izniyle melekler ve Ruh (Cebrail), her iş için iner dururlar."
+    },
+    {
+      "n": 5,
+      "tr": "O gece, esenlik doludur. Ta fecrin doğuşuna kadar."
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "mealId": "hamidullah",
+  "n": 1,
+  "ayahCount": 7,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Au nom d'Allah, le Tout Miséricordieux, le Très Miséricordieux."
+    },
+    {
+      "n": 2,
+      "tr": "Louange à Allah, Seigneur de l'univers."
+    },
+    {
+      "n": 3,
+      "tr": "Le Tout Miséricordieux, le Très Miséricordieux,"
+    },
+    {
+      "n": 4,
+      "tr": "Maître du Jour de la rétribution."
+    },
+    {
+      "n": 5,
+      "tr": "C'est Toi [Seul] que nous adorons, et c'est Toi [Seul] dont nous implorons secours."
+    },
+    {
+      "n": 6,
+      "tr": "Guide-nous dans le droit chemin,"
+    },
+    {
+      "n": 7,
+      "tr": "le chemin de ceux que Tu as comblés de faveurs, non pas de ceux qui ont encouru Ta colère, ni des égarés."
+    }
+  ]
+}

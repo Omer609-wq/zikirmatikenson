@@ -1,0 +1,35 @@
+{
+  "translitId": "translit-en",
+  "n": 107,
+  "ayahCount": 7,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Araayta allathee yukaththibu bialddeeni"
+    },
+    {
+      "n": 2,
+      "lat": "Fathalika allathee yaduAAAAu alyateema"
+    },
+    {
+      "n": 3,
+      "lat": "Wala yahuddu AAala taAAami almiskeeni"
+    },
+    {
+      "n": 4,
+      "lat": "Fawaylun lilmusalleena"
+    },
+    {
+      "n": 5,
+      "lat": "Allatheena hum AAan salatihim sahoona"
+    },
+    {
+      "n": 6,
+      "lat": "Allatheena hum yuraoona"
+    },
+    {
+      "n": 7,
+      "lat": "WayamnaAAoona almaAAoona"
+    }
+  ]
+}

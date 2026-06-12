@@ -1,0 +1,51 @@
+{
+  "mealId": "diyanet",
+  "n": 101,
+  "ayahCount": 11,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Gürültü koparacak olan"
+    },
+    {
+      "n": 2,
+      "tr": "Nedir o gürültü koparacak olan?"
+    },
+    {
+      "n": 3,
+      "tr": "O gürültü koparacak olanın ne olduğunu sen bilir misin?"
+    },
+    {
+      "n": 4,
+      "tr": "O gün insanlar, ateş etrafında çırpınıp dökülen pervaneye dönecekler."
+    },
+    {
+      "n": 5,
+      "tr": "Dağlar, atılmış renkli yüne benzeyecekler."
+    },
+    {
+      "n": 6,
+      "tr": "Ama tartıları ağır gelen kimse hoş bir hayat içinde olacaktır."
+    },
+    {
+      "n": 7,
+      "tr": "Ama tartıları ağır gelen kimse hoş bir hayat içinde olacaktır."
+    },
+    {
+      "n": 8,
+      "tr": "Tartıları hafif gelenler ise,"
+    },
+    {
+      "n": 9,
+      "tr": "Onların yeri bir çukurdur."
+    },
+    {
+      "n": 10,
+      "tr": "O çukurun ne olduğunu sen bilir misin?"
+    },
+    {
+      "n": 11,
+      "tr": "O, kızgın bir ateştir."
+    }
+  ]
+}

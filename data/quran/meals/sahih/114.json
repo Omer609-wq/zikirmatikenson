@@ -1,0 +1,31 @@
+{
+  "mealId": "sahih",
+  "n": 114,
+  "ayahCount": 6,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Say, \"I seek refuge in the Lord of mankind,"
+    },
+    {
+      "n": 2,
+      "tr": "The Sovereign of mankind."
+    },
+    {
+      "n": 3,
+      "tr": "The God of mankind,"
+    },
+    {
+      "n": 4,
+      "tr": "From the evil of the retreating whisperer -"
+    },
+    {
+      "n": 5,
+      "tr": "Who whispers [evil] into the breasts of mankind -"
+    },
+    {
+      "n": 6,
+      "tr": "From among the jinn and mankind.\""
+    }
+  ]
+}

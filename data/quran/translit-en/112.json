@@ -1,0 +1,23 @@
+{
+  "translitId": "translit-en",
+  "n": 112,
+  "ayahCount": 4,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Qul huwa Allahu ahadun"
+    },
+    {
+      "n": 2,
+      "lat": "Allahu alssamadu"
+    },
+    {
+      "n": 3,
+      "lat": "Lam yalid walam yooladu"
+    },
+    {
+      "n": 4,
+      "lat": "Walam yakun lahu kufuwan ahadun"
+    }
+  ]
+}

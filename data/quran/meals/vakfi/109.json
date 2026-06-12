@@ -1,0 +1,31 @@
+{
+  "mealId": "vakfi",
+  "n": 109,
+  "ayahCount": 6,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Ey Muhammed! De ki: \"Ey kafirler!"
+    },
+    {
+      "n": 2,
+      "tr": "\"Ben sizin taptıklarınıza tapmam.\""
+    },
+    {
+      "n": 3,
+      "tr": "\"Benim taptıgıma da sizler tapmazsınız.\""
+    },
+    {
+      "n": 4,
+      "tr": "\"Ben de sizin taptığınıza tapacak dağilim.\""
+    },
+    {
+      "n": 5,
+      "tr": "\"Benim taptığıma da sizler tapmıyorsunuz.\""
+    },
+    {
+      "n": 6,
+      "tr": "\"Sizin dininiz size, benim dinim banadır.\""
+    }
+  ]
+}

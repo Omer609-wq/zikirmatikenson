@@ -1,0 +1,227 @@
+{
+  "translitId": "translit-en",
+  "n": 54,
+  "ayahCount": 55,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Iqtarabati alssaAAatu wainshaqqa alqamaru"
+    },
+    {
+      "n": 2,
+      "lat": "Wain yaraw ayatan yuAAridoo wayaqooloo sihrun mustamirrun"
+    },
+    {
+      "n": 3,
+      "lat": "Wakaththaboo waittabaAAoo ahwaahum wakullu amrin mustaqirrun"
+    },
+    {
+      "n": 4,
+      "lat": "Walaqad jaahum mina alanbai ma feehi muzdajarun"
+    },
+    {
+      "n": 5,
+      "lat": "Hikmatun balighatun fama tughnee alnnuthuru"
+    },
+    {
+      "n": 6,
+      "lat": "Fatawalla AAanhum yawma yadAAu alddaAAi ila shayin nukurin"
+    },
+    {
+      "n": 7,
+      "lat": "KhushshaAAan absaruhum yakhrujoona mina alajdathi kaannahum jaradun muntashirun"
+    },
+    {
+      "n": 8,
+      "lat": "MuhtiAAeena ila alddaAAi yaqoolu alkafiroona hatha yawmun AAasirun"
+    },
+    {
+      "n": 9,
+      "lat": "Kaththabat qablahum qawmu noohin fakaththaboo AAabdana waqaloo majnoonun waizdujira"
+    },
+    {
+      "n": 10,
+      "lat": "FadaAAa rabbahu annee maghloobun faintasir"
+    },
+    {
+      "n": 11,
+      "lat": "Fafatahna abwaba alssamai bimain munhamirin"
+    },
+    {
+      "n": 12,
+      "lat": "Wafajjarna alarda AAuyoonan failtaqa almao AAala amrin qad qudira"
+    },
+    {
+      "n": 13,
+      "lat": "Wahamalnahu AAala thati alwahin wadusurin"
+    },
+    {
+      "n": 14,
+      "lat": "Tajree biaAAyunina jazaan liman kana kufira"
+    },
+    {
+      "n": 15,
+      "lat": "Walaqad taraknaha ayatan fahal min muddakirin"
+    },
+    {
+      "n": 16,
+      "lat": "Fakayfa kana AAathabee wanuthuri"
+    },
+    {
+      "n": 17,
+      "lat": "Walaqad yassarna alqurana lilththikri fahal min muddakirin"
+    },
+    {
+      "n": 18,
+      "lat": "Kaththabat AAadun fakayfa kana AAathabee wanuthuri"
+    },
+    {
+      "n": 19,
+      "lat": "Inna arsalna AAalayhim reehan sarsaran fee yawmi nahsin mustamirrin"
+    },
+    {
+      "n": 20,
+      "lat": "TanziAAu alnnasa kaannahum aAAjazu nakhlin munqaAAirin"
+    },
+    {
+      "n": 21,
+      "lat": "Fakayfa kana AAathabee wanuthuri"
+    },
+    {
+      "n": 22,
+      "lat": "Walaqad yassarna alqurana lilththikri fahal min muddakirin"
+    },
+    {
+      "n": 23,
+      "lat": "Kaththabat thamoodu bialnnuthuri"
+    },
+    {
+      "n": 24,
+      "lat": "Faqaloo abasharan minna wahidan nattabiAAuhu inna ithan lafee dalalin wasuAAurin"
+    },
+    {
+      "n": 25,
+      "lat": "Aolqiya alththikru AAalayhi min baynina bal huwa kaththabun ashirun"
+    },
+    {
+      "n": 26,
+      "lat": "SayaAAlamoona ghadan mani alkaththabu alashiru"
+    },
+    {
+      "n": 27,
+      "lat": "Inna mursiloo alnnaqati fitnatan lahum fairtaqibhum waistabir"
+    },
+    {
+      "n": 28,
+      "lat": "Wanabbihum anna almaa qismatun baynahum kullu shirbin muhtadarun"
+    },
+    {
+      "n": 29,
+      "lat": "Fanadaw sahibahum fataAAata faAAaqara"
+    },
+    {
+      "n": 30,
+      "lat": "Fakayfa kana AAathabee wanuthuri"
+    },
+    {
+      "n": 31,
+      "lat": "Inna arsalna AAalayhim sayhatan wahidatan fakanoo kahasheemi almuhtathiri"
+    },
+    {
+      "n": 32,
+      "lat": "Walaqad yassarna alqurana lilththikri fahal min muddakirin"
+    },
+    {
+      "n": 33,
+      "lat": "Kaththabat qawmu lootin bialnnuthuri"
+    },
+    {
+      "n": 34,
+      "lat": "Inna arsalna AAalayhim hasiban illa ala lootin najjaynahum bisaharin"
+    },
+    {
+      "n": 35,
+      "lat": "NiAAmatan min AAindina kathalika najzee man shakara"
+    },
+    {
+      "n": 36,
+      "lat": "Walaqad antharahum batshatana fatamaraw bialnnuthuri"
+    },
+    {
+      "n": 37,
+      "lat": "Walaqad rawadoohu AAan dayfihi fatamasna aAAyunahum fathooqoo AAathabee wanuthuri"
+    },
+    {
+      "n": 38,
+      "lat": "Walaqad sabbahahum bukratan AAathabun mustaqirrun"
+    },
+    {
+      "n": 39,
+      "lat": "Fathooqoo AAathabee wanuthuri"
+    },
+    {
+      "n": 40,
+      "lat": "Walaqad yassarna alqurana lilththikri fahal min muddakirin"
+    },
+    {
+      "n": 41,
+      "lat": "Walaqad jaa ala firAAawna alnnuthuru"
+    },
+    {
+      "n": 42,
+      "lat": "Kaththaboo biayatina kulliha faakhathnahum akhtha AAazeezin muqtadirin"
+    },
+    {
+      "n": 43,
+      "lat": "Akuffarukum khayrun min olaikum am lakum baraatun fee alzzuburi"
+    },
+    {
+      "n": 44,
+      "lat": "Am yaqooloona nahnu jameeAAun muntasirun"
+    },
+    {
+      "n": 45,
+      "lat": "Sayuhzamu aljamAAu wayuwalloona alddubura"
+    },
+    {
+      "n": 46,
+      "lat": "Bali alssaAAatu mawAAiduhum waalssaAAatu adha waamarru"
+    },
+    {
+      "n": 47,
+      "lat": "Inna almujrimeena fee dalalin wasuAAurin"
+    },
+    {
+      "n": 48,
+      "lat": "Yawma yushaboona fee alnnari AAala wujoohihim thooqoo massa saqara"
+    },
+    {
+      "n": 49,
+      "lat": "Inna kulla shayin khalaqnahu biqadarin"
+    },
+    {
+      "n": 50,
+      "lat": "Wama amruna illa wahidatun kalamhin bialbasari"
+    },
+    {
+      "n": 51,
+      "lat": "Walaqad ahlakna ashyaAAakum fahal min muddakirin"
+    },
+    {
+      "n": 52,
+      "lat": "Wakullu shayin faAAaloohu fee alzzuburi"
+    },
+    {
+      "n": 53,
+      "lat": "Wakullu sagheerin wakabeerin mustatarun"
+    },
+    {
+      "n": 54,
+      "lat": "Inna almuttaqeena fee jannatin wanaharin"
+    },
+    {
+      "n": 55,
+      "lat": "Fee maqAAadi sidqin AAinda maleekin muqtadirin"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "translitId": "translit-tr",
+  "n": 100,
+  "ayahCount": 11,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Vel`âdiyâti ḍabḥâ"
+    },
+    {
+      "n": 2,
+      "lat": "Felmûriyâti ḳadḥâ"
+    },
+    {
+      "n": 3,
+      "lat": "Felmügîrâti ṣubḥâ"
+    },
+    {
+      "n": 4,
+      "lat": "Feeŝerne bihî naḳ`â"
+    },
+    {
+      "n": 5,
+      "lat": "Fevesaṭne bihî cem`â"
+    },
+    {
+      "n": 6,
+      "lat": "İnne-l'insâne lirabbihî lekenûd"
+    },
+    {
+      "n": 7,
+      "lat": "Veinnehû `alâ ẕâlike leşehîd"
+    },
+    {
+      "n": 8,
+      "lat": "Veinnehû liḥubbi-lḫayri leşedîd"
+    },
+    {
+      "n": 9,
+      "lat": "Efelâ ya`lemü iẕâ bü`ŝira mâ fi-lḳubûr"
+    },
+    {
+      "n": 10,
+      "lat": "Veḥuṣṣile mâ fi-ṣṣudûr"
+    },
+    {
+      "n": 11,
+      "lat": "İnne rabbehüm bihim yevmeiẕil leḫabîr"
+    }
+  ]
+}

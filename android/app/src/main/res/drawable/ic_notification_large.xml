@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bildirim paneli: renkli kare kufi (uygulama ikonu ön planı) -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#0f2918" />
+            <corners android:radius="6dp" />
+        </shape>
+    </item>
+    <item
+        android:bottom="7dp"
+        android:left="5dp"
+        android:right="5dp"
+        android:top="4dp">
+        <bitmap
+            android:gravity="center"
+            android:src="@mipmap/ic_launcher_foreground" />
+    </item>
+</layer-list>

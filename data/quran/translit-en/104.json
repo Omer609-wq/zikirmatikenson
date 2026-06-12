@@ -1,0 +1,43 @@
+{
+  "translitId": "translit-en",
+  "n": 104,
+  "ayahCount": 9,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Waylun likulli humazatin lumazatin"
+    },
+    {
+      "n": 2,
+      "lat": "Allathee jamaAAa malan waAAaddadahu"
+    },
+    {
+      "n": 3,
+      "lat": "Yahsabu anna malahu akhladahu"
+    },
+    {
+      "n": 4,
+      "lat": "Kalla layunbathanna fee alhutamati"
+    },
+    {
+      "n": 5,
+      "lat": "Wama adraka ma alhutamatu"
+    },
+    {
+      "n": 6,
+      "lat": "Naru Allahi almooqadatu"
+    },
+    {
+      "n": 7,
+      "lat": "Allatee tattaliAAu AAala alafidati"
+    },
+    {
+      "n": 8,
+      "lat": "lnnaha AAalayhim musadatun"
+    },
+    {
+      "n": 9,
+      "lat": "Fee AAamadin mumaddadatin"
+    }
+  ]
+}

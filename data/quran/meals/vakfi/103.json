@@ -1,0 +1,19 @@
+{
+  "mealId": "vakfi",
+  "n": 103,
+  "ayahCount": 3,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Asra yemin ederim ki"
+    },
+    {
+      "n": 2,
+      "tr": "İnsan gerçekten ziyan içindedir."
+    },
+    {
+      "n": 3,
+      "tr": "Bundan ancak iman edip iyi ameller işleyenler, birbirlerine hakkı tavsiye edenler ve sabrı tavsiye edenler müstesnadır."
+    }
+  ]
+}

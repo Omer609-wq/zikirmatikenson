@@ -1,0 +1,31 @@
+{
+  "mealId": "hamidullah",
+  "n": 109,
+  "ayahCount": 6,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Dis: «O vous les infidèles!"
+    },
+    {
+      "n": 2,
+      "tr": "Je n'adore pas ce que vous adorez."
+    },
+    {
+      "n": 3,
+      "tr": "Et vous n'êtes pas adorateurs de ce que j'adore."
+    },
+    {
+      "n": 4,
+      "tr": "Je ne suis pas adorateur de ce que vous adorez."
+    },
+    {
+      "n": 5,
+      "tr": "Et vous n'êtes pas adorateurs de ce que j'adore."
+    },
+    {
+      "n": 6,
+      "tr": "A vous votre religion, et à moi ma religion»."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "translitId": "translit-en",
+  "n": 113,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Qul aAAoothu birabbi alfalaqi"
+    },
+    {
+      "n": 2,
+      "lat": "Min sharri ma khalaqa"
+    },
+    {
+      "n": 3,
+      "lat": "Wamin sharri ghasiqin itha waqaba"
+    },
+    {
+      "n": 4,
+      "lat": "Wamin sharri alnnaffathati fee alAAuqadi"
+    },
+    {
+      "n": 5,
+      "lat": "Wamin sharri hasidin itha hasada"
+    }
+  ]
+}

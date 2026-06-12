@@ -1,0 +1,83 @@
+{
+  "translitId": "translit-en",
+  "n": 82,
+  "ayahCount": 19,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Itha alssamao infatarat"
+    },
+    {
+      "n": 2,
+      "lat": "Waitha alkawakibu intatharat"
+    },
+    {
+      "n": 3,
+      "lat": "Waitha albiharu fujjirat"
+    },
+    {
+      "n": 4,
+      "lat": "Waitha alqubooru buAAthirat"
+    },
+    {
+      "n": 5,
+      "lat": "AAalimat nafsun ma qaddamat waakhkharat"
+    },
+    {
+      "n": 6,
+      "lat": "Ya ayyuha alinsanu ma gharraka birabbika alkareemi"
+    },
+    {
+      "n": 7,
+      "lat": "Allathee khalaqaka fasawwaka faAAadalaka"
+    },
+    {
+      "n": 8,
+      "lat": "Fee ayyi sooratin ma shaa rakkabaka"
+    },
+    {
+      "n": 9,
+      "lat": "Kalla bal tukaththiboona bialddeeni"
+    },
+    {
+      "n": 10,
+      "lat": "Wainna AAalaykum lahafitheena"
+    },
+    {
+      "n": 11,
+      "lat": "Kiraman katibeena"
+    },
+    {
+      "n": 12,
+      "lat": "YaAAlamoona ma tafAAaloona"
+    },
+    {
+      "n": 13,
+      "lat": "Inna alabrara lafee naAAeemin"
+    },
+    {
+      "n": 14,
+      "lat": "Wainna alfujjara lafee jaheemin"
+    },
+    {
+      "n": 15,
+      "lat": "Yaslawnaha yawma alddeeni"
+    },
+    {
+      "n": 16,
+      "lat": "Wama hum AAanha bighaibeena"
+    },
+    {
+      "n": 17,
+      "lat": "Wama adraka ma yawmu alddeeni"
+    },
+    {
+      "n": 18,
+      "lat": "Thumma ma adraka ma yawmu alddeeni"
+    },
+    {
+      "n": 19,
+      "lat": "Yawma la tamliku nafsun linafsin shayan waalamru yawmaithin lillahi"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "translitId": "translit-tr",
+  "n": 97,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "İnnâ enzelnâhü fî leyleti-lḳadr"
+    },
+    {
+      "n": 2,
+      "lat": "Vemâ edrâke mâ leyletü-lḳadr"
+    },
+    {
+      "n": 3,
+      "lat": "Leyletü-lḳadri ḫayrum min elfi şehr"
+    },
+    {
+      "n": 4,
+      "lat": "Tenezzelü-lmelâiketü verrûḥu fîhâ biiẕni rabbihim. Min külli emr"
+    },
+    {
+      "n": 5,
+      "lat": "Selâmün. Hiye ḥattâ maṭle`i-lfecr"
+    }
+  ]
+}

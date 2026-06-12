@@ -1,0 +1,27 @@
+{
+  "translitId": "translit-en",
+  "n": 97,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Inna anzalnahu fee laylati alqadri"
+    },
+    {
+      "n": 2,
+      "lat": "Wama adraka ma laylatu alqadri"
+    },
+    {
+      "n": 3,
+      "lat": "Laylatu alqadri khayrun min alfi shahrin"
+    },
+    {
+      "n": 4,
+      "lat": "Tanazzalu almalaikatu waalrroohu feeha biithni rabbihim min kulli amrin"
+    },
+    {
+      "n": 5,
+      "lat": "Salamun hiya hatta matlaAAi alfajri"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "translitId": "translit-tr",
+  "n": 109,
+  "ayahCount": 6,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Ḳul yâ eyyühe-lkâfirûn"
+    },
+    {
+      "n": 2,
+      "lat": "Lâ a`büdü mâ ta`büdûn"
+    },
+    {
+      "n": 3,
+      "lat": "Velâ entüm `âbidûne mâ a`büd"
+    },
+    {
+      "n": 4,
+      "lat": "Velâ ene `âbidüm mâ `abettüm"
+    },
+    {
+      "n": 5,
+      "lat": "Velâ entüm `âbidûne mâ a`büd"
+    },
+    {
+      "n": 6,
+      "lat": "Leküm dînüküm veliye dîn"
+    }
+  ]
+}

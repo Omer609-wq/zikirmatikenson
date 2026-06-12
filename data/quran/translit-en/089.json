@@ -1,0 +1,127 @@
+{
+  "translitId": "translit-en",
+  "n": 89,
+  "ayahCount": 30,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Waalfajri"
+    },
+    {
+      "n": 2,
+      "lat": "Walayalin AAashrin"
+    },
+    {
+      "n": 3,
+      "lat": "WaalshshafAAi waalwatri"
+    },
+    {
+      "n": 4,
+      "lat": "Waallayli itha yasri"
+    },
+    {
+      "n": 5,
+      "lat": "Hal fee thalika qasamun lithee hijrin"
+    },
+    {
+      "n": 6,
+      "lat": "Alam tara kayfa faAAala rabbuka biAAadin"
+    },
+    {
+      "n": 7,
+      "lat": "Irama thati alAAimadi"
+    },
+    {
+      "n": 8,
+      "lat": "Allatee lam yukhlaq mithluha fee albiladi"
+    },
+    {
+      "n": 9,
+      "lat": "Wathamooda allatheena jaboo alssakhra bialwadi"
+    },
+    {
+      "n": 10,
+      "lat": "WafirAAawna thee alawtadi"
+    },
+    {
+      "n": 11,
+      "lat": "Allatheena taghaw fee albiladi"
+    },
+    {
+      "n": 12,
+      "lat": "Faaktharoo feeha alfasada"
+    },
+    {
+      "n": 13,
+      "lat": "Fasabba AAalayhim rabbuka sawta AAathabin"
+    },
+    {
+      "n": 14,
+      "lat": "Inna rabbaka labialmirsadi"
+    },
+    {
+      "n": 15,
+      "lat": "Faamma alinsanu itha ma ibtalahu rabbuhu faakramahu wanaAAAAamahu fayaqoolu rabbee akramani"
+    },
+    {
+      "n": 16,
+      "lat": "Waamma itha ma ibtalahu faqadara AAalayhi rizqahu fayaqoolu rabbee ahanani"
+    },
+    {
+      "n": 17,
+      "lat": "Kalla bal la tukrimoona alyateema"
+    },
+    {
+      "n": 18,
+      "lat": "Wala tahaddoona AAala taAAami almiskeeni"
+    },
+    {
+      "n": 19,
+      "lat": "Watakuloona altturatha aklan lamman"
+    },
+    {
+      "n": 20,
+      "lat": "Watuhibboona almala hubban jamman"
+    },
+    {
+      "n": 21,
+      "lat": "Kalla itha dukkati alardu dakkan dakkan"
+    },
+    {
+      "n": 22,
+      "lat": "Wajaa rabbuka waalmalaku saffan saffan"
+    },
+    {
+      "n": 23,
+      "lat": "Wajeea yawmaithin bijahannama yawmaithin yatathakkaru alinsanu waanna lahu alththikra"
+    },
+    {
+      "n": 24,
+      "lat": "Yaqoolu ya laytanee qaddamtu lihayatee"
+    },
+    {
+      "n": 25,
+      "lat": "Fayawmaithin la yuAAaththibu AAathabahu ahadun"
+    },
+    {
+      "n": 26,
+      "lat": "Wala yoothiqu wathaqahu ahadun"
+    },
+    {
+      "n": 27,
+      "lat": "Ya ayyatuha alnnafsu almutmainnatu"
+    },
+    {
+      "n": 28,
+      "lat": "IrjiAAee ila rabbiki radiyatan mardiyyatan"
+    },
+    {
+      "n": 29,
+      "lat": "Faodkhulee fee AAibadee"
+    },
+    {
+      "n": 30,
+      "lat": "Waodkhulee jannatee"
+    }
+  ]
+}

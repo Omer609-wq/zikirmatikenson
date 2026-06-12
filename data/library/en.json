@@ -1,0 +1,247 @@
+[
+  {
+    "id": "lib_d_tuvalet_giris",
+    "name": "Allahumma inni a'udhu bika minal-khubthi wal-khaba'ith",
+    "meaning": "O Allah, I seek refuge in You from filth and foul creatures.",
+    "context": "Recite before entering a toilet, restroom, or similar private place; seeking Allah's protection is a sunnah.",
+    "keywords": "toilet restroom wc bathroom washroom entering hygiene"
+  },
+  {
+    "id": "lib_d_tuvalet_cikis",
+    "name": "Ghufranaka",
+    "meaning": "I ask Your forgiveness.",
+    "context": "Recite when leaving the toilet or restroom; asking for forgiveness is proper etiquette.",
+    "keywords": "toilet restroom wc leaving forgiveness"
+  },
+  {
+    "id": "lib_d_eve_giris",
+    "name": "Allahumma inni as'aluka khayral-mawliji wa khayral-makhraji",
+    "meaning": "O Allah, I ask You for the good of entering and the good of leaving.",
+    "context": "Recite when entering home, work, or as a guest through the door; asking good for entry and exit is a sunnah.",
+    "keywords": "home door entering guest workplace"
+  },
+  {
+    "id": "lib_d_yemek_once",
+    "name": "Bismillah",
+    "meaning": "In the name of Allah.",
+    "context": "Recite before eating; beginning with the basmala is for blessing and gratitude.",
+    "keywords": "food meal eating before start bismillah"
+  },
+  {
+    "id": "lib_d_yemek_sonra",
+    "name": "Alhamdulillahil-ladhi at'amana wa saqana",
+    "meaning": "Praise be to Allah who fed us and gave us drink.",
+    "context": "Recite after finishing a meal; thanking Allah who provided food and drink is a sunnah.",
+    "keywords": "food meal after thanks gratitude hamd"
+  },
+  {
+    "id": "lib_d_arac",
+    "name": "Subhanalladhi sakhkhara lana hadha",
+    "meaning": "Glory be to Him who subjected this to us.",
+    "context": "Recite when boarding a ride or vehicle (car, bus, etc.); remembering Allah on a journey is recommended.",
+    "keywords": "vehicle car bus travel journey ride transport"
+  },
+  {
+    "id": "lib_d_uyku",
+    "name": "Bismika Allahumma ahya wa amut",
+    "meaning": "In Your name, O Allah, I live and die (sleep).",
+    "context": "Recite when lying down to sleep; entrusting the night to Allah is a sunnah.",
+    "keywords": "sleep bed night before sleeping"
+  },
+  {
+    "id": "lib_d_uyaninca",
+    "name": "Alhamdulillahil-ladhi ahyana ba'da ma amatana wa ilayhin-nushur",
+    "meaning": "Praise be to Allah who gave us life after death-like sleep; to Him is the return.",
+    "context": "Recite when waking up in the morning; gratitude for sleep and starting the day with Allah.",
+    "keywords": "morning wake up waking gratitude sleep"
+  },
+  {
+    "id": "lib_d_evden_cikis",
+    "name": "Bismillahi tawakkaltu 'alallahi la hawla wa la quwwata illa billah",
+    "meaning": "In the name of Allah; I rely on Allah; there is no power except with Allah.",
+    "context": "Recite when leaving home, work, or a safe place; relying on Allah for the road and daily affairs.",
+    "keywords": "leaving home door work travel tawakkul daily"
+  },
+  {
+    "id": "lib_d_yeni_elbise",
+    "name": "Alhamdulillahil-ladhi kasani hadha wa ma kunna muqtadirin",
+    "meaning": "Praise be to Allah who clothed me with this though I was unable to do it.",
+    "context": "Recite when wearing new clothes or a garment; gratitude for the blessing and mindfulness against waste.",
+    "keywords": "clothes clothing new garment dress wearing"
+  },
+  {
+    "id": "lib_d_ayna",
+    "name": "Allahumma kama hassanta khalqi fahassin khuluqi",
+    "meaning": "O Allah, as You made my form beautiful, make my character beautiful.",
+    "context": "Recite when looking in a mirror; gratitude for one's appearance and asking for good character.",
+    "keywords": "mirror reflection face character gratitude"
+  },
+  {
+    "id": "lib_d_cami_giris",
+    "name": "Allahummaftah li abwaba rahmatik",
+    "meaning": "O Allah, open for me the doors of Your mercy.",
+    "context": "Recite when entering a mosque; with respect for the place of worship and hope in Allah's mercy.",
+    "keywords": "mosque masjid entering prayer worship"
+  },
+  {
+    "id": "lib_d_cami_cikis",
+    "name": "Allahumma inni as'aluka min fadlik",
+    "meaning": "O Allah, I ask You of Your bounty.",
+    "context": "Recite when leaving a mosque; asking for goodness and forgiveness after worship.",
+    "keywords": "mosque masjid leaving prayer"
+  },
+  {
+    "id": "lib_d_kabir",
+    "name": "Assalamu 'alaykum ahla di-yarin minal-mu'minina wal-muslimin",
+    "meaning": "Peace be upon you, O people of this abode, believers and Muslims.",
+    "context": "Recite when entering a graveyard; greeting the deceased and remembering the hereafter.",
+    "keywords": "grave cemetery burial death visit hereafter"
+  },
+  {
+    "id": "lib_d_kotu_ruya",
+    "name": "Na'udhu billahi min sharri hadha wa min sharri ma fihi",
+    "meaning": "I seek refuge in Allah from the evil of this and what it contains.",
+    "context": "Recite after waking from a disturbing dream; seeking refuge in Allah from evil.",
+    "keywords": "dream nightmare sleep fear refuge"
+  },
+  {
+    "id": "lib_d_olum_haberi",
+    "name": "Inna lillahi wa inna ilayhi raji'un. Allahumma'jurni fi musibati wa-khluf li khayran minha",
+    "meaning": "We belong to Allah and to Him we return. O Allah, reward me in my affliction and replace it with something better.",
+    "context": "Recite upon hearing of death or a great loss; patience and asking reward and good outcome (verse and supplication together).",
+    "keywords": "death loss grief patience calamity condolence"
+  },
+  {
+    "id": "lib_d_yagmur_isteme",
+    "name": "Allahumma asqina ghaythan nafi'an",
+    "meaning": "O Allah, send down upon us a beneficial rain.",
+    "context": "Recite when rain is needed; traditionally made facing the qibla when asking for beneficial rain (according to sunnah etiquette).",
+    "keywords": "rain drought prayer istisqa water farm"
+  },
+  {
+    "id": "lib_d_yagmur_yagarken",
+    "name": "Allahumma sayyiban mubarakan",
+    "meaning": "O Allah, send upon us a blessed rain.",
+    "context": "Recite when rain begins to fall; gratitude for the blessing and asking for barakah.",
+    "keywords": "rain falling sky gratitude blessing"
+  },
+  {
+    "id": "lib_d_sikinti_yunus",
+    "name": "La ilaha illa Anta Subhanaka inni kuntu minaz-zalimin",
+    "meaning": "There is no god but You; glory be to You; I was among the wrongdoers.",
+    "context": "Recite in distress, fear, or hopelessness; the supplication of Yunus (peace be upon him) to turn the heart to Allah.",
+    "keywords": "distress hardship fear anxiety hope prophet yunus"
+  },
+  {
+    "id": "lib_d_ilim",
+    "name": "Rabbi zidni 'ilman nafi'an wa fahman wasi'an",
+    "meaning": "My Lord, increase me in beneficial knowledge and broad understanding.",
+    "context": "Recite before study, Qur'an reading, or beginning work; asking for beneficial knowledge and understanding.",
+    "keywords": "knowledge study school quran learning wisdom"
+  },
+  {
+    "id": "lib_1",
+    "name": "Subhanallahi wa bihamdihi",
+    "meaning": "Glory and praise be to Allah."
+  },
+  {
+    "id": "lib_2",
+    "name": "Hasbunallahu wa ni'mal-wakil",
+    "meaning": "Allah is sufficient for us; what an excellent Guardian He is."
+  },
+  {
+    "id": "lib_3",
+    "name": "Alhamdulillah",
+    "meaning": "All praise is for Allah."
+  },
+  {
+    "id": "lib_4",
+    "name": "La ilaha illallah",
+    "meaning": "There is no god but Allah."
+  },
+  {
+    "id": "lib_5",
+    "name": "Allahu Akbar",
+    "meaning": "Allah is the Greatest."
+  },
+  {
+    "id": "lib_6",
+    "name": "Subhanallah",
+    "meaning": "Glory be to Allah."
+  },
+  {
+    "id": "lib_7",
+    "name": "La hawla wa la quwwata illa billah",
+    "meaning": "There is no power and no strength except with Allah."
+  },
+  {
+    "id": "lib_8",
+    "name": "Astaghfirullah",
+    "meaning": "I seek forgiveness from Allah."
+  },
+  {
+    "id": "lib_9",
+    "name": "Allahumma salli 'ala Muhammad",
+    "meaning": "O Allah, send blessings upon Muhammad."
+  },
+  {
+    "id": "lib_10",
+    "name": "Allahumma barik 'ala Muhammad",
+    "meaning": "O Allah, bless Muhammad."
+  },
+  {
+    "id": "lib_11",
+    "name": "Subhanallahil-'Azim wa bihamdih",
+    "meaning": "Glory be to Allah, the Magnificent, and praise be to Him."
+  },
+  {
+    "id": "lib_12",
+    "name": "La ilaha illallahu wahdahu la sharika lah",
+    "meaning": "There is no god but Allah alone, without partner; to Him belongs dominion and praise; He is over all things capable."
+  },
+  {
+    "id": "lib_13",
+    "name": "Hasbiyallahu la ilaha illa huwa",
+    "meaning": "Allah is sufficient for me; there is no god but He; in Him I have placed my trust."
+  },
+  {
+    "id": "lib_14",
+    "name": "Rabbi-ghfir warham",
+    "meaning": "My Lord, forgive and have mercy; You are the best of those who show mercy."
+  },
+  {
+    "id": "lib_15",
+    "name": "Ya Hayyu ya Qayyum",
+    "meaning": "O Ever-Living, O Self-Sustaining."
+  },
+  {
+    "id": "lib_16",
+    "name": "Subhanallahi wa bihamdihi Subhanallahil-'Azim",
+    "meaning": "Glory be to Allah and praise be to Him; glory be to Allah, the Magnificent."
+  },
+  {
+    "id": "lib_17",
+    "name": "Raditu billahi Rabban wa bil-Islami dinan wa bi-Muhammadin nabiyya",
+    "meaning": "I am pleased with Allah as Lord, Islam as religion, and Muhammad as Prophet."
+  },
+  {
+    "id": "lib_18",
+    "name": "Allahumma Antas-Salam",
+    "meaning": "O Allah, You are Peace and from You comes peace; blessed are You, Owner of majesty and honor."
+  },
+  {
+    "id": "lib_19",
+    "name": "La ilaha illallah (mulk, hayat, qudrah)",
+    "meaning": "(Full supplication of tawhid with dominion, life, death, and power over all things.)"
+  },
+  {
+    "id": "lib_20",
+    "name": "Subhanallahi wa bihamdihi 'adada khalqihi",
+    "meaning": "Glory and praise be to Allah as much as the number of His creation, as pleases Him, as the weight of His Throne, and as the ink of His words."
+  },
+  {
+    "id": "lib_21",
+    "name": "La ilaha illallahu'l-Malikul-Haqqul-Mubin",
+    "meaning": "There is no god but Allah, the King, the Truth, the Clear."
+  }
+]

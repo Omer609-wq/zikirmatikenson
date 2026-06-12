@@ -1,0 +1,51 @@
+{
+  "mealId": "vakfi",
+  "n": 101,
+  "ayahCount": 11,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Kapı çalan!"
+    },
+    {
+      "n": 2,
+      "tr": "Nedir o kapı çalan?"
+    },
+    {
+      "n": 3,
+      "tr": "O kapı çalanın ne olduğunu bilir misin?"
+    },
+    {
+      "n": 4,
+      "tr": "İnsanların, ateşin etrafını sarmış pervaneler gibi olur,"
+    },
+    {
+      "n": 5,
+      "tr": "Dağların da atılmış renkli yüne dönüştüğü gündür (o Karia!)"
+    },
+    {
+      "n": 6,
+      "tr": "O gün kimin tartılan ameli ağır gelirse."
+    },
+    {
+      "n": 7,
+      "tr": "İşte o, hoşnut edici bir yaşayış içinde olur."
+    },
+    {
+      "n": 8,
+      "tr": "Ameli yeğni olana gelince."
+    },
+    {
+      "n": 9,
+      "tr": "İşte onun anası (yeri, yurdu) Haviye'dir."
+    },
+    {
+      "n": 10,
+      "tr": "Nedir o (Haviye) bilir misin?"
+    },
+    {
+      "n": 11,
+      "tr": "Kızgın ateş!"
+    }
+  ]
+}

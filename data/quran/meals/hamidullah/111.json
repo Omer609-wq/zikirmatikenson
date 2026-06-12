@@ -1,0 +1,27 @@
+{
+  "mealId": "hamidullah",
+  "n": 111,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Que périssent les deux mains d'Abû-Lahab et que lui-même périsse."
+    },
+    {
+      "n": 2,
+      "tr": "Sa fortune ne lui sert à rien, ni ce qu'il a acquis."
+    },
+    {
+      "n": 3,
+      "tr": "Il sera brûlé dans un Feu plein de flammes,"
+    },
+    {
+      "n": 4,
+      "tr": "de même sa femme, la porteuse de bois,"
+    },
+    {
+      "n": 5,
+      "tr": "à son cou, une corde de fibres."
+    }
+  ]
+}

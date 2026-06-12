@@ -1,0 +1,35 @@
+{
+  "translitId": "translit-tr",
+  "n": 107,
+  "ayahCount": 7,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Era'eyte-lleẕî yükeẕẕibü biddîn"
+    },
+    {
+      "n": 2,
+      "lat": "Feẕâlike-lleẕî yedü``u-lyetîm"
+    },
+    {
+      "n": 3,
+      "lat": "Velâ yeḥuḍḍu `alâ ṭa`âmi-lmiskîn"
+    },
+    {
+      "n": 4,
+      "lat": "Feveylül lilmüṣallîn"
+    },
+    {
+      "n": 5,
+      "lat": "Elleẕîne hüm `an ṣalâtihim sâhûn"
+    },
+    {
+      "n": 6,
+      "lat": "Elleẕîne hüm yürâûn"
+    },
+    {
+      "n": 7,
+      "lat": "Veyemne`ûne-lmâ`ûn"
+    }
+  ]
+}

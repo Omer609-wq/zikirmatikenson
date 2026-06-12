@@ -1,0 +1,10 @@
+{
+  "id": "translit-tr",
+  "nameTr": "Türkçe Latin Okunuş",
+  "language": "tr",
+  "author": "Muhammet Abay",
+  "edition": "Çeviriyazı",
+  "source": "Tanzil.net (tr.transliteration)",
+  "license": "See Tanzil.net translation terms",
+  "note": "Muhammet Abay Çeviriyazı; fawazahmed0/quran-api (tur-muhammetabay) üzerinden alındı."
+}

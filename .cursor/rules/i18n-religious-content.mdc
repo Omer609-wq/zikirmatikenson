@@ -1,0 +1,45 @@
+---
+description: Çok dilli içerik — klasik 4 dil başına; diğer meal EN; fazilet yalnız TR
+alwaysApply: true
+---
+
+# Çok dilli içerik politikası
+
+## Özet
+
+| İçerik | Türkçe (TR) | EN / ID / MS / FR / BN | AR |
+|--------|-------------|------------------------|-----|
+| **UI** | `locales/tr.json` | `locales/{en,id,ms,fr,bn}.json` | `locales/ar.json` (LTR düzen) |
+| **Varsayılan 4 zikir meal** (`z_1`–`z_4`) | `defaults.zikirMeaning` TR | TR meal; diğerleri EN (klasik 4) |
+| **Varsayılan 4 zikir adı** | `defaults.zikirName` TR Latin | EN/ID/MS/FR Latin; BN বাংলা yazımı |
+| **Kütüphane okunuş adı** | `tr.json` `name` | `en.json` Latin; `bn.json` Bengalce | `ar.json` Arapça |
+| **Esma adı** | `ESMA_LIST` TR Latin | `esma-names-en.js` / `bn` | `ESMA_ARABIC` |
+| **Esma meal** (99) | `ESMA_LIST` TR | `esma-meanings-en.js` → **İngilizce** |
+| **Esma adı** (99) | `ESMA_LIST` TR Latin | `esma-names-en.js` Latin; `esma-names-bn.js` Bengalce |
+| **Kütüphane meal** | `data/library/tr.json` | `data/library/en.json` → **İngilizce** |
+| **Kütüphane dua bağlamı** (ne zaman) | TR `context` | `en.json` **İngilizce** |
+| **Kütüphane zikir bağlamı** (fazilet) | TR `context` | **Boş** (non-TR) |
+| **Fazilet** (`fazilet`, Esma varsayılan) | Göster | **Gösterme** (non-TR) |
+| **Kullanıcı yazdığı meal/fazilet** | Saklanan metin | Saklanan metin (meal); fazilet non-TR'de gizli |
+
+Kod: `localeUsesEnglishMeals()`, `getZikirDisplayMeaning()`, `getZikirDisplayName()`, `getLibraryNameForLocale()`, `applyLibraryLocalePolicy()` (`i18n.js` / `app.js`).
+
+---
+
+## Dosyalar
+
+- `esma-meanings-en.js` — 99 Esma meal (EN), ESMA_LIST sırası
+- `esma-names-en.js` / `esma-names-bn.js` — 99 Esma okunuş adı, ESMA_LIST sırası
+- `data/library/en.json` — `id`, `meaning`; dualarda `context`, `keywords`
+- `esma-fazilet.js` — yalnız TR locale'de gösterilir
+
+---
+
+## Yeni içerik
+
+1. TR kanon güncelle (`tr.json` / `ESMA_LIST`)
+2. Aynı `id` ile `en.json` meal (+ dua ise context)
+3. Esma sırasına uygun `ESMA_MEANING_EN` + `ESMA_NAME_EN` + `ESMA_NAME_BN` satırları
+4. Klasik 4 için her dilde `defaults.zikirMeaning` (TR kendi dili; diğerleri çoğunlukla EN meal)
+
+Fazileti non-TR'ye çevirme (T3); kullanıcı kendi notunu yazabilir ama UI non-TR'de fazilet göstermez.

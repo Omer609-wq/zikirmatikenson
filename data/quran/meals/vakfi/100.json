@@ -1,0 +1,51 @@
+{
+  "mealId": "vakfi",
+  "n": 100,
+  "ayahCount": 11,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Harıl harıl koşanlara,"
+    },
+    {
+      "n": 2,
+      "tr": "(Nallarıyla) çakarak kıvılcım saçanlara,"
+    },
+    {
+      "n": 3,
+      "tr": "(Ansızın) sabah baskını yapanlara,"
+    },
+    {
+      "n": 4,
+      "tr": "Orada tozu dumana katanlara,"
+    },
+    {
+      "n": 5,
+      "tr": "Derken orada bir topluluğun ta ortasına girenlere yemin ederim ki,"
+    },
+    {
+      "n": 6,
+      "tr": "Şüphesiz insan, Rabbine karşı pek nankördür."
+    },
+    {
+      "n": 7,
+      "tr": "Şüphesiz buna kendisi de şahittir,"
+    },
+    {
+      "n": 8,
+      "tr": "Ve o, mal sevgisine de aşırı derecede düşkündür."
+    },
+    {
+      "n": 9,
+      "tr": "Kabirlerde bulunanların diriltilip dışarı atıldığını düşünmez mi?"
+    },
+    {
+      "n": 10,
+      "tr": "Ve kalplerde gizlenenler ortaya konduğu zaman,"
+    },
+    {
+      "n": 11,
+      "tr": "Şüphesiz Rableri o gün onlardan tamamıyle haberdar"
+    }
+  ]
+}

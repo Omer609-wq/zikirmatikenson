@@ -1,0 +1,27 @@
+{
+  "mealId": "sahih",
+  "n": 113,
+  "ayahCount": 5,
+  "ayahs": [
+    {
+      "n": 1,
+      "tr": "Say, \"I seek refuge in the Lord of daybreak"
+    },
+    {
+      "n": 2,
+      "tr": "From the evil of that which He created"
+    },
+    {
+      "n": 3,
+      "tr": "And from the evil of darkness when it settles"
+    },
+    {
+      "n": 4,
+      "tr": "And from the evil of the blowers in knots"
+    },
+    {
+      "n": 5,
+      "tr": "And from the evil of an envier when he envies.\""
+    }
+  ]
+}

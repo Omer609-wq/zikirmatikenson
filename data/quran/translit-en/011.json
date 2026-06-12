@@ -1,0 +1,499 @@
+{
+  "translitId": "translit-en",
+  "n": 11,
+  "ayahCount": 123,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Aliflamra kitabun ohkimat ayatuhu thumma fussilat min ladun hakeemin khabeerin"
+    },
+    {
+      "n": 2,
+      "lat": "Alla taAAbudoo illa Allaha innanee lakum minhu natheerun wabasheerun"
+    },
+    {
+      "n": 3,
+      "lat": "Waani istaghfiroo rabbakum thumma tooboo ilayhi yumattiAAkum mataAAan hasanan ila ajalin musamman wayuti kulla thee fadlin fadlahu wain tawallaw fainee akhafu AAalaykum AAathaba yawmin kabeerin"
+    },
+    {
+      "n": 4,
+      "lat": "Ila Allahi marjiAAukum wahuwa AAala kulli shayin qadeerun"
+    },
+    {
+      "n": 5,
+      "lat": "Ala innahum yathnoona sudoorahum liyastakhfoo minhu ala heena yastaghshoona thiyabahum yaAAlamu ma yusirroona wama yuAAlinoona innahu AAaleemun bithati alssudoori"
+    },
+    {
+      "n": 6,
+      "lat": "Wama min dabbatin fee alardi illa AAala Allahi rizquha wayaAAlamu mustaqarraha wamustawdaAAaha kullun fee kitabin mubeenin"
+    },
+    {
+      "n": 7,
+      "lat": "Wahuwa allathee khalaqa alssamawati waalarda fee sittati ayyamin wakana AAarshuhu AAala almai liyabluwakum ayyukum ahsanu AAamalan walain qulta innakum mabAAoothoona min baAAdi almawti layaqoolanna allatheena kafaroo in hatha illa sihrun mubeenun"
+    },
+    {
+      "n": 8,
+      "lat": "Walain akhkharna AAanhumu alAAathaba ila ommatin maAAdoodatin layaqoolunna ma yahbisuhu ala yawma yateehim laysa masroofan AAanhum wahaqa bihim ma kanoo bihi yastahzioona"
+    },
+    {
+      "n": 9,
+      "lat": "Walain athaqna alinsana minna rahmatan thumma nazaAAnaha minhu innahu layaoosun kafoorun"
+    },
+    {
+      "n": 10,
+      "lat": "Walain athaqnahu naAAmaa baAAda darraa massathu layaqoolanna thahaba alssayyiatu AAannee innahu lafarihun fakhoorun"
+    },
+    {
+      "n": 11,
+      "lat": "Illa allatheena sabaroo waAAamiloo alssalihati olaika lahum maghfiratun waajrun kabeerun"
+    },
+    {
+      "n": 12,
+      "lat": "FalaAAallaka tarikun baAAda ma yooha ilayka wadaiqun bihi sadruka an yaqooloo lawla onzila AAalayhi kanzun aw jaa maAAahu malakun innama anta natheerun waAllahu AAala kulli shayin wakeelun"
+    },
+    {
+      "n": 13,
+      "lat": "Am yaqooloona iftarahu qul fatoo biAAashri suwarin mithlihi muftarayatin waodAAoo mani istataAAtum min dooni Allahi in kuntum sadiqeena"
+    },
+    {
+      "n": 14,
+      "lat": "Fai llam yastajeeboo lakum faiAAlamoo annama onzila biAAilmi Allahi waan la ilaha illa huwa fahal antum muslimoona"
+    },
+    {
+      "n": 15,
+      "lat": "Man kana yureedu alhayata alddunya wazeenataha nuwaffi ilayhim aAAmalahum feeha wahum feeha la yubkhasoona"
+    },
+    {
+      "n": 16,
+      "lat": "Olaika allatheena laysa lahum fee alakhirati illa alnnaru wahabita ma sanaAAoo feeha wabatilun ma kanoo yaAAmaloona"
+    },
+    {
+      "n": 17,
+      "lat": "Afaman kana AAala bayyinatin min rabbihi wayatloohu shahidun minhu wamin qablihi kitabu moosa imaman warahmatan olaika yuminoona bihi waman yakfur bihi mina alahzabi faalnnaru mawAAiduhu fala taku fee miryatin minhu innahu alhaqqu min rabbika walakinna akthara alnnasi la yuminoona"
+    },
+    {
+      "n": 18,
+      "lat": "Waman athlamu mimmani iftara AAala Allahi kathiban olaika yuAAradoona AAala rabbihim wayaqoolu alashhadu haolai allatheena kathaboo AAala rabbihim ala laAAnatu Allahi AAala alththalimeena"
+    },
+    {
+      "n": 19,
+      "lat": "Allatheena yasuddoona AAan sabeeli Allahi wayabghoonaha AAiwajan wahum bialakhirati hum kafiroona"
+    },
+    {
+      "n": 20,
+      "lat": "Olaika lam yakoonoo muAAjizeena fee alardi wama kana lahum min dooni Allahi min awliyaa yudaAAafu lahumu alAAathabu ma kanoo yastateeAAoona alssamAAa wama kanoo yubsiroona"
+    },
+    {
+      "n": 21,
+      "lat": "Olaika allatheena khasiroo anfusahum wadalla AAanhum ma kanoo yaftaroona"
+    },
+    {
+      "n": 22,
+      "lat": "La jarama annahum fee alakhirati humu alakhsaroona"
+    },
+    {
+      "n": 23,
+      "lat": "Inna allatheena amanoo waAAamiloo alsalihati waakhbatoo ila rabbihim olaika ashabu aljannati hum feeha khalidoona"
+    },
+    {
+      "n": 24,
+      "lat": "Mathalu alfareeqayni kaalaAAma waalasammi waalbaseeri waalssameeAAi hal yastawiyani mathalan afala tathakkaroona"
+    },
+    {
+      "n": 25,
+      "lat": "Walaqad arsalna noohan ila qawmihi innee lakum natheerun mubeenun"
+    },
+    {
+      "n": 26,
+      "lat": "An la taAAbudoo illa Allaha innee akhafu AAalaykum AAathaba yawmin aleemin"
+    },
+    {
+      "n": 27,
+      "lat": "Faqala almalao allatheena kafaroo min qawmihi ma naraka illa basharan mithlana wama naraka ittabaAAaka illa allatheena hum arathiluna badiya alrrayi wama nara lakum AAalayna min fadlin bal nathunnukum kathibeena"
+    },
+    {
+      "n": 28,
+      "lat": "Qala ya qawmi araaytum in kuntu AAala bayyinatin min rabbee waatanee rahmatan min AAindihi faAAummiyat AAalaykum anulzimukumooha waantum laha karihoona"
+    },
+    {
+      "n": 29,
+      "lat": "Waya qawmi la asalukum AAalayhi malan in ajriya illa AAala Allahi wama ana bitaridi allatheena amanoo innahum mulaqoo rabbihim walakinnee arakum qawman tajhaloona"
+    },
+    {
+      "n": 30,
+      "lat": "Waya qawmi man yansurunee mina Allahi in taradtuhum afala tathakkaroona"
+    },
+    {
+      "n": 31,
+      "lat": "Wala aqoolu lakum AAindee khazainu Allahi wala aAAlamu alghayba wala aqoolu innee malakun wala aqoolu lillatheena tazdaree aAAyunukum lan yutiyahumu Allahu khayran Allahu aAAlamu bima fee anfusihim innee ithan lamina alththalimeena"
+    },
+    {
+      "n": 32,
+      "lat": "Qaloo ya noohu qad jadaltana faaktharta jidalana fatina bima taAAiduna in kunta mina alssadiqeena"
+    },
+    {
+      "n": 33,
+      "lat": "Qala innama yateekum bihi Allahu in shaa wama antum bimuAAjizeena"
+    },
+    {
+      "n": 34,
+      "lat": "Wala yanfaAAukum nushee in aradtu an ansaha lakum in kana Allahu yureedu an yughwiyakum huwa rabbukum wailayhi turjaAAoona"
+    },
+    {
+      "n": 35,
+      "lat": "Am yaqooloona iftarahu qul ini iftaraytuhu faAAalayya ijramee waana bareeon mimma tujrimoona"
+    },
+    {
+      "n": 36,
+      "lat": "Waoohiya ila noohin annahu lan yumina min qawmika illa man qad amana fala tabtais bima kanoo yafAAaloona"
+    },
+    {
+      "n": 37,
+      "lat": "WaisnaAAi alfulka biaAAyunina wawahyina wala tukhatibnee fee allatheena thalamoo innahum mughraqoona"
+    },
+    {
+      "n": 38,
+      "lat": "WayasnaAAu alfulka wakullama marra AAalayhi malaon min qawmihi sakhiroo minhu qala in taskharoo minna fainna naskharu minkum kama taskharoona"
+    },
+    {
+      "n": 39,
+      "lat": "Fasawfa taAAlamoona man yateehi AAathabun yukhzeehi wayahillu AAalayhi AAathabun muqeemun"
+    },
+    {
+      "n": 40,
+      "lat": "Hatta itha jaa amruna wafara alttannooru qulna ihmil feeha min kullin zawjayni ithnayni waahlaka illa man sabaqa AAalayhi alqawlu waman amana wama amana maAAahu illa qaleelun"
+    },
+    {
+      "n": 41,
+      "lat": "Waqala irkaboo feeha bismi Allahi majraha wamursaha inna rabbee laghafoorun raheemun"
+    },
+    {
+      "n": 42,
+      "lat": "Wahiya tajree bihim fee mawjin kaaljibali wanada noohunu ibnahu wakana fee maAAzilin ya bunayya irkab maAAana wala takun maAAa alkafireena"
+    },
+    {
+      "n": 43,
+      "lat": "Qala saawee ila jabalin yaAAsimunee mina almai qala la AAasima alyawma min amri Allahi illa man rahima wahala baynahuma almawju fakana mina almughraqeena"
+    },
+    {
+      "n": 44,
+      "lat": "Waqeela ya ardu iblaAAee maaki waya samao aqliAAee wagheeda almao waqudiya alamru waistawat AAala aljoodiyyi waqeela buAAdan lilqawmi alththalimeena"
+    },
+    {
+      "n": 45,
+      "lat": "Wanada noohun rabbahu faqala rabbi inna ibnee min ahlee wainna waAAdaka alhaqqu waanta ahkamu alhakimeena"
+    },
+    {
+      "n": 46,
+      "lat": "Qala ya noohu innahu laysa min ahlika innahu AAamalun ghayru salihin fala tasalni ma laysa laka bihi AAilmun innee aAAithuka an takoona mina aljahileena"
+    },
+    {
+      "n": 47,
+      "lat": "Qala rabbi innee aAAoothu bika an asalaka ma laysa lee bihi AAilmun wailla taghfir lee watarhamnee akun mina alkhasireena"
+    },
+    {
+      "n": 48,
+      "lat": "Qeela ya noohu ihbit bisalamin minna wabarakatin AAalayka waAAala omamin mimman maAAaka waomamun sanumattiAAuhum thumma yamassuhum minna AAathabun aleemun"
+    },
+    {
+      "n": 49,
+      "lat": "Tilka min anbai alghaybi nooheeha ilayka ma kunta taAAlamuha anta wala qawmuka min qabli hatha faisbir inna alAAaqibata lilmuttaqeena"
+    },
+    {
+      "n": 50,
+      "lat": "Waila AAadin akhahum hoodan qala ya qawmi oAAbudoo Allaha ma lakum min ilahin ghayruhu in antum illa muftaroona"
+    },
+    {
+      "n": 51,
+      "lat": "Ya qawmi la asalukum AAalayhi ajran in ajriya illa AAala allathee fataranee afala taAAqiloona"
+    },
+    {
+      "n": 52,
+      "lat": "Waya qawmi istaghfiroo rabbakum thumma tooboo ilayhi yursili alssamaa AAalaykum midraran wayazidkum quwwatan ila quwwatikum wala tatawallaw mujrimeena"
+    },
+    {
+      "n": 53,
+      "lat": "Qaloo ya hoodu ma jitana bibayyinatin wama nahnu bitarikee alihatina AAan qawlika wama nahnu laka bimumineena"
+    },
+    {
+      "n": 54,
+      "lat": "In naqoolu illa iAAtaraka baAAdu alihatina bisooin qala innee oshhidu Allaha waishhadoo annee bareeon mimma tushrikoona"
+    },
+    {
+      "n": 55,
+      "lat": "Min doonihi fakeedoonee jameeAAan thumma la tunthirooni"
+    },
+    {
+      "n": 56,
+      "lat": "Innee tawakkaltu AAala Allahi rabbee warabbikum ma min dabbatin illa huwa akhithun binasiyatiha inna rabbee AAala siratin mustaqeemin"
+    },
+    {
+      "n": 57,
+      "lat": "Fain tawallaw faqad ablaghtukum ma orsiltu bihi ilaykum wayastakhlifu rabbee qawman ghayrakum wala tadurroonahu shayan inna rabbee AAala kulli shayin hafeethun"
+    },
+    {
+      "n": 58,
+      "lat": "Walamma jaa amruna najjayna hoodan waallatheena amanoo maAAahu birahmatin minna wanajjaynahum min AAathabin ghaleethin"
+    },
+    {
+      "n": 59,
+      "lat": "Watilka AAadun jahadoo biayati rabbihim waAAasaw rusulahu waittabaAAoo amra kulli jabbarin AAaneedin"
+    },
+    {
+      "n": 60,
+      "lat": "WaotbiAAoo fee hathihi alddunya laAAnatan wayawma alqiyamati ala inna AAadan kafaroo rabbahum ala buAAdan liAAadin qawmi hoodin"
+    },
+    {
+      "n": 61,
+      "lat": "Waila thamooda akhahum salihan qala ya qawmi oAAbudoo Allaha ma lakum min ilahin ghayruhu huwa anshaakum mina alardi waistaAAmarakum feeha faistaghfiroohu thumma tooboo ilayhi inna rabbee qareebun mujeebun"
+    },
+    {
+      "n": 62,
+      "lat": "Qaloo ya salihu qad kunta feena marjuwwan qabla hatha atanhana an naAAbuda ma yaAAbudu abaona wainnana lafee shakkin mimma tadAAoona ilayhi mureebun"
+    },
+    {
+      "n": 63,
+      "lat": "Qala ya qawmi araaytum in kuntu AAala bayyinatin min rabbee waatanee minhu rahmatan faman yansurunee mina Allahi in AAasaytuhu fama tazeedoonanee ghayra takhseerin"
+    },
+    {
+      "n": 64,
+      "lat": "Waya qawmi hathihi naqatu Allahi lakum ayatan fatharooha takul fee ardi Allahi wala tamassooha bisooin fayakhuthakum AAathabun qareebun"
+    },
+    {
+      "n": 65,
+      "lat": "FaAAaqarooha faqala tamattaAAoo fee darikum thalathata ayyamin thalika waAAdun ghayru makthoobin"
+    },
+    {
+      "n": 66,
+      "lat": "Falamma jaa amruna najjayna salihan waallatheena amanoo maAAahu birahmatin minna wamin khizyi yawmiithin inna rabbaka huwa alqawiyyu alAAazeezu"
+    },
+    {
+      "n": 67,
+      "lat": "Waakhatha allatheena thalamoo alssayhatu faasbahoo fee diyarihim jathimeena"
+    },
+    {
+      "n": 68,
+      "lat": "Kaan lam yaghnaw feeha ala inna thamooda kafaroo rabbahum ala buAAdan lithamooda"
+    },
+    {
+      "n": 69,
+      "lat": "Walaqad jaat rusuluna ibraheema bialbushra qaloo salaman qala salamun fama labitha an jaa biAAijlin haneethin"
+    },
+    {
+      "n": 70,
+      "lat": "Falamma raa aydiyahum la tasilu ilayhi nakirahum waawjasa minhum kheefatan qaloo la takhaf inna orsilna ila qawmi lootin"
+    },
+    {
+      "n": 71,
+      "lat": "Waimraatuhu qaimatun fadahikat fabashsharnaha biishaqa wamin warai ishaqa yaAAqooba"
+    },
+    {
+      "n": 72,
+      "lat": "Qalat ya waylata aalidu waana AAajoozun wahatha baAAlee shaykhan inna hatha lashayon AAajeebun"
+    },
+    {
+      "n": 73,
+      "lat": "Qaloo ataAAjabeena min amri Allahi rahmatu Allahi wabarakatuhu AAalaykum ahla albayti innahu hameedun majeedun"
+    },
+    {
+      "n": 74,
+      "lat": "Falamma thahaba AAan ibraheema alrrawAAu wajaathu albushra yujadiluna fee qawmi lootin"
+    },
+    {
+      "n": 75,
+      "lat": "Inna ibraheema lahaleemun awwahun muneebun"
+    },
+    {
+      "n": 76,
+      "lat": "Ya ibraheemu aAArid AAan hatha innahu qad jaa amru rabbika wainnahum ateehim AAathabun ghayru mardoodin"
+    },
+    {
+      "n": 77,
+      "lat": "Walamma jaat rusuluna lootan seea bihim wadaqa bihim tharAAan waqala hatha yawmun AAaseebun"
+    },
+    {
+      "n": 78,
+      "lat": "Wajaahu qawmuhu yuhraAAoona ilayhi wamin qablu kanoo yaAAmaloona alssayyiati qala ya qawmi haolai banatee hunna atharu lakum faittaqoo Allaha wala tukhzooni fee dayfee alaysa minkum rajulun rasheedun"
+    },
+    {
+      "n": 79,
+      "lat": "Qaloo laqad AAalimta ma lana fee banatika min haqqin wainnaka lataAAlamu ma nureedu"
+    },
+    {
+      "n": 80,
+      "lat": "Qala law anna lee bikum quwwatan aw awee ila ruknin shadeedin"
+    },
+    {
+      "n": 81,
+      "lat": "Qaloo ya lootu inna rusulu rabbika lan yasiloo ilayka faasri biahlika biqitAAin mina allayli wala yaltafit minkum ahadun illa imraataka innahu museebuha ma asabahum inna mawAAidahumu alssubhu alaysa alssubhu biqareebin"
+    },
+    {
+      "n": 82,
+      "lat": "Falamma jaa amruna jaAAalna AAaliyaha safilaha waamtarna AAalayha hijaratan min sijjeelin mandoodin"
+    },
+    {
+      "n": 83,
+      "lat": "Musawwamatan AAinda rabbika wama hiya mina alththalimeena bibaAAeedin"
+    },
+    {
+      "n": 84,
+      "lat": "Waila madyana akhahum shuAAayban qala ya qawmi oAAbudoo Allaha ma lakum min ilahin ghayruhu wala tanqusoo almikyala waalmeezana innee arakum bikhayrin wainnee akhafu AAalaykum AAathaba yawmin muheetin"
+    },
+    {
+      "n": 85,
+      "lat": "Waya qawmi awfoo almikyala waalmeezana bialqisti wala tabkhasoo alnnasa ashyaahum wala taAAthaw fee alardi mufsideena"
+    },
+    {
+      "n": 86,
+      "lat": "Baqiyyatu Allahi khayrun lakum in kuntum mumineena wama ana AAalaykum bihafeethin"
+    },
+    {
+      "n": 87,
+      "lat": "Qaloo ya shuAAaybu asalatuka tamuruka an natruka ma yaAAbudu abaona aw an nafAAala fee amwalina ma nashao innaka laanta alhaleemu alrrasheedu"
+    },
+    {
+      "n": 88,
+      "lat": "Qala ya qawmi araaytum in kuntu AAala bayyinatin min rabbee warazaqanee minhu rizqan hasanan wama oreedu an okhalifakum ila ma anhakum AAanhu in oreedu illa alislaha ma istataAAtu wama tawfeeqee illa biAllahi AAalayhi tawakkaltu wailayhi oneebu"
+    },
+    {
+      "n": 89,
+      "lat": "Waya qawmi la yajrimannakum shiqaqee an yuseebakum mithlu ma asaba qawma noohin aw qawma hoodin aw qawma salihin wama qawmu lootin minkum bibaAAeedin"
+    },
+    {
+      "n": 90,
+      "lat": "Waistaghfiroo rabbakum thumma tooboo ilayhi inna rabbee raheemun wadoodun"
+    },
+    {
+      "n": 91,
+      "lat": "Qaloo ya shuAAaybu ma nafqahu katheeran mimma taqoolu wainna lanaraka feena daAAeefan walawla rahtuka larajamnaka wama anta AAalayna biAAazeezin"
+    },
+    {
+      "n": 92,
+      "lat": "Qala ya qawmi arahtee aAAazzu AAalaykum mina Allahi waittakhathtumoohu waraakum thihriyyan inna rabbee bima taAAmaloona muheetun"
+    },
+    {
+      "n": 93,
+      "lat": "Waya qawmi iAAmaloo AAala makanatikum innee AAamilun sawfa taAAlamoona man yateehi AAathabun yukhzeehi waman huwa kathibun wairtaqiboo inne maAAakum raqeebun"
+    },
+    {
+      "n": 94,
+      "lat": "Walamma jaa amruna najjayna shuAAayban waallatheena amanoo maAAahu birahmatin minna waakhathati allatheena thalamoo alssayhatu faasbahoo fee diyarihim jathimeena"
+    },
+    {
+      "n": 95,
+      "lat": "Kaan lam yaghnaw feeha ala buAAdan limadyana kama baAAidat thamoodu"
+    },
+    {
+      "n": 96,
+      "lat": "Walaqad arsalna moosa biayatina wasultanin mubeenin"
+    },
+    {
+      "n": 97,
+      "lat": "Ila firAAawna wamalaihi faittabaAAoo amra firAAawna wama amru firAAawna birasheedin"
+    },
+    {
+      "n": 98,
+      "lat": "Yaqdumu qawmahu yawma alqiyamati faawradahumu alnnara wabisa alwirdu almawroodu"
+    },
+    {
+      "n": 99,
+      "lat": "WaotbiAAoo fee hathihi laAAnatan wayawma alqiyamati bisa alrrifdu almarfoodu"
+    },
+    {
+      "n": 100,
+      "lat": "Thalika min anbai alqura naqussuhu AAalayka minha qaimun wahaseedun"
+    },
+    {
+      "n": 101,
+      "lat": "Wama thalamnahum walakin thalamoo anfusahum fama aghnat AAanhum alihatuhumu allatee yadAAoona min dooni Allahi min shayin lamma jaa amru rabbika wama zadoohum ghayra tatbeebin"
+    },
+    {
+      "n": 102,
+      "lat": "Wakathalika akhthu rabbika itha akhatha alqura wahiya thalimatun inna akhthahu aleemun shadeedun"
+    },
+    {
+      "n": 103,
+      "lat": "Inna fee thalika laayatan liman khafa AAathaba alakhirati thalika yawmun majmooAAun lahu alnnasu wathalika yawmun mashhoodun"
+    },
+    {
+      "n": 104,
+      "lat": "Wama nuakhkhiruhu illa liajalin maAAdoodin"
+    },
+    {
+      "n": 105,
+      "lat": "Yawma yati la takallamu nafsun illa biithnihi faminhum shaqiyyun wasaAAeedin"
+    },
+    {
+      "n": 106,
+      "lat": "Faamma allatheena shaqoo fafee alnnari lahum feeha zafeerun washaheequn"
+    },
+    {
+      "n": 107,
+      "lat": "Khalideena feeha ma damati alssamawatu waalardu illa ma shaa rabbuka inna rabbaka faAAAAalun lima yureedu"
+    },
+    {
+      "n": 108,
+      "lat": "Waamma allatheena suAAidoo fafee aljannati khalideena feeha ma damati alssamawatu waalardu illa ma shaa rabbuka AAataan ghayra majthoothin"
+    },
+    {
+      "n": 109,
+      "lat": "Fala taku fee miryatin mimma yaAAbudu haolai ma yaAAbudoona illa kama yaAAbudu abaohum min qablu wainna lamuwaffoohum naseebahum ghayra manqoosin"
+    },
+    {
+      "n": 110,
+      "lat": "Walaqad atayna moosa alkitaba faikhtulifa feehi walawla kalimatun sabaqat min rabbika laqudiya baynahum wainnahum lafee shakkin minhu mureebun"
+    },
+    {
+      "n": 111,
+      "lat": "Wainna kullan lamma layuwaffiyannahum rabbuka aAAmalahum innahu bima yaAAmaloona khabeerun"
+    },
+    {
+      "n": 112,
+      "lat": "Faistaqim kama omirta waman taba maAAaka wala tatghaw innahu bima taAAmaloona baseerun"
+    },
+    {
+      "n": 113,
+      "lat": "Wala tarkanoo ila allatheena thalamoo fatamassakumu alnnaru wama lakum min dooni Allahi min awliyaa thumma la tunsaroona"
+    },
+    {
+      "n": 114,
+      "lat": "Waaqimi alssalata tarafayi alnnahari wazulafan mina allayli inna alhasanati yuthhibna alssayyiati thalika thikra lilththakireena"
+    },
+    {
+      "n": 115,
+      "lat": "Waisbir fainna Allaha la yudeeAAu ajra almuhsineena"
+    },
+    {
+      "n": 116,
+      "lat": "Falawla kana mina alqurooni min qablikum oloo baqiyyatin yanhawna AAani alfasadi fee alardi illa qaleelan mimman anjayna minhum waittabaAAa allatheena thalamoo ma otrifoo feehi wakanoo mujrimeena"
+    },
+    {
+      "n": 117,
+      "lat": "Wama kana rabbuka liyuhlika alqura bithulmin waahluha muslihoona"
+    },
+    {
+      "n": 118,
+      "lat": "Walaw shaa rabbuka lajaAAala alnnasa ommatan wahidatan wala yazaloona mukhtalifeena"
+    },
+    {
+      "n": 119,
+      "lat": "Illa man rahima rabbuka walithalika khalaqahum watammat kalimatu rabbika laamlaanna jahannama mina aljinnati waalnnasi ajmaAAeena"
+    },
+    {
+      "n": 120,
+      "lat": "Wakullan naqussu AAalayka min anbai alrrusuli ma nuthabbitu bihi fuadaka wajaaka fee hathihi alhaqqu wamawAAithatun wathikra lilmumineena"
+    },
+    {
+      "n": 121,
+      "lat": "Waqul lillatheena la yuminoona iAAmaloo AAala makanatikum inna AAamiloona"
+    },
+    {
+      "n": 122,
+      "lat": "Waintathiroo inna muntathiroona"
+    },
+    {
+      "n": 123,
+      "lat": "Walillahi ghaybu alssamawati waalardi wailayhi yurjaAAu alamru kulluhu faoAAbudhu watawakkal AAalayhi wama rabbuka bighafilin AAamma taAAmaloona"
+    }
+  ]
+}

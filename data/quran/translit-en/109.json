@@ -1,0 +1,31 @@
+{
+  "translitId": "translit-en",
+  "n": 109,
+  "ayahCount": 6,
+  "ayahs": [
+    {
+      "n": 1,
+      "lat": "Qul ya ayyuha alkafiroona"
+    },
+    {
+      "n": 2,
+      "lat": "La aAAbudu ma taAAbudoona"
+    },
+    {
+      "n": 3,
+      "lat": "Wala antum AAabidoona ma aAAbudu"
+    },
+    {
+      "n": 4,
+      "lat": "Wala ana AAabidun ma AAabadtum"
+    },
+    {
+      "n": 5,
+      "lat": "Wala antum AAabidoona ma aAAbudu"
+    },
+    {
+      "n": 6,
+      "lat": "Lakum deenukum waliya deeni"
+    }
+  ]
+}
