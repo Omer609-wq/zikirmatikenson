@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "events": [
+    {
+      "id": "regaib-2026",
+      "start": "2026-03-12T18:00:00+03:00",
+      "end": "2026-03-13T06:00:00+03:00",
+      "title": {
+        "tr": "Regaib Gecesi",
+        "en": "Regaib Night",
+        "ar": "ليلة الرغائب",
+        "ur": "شب رغائب"
+      },
+      "subtitle": {
+        "tr": "Bu geceye özel zikirler",
+        "en": "Dhikr for this special night",
+        "ar": "أذكار خاصة بهذه الليلة",
+        "ur": "اس خاص رات کے لیے ذکر"
+      },
+      "zikirs": [
+        {
+          "name": "Estağfirullah",
+          "arabic": "أَسْتَغْفِرُ اللَّهَ",
+          "meaning": {
+            "tr": "Allah'tan bağışlanma dilerim.",
+            "en": "I seek forgiveness from Allah."
+          },
+          "target": 100
+        },
+        {
+          "name": "Salavat",
+          "arabic": "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ",
+          "meaning": {
+            "tr": "Allah'ım, Muhammed'e ve âline salat et.",
+            "en": "O Allah, send blessings upon Muhammad and his family."
+          },
+          "target": 100
+        },
+        {
+          "name": "La ilahe illallah",
+          "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ",
+          "meaning": {
+            "tr": "Allah'tan başka ilah yoktur.",
+            "en": "There is no god but Allah."
+          },
+          "target": 100
+        }
+      ]
+    }
+  ]
+}
