@@ -23,7 +23,8 @@
     "delete": "Sil",
     "selectNone": "Seçim yok",
     "selectedFolders": "{count} klasör seçili",
-    "selectedZikirs": "{count} zikir seçili"
+    "selectedZikirs": "{count} zikir seçili",
+    "seasonalZikirCount": "{count} zikir"
   },
   "folder": {
     "search": "Ara",
@@ -33,6 +34,7 @@
     "zikirDragHintSelect": "Kutucuğa tik veya satıra dokunarak seçin; sileceklerinizi işaretledikten sonra alttan Sil'e dokunun. Vazgeç: İptal. Sıralama: üç çizgi.",
     "zikirDragHintSelectNoReorder": "Kutucuğa tik veya satıra dokunarak seçin; sileceklerinizi işaretledikten sonra alttan Sil'e dokunun. Vazgeç: İptal. Arama veya favori açıkken sıralama kapalı.",
     "zikirDragHintReorderDisabled": "Sıralamak için aramayı temizleyin ve favori filtresini kapatın.",
+    "seasonalDragHint": "Bu özel günlük zikirler yalnızca belirlenen süre boyunca görünür.",
     "limitWarning": "Bu klasörde zikir üst sınırına ulaşıldı. Bir zikri silerek veya başka klasöre taşıyarak yer açabilirsin.",
     "addZikir": "Zikir Ekle"
   },
@@ -90,7 +92,19 @@
   "quran": {
     "title": "Kur'an-ı Kerim",
     "search": "Ara",
-    "searchPlaceholder": "Sure adı veya numarası…",
+    "searchPlaceholder": "Sure adı, Bakara 12, meal veya okunuş…",
+    "searchRefHit": "{surah} — {ayah}. ayet",
+    "searchMealHit": "{meal} — {surah}, {ayah}. ayet",
+    "searchTranslitHit": "Okunuş — {surah}, {ayah}. ayet",
+    "searchGuideLink": "Gelişmiş arama motoru rehberi",
+    "searchGuideTitle": "Gelişmiş arama motoru rehberi",
+    "searchGuideIntro": "Bu arama kutusu sure listesini filtreler; yazdıkça öneriler çıkar ve doğrudan ayete gidebilirsiniz.",
+    "searchGuideRef": "Sure referansı: Bakara 12, 2:12 veya sure adı (Fatiha, Yasin).",
+    "searchGuideFilter": "Sure adı yazınca liste daralır; tam eşleşme olmasa da yakın isimler bulunur.",
+    "searchGuideMeal": "Meal metni (Türkçe): Diyanet İşleri ve Diyanet Vakfı meal'lerinde birlikte arar; ör. şüphe götürmeyen.",
+    "searchGuideTranslit": "Türkçe okunuş: ör. la raybe fih, bismi llahi rrahman; küçük yazım hataları tolere edilir.",
+    "searchGuideTips": "En az 3 harf gerekir. Tek öneri varken Enter ile gidebilirsiniz; meal sonucu seçince ilgili meal, okunuş sonucu seçince okunuş görünümü açılır.",
+    "searchRefGo": "Ayete git",
     "ayahCount": "{count} ayet",
     "emptySearch": "Eşleşen sure bulunamadı.",
     "mealLabel": "Meal",
@@ -106,7 +120,7 @@
     "guideMealOr": "veya",
     "guideReadMode": "Bu menüden görünümü değiştirin: meal + Arapça, okunuş + Arapça veya sadece Arapça.",
     "guideGoto": "Sure ve ayet numarası yazarak doğrudan istediğiniz ayete gidin.",
-    "guideTapExpand": "Ayete kısa dokunun; büyük kartta okuyun, sola veya sağa kaydırarak diğer ayete geçin.",
+    "guideTapExpand": "Ayete kısa dokunun; büyük kartta okuyun. Sağa kaydırın sonraki ayet, sola kaydırın önceki ayet.",
     "guideHoldTafsir": "Ayete basılı tutun; Türkçe tefsir kaynaklarından birini harici sitede açın.",
     "guideFavorite": "Ayet kartındaki yıldıza dokunarak favoriye ekleyin; Favoriler sekmesinden tekrar açın.",
     "guideAddFolder": "Zikir klasörüne ekle ile ayetleri klasörünüze kaydedin; en fazla üç ayet numarası yazabilirsiniz.",
@@ -194,6 +208,18 @@
     "privacy": "Gizlilik",
     "reminder": "Günlük Hatırlatıcı",
     "reminderTime": "Hatırlatma Saati"
+  },
+  "reminderDialog": {
+    "notificationPermTitle": "Bildirim izni",
+    "notificationPermDeniedNative": "Günlük hatırlatıcı için bildirim izni gerekir. Android'de Uygulama bilgisi → Bildirimler bölümünden açabilirsiniz.",
+    "exactAlarmTitle": "Alarm izni",
+    "exactAlarmBody": "Hatırlatıcının seçtiğiniz saatte çalışması için tam zamanlı alarm iznini açmanız gerekir.\n\nAşağıdaki düğmeye basınca ilgili ayar sayfasına yönlendirileceksiniz.",
+    "exactAlarmOk": "Ayarlara git",
+    "scheduleFailedTitle": "Hatırlatıcı",
+    "scheduleFailedBody": "Günlük hatırlatıcı zamanlanamadı. Uygulamayı güncelleyip tekrar deneyin; sorun sürerse Ayarlar → Bildirimler bölümünü kontrol edin.",
+    "unsupportedTitle": "Bildirim",
+    "unsupportedBody": "Bu tarayıcı veya görünüm bildirim desteklemiyor.",
+    "deniedWebBody": "Bildirim izni kapalı. Hatırlatıcı için telefon veya tarayıcı ayarlarından bu uygulamaya bildirim izni vermeniz gerekir."
   },
   "privacy": {
     "title": "Gizlilik",
@@ -286,6 +312,7 @@
     "resetLabel": "Sıfırla",
     "protectedFoldersTitle": "Silinemez",
     "protectedFoldersMsg": "“Varsayılan Zikirler” ve “Esma'ül Hüsna” klasörleri silinemez. Seçimden çıkarın.",
+    "protectedSeasonalZikirsMsg": "Özel gün zikirleri silinemez. Süre dolunca otomatik kalkar.",
     "nameRequired": "Zikir adı gerekli.",
     "nameEmpty": "Zikir adı boş olamaz.",
     "missingNameTitle": "Eksik bilgi",

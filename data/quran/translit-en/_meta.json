@@ -2,6 +2,8 @@
   "id": "translit-en",
   "nameTr": "İngilizce Latin Okunuş",
   "language": "en",
-  "source": "Tanzil.net (en.transliteration) via quran-api ara-quran-la",
-  "license": "See Tanzil.net translation terms"
+  "author": "Quran Phonetics Transliteration",
+  "source": "fawazahmed0/quran-api (ara-quranphoneticst-la)",
+  "license": "See upstream quran-api / edition terms",
+  "note": "Okunaklı ASCII okunuş (Ar-Rahman, Al-Hamdu). Varsayılan EN paketi."
 }

@@ -23,7 +23,8 @@
     "delete": "Delete",
     "selectNone": "No selection",
     "selectedFolders": "{count} folders selected",
-    "selectedZikirs": "{count} zikir selected"
+    "selectedZikirs": "{count} zikir selected",
+    "seasonalZikirCount": "{count} dhikr"
   },
   "folder": {
     "search": "Search",
@@ -33,6 +34,7 @@
     "zikirDragHintSelect": "Tap the checkbox or row to select items, then tap Delete at the bottom. Cancel to exit. Reorder: use the grip lines.",
     "zikirDragHintSelectNoReorder": "Tap the checkbox or row to select items, then tap Delete at the bottom. Cancel to exit. Reordering is off while search or favorites filter is on.",
     "zikirDragHintReorderDisabled": "Clear search and turn off the favorites filter to reorder.",
+    "seasonalDragHint": "These special-day dhikr appear only for the scheduled period.",
     "limitWarning": "This folder has reached the zikir limit. Delete one or move to another folder.",
     "addZikir": "Add Zikir"
   },
@@ -90,7 +92,18 @@
   "quran": {
     "title": "Qur'an",
     "search": "Search",
-    "searchPlaceholder": "Surah name or number…",
+    "searchPlaceholder": "Surah name, Al-Baqarah 12, or translation text…",
+    "searchRefHit": "{surah} — verse {ayah}",
+    "searchMealHit": "{meal} — {surah}, verse {ayah}",
+    "searchGuideLink": "Advanced search guide",
+    "searchGuideTitle": "Advanced search guide",
+    "searchGuideIntro": "This box filters the surah list; suggestions appear as you type and you can jump straight to a verse.",
+    "searchGuideRef": "Surah reference: Al-Baqarah 12, 2:12, or a surah name (Al-Fatihah, Yasin).",
+    "searchGuideFilter": "Typing a surah name narrows the list; close matches work even without an exact name.",
+    "searchGuideMeal": "Translation text: searches Sahih International; e.g. no doubt, conscious of Allah.",
+    "searchGuideTranslit": "Turkish transliteration (Turkish UI only): e.g. la raybe fih, bismi llahi rrahman; minor typos are tolerated.",
+    "searchGuideTips": "At least 3 characters are required. Press Enter when there is a single suggestion.",
+    "searchRefGo": "Go to verse",
     "ayahCount": "{count} verses",
     "emptySearch": "No matching surah found.",
     "mealLabel": "Translation",
@@ -106,7 +119,7 @@
     "guideMealOr": "or",
     "guideReadMode": "Change display here: translation + Arabic, transliteration + Arabic, or Arabic only.",
     "guideGoto": "Jump to a verse by entering surah and verse numbers.",
-    "guideTapExpand": "Tap a verse briefly to read it enlarged; swipe left or right for adjacent verses.",
+    "guideTapExpand": "Tap a verse briefly to read it enlarged; swipe right for the next verse, left for the previous.",
     "guideHoldTafsir": "Press and hold a verse to open Turkish tafsir in an external site.",
     "guideFavorite": "Tap the star on a verse card to favorite it; open again from the Favorites tab.",
     "guideAddFolder": "Use Add to zikir folder to save verses; you can enter up to three verse numbers.",
@@ -194,6 +207,18 @@
     "privacy": "Privacy",
     "reminder": "Daily reminder",
     "reminderTime": "Reminder time"
+  },
+  "reminderDialog": {
+    "notificationPermTitle": "Notification permission",
+    "notificationPermDeniedNative": "Daily reminders need notification permission. On Android: App info → Notifications.",
+    "exactAlarmTitle": "Alarm permission",
+    "exactAlarmBody": "To run the reminder at the exact time you chose, allow exact alarms.\n\nTap below to open the relevant settings screen.",
+    "exactAlarmOk": "Open settings",
+    "scheduleFailedTitle": "Reminder",
+    "scheduleFailedBody": "Could not schedule the daily reminder. Update the app and try again; if it persists, check Settings → Notifications.",
+    "unsupportedTitle": "Notifications",
+    "unsupportedBody": "This browser or view does not support notifications.",
+    "deniedWebBody": "Notifications are blocked. Allow notifications for this app in your phone or browser settings to use reminders."
   },
   "privacy": {
     "title": "Privacy",
@@ -286,6 +311,7 @@
     "resetLabel": "Reset",
     "protectedFoldersTitle": "Cannot delete",
     "protectedFoldersMsg": "“Default dhikr” and “Beautiful Names of Allah” folders cannot be deleted. Deselect them.",
+    "protectedSeasonalZikirsMsg": "Special-day dhikr cannot be deleted. They disappear when the period ends.",
     "nameRequired": "Zikir name is required.",
     "nameEmpty": "Zikir name cannot be empty.",
     "missingNameTitle": "Missing information",

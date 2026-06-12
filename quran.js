@@ -1,6 +1,23 @@
 import surahIndex from './data/quran/index.json';
 import juzBoundaries from './data/quran/juz.json';
 import mealsIndex from './data/quran/meals/index.json';
+import {
+    getSurahRefDisplayName,
+    resolveQuranRefSuggestions,
+    resolveSurahNameQuery,
+    surahMatchesRefSearch
+} from './quran-ref-search.js';
+import {
+    isMealSearchIndexReady,
+    localeSupportsAyahTextSearch,
+    localeSupportsMealTextSearch,
+    localeSupportsTranslitTextSearch,
+    preloadMealSearchIndex,
+    searchAyahTextHits
+} from './quran-ayah-text-search.js';
+import { getSurahLocalizedName } from './quran-surah-names.js';
+
+export { getSurahLocalizedName } from './quran-surah-names.js';
 import { t, getLocale, getLocaleTag, normalizeAppLocale } from './i18n.js';
 import { closeTafsirBridgeSheet, openTafsirBridgeSheet } from './tafsir-bridge.js';
 
@@ -166,6 +183,29 @@ export function syncQuranTabVisibility() {
     btn.removeAttribute('hidden');
     syncQuranTafsirVisibility();
     syncQuranGuideMealSelect();
+    syncQuranSearchGuide();
+}
+
+export function syncQuranSearchGuide(locale = getLocale()) {
+    const mealItem = document.getElementById('quranSearchGuideMeal');
+    const translitItem = document.getElementById('quranSearchGuideTranslit');
+    if (mealItem) mealItem.hidden = !localeSupportsMealTextSearch(locale);
+    if (translitItem) translitItem.hidden = !localeSupportsTranslitTextSearch(locale);
+}
+
+let mealSearchPreloadToken = 0;
+
+function ensureMealSearchIndexLoaded() {
+    const locale = getLocale();
+    if (!localeSupportsMealTextSearch(locale)) return;
+    if (isMealSearchIndexReady(locale)) return;
+
+    const token = ++mealSearchPreloadToken;
+    void preloadMealSearchIndex(locale).then(() => {
+        if (token !== mealSearchPreloadToken) return;
+        if (!(quranSearchQuery || '').trim()) return;
+        renderQuranSurahList();
+    });
 }
 
 function mealMetaById(mealId) {
@@ -213,6 +253,11 @@ export function clearQuranSearch() {
     quranSearchQuery = '';
     const input = document.getElementById('quranSearchInput');
     if (input) input.value = '';
+    const box = document.getElementById('quranSearchSuggestions');
+    if (box) {
+        box.innerHTML = '';
+        box.hidden = true;
+    }
 }
 
 function surahMeta(n) {
@@ -285,19 +330,99 @@ function createJuzDivider(juzN) {
 }
 
 function surahMatchesSearch(surah, rawQuery) {
-    const q = (rawQuery || '').trim();
-    if (!q) return true;
-    const tag = getLocaleTag();
-    const hay = [
-        String(surah.n),
-        surah.nameTr,
-        surah.nameAr,
-        String(surah.ayahCount)
-    ]
-        .join(' ')
-        .toLocaleLowerCase(tag);
-    const tokens = q.toLocaleLowerCase(tag).split(/\s+/).filter(Boolean);
-    return tokens.every((tok) => hay.includes(tok));
+    return surahMatchesRefSearch(surah, rawQuery, getLocale());
+}
+
+function escapeSearchHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+function getQuranSearchSuggestionHits(query) {
+    const q = (query || '').trim();
+    const locale = getLocale();
+    if (!q) return [];
+
+    const refs = resolveQuranRefSuggestions(q, surahIndex, locale);
+    if (refs.length) {
+        return refs.map((ref) => ({
+            kind: 'ref',
+            surah: ref.surah,
+            ayah: ref.ayah,
+            displayName: ref.displayName,
+            label: t('quran.searchRefHit', { surah: ref.displayName, ayah: ref.ayah })
+        }));
+    }
+
+    if (!localeSupportsAyahTextSearch(locale)) return [];
+    return searchAyahTextHits(q, surahIndex, locale, { limit: 5 }).map((hit) => {
+        if (hit.kind === 'translit') {
+            return {
+                kind: 'translit',
+                surah: hit.surah,
+                ayah: hit.ayah,
+                readModeId: hit.readModeId,
+                displayName: hit.displayName,
+                label: t('quran.searchTranslitHit', {
+                    surah: hit.displayName,
+                    ayah: hit.ayah
+                }),
+                snippet: hit.snippet
+            };
+        }
+        const mealMeta = mealMetaById(hit.mealId);
+        const mealLabel = getMealDisplayName(mealMeta, locale) || hit.mealId;
+        return {
+            kind: 'meal',
+            surah: hit.surah,
+            ayah: hit.ayah,
+            mealId: hit.mealId,
+            displayName: hit.displayName,
+            label: t('quran.searchMealHit', {
+                meal: mealLabel,
+                surah: hit.displayName,
+                ayah: hit.ayah
+            }),
+            snippet: hit.snippet
+        };
+    });
+}
+
+function renderQuranSearchSuggestions(query) {
+    const box = document.getElementById('quranSearchSuggestions');
+    if (!box) return;
+    box.innerHTML = '';
+    const hits = getQuranSearchSuggestionHits(query);
+    if (!hits.length) {
+        box.hidden = true;
+        return;
+    }
+
+    hits.forEach((hit) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `quran-search-ref${hit.kind === 'meal' || hit.kind === 'translit' ? ' quran-search-ref--meal' : ''}`;
+        const snippetHtml = hit.snippet
+            ? `<span class="quran-search-ref__snippet">${escapeSearchHtml(hit.snippet)}</span>`
+            : '';
+        btn.innerHTML = `
+            <span class="material-icons-outlined quran-search-ref__icon" aria-hidden="true">arrow_forward</span>
+            <span class="quran-search-ref__text">
+                <span class="quran-search-ref__title">${escapeSearchHtml(hit.label)}</span>
+                ${snippetHtml}
+            </span>
+        `;
+        btn.addEventListener('click', () => {
+            if (hit.readModeId && onReadModeChange) onReadModeChange(hit.readModeId);
+            if (navigateToSurah) navigateToSurah(hit.surah, hit.ayah, hit.mealId);
+            clearQuranSearch();
+            renderQuranSurahList();
+        });
+        box.appendChild(btn);
+    });
+    box.hidden = false;
 }
 
 function getQuranReaderScroller() {
@@ -471,7 +596,7 @@ function fillAyahExpandCard(surahN, ayah, readMode) {
     if (!refEl || !arEl) return;
 
     refEl.textContent = formatAyahExpandRef(
-        meta?.nameTr || t('quran.surahFallback', { n: surahN }),
+        getSurahLocalizedName(meta || surahN, getLocale()) || t('quran.surahFallback', { n: surahN }),
         surahN,
         ayah.n
     );
@@ -519,7 +644,7 @@ async function navigateExpandedAyah(delta) {
         if (card) {
             card.classList.remove('quran-ayah-expand__card--from-left', 'quran-ayah-expand__card--from-right');
             void card.offsetWidth;
-            card.classList.add(delta > 0 ? 'quran-ayah-expand__card--from-right' : 'quran-ayah-expand__card--from-left');
+            card.classList.add(delta > 0 ? 'quran-ayah-expand__card--from-left' : 'quran-ayah-expand__card--from-right');
         }
 
         void prefetchSurahs(meal, readMode, [target.surah, target.surah - 1, target.surah + 1], renderGeneration);
@@ -728,7 +853,8 @@ function createAyahElement(ayah, surahN, readMode) {
     block.setAttribute('data-ayah', String(ayah.n));
     block.setAttribute('role', 'button');
     block.setAttribute('tabindex', '0');
-    const surahName = surahMeta(surahN)?.nameTr || t('quran.surahFallback', { n: surahN });
+    const surahName = getSurahLocalizedName(surahMeta(surahN) || surahN, getLocale())
+        || t('quran.surahFallback', { n: surahN });
     const cardRef = formatAyahCardRef(surahName, surahN, ayah.n);
     const ariaHints = [t('quran.ayahTapHint')];
     if (localeShowsQuranTafsir()) ariaHints.push(t('quran.ayahHoldTafsirHint'));
@@ -842,9 +968,10 @@ function createSurahSectionShell(meta) {
     nameAr.setAttribute('lang', 'ar');
     nameAr.textContent = meta.nameAr || '';
 
-    const nameTr = document.createElement('p');
-    nameTr.className = 'quran-surah-section__name-tr';
-    nameTr.textContent = meta.nameTr || '';
+    const localName = document.createElement('p');
+    localName.className = 'quran-surah-section__name-tr';
+    const localized = getSurahLocalizedName(meta, getLocale());
+    localName.textContent = localized || '';
 
     const ayahMeta = document.createElement('p');
     ayahMeta.className = 'quran-surah-section__meta';
@@ -852,7 +979,7 @@ function createSurahSectionShell(meta) {
 
     frame.appendChild(num);
     frame.appendChild(nameAr);
-    if (meta.nameTr) frame.appendChild(nameTr);
+    if (localized && localized !== (meta.nameAr || '')) frame.appendChild(localName);
     frame.appendChild(ayahMeta);
     head.appendChild(frame);
 
@@ -1096,26 +1223,18 @@ function resolveSurahFromGotoInput(raw) {
     const q = String(raw || '').trim();
     if (!q) return { ok: false, message: t('quran.gotoInvalidSurah') };
 
-    if (/^\d+$/.test(q)) {
-        const n = Number(q);
-        if (n >= 1 && n <= 114) return { ok: true, surah: n };
-        return { ok: false, message: t('quran.gotoInvalidSurah') };
-    }
-
-    const tag = getLocaleTag();
-    const ql = q.toLocaleLowerCase(tag);
     const compactQ = q.replace(/\s+/g, '');
-
-    const exact = (surahIndex || []).find((s) => {
-        const nameTr = (s.nameTr || '').toLocaleLowerCase(tag);
+    const nameArExact = (surahIndex || []).find((s) => {
         const nameAr = s.nameAr || '';
-        return (
-            nameTr === ql ||
-            nameAr === q ||
-            nameAr.replace(/\s+/g, '') === compactQ
-        );
+        return nameAr === q || nameAr.replace(/\s+/g, '') === compactQ;
     });
-    if (exact) return { ok: true, surah: exact.n };
+    if (nameArExact) return { ok: true, surah: nameArExact.n };
+
+    const resolved = resolveSurahNameQuery(q, surahIndex, getLocale());
+    if (resolved?.surah) return { ok: true, surah: resolved.surah.n };
+    if (resolved?.ambiguous) {
+        return { ok: false, message: t('quran.gotoAmbiguousSurah') };
+    }
 
     const matches = (surahIndex || []).filter((s) => surahMatchesSearch(s, q));
     if (matches.length === 1) return { ok: true, surah: matches[0].n };
@@ -1246,15 +1365,22 @@ export function renderQuranSurahList() {
     const list = document.getElementById('quranSurahList');
     if (!list) return;
 
-    list.innerHTML = '';
+    ensureMealSearchIndexLoaded();
+
     const q = (quranSearchQuery || '').trim();
+    const suggestionHits = q ? getQuranSearchSuggestionHits(q) : [];
+    renderQuranSearchSuggestions(q);
+
+    list.innerHTML = '';
     const filtered = (surahIndex || []).filter((s) => surahMatchesSearch(s, q));
 
     if (!filtered.length) {
-        const empty = document.createElement('p');
-        empty.className = 'quran-surah-empty';
-        empty.textContent = t('quran.emptySearch');
-        list.appendChild(empty);
+        if (!suggestionHits.length) {
+            const empty = document.createElement('p');
+            empty.className = 'quran-surah-empty';
+            empty.textContent = t('quran.emptySearch');
+            list.appendChild(empty);
+        }
         return;
     }
 
@@ -1270,22 +1396,26 @@ export function renderQuranSurahList() {
         const body = document.createElement('span');
         body.className = 'quran-surah-card__body';
 
-        const nameTr = document.createElement('span');
-        nameTr.className = 'quran-surah-card__name';
-        nameTr.textContent = s.nameTr || '';
+        const locale = getLocale();
+        const localizedName = getSurahLocalizedName(s, locale);
+        const namePrimary = document.createElement('span');
+        namePrimary.className = 'quran-surah-card__name';
+        namePrimary.textContent = localizedName || '';
 
         const nameAr = document.createElement('span');
         nameAr.className = 'quran-surah-card__name-ar arabic-text';
         nameAr.setAttribute('dir', 'rtl');
         nameAr.setAttribute('lang', 'ar');
-        nameAr.textContent = s.nameAr || '';
+        const showArabicSub =
+            normalizeAppLocale(locale) !== 'ar' && s.nameAr && s.nameAr !== localizedName;
+        nameAr.textContent = showArabicSub ? s.nameAr : '';
 
         const meta = document.createElement('span');
         meta.className = 'quran-surah-card__meta';
         meta.textContent = t('quran.ayahCount', { count: s.ayahCount });
 
-        body.appendChild(nameTr);
-        body.appendChild(nameAr);
+        body.appendChild(namePrimary);
+        if (showArabicSub) body.appendChild(nameAr);
         body.appendChild(meta);
 
         card.appendChild(num);
@@ -1297,12 +1427,34 @@ export function renderQuranSurahList() {
     });
 }
 
+function openQuranSearchGuide() {
+    const overlay = document.getElementById('quranSearchGuideOverlay');
+    if (overlay) overlay.classList.add('active');
+}
+
+export function bindQuranSearchGuide() {
+    const btn = document.getElementById('quranSearchGuideBtn');
+    if (!btn || btn.dataset.quranBound === '1') return;
+    btn.dataset.quranBound = '1';
+    btn.addEventListener('click', openQuranSearchGuide);
+}
+
 export function bindQuranSearchInput() {
     const input = document.getElementById('quranSearchInput');
     if (!input || input.dataset.quranBound === '1') return;
     input.dataset.quranBound = '1';
     input.addEventListener('input', () => {
         quranSearchQuery = input.value || '';
+        renderQuranSurahList();
+    });
+    input.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        const hits = getQuranSearchSuggestionHits(quranSearchQuery);
+        if (hits.length !== 1 || !navigateToSurah) return;
+        e.preventDefault();
+        if (hits[0].readModeId && onReadModeChange) onReadModeChange(hits[0].readModeId);
+        navigateToSurah(hits[0].surah, hits[0].ayah, hits[0].mealId);
+        clearQuranSearch();
         renderQuranSurahList();
     });
 }
@@ -1383,7 +1535,7 @@ export async function renderQuranFavoritesList(mealId, favorites) {
             const ref = document.createElement('span');
             ref.className = 'quran-favorite-card__ref';
             ref.textContent = formatAyahCardRef(
-                meta?.nameTr || t('quran.surahFallback', { n: s }),
+                getSurahLocalizedName(meta || s, getLocale()) || t('quran.surahFallback', { n: s }),
                 s,
                 a
             );
@@ -1516,8 +1668,8 @@ function attachExpandCardSwipe(card) {
             let tx = dx;
             const canPrev = !!adjacentAyahRef(expandViewState.surah, expandViewState.ayah, -1);
             const canNext = !!adjacentAyahRef(expandViewState.surah, expandViewState.ayah, 1);
-            if (tx > 0 && !canPrev) tx *= 0.3;
-            if (tx < 0 && !canNext) tx *= 0.3;
+            if (tx > 0 && !canNext) tx *= 0.3;
+            if (tx < 0 && !canPrev) tx *= 0.3;
             card.style.transform = `translateX(${tx}px)`;
         },
         { passive: false }
@@ -1537,8 +1689,8 @@ function attachExpandCardSwipe(card) {
 
         const canPrev = !!adjacentAyahRef(expandViewState.surah, expandViewState.ayah, -1);
         const canNext = !!adjacentAyahRef(expandViewState.surah, expandViewState.ayah, 1);
-        const goNext = dx <= -EXPAND_SWIPE_COMMIT_PX && canNext;
-        const goPrev = dx >= EXPAND_SWIPE_COMMIT_PX && canPrev;
+        const goNext = dx >= EXPAND_SWIPE_COMMIT_PX && canNext;
+        const goPrev = dx <= -EXPAND_SWIPE_COMMIT_PX && canPrev;
 
         if (!goNext && !goPrev) {
             resetSwipeTransform(true);
@@ -1546,7 +1698,7 @@ function attachExpandCardSwipe(card) {
         }
 
         const delta = goNext ? 1 : -1;
-        const exitX = goNext ? '-108%' : '108%';
+        const exitX = goNext ? '108%' : '-108%';
         card.style.transition = '';
         card.style.transform = `translateX(${exitX})`;
 
@@ -1561,6 +1713,136 @@ function attachExpandCardSwipe(card) {
 
     card.addEventListener('pointerup', onSwipePointerEnd);
     card.addEventListener('pointercancel', onSwipePointerEnd);
+}
+
+function attachReaderDrawerSwipe(panel, backdrop) {
+    let activePointer = null;
+    let startX = 0;
+    let startY = 0;
+    let lastX = 0;
+    /** @type {'h' | 'v' | null} */
+    let axisLock = null;
+
+    function isDrawerOpen() {
+        const drawer = document.getElementById('quranReaderDrawer');
+        return !!drawer?.classList.contains('quran-reader-drawer--open');
+    }
+
+    function endSwipeGesture(releasePointer) {
+        if (activePointer == null) return;
+        if (releasePointer && panel.hasPointerCapture(activePointer)) {
+            try {
+                panel.releasePointerCapture(activePointer);
+            } catch {
+                // ignore
+            }
+        }
+        activePointer = null;
+        axisLock = null;
+    }
+
+    function resetSwipeTransform(animate) {
+        panel.style.transition = animate ? '' : 'none';
+        panel.style.transform = animate ? '' : '';
+        if (backdrop) {
+            backdrop.style.transition = animate ? '' : 'none';
+            backdrop.style.opacity = animate ? '' : '';
+        }
+        if (!animate) {
+            requestAnimationFrame(() => {
+                panel.style.transition = '';
+                if (backdrop) backdrop.style.transition = '';
+            });
+        }
+    }
+
+    panel.addEventListener('pointerdown', (e) => {
+        if (!isDrawerOpen()) return;
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        activePointer = e.pointerId;
+        startX = lastX = e.clientX;
+        startY = e.clientY;
+        axisLock = null;
+        panel.style.transition = 'none';
+        if (backdrop) backdrop.style.transition = 'none';
+        try {
+            panel.setPointerCapture(e.pointerId);
+        } catch {
+            // ignore
+        }
+    });
+
+    panel.addEventListener(
+        'pointermove',
+        (e) => {
+            if (e.pointerId !== activePointer || !isDrawerOpen()) return;
+
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+
+            if (!axisLock) {
+                if (Math.abs(dx) < EXPAND_SWIPE_LOCK_PX && Math.abs(dy) < EXPAND_SWIPE_LOCK_PX) return;
+                if (Math.abs(dx) > Math.abs(dy) * 1.12) axisLock = 'h';
+                else {
+                    axisLock = 'v';
+                    endSwipeGesture(true);
+                    resetSwipeTransform(false);
+                    return;
+                }
+            }
+
+            if (axisLock !== 'h') return;
+            e.preventDefault();
+
+            lastX = e.clientX;
+            let tx = dx;
+            if (tx < 0) tx *= 0.2;
+            panel.style.transform = `translateX(${tx}px)`;
+            if (backdrop) {
+                const w = panel.offsetWidth || 1;
+                const progress = Math.max(0, Math.min(1, Math.max(0, tx) / w));
+                backdrop.style.opacity = String(1 - progress);
+            }
+        },
+        { passive: false }
+    );
+
+    function onSwipePointerEnd(e) {
+        if (e.pointerId !== activePointer) return;
+
+        const dx = lastX - startX;
+        const wasHorizontal = axisLock === 'h';
+        endSwipeGesture(true);
+
+        if (!wasHorizontal || !isDrawerOpen()) {
+            resetSwipeTransform(true);
+            return;
+        }
+
+        const shouldClose = dx >= EXPAND_SWIPE_COMMIT_PX;
+        if (!shouldClose) {
+            resetSwipeTransform(true);
+            return;
+        }
+
+        panel.style.transition = '';
+        panel.style.transform = 'translateX(100%)';
+        if (backdrop) {
+            backdrop.style.transition = 'opacity 0.24s ease';
+            backdrop.style.opacity = '0';
+        }
+
+        const onExitDone = (ev) => {
+            if (ev.propertyName !== 'transform') return;
+            panel.removeEventListener('transitionend', onExitDone);
+            resetSwipeTransform(false);
+            setQuranReaderDrawerOpen(false);
+        };
+        panel.addEventListener('transitionend', onExitDone);
+    }
+
+    panel.addEventListener('pointerup', onSwipePointerEnd);
+    panel.addEventListener('pointercancel', onSwipePointerEnd);
 }
 
 export function bindQuranAyahExpandOverlay() {
@@ -1603,6 +1885,12 @@ export function bindQuranReaderMenu(initialReadMode) {
     if (backdrop && backdrop.dataset.quranBound !== '1') {
         backdrop.dataset.quranBound = '1';
         backdrop.addEventListener('click', () => setQuranReaderDrawerOpen(false));
+    }
+
+    const drawerPanel = document.getElementById('quranReaderDrawerPanel');
+    if (drawerPanel && drawerPanel.dataset.quranDrawerSwipeBound !== '1') {
+        drawerPanel.dataset.quranDrawerSwipeBound = '1';
+        attachReaderDrawerSwipe(drawerPanel, backdrop);
     }
 
     if (modeList && modeList.dataset.quranBound !== '1') {

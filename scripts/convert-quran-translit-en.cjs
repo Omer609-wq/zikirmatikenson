@@ -1,28 +1,50 @@
 /**
  * İngilizce latin okunuş → data/quran/translit-en/
- * Kaynak: fawazahmed0/quran-api — edition ara-quran-la (Tanzil en.transliteration uyumlu)
  *
- * Usage: node scripts/convert-quran-translit-en.cjs
+ * Varsayılan: Quran Phonetics (ASCII) — fawazahmed0/quran-api ara-quranphoneticst-la
+ * Eski Tanzil: --tanzil veya en.transliteration.txt dosya yolu
+ *
+ * Usage:
+ *   node scripts/convert-quran-translit-en.cjs
+ *   node scripts/convert-quran-translit-en.cjs --tanzil
+ *   node scripts/convert-quran-translit-en.cjs path/to/en.transliteration.txt
+ *
+ * Doğrulama:
+ *   node scripts/verify-quran-translit-en.cjs
  */
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+const { cleanLat, parseTanzilPipeFile } = require('./lib/tanzil-translit-parse.cjs');
 
 const outDir = path.join(__dirname, '..', 'data', 'quran', 'translit-en');
-const EDITION_BASE =
-    'https://raw.githubusercontent.com/fawazahmed0/quran-api/1/editions/ara-quran-la';
+const API_ROOT = 'https://raw.githubusercontent.com/fawazahmed0/quran-api/1/editions';
 
-const meta = {
-    id: 'translit-en',
-    nameTr: 'İngilizce Latin Okunuş',
-    language: 'en',
-    source: 'Tanzil.net (en.transliteration) via quran-api ara-quran-la',
-    license: 'See Tanzil.net translation terms'
+const EDITIONS = {
+    phonetic: {
+        id: 'ara-quranphoneticst-la',
+        meta: {
+            id: 'translit-en',
+            nameTr: 'İngilizce Latin Okunuş',
+            language: 'en',
+            author: 'Quran Phonetics Transliteration',
+            source: 'fawazahmed0/quran-api (ara-quranphoneticst-la)',
+            license: 'See upstream quran-api / edition terms',
+            note: 'Okunaklı ASCII okunuş (Ar-Rahman, Al-Hamdu). Varsayılan EN paketi.'
+        }
+    },
+    tanzil: {
+        id: 'ara-quran-la',
+        meta: {
+            id: 'translit-en',
+            nameTr: 'İngilizce Latin Okunuş',
+            language: 'en',
+            source: 'Tanzil.net (en.transliteration)',
+            license: 'See Tanzil.net translation terms',
+            note: 'Tanzil resmi okunuşu (alrrahmani). --tanzil ile üretilir.'
+        }
+    }
 };
-
-function cleanLat(text) {
-    return String(text || '').replace(/<\/?[a-z]+>/gi, '').replace(/\.\s*$/, '').trim();
-}
 
 function getJson(url) {
     return new Promise((resolve, reject) => {
@@ -51,13 +73,13 @@ function getJson(url) {
     });
 }
 
-async function fetchFromGithub() {
+async function fetchEditionFromGithub(editionId) {
+    const base = `${API_ROOT}/${editionId}`;
     const bySurah = new Map();
     let parsed = 0;
 
     for (let n = 1; n <= 114; n += 1) {
-        const url = `${EDITION_BASE}/${n}.json`;
-        const data = await getJson(url);
+        const data = await getJson(`${base}/${n}.json`);
         const verses = data.chapter || [];
         const ayahs = verses
             .map((v) => ({
@@ -71,10 +93,10 @@ async function fetchFromGithub() {
     }
     process.stdout.write('\n');
 
-    return { bySurah, parsed };
+    return { bySurah, parsed, skipped: 0 };
 }
 
-function writeOutput(bySurah) {
+function writeOutput(bySurah, meta) {
     if (bySurah.size !== 114) {
         throw new Error(`Expected 114 surahs, got ${bySurah.size}`);
     }
@@ -103,14 +125,39 @@ function writeOutput(bySurah) {
 }
 
 async function main() {
-    console.log('Fetching from:', EDITION_BASE);
-    const { bySurah, parsed } = await fetchFromGithub();
-    const { surahNums, totalAyahs } = writeOutput(bySurah);
+    const argv = process.argv.slice(2);
+    const useTanzil = argv.includes('--tanzil');
+    const fileArg = argv.find((a) => !a.startsWith('--') && fs.existsSync(path.resolve(a)));
+
+    let result;
+    let meta;
+
+    if (fileArg) {
+        const inputPath = path.resolve(fileArg);
+        console.log('Input (Tanzil pipe):', inputPath);
+        result = parseTanzilPipeFile(inputPath);
+        meta = EDITIONS.tanzil.meta;
+    } else if (useTanzil) {
+        const editionId = EDITIONS.tanzil.id;
+        console.log('Fetching Tanzil edition:', editionId);
+        result = await fetchEditionFromGithub(editionId);
+        meta = EDITIONS.tanzil.meta;
+    } else {
+        const editionId = EDITIONS.phonetic.id;
+        console.log('Fetching phonetic edition:', editionId);
+        result = await fetchEditionFromGithub(editionId);
+        meta = EDITIONS.phonetic.meta;
+    }
+
+    const { bySurah, parsed, skipped } = result;
+    const { surahNums, totalAyahs } = writeOutput(bySurah, meta);
 
     console.log('Parsed ayahs:', parsed);
+    console.log('Skipped lines:', skipped);
     console.log('Surahs:', surahNums.length);
     console.log('Total ayahs:', totalAyahs);
     console.log('Sample 1:1:', bySurah.get(1).find((a) => a.n === 1)?.lat);
+    console.log('Sample 2:2:', bySurah.get(2).find((a) => a.n === 2)?.lat);
     console.log('Wrote:', outDir);
 }
 

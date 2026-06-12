@@ -614,8 +614,13 @@
                 <div id="quranSurahsPanel">
                     <div class="form-group" style="margin-top: 0.75rem;">
                         <label data-i18n="quran.search">Ara</label>
-                        <input type="text" id="quranSearchInput" data-i18n="quran.searchPlaceholder" data-i18n-placeholder placeholder="Sure adı veya numarası…" autocomplete="off" />
+                        <button type="button" class="quran-search-guide-link" id="quranSearchGuideBtn" aria-haspopup="dialog" aria-controls="quranSearchGuideOverlay">
+                            <span class="material-icons-outlined quran-search-guide-link__icon" aria-hidden="true">lightbulb</span>
+                            <span class="quran-search-guide-link__text" data-i18n="quran.searchGuideLink">Gelişmiş arama motoru rehberi</span>
+                        </button>
+                        <input type="text" id="quranSearchInput" data-i18n="quran.searchPlaceholder" data-i18n-placeholder placeholder="Sure adı veya numarası…" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="search" />
                     </div>
+                    <div id="quranSearchSuggestions" class="quran-search-suggestions" hidden></div>
                     <div class="quran-surah-list" id="quranSurahList" role="list"></div>
                 </div>
                 <div id="quranFavoritesPanel" hidden>
@@ -894,6 +899,26 @@
             <div class="modal-footer">
                 <button class="primary-btn full-width" id="saveCopyBtn" style="margin-bottom: 10px;" data-i18n="zikir.copyDuplicate">Oraya Kopyala (Çoğalt)</button>
                 <button class="primary-btn full-width" id="saveMoveBtn" style="background: transparent; border: 1px solid var(--primary-green);" data-i18n="zikir.copyMove">Oraya Taşı</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quran advanced search guide -->
+    <div class="modal-overlay" id="quranSearchGuideOverlay">
+        <div class="modal glass-modal quran-search-guide-modal">
+            <div class="modal-header">
+                <h2 data-i18n="quran.searchGuideTitle">Gelişmiş arama motoru rehberi</h2>
+                <button type="button" class="icon-btn closeModalBtn" data-modal="quranSearchGuideOverlay" aria-label="Kapat"><span class="material-icons-outlined">close</span></button>
+            </div>
+            <div class="modal-body">
+                <p class="quran-search-guide-modal__intro" data-i18n="quran.searchGuideIntro">Bu arama kutusu sure listesini filtreler; yazdıkça öneriler çıkar ve doğrudan ayete gidebilirsiniz.</p>
+                <ul class="quran-search-guide-modal__list">
+                    <li data-i18n="quran.searchGuideRef">Sure referansı: Bakara 12, 2:12 veya sure adı (Fatiha, Yasin).</li>
+                    <li data-i18n="quran.searchGuideFilter">Sure adı yazınca liste daralır; tam eşleşme olmasa da yakın isimler bulunur.</li>
+                    <li id="quranSearchGuideMeal" data-i18n="quran.searchGuideMeal">Meal metni (Türkçe): Diyanet İşleri ve Diyanet Vakfı meal'lerinde birlikte arar; ör. şüphe götürmeyen.</li>
+                    <li id="quranSearchGuideTranslit" data-i18n="quran.searchGuideTranslit">Türkçe okunuş: ör. la raybe fih, bismi llahi rrahman; küçük yazım hataları tolere edilir.</li>
+                    <li data-i18n="quran.searchGuideTips">En az 3 harf gerekir. Tek öneri varken Enter ile gidebilirsiniz; meal sonucu seçince ilgili meal, okunuş sonucu seçince okunuş görünümü açılır.</li>
+                </ul>
             </div>
         </div>
     </div>

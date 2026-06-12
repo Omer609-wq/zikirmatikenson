@@ -8,7 +8,13 @@
         "preview": "vite preview",
         "cap:sync": "npm run build && npx cap sync",
         "cap:open:android": "npx cap open android",
-        "cap:icons": "node scripts/ensure-icon-source.cjs && capacitor-assets generate --android --pwa --assetPath resources --iconBackgroundColor \"#0f2918\" --pwaManifestPath public/manifest.json && node scripts/patch-adaptive-icon.cjs"
+        "cap:icons": "node scripts/ensure-icon-source.cjs && capacitor-assets generate --android --pwa --assetPath resources --iconBackgroundColor \"#0f2918\" --pwaManifestPath public/manifest.json && node scripts/patch-adaptive-icon.cjs",
+        "test": "node --test lib/*.test.js quran-ref-search.test.js quran-ayah-text-search.test.js",
+        "translit:en:verify": "node scripts/verify-quran-translit-en.cjs",
+        "translit:en:build": "node scripts/convert-quran-translit-en.cjs",
+        "translit:en:build:tanzil": "node scripts/convert-quran-translit-en.cjs --tanzil",
+        "quran:meal-search-index": "node scripts/build-quran-meal-search-index.cjs",
+        "quran:translit-search-index": "node scripts/build-quran-translit-search-index.cjs"
     },
     "dependencies": {
         "@capacitor-community/keep-awake": "^5.0.1",
