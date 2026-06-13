@@ -74,8 +74,8 @@ export function seasonalFolderId(eventId) {
     return `${SEASONAL_FOLDER_PREFIX}${eventId}`;
 }
 
-export function seasonalZikirId(eventId, index) {
-    return `${SEASONAL_ZIKIR_PREFIX}${eventId}${SEASONAL_ZIKIR_SEP}${index}`;
+export function seasonalZikirId(eventId, key) {
+    return `${SEASONAL_ZIKIR_PREFIX}${eventId}${SEASONAL_ZIKIR_SEP}${key}`;
 }
 
 export function parseSeasonalZikirId(id) {
@@ -84,9 +84,10 @@ export function parseSeasonalZikirId(id) {
     const sep = rest.lastIndexOf(SEASONAL_ZIKIR_SEP);
     if (sep < 0) return null;
     const eventId = rest.slice(0, sep);
-    const index = parseInt(rest.slice(sep + SEASONAL_ZIKIR_SEP.length), 10);
-    if (!eventId || !Number.isFinite(index) || index < 0) return null;
-    return { eventId, index };
+    const key = rest.slice(sep + SEASONAL_ZIKIR_SEP.length);
+    if (!eventId || !key) return null;
+    const index = /^\d+$/.test(key) ? parseInt(key, 10) : null;
+    return { eventId, key, index };
 }
 
 export function resolveSeasonalText(field, locale) {
@@ -130,6 +131,37 @@ function writeSeasonalCounts(data) {
     localStorage.setItem(COUNTS_STORAGE_KEY, JSON.stringify(data));
 }
 
+function resolveStableSeasonalText(field) {
+    if (field == null) return '';
+    if (typeof field === 'string') return field.trim();
+    if (typeof field === 'object') {
+        return String(field.tr || field.en || Object.values(field)[0] || '').trim();
+    }
+    return String(field).trim();
+}
+
+function stableHash(input) {
+    let hash = 2166136261;
+    const text = String(input || '');
+    for (let i = 0; i < text.length; i++) {
+        hash ^= text.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
+    }
+    return (hash >>> 0).toString(36);
+}
+
+function normalizeSeasonalKey(raw) {
+    const explicit = String(raw?.id || raw?.key || '').trim();
+    if (/^[a-z0-9][a-z0-9_-]{0,80}$/i.test(explicit)) return explicit;
+    const identity = [
+        typeof raw?.arabic === 'string' ? raw.arabic.trim() : '',
+        resolveStableSeasonalText(raw?.name),
+        resolveStableSeasonalText(raw?.meaning),
+        String(raw?.target ?? '').trim()
+    ].join('|');
+    return `h_${stableHash(identity)}`;
+}
+
 export function purgeSeasonalCountsExcept(activeEventIds) {
     const keep = new Set((activeEventIds || []).map(String));
     const all = readSeasonalCounts();
@@ -156,7 +188,7 @@ export function persistSeasonalCountsFromZikirs(zikirs) {
             all[eventId] = {};
             changed = true;
         }
-        const key = String(index);
+        const key = parsed.key || String(index);
         const prev = all[eventId][key] || {};
         const next = {
             count: Number.isFinite(z.count) ? z.count : 0,
@@ -171,12 +203,12 @@ export function persistSeasonalCountsFromZikirs(zikirs) {
     if (changed) writeSeasonalCounts(all);
 }
 
-function normalizeZikir(raw, locale, eventId, index, savedCounts) {
+function normalizeZikir(raw, locale, eventId, index, key, savedCounts) {
     if (!raw || typeof raw !== 'object') return null;
-    const saved = savedCounts?.[String(index)] || {};
+    const saved = savedCounts?.[key] || savedCounts?.[String(index)] || {};
     const target = parseInt(String(raw.target ?? ''), 10);
     return {
-        id: seasonalZikirId(eventId, index),
+        id: seasonalZikirId(eventId, key),
         folderId: seasonalFolderId(eventId),
         name: resolveSeasonalText(raw.name, locale) || 'Zikir',
         arabic: typeof raw.arabic === 'string' ? raw.arabic.trim() : '',
@@ -207,8 +239,15 @@ function normalizeEvents(raw, locale) {
         .map((ev) => {
             const id = String(ev.id || '').trim();
             if (!id || !/^[a-z0-9][a-z0-9_-]*$/i.test(id)) return null;
+            const seenKeys = new Map();
             const zikirs = (Array.isArray(ev.zikirs) ? ev.zikirs : [])
-                .map((z, i) => normalizeZikir(z, locale, id, i, readSeasonalCounts()[id]))
+                .map((z, i) => {
+                    const baseKey = normalizeSeasonalKey(z);
+                    const seen = seenKeys.get(baseKey) || 0;
+                    seenKeys.set(baseKey, seen + 1);
+                    const key = seen ? `${baseKey}_${seen + 1}` : baseKey;
+                    return normalizeZikir(z, locale, id, i, key, readSeasonalCounts()[id]);
+                })
                 .filter(Boolean);
             if (!zikirs.length) return null;
             return {
