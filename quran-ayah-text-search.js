@@ -1,7 +1,7 @@
 /**
- * Meal ve (TR) okunuş metninde ayet araması — locale başına lazy indeks.
+ * Meal, Arapça mushaf ve (TR) okunuş metninde ayet araması — locale başına lazy indeks.
  */
-import { parseQuranRefQuery, getSurahRefDisplayName } from './quran-ref-search.js';
+import { parseQuranRefQuery, getSurahRefDisplayName, normalizeArabicSearchText } from './quran-ref-search.js';
 import translitSearchIndex from './data/quran/search/translit-tr.json' with { type: 'json' };
 
 /** Gürültüyü azaltmak için minimum arama uzunluğu (boşluksuz). */
@@ -308,6 +308,69 @@ const UR_STOP_WORDS = new Set([
 
 const TRANSLIT_STOP_WORDS = new Set(['ve', 'el', 'lil', 'fi', 'min', 'vem', 'iley', 'min']);
 
+const AR_STOP_WORDS = new Set([
+    'في',
+    'من',
+    'ال',
+    'و',
+    'ب',
+    'ل',
+    'ك',
+    'عن',
+    'الى',
+    'علي',
+    'على',
+    'ما',
+    'لا',
+    'ان',
+    'ان',
+    'او',
+    'هذا',
+    'هذه',
+    'ذلك',
+    'التي',
+    'الذي',
+    'الذين',
+    'هم',
+    'هن',
+    'هو',
+    'هي',
+    'قد',
+    'كان',
+    'قال',
+    'ان',
+    'لم',
+    'لن',
+    'كل',
+    'ذلك',
+    'ثم',
+    'بل',
+    'مع',
+    'عند',
+    'حتي',
+    'اذا',
+    'اذ',
+    'انما',
+    'الا',
+    'غير',
+    'بين',
+    'عليه',
+    'عليهم',
+    'اليه',
+    'اليكم',
+    'ربكم',
+    'الله',
+    'رب',
+    'ان',
+    'يا'
+]);
+
+const AR_AYAH_SEARCH_CONFIG = {
+    localeTag: 'ar',
+    normalize: normalizeArabicAyahSearchText,
+    stopWords: AR_STOP_WORDS
+};
+
 const MEAL_LOCALE_CONFIG = {
     tr: {
         localeTag: 'tr',
@@ -348,9 +411,15 @@ const MEAL_LOCALE_CONFIG = {
 
 const mealIndexCache = new Map();
 const mealIndexLoading = new Map();
+const arabicAyahIndexCache = new Map();
+let arabicAyahIndexLoading = null;
 
 function normalizeSearchLocale(locale = 'tr') {
     return String(locale || 'tr').toLowerCase().split('-')[0];
+}
+
+export function normalizeArabicAyahSearchText(value) {
+    return normalizeArabicSearchText(value);
 }
 
 export function normalizeMealSearchText(value) {
@@ -430,17 +499,57 @@ export function localeSupportsMealTextSearch(locale = 'tr') {
     return Boolean(getMealLocaleConfig(locale));
 }
 
+export function localeSupportsArabicAyahTextSearch(locale = 'tr') {
+    return normalizeSearchLocale(locale) === 'ar';
+}
+
 export function localeSupportsTranslitTextSearch(locale = 'tr') {
     return normalizeSearchLocale(locale) === 'tr';
 }
 
 export function localeSupportsAyahTextSearch(locale = 'tr') {
-    return localeSupportsMealTextSearch(locale) || localeSupportsTranslitTextSearch(locale);
+    return (
+        localeSupportsMealTextSearch(locale) ||
+        localeSupportsArabicAyahTextSearch(locale) ||
+        localeSupportsTranslitTextSearch(locale)
+    );
+}
+
+export function isAyahTextSearchIndexReady(locale = 'tr') {
+    const code = normalizeSearchLocale(locale);
+    if (code === 'ar') return arabicAyahIndexCache.has('ar');
+    return mealIndexCache.has(code);
 }
 
 export function isMealSearchIndexReady(locale = 'tr') {
     const code = normalizeSearchLocale(locale);
+    if (code === 'ar') return false;
     return mealIndexCache.has(code);
+}
+
+export async function preloadArabicAyahSearchIndex() {
+    if (arabicAyahIndexCache.has('ar')) return arabicAyahIndexCache.get('ar');
+    if (arabicAyahIndexLoading) return arabicAyahIndexLoading;
+
+    arabicAyahIndexLoading = import('./data/quran/search/ar-ayah.json', { with: { type: 'json' } })
+        .then((mod) => {
+            const index = mod.default || mod;
+            arabicAyahIndexCache.set('ar', index);
+            arabicAyahIndexLoading = null;
+            return index;
+        })
+        .catch((err) => {
+            arabicAyahIndexLoading = null;
+            throw err;
+        });
+
+    return arabicAyahIndexLoading;
+}
+
+export async function preloadAyahTextSearchIndex(locale = 'tr') {
+    const code = normalizeSearchLocale(locale);
+    if (code === 'ar') return preloadArabicAyahSearchIndex();
+    return preloadMealSearchIndex(locale);
 }
 
 export async function preloadMealSearchIndex(locale = 'tr') {
@@ -477,9 +586,11 @@ export function meetsMinTextSearchQuery(raw, locale = 'tr') {
     if (!q) return false;
     if (parseQuranRefQuery(q)) return false;
 
+    const code = normalizeSearchLocale(locale);
+    const arCfg = code === 'ar' ? AR_AYAH_SEARCH_CONFIG : null;
     const mealCfg = getMealLocaleConfig(locale);
-    const normalize = mealCfg?.normalize || normalizeMealSearchText;
-    const stopWords = mealCfg?.stopWords || TR_STOP_WORDS;
+    const normalize = arCfg?.normalize || mealCfg?.normalize || normalizeMealSearchText;
+    const stopWords = arCfg?.stopWords || mealCfg?.stopWords || TR_STOP_WORDS;
 
     const norm = normalize(q);
     const compact = norm.replace(/\s+/g, '');
@@ -530,39 +641,63 @@ function levenshteinAtMost1(a, b) {
     return edits + (longer.length - i);
 }
 
+function compareTokenHit(a, b) {
+    if (!a) return b;
+    if (!b) return a;
+    if (a.rank !== b.rank) return a.rank < b.rank ? a : b;
+    if (a.fuzz !== b.fuzz) return a.fuzz < b.fuzz ? a : b;
+    return a.pos <= b.pos ? a : b;
+}
+
 function findTokenInHay(hay, token, from = 0, fuzzy = false) {
-    const idx = hay.indexOf(token, from);
-    if (idx >= 0) return { pos: idx, fuzz: 0 };
+    let best = null;
+    let i = from;
+    while (i < hay.length) {
+        while (i < hay.length && hay[i] === ' ') i += 1;
+        const wordStart = i;
+        let j = i;
+        while (j < hay.length && hay[j] !== ' ') j += 1;
+        const word = hay.slice(wordStart, j);
+        i = j + 1;
 
-    if (!fuzzy || token.length < 4) return null;
+        if (!word) continue;
 
-    for (let i = from; i < hay.length; i += 1) {
-        for (let len = token.length - 1; len <= token.length + 1; len += 1) {
-            if (len < 3 || i + len > hay.length) continue;
-            const slice = hay.slice(i, i + len);
-            if (levenshteinAtMost1(slice, token) <= 1) {
-                return { pos: i, fuzz: 1 };
-            }
+        if (word === token) {
+            return { pos: wordStart, fuzz: 0, rank: 0 };
+        }
+        if (word.startsWith(token)) {
+            best = compareTokenHit(best, { pos: wordStart, fuzz: 0, rank: 1 });
+        } else if (word.includes(token)) {
+            best = compareTokenHit(best, {
+                pos: wordStart + word.indexOf(token),
+                fuzz: 0,
+                rank: 2
+            });
+        } else if (fuzzy && token.length >= 4 && levenshteinAtMost1(word, token) <= 1) {
+            best = compareTokenHit(best, { pos: wordStart, fuzz: 1, rank: 3 });
         }
     }
-    return null;
+
+    const idx = hay.indexOf(token, from);
+    if (idx >= 0) {
+        return compareTokenHit(best, { pos: idx, fuzz: 0, rank: 4 }) || { pos: idx, fuzz: 0, rank: 4 };
+    }
+
+    return best;
 }
 
 function scoreHaystack(hay, tokens, fuzzy = false) {
     let searchFrom = 0;
-    const positions = [];
-    let fuzzPenalty = 0;
+    let total = 0;
 
     for (const tok of tokens) {
         const hit = findTokenInHay(hay, tok, searchFrom, fuzzy);
         if (!hit) return null;
-        positions.push(hit.pos);
-        fuzzPenalty += hit.fuzz * 40;
+        total += hit.rank * 1000 + hit.pos * 0.01 + hit.fuzz * 40;
         searchFrom = hit.pos + Math.max(tok.length, 1);
     }
 
-    const span = positions[positions.length - 1] - positions[0];
-    return span + positions[0] * 0.01 + fuzzPenalty;
+    return total;
 }
 
 function makeSnippet(text, rawQuery, cfg, maxLen = 72) {
@@ -573,7 +708,7 @@ function makeSnippet(text, rawQuery, cfg, maxLen = 72) {
     const localeTag = cfg.localeTag || 'tr';
     const tokens = searchTokensFromQuery(rawQuery, normalize, stopWords);
     const lower =
-        localeTag === 'bn' || localeTag === 'ur'
+        localeTag === 'bn' || localeTag === 'ur' || localeTag === 'ar'
             ? original
             : original.toLocaleLowerCase(localeTag === 'tr' ? 'tr' : localeTag);
     let hitAt = -1;
@@ -701,9 +836,27 @@ export function searchAyahTextHits(raw, surahIndex, locale = 'tr', options = {})
 
     const limit = Number(options.limit) > 0 ? Number(options.limit) : 5;
     const poolLimit = Math.max(limit * 2, 8);
-    const mealRows = searchMealAyahsInternal(raw, locale, { limit: poolLimit });
+    const surahFilter = Number(options.surah);
+    const scopedSurah = Number.isFinite(surahFilter) && surahFilter >= 1 ? surahFilter : null;
+    const code = normalizeSearchLocale(locale);
+
+    if (code === 'ar') {
+        return searchArabicAyahsInternal(raw, { limit, surah: scopedSurah }).map((hit) => {
+            const meta = (surahIndex || []).find((s) => s.n === hit.surah);
+            return {
+                kind: 'ar',
+                surah: hit.surah,
+                ayah: hit.ayah,
+                displayName: getSurahRefDisplayName(meta || { n: hit.surah }, locale),
+                snippet: hit.snippet,
+                readModeId: 'ar-only'
+            };
+        });
+    }
+
+    const mealRows = searchMealAyahsInternal(raw, locale, { limit: poolLimit, surah: scopedSurah });
     const translitRows = localeSupportsTranslitTextSearch(locale)
-        ? searchTranslitAyahsInternal(raw, { limit: poolLimit })
+        ? searchTranslitAyahsInternal(raw, { limit: poolLimit, surah: scopedSurah })
         : [];
     const bestByAyah = new Map();
 
@@ -730,6 +883,60 @@ export function searchAyahTextHits(raw, surahIndex, locale = 'tr', options = {})
     });
 }
 
+/**
+ * @param {Array<{ n: number, nameTr?: string, nameAr?: string, ayahCount: number }>} surahIndex
+ */
+export function searchArabicAyahs(raw, surahIndex, locale = 'ar', options = {}) {
+    if (!localeSupportsArabicAyahTextSearch(locale)) return [];
+    if (!meetsMinTextSearchQuery(raw, locale)) return [];
+
+    const limit = Number(options.limit) > 0 ? Number(options.limit) : 5;
+    const surahFilter = Number(options.surah);
+    const scopedSurah = Number.isFinite(surahFilter) && surahFilter >= 1 ? surahFilter : null;
+
+    return searchArabicAyahsInternal(raw, { limit, surah: scopedSurah }).map((hit) => {
+        const meta = (surahIndex || []).find((s) => s.n === hit.surah);
+        return {
+            kind: 'ar',
+            surah: hit.surah,
+            ayah: hit.ayah,
+            displayName: getSurahRefDisplayName(meta || { n: hit.surah }, locale),
+            snippet: hit.snippet,
+            readModeId: 'ar-only'
+        };
+    });
+}
+
+function searchArabicAyahsInternal(raw, options = {}) {
+    const tokens = searchTokensFromQuery(raw, AR_AYAH_SEARCH_CONFIG.normalize, AR_AYAH_SEARCH_CONFIG.stopWords);
+    if (!tokens.length) return [];
+
+    const limit = Number(options.limit) > 0 ? Number(options.limit) : 5;
+    const surahFilter = Number(options.surah);
+    const scopedSurah = Number.isFinite(surahFilter) && surahFilter >= 1 ? surahFilter : null;
+    const rows = arabicAyahIndexCache.get('ar')?.ayahs || [];
+    if (!rows.length) return [];
+
+    const scored = [];
+
+    for (const row of rows) {
+        if (scopedSurah != null && row.s !== scopedSurah) continue;
+        const score = scoreHaystack(row.n || '', tokens, false);
+        if (score == null) continue;
+        scored.push({
+            kind: 'ar',
+            surah: row.s,
+            ayah: row.a,
+            score,
+            snippet: makeSnippet(row.t, raw, AR_AYAH_SEARCH_CONFIG)
+        });
+    }
+
+    return scored
+        .sort((a, b) => a.score - b.score || a.surah - b.surah || a.ayah - b.ayah)
+        .slice(0, limit);
+}
+
 function searchMealAyahsInternal(raw, locale, options = {}) {
     const code = normalizeSearchLocale(locale);
     const mealCfg = getMealLocaleConfig(code);
@@ -739,12 +946,15 @@ function searchMealAyahsInternal(raw, locale, options = {}) {
     if (!tokens.length) return [];
 
     const limit = Number(options.limit) > 0 ? Number(options.limit) : 5;
+    const surahFilter = Number(options.surah);
+    const scopedSurah = Number.isFinite(surahFilter) && surahFilter >= 1 ? surahFilter : null;
     const rows = getLoadedMealSearchIndex(code)?.ayahs || [];
     if (!rows.length) return [];
 
     const bestByAyah = new Map();
 
     for (const row of rows) {
+        if (scopedSurah != null && row.s !== scopedSurah) continue;
         const score = scoreHaystack(row.n || '', tokens, false);
         if (score == null) continue;
         const key = `${row.s}:${row.a}`;
@@ -770,11 +980,14 @@ function searchTranslitAyahsInternal(raw, options = {}) {
     const tokens = searchTokensFromQuery(raw, normalizeTranslitSearchText, TRANSLIT_STOP_WORDS);
     if (!tokens.length) return [];
     const limit = Number(options.limit) > 0 ? Number(options.limit) : 5;
+    const surahFilter = Number(options.surah);
+    const scopedSurah = Number.isFinite(surahFilter) && surahFilter >= 1 ? surahFilter : null;
     const rows = translitSearchIndex?.ayahs || [];
     const translitCfg = { localeTag: 'tr', normalize: normalizeTranslitSearchText, stopWords: TRANSLIT_STOP_WORDS };
     const scored = [];
 
     for (const row of rows) {
+        if (scopedSurah != null && row.s !== scopedSurah) continue;
         const score = scoreHaystack(row.n || '', tokens, true);
         if (score == null) continue;
         scored.push({

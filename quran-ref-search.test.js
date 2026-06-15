@@ -5,6 +5,7 @@ import {
     normalizeTrSearchText,
     normalizeLatinSearchText,
     parseQuranRefQuery,
+    parseScopedMealSearchQuery,
     resolveQuranRefSuggestions,
     resolveSurahNameQuery
 } from './quran-ref-search.js';
@@ -66,6 +67,13 @@ test('resolveSurahNameQuery fuzzy match', () => {
     const enHit = resolveSurahNameQuery('baqarah', surahIndex, 'en');
     assert.ok(enHit && enHit.surah);
     assert.equal(enHit.surah.n, 2);
+});
+
+test('parseScopedMealSearchQuery splits surah and text', () => {
+    const scoped = parseScopedMealSearchQuery('kehf hidayet', surahIndex, 'tr');
+    assert.equal(scoped?.surah, 18);
+    assert.equal(scoped?.text, 'hidayet');
+    assert.equal(scoped?.surahName, 'Kehf');
 });
 
 test('normalizeLatinSearchText', () => {

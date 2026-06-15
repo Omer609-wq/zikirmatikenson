@@ -253,6 +253,32 @@ export function resolveSurahNameQuery(raw, surahIndex, locale = 'tr') {
     return { ambiguous: true, count: fuzzy.length };
 }
 
+/**
+ * Sure adı + meal/okunuş metni: "kehf hidayet", "yasin rahman".
+ * @returns {{ surah: number, text: string, surahName: string } | null}
+ */
+export function parseScopedMealSearchQuery(raw, surahIndex, locale = 'tr') {
+    const q = String(raw || '').trim();
+    if (!q || parseQuranRefQuery(q)) return null;
+
+    const tokens = normalizeSearchText(q, locale).split(/\s+/).filter(Boolean);
+    if (tokens.length < 2) return null;
+
+    for (let prefixLen = tokens.length - 1; prefixLen >= 1; prefixLen -= 1) {
+        const namePart = tokens.slice(0, prefixLen).join(' ');
+        const textPart = tokens.slice(prefixLen).join(' ');
+        const resolved = resolveSurahNameQuery(namePart, surahIndex, locale);
+        if (!resolved?.surah || resolved.ambiguous) continue;
+        if (textPart.replace(/\s+/g, '').length < 3) continue;
+        return {
+            surah: resolved.surah.n,
+            text: textPart,
+            surahName: getSurahRefDisplayName(resolved.surah, locale)
+        };
+    }
+    return null;
+}
+
 export function surahMatchesRefSearch(surah, rawQuery, locale = 'tr') {
     const q = (rawQuery || '').trim();
     if (!q) return true;

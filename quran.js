@@ -3,16 +3,19 @@ import juzBoundaries from './data/quran/juz.json';
 import mealsIndex from './data/quran/meals/index.json';
 import {
     getSurahRefDisplayName,
+    parseScopedMealSearchQuery,
     resolveQuranRefSuggestions,
     resolveSurahNameQuery,
     surahMatchesRefSearch
 } from './quran-ref-search.js';
 import {
-    isMealSearchIndexReady,
+    isAyahTextSearchIndexReady,
+    localeSupportsArabicAyahTextSearch,
     localeSupportsAyahTextSearch,
     localeSupportsMealTextSearch,
     localeSupportsTranslitTextSearch,
-    preloadMealSearchIndex,
+    meetsMinTextSearchQuery,
+    preloadAyahTextSearchIndex,
     searchAyahTextHits
 } from './quran-ayah-text-search.js';
 import { getSurahLocalizedName } from './quran-surah-names.js';
@@ -44,6 +47,7 @@ const AYAH_TAP_MOVE_CANCEL_PX_TOUCH = 56;
 const AYAH_HOLD_MS = 520;
 const EXPAND_SWIPE_COMMIT_PX = 72;
 const EXPAND_SWIPE_LOCK_PX = 14;
+const TEXT_SEARCH_SUGGESTION_LIMIT = 10;
 
 /** @type {{ surah: number, ayah: number, readMode: string, meal: string } | null} */
 let expandViewState = null;
@@ -189,20 +193,22 @@ export function syncQuranTabVisibility() {
 export function syncQuranSearchGuide(locale = getLocale()) {
     const mealItem = document.getElementById('quranSearchGuideMeal');
     const translitItem = document.getElementById('quranSearchGuideTranslit');
-    if (mealItem) mealItem.hidden = !localeSupportsMealTextSearch(locale);
+    if (mealItem) {
+        mealItem.hidden = !localeSupportsMealTextSearch(locale) && !localeSupportsArabicAyahTextSearch(locale);
+    }
     if (translitItem) translitItem.hidden = !localeSupportsTranslitTextSearch(locale);
 }
 
-let mealSearchPreloadToken = 0;
+let ayahSearchPreloadToken = 0;
 
-function ensureMealSearchIndexLoaded() {
+function ensureAyahTextSearchIndexLoaded() {
     const locale = getLocale();
-    if (!localeSupportsMealTextSearch(locale)) return;
-    if (isMealSearchIndexReady(locale)) return;
+    if (!localeSupportsAyahTextSearch(locale)) return;
+    if (isAyahTextSearchIndexReady(locale)) return;
 
-    const token = ++mealSearchPreloadToken;
-    void preloadMealSearchIndex(locale).then(() => {
-        if (token !== mealSearchPreloadToken) return;
+    const token = ++ayahSearchPreloadToken;
+    void preloadAyahTextSearchIndex(locale).then(() => {
+        if (token !== ayahSearchPreloadToken) return;
         if (!(quranSearchQuery || '').trim()) return;
         renderQuranSurahList();
     });
@@ -357,7 +363,32 @@ function getQuranSearchSuggestionHits(query) {
     }
 
     if (!localeSupportsAyahTextSearch(locale)) return [];
-    return searchAyahTextHits(q, surahIndex, locale, { limit: 5 }).map((hit) => {
+
+    const scoped = parseScopedMealSearchQuery(q, surahIndex, locale);
+    const searchQ = scoped ? scoped.text : q;
+    if (!meetsMinTextSearchQuery(searchQ, locale)) return [];
+
+    const searchOpts = {
+        limit: TEXT_SEARCH_SUGGESTION_LIMIT,
+        surah: scoped?.surah
+    };
+
+    return searchAyahTextHits(searchQ, surahIndex, locale, searchOpts).map((hit) => {
+        const scopedPrefix = scoped ? `${scoped.surahName} · ` : '';
+        if (hit.kind === 'ar') {
+            return {
+                kind: 'ar',
+                surah: hit.surah,
+                ayah: hit.ayah,
+                readModeId: hit.readModeId,
+                displayName: hit.displayName,
+                label: `${scopedPrefix}${t('quran.searchArHit', {
+                    surah: hit.displayName,
+                    ayah: hit.ayah
+                })}`,
+                snippet: hit.snippet
+            };
+        }
         if (hit.kind === 'translit') {
             return {
                 kind: 'translit',
@@ -365,10 +396,10 @@ function getQuranSearchSuggestionHits(query) {
                 ayah: hit.ayah,
                 readModeId: hit.readModeId,
                 displayName: hit.displayName,
-                label: t('quran.searchTranslitHit', {
+                label: `${scopedPrefix}${t('quran.searchTranslitHit', {
                     surah: hit.displayName,
                     ayah: hit.ayah
-                }),
+                })}`,
                 snippet: hit.snippet
             };
         }
@@ -380,11 +411,11 @@ function getQuranSearchSuggestionHits(query) {
             ayah: hit.ayah,
             mealId: hit.mealId,
             displayName: hit.displayName,
-            label: t('quran.searchMealHit', {
+            label: `${scopedPrefix}${t('quran.searchMealHit', {
                 meal: mealLabel,
                 surah: hit.displayName,
                 ayah: hit.ayah
-            }),
+            })}`,
             snippet: hit.snippet
         };
     });
@@ -394,16 +425,38 @@ function renderQuranSearchSuggestions(query) {
     const box = document.getElementById('quranSearchSuggestions');
     if (!box) return;
     box.innerHTML = '';
+    const q = (query || '').trim();
+    const locale = getLocale();
+    const scoped = q ? parseScopedMealSearchQuery(q, surahIndex, locale) : null;
+    const textProbe = scoped ? scoped.text : q;
+
+    if (
+        textProbe &&
+        localeSupportsAyahTextSearch(locale) &&
+        !isAyahTextSearchIndexReady(locale) &&
+        meetsMinTextSearchQuery(textProbe, locale)
+    ) {
+        const loading = document.createElement('p');
+        loading.className = 'quran-search-ref quran-search-ref--loading';
+        loading.textContent = t('quran.loading');
+        box.appendChild(loading);
+        box.hidden = false;
+    }
+
     const hits = getQuranSearchSuggestionHits(query);
     if (!hits.length) {
-        box.hidden = true;
+        if (!box.childElementCount) box.hidden = true;
         return;
     }
 
     hits.forEach((hit) => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = `quran-search-ref${hit.kind === 'meal' || hit.kind === 'translit' ? ' quran-search-ref--meal' : ''}`;
+        btn.className = `quran-search-ref${
+            hit.kind === 'meal' || hit.kind === 'translit' || hit.kind === 'ar'
+                ? ' quran-search-ref--meal'
+                : ''
+        }`;
         const snippetHtml = hit.snippet
             ? `<span class="quran-search-ref__snippet">${escapeSearchHtml(hit.snippet)}</span>`
             : '';
@@ -1365,7 +1418,7 @@ export function renderQuranSurahList() {
     const list = document.getElementById('quranSurahList');
     if (!list) return;
 
-    ensureMealSearchIndexLoaded();
+    ensureAyahTextSearchIndexLoaded();
 
     const q = (quranSearchQuery || '').trim();
     const suggestionHits = q ? getQuranSearchSuggestionHits(q) : [];
@@ -1443,6 +1496,7 @@ export function bindQuranSearchInput() {
     const input = document.getElementById('quranSearchInput');
     if (!input || input.dataset.quranBound === '1') return;
     input.dataset.quranBound = '1';
+    ensureAyahTextSearchIndexLoaded();
     input.addEventListener('input', () => {
         quranSearchQuery = input.value || '';
         renderQuranSurahList();

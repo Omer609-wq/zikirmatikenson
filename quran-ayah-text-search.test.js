@@ -4,13 +4,17 @@ import surahIndex from './data/quran/index.json' with { type: 'json' };
 import {
     MIN_TEXT_SEARCH_CHARS,
     meetsMinTextSearchQuery,
+    normalizeArabicAyahSearchText,
     normalizeEnMealSearchText,
     normalizeMealSearchText,
     normalizeTranslitSearchText,
+    preloadArabicAyahSearchIndex,
     preloadMealSearchIndex,
+    searchArabicAyahs,
     searchMealAyahs,
     searchTranslitAyahs,
     searchAyahTextHits,
+    localeSupportsArabicAyahTextSearch,
     localeSupportsMealTextSearch
 } from './quran-ayah-text-search.js';
 
@@ -42,6 +46,33 @@ test('localeSupportsMealTextSearch for meal locales', () => {
         assert.equal(localeSupportsMealTextSearch(code), true);
     }
     assert.equal(localeSupportsMealTextSearch('ar'), false);
+    assert.equal(localeSupportsArabicAyahTextSearch('ar'), true);
+    assert.equal(localeSupportsArabicAyahTextSearch('tr'), false);
+});
+
+test('normalizeArabicAyahSearchText folds hamza and diacritics', () => {
+    assert.equal(normalizeArabicAyahSearchText('لَا رَيْبَ'), 'لا ريب');
+});
+
+test('searchArabicAyahs finds Al-Baqarah 2:2 by Arabic phrase', async () => {
+    await preloadArabicAyahSearchIndex();
+    const hits = searchArabicAyahs('ذلك الكتاب لا ريب', surahIndex, 'ar', { limit: 5 });
+    assert.ok(hits.length >= 1);
+    assert.equal(hits[0].surah, 2);
+    assert.equal(hits[0].ayah, 2);
+    assert.equal(hits[0].kind, 'ar');
+    assert.match(hits[0].snippet, /كتاب|كِتَاب/);
+});
+
+test('searchArabicAyahs finds هدى in Al-Kahf when scoped', async () => {
+    await preloadArabicAyahSearchIndex();
+    const hits = searchArabicAyahs('هدى', surahIndex, 'ar', { limit: 5, surah: 18 });
+    assert.ok(hits.some((h) => h.surah === 18 && h.ayah === 13));
+});
+
+test('searchAyahTextHits ignores bogus translit for hidayet without meal index', () => {
+    const hits = searchAyahTextHits('hidayet', surahIndex, 'tr', { limit: 5 });
+    assert.equal(hits.length, 0);
 });
 
 test('searchMealAyahs finds Diyanet meal phrase', async () => {
@@ -52,6 +83,12 @@ test('searchMealAyahs finds Diyanet meal phrase', async () => {
     assert.equal(hits[0].ayah, 2);
     assert.equal(hits[0].mealId, 'diyanet');
     assert.match(hits[0].snippet, /şüphe|suphe/i);
+});
+
+test('searchMealAyahs finds hidayet in Kehf when scoped', async () => {
+    await preloadMealSearchIndex('tr');
+    const hits = searchAyahTextHits('hidayet', surahIndex, 'tr', { limit: 10, surah: 18 });
+    assert.ok(hits.some((h) => h.surah === 18 && h.ayah === 13 && h.kind === 'meal'));
 });
 
 test('searchMealAyahs finds Vakfi meal phrase', async () => {

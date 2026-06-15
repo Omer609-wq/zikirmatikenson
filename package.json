@@ -14,6 +14,7 @@
         "translit:en:build": "node scripts/convert-quran-translit-en.cjs",
         "translit:en:build:tanzil": "node scripts/convert-quran-translit-en.cjs --tanzil",
         "quran:meal-search-index": "node scripts/build-quran-meal-search-index.cjs",
+        "quran:ar-ayah-search-index": "node scripts/build-quran-ar-ayah-search-index.cjs",
         "quran:translit-search-index": "node scripts/build-quran-translit-search-index.cjs"
     },
     "dependencies": {

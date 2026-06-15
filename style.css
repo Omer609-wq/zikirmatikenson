@@ -2215,6 +2215,15 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
 .quran-search-ref--meal .quran-search-ref__icon {
     margin-top: 0.1rem;
 }
+.quran-search-ref--loading {
+    display: block;
+    margin: 0;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.88rem;
+    color: var(--text-gray);
+    cursor: default;
+    pointer-events: none;
+}
 
 .quran-search-guide-link {
     display: inline-flex;
