@@ -52,6 +52,7 @@ test('localeSupportsMealTextSearch for meal locales', () => {
 
 test('normalizeArabicAyahSearchText folds hamza and diacritics', () => {
     assert.equal(normalizeArabicAyahSearchText('لَا رَيْبَ'), 'لا ريب');
+    assert.equal(normalizeArabicAyahSearchText('الرَّحْمَـٰنِ'), 'الرحمن');
 });
 
 test('searchArabicAyahs finds Al-Baqarah 2:2 by Arabic phrase', async () => {
@@ -62,6 +63,12 @@ test('searchArabicAyahs finds Al-Baqarah 2:2 by Arabic phrase', async () => {
     assert.equal(hits[0].ayah, 2);
     assert.equal(hits[0].kind, 'ar');
     assert.match(hits[0].snippet, /كتاب|كِتَاب/);
+});
+
+test('searchArabicAyahs finds plain Arabic words without tatweel', async () => {
+    await preloadArabicAyahSearchIndex();
+    const hits = searchArabicAyahs('الرحمن', surahIndex, 'ar', { limit: 5 });
+    assert.ok(hits.some((h) => h.surah === 1 && h.ayah === 3));
 });
 
 test('searchArabicAyahs finds هدى in Al-Kahf when scoped', async () => {
