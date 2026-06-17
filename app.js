@@ -24,7 +24,7 @@ import { sanitizeLoadedData, mintId } from './lib/sanitize.js';
 import { showAppAlert, showAppConfirm, showAppPrompt, setupAppDialog } from './lib/app-dialog.js';
 import { applyNativeStatusBarTheme } from './status-bar-theme.js';
 import { runCounterVibration, runDragReorderNudge } from './haptics.js';
-import { pickRandomQuote, REMINDER_FIXED_BODY } from './quotes.js';
+import { pickRandomQuote, preloadQuranQuotes, REMINDER_FIXED_BODY } from './quotes.js';
 import { ESMA_DEFAULT_FAZILET } from './esma-fazilet.js';
 import { ESMA_MEANING_EN } from './esma-meanings-en.js';
 import { ESMA_NAME_EN } from './esma-names-en.js';
@@ -837,6 +837,7 @@ function init() {
     loadData();
     setupEventListeners();
     setDailyQuote();
+    void preloadQuranQuotes().then(() => setDailyQuote());
     setMultiSelectBarShown(folderMultiSelectBar, false);
     setMultiSelectBarShown(zikirMultiSelectBar, false);
     // Do not push on first paint; set the baseline history state.

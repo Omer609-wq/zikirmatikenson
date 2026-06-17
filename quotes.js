@@ -2,7 +2,6 @@
  * Ana sayfa alt şeridi (#dailyQuoteText): her girişte rastgele bir satır.
  * Günlük hatırlatıcı bildirimi sabit metin kullanır (REMINDER_FIXED_BODY).
  */
-import quranQuotes from './data/quotes-quran.json' with { type: 'json' };
 
 export const APP_QUOTES = [
     'Ölmeden önce tövbe etmekte acele ediniz. (Hadis-i Şerif)',
@@ -72,6 +71,33 @@ function normalizeQuoteLocale(locale) {
     return String(locale || 'tr').toLowerCase().split('-')[0];
 }
 
+let quranQuotesCache = null;
+let quranQuotesLoading = null;
+
+function quranQuotesUrl() {
+    const base = import.meta.env?.BASE_URL || './';
+    const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+    return `${normalizedBase}data/quotes-quran.json`;
+}
+
+export async function preloadQuranQuotes() {
+    if (quranQuotesCache) return quranQuotesCache;
+    if (quranQuotesLoading) return quranQuotesLoading;
+    quranQuotesLoading = fetch(quranQuotesUrl())
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+            quranQuotesCache = data && typeof data === 'object' ? data : null;
+            quranQuotesLoading = null;
+            return quranQuotesCache;
+        })
+        .catch(() => {
+            quranQuotesCache = null;
+            quranQuotesLoading = null;
+            return null;
+        });
+    return quranQuotesLoading;
+}
+
 function cleanQuoteText(text) {
     return String(text || '')
         .replace(/\s*["”]+$/g, '')
@@ -89,7 +115,7 @@ function truncateQuote(text, maxLen = 160) {
 
 function pickRandomQuranQuote(locale) {
     const code = normalizeQuoteLocale(locale);
-    const list = quranQuotes?.quotes?.[code] || quranQuotes?.quotes?.en || [];
+    const list = quranQuotesCache?.quotes?.[code] || quranQuotesCache?.quotes?.en || [];
     if (!Array.isArray(list) || !list.length) return null;
     const [s, a, t] = list[Math.floor(Math.random() * list.length)];
     const text = truncateQuote(t, code === 'ar' ? 220 : 170);

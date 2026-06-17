@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SEARCH_SRC = path.join(__dirname, 'data', 'quran', 'search');
+const QURAN_QUOTES_SRC = path.join(__dirname, 'data', 'quotes-quran.json');
 
 function quranSearchAssets() {
     return {
@@ -24,11 +25,27 @@ function quranSearchAssets() {
                 res.setHeader('Content-Type', 'application/json; charset=utf-8');
                 fs.createReadStream(filePath).pipe(res);
             });
+
+            // Serve footer Quran quotes JSON in dev.
+            server.middlewares.use((req, res, next) => {
+                const url = req.url?.split('?')[0] || '';
+                if (url !== '/data/quotes-quran.json') return next();
+                if (!fs.existsSync(QURAN_QUOTES_SRC) || !fs.statSync(QURAN_QUOTES_SRC).isFile()) return next();
+                res.setHeader('Content-Type', 'application/json; charset=utf-8');
+                fs.createReadStream(QURAN_QUOTES_SRC).pipe(res);
+            });
         },
         closeBundle() {
             const dest = path.join(__dirname, 'www', 'data', 'quran', 'search');
             fs.mkdirSync(path.dirname(dest), { recursive: true });
             fs.cpSync(SEARCH_SRC, dest, { recursive: true });
+
+            // Footer Quran quotes (localized): keep as plain JSON file under www/data/
+            if (fs.existsSync(QURAN_QUOTES_SRC)) {
+                const quotesDest = path.join(__dirname, 'www', 'data', 'quotes-quran.json');
+                fs.mkdirSync(path.dirname(quotesDest), { recursive: true });
+                fs.copyFileSync(QURAN_QUOTES_SRC, quotesDest);
+            }
 
             const assetsDir = path.join(__dirname, 'www', 'assets');
             const orphanSearchChunks =
