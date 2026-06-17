@@ -24,7 +24,9 @@
     "selectNone": "No selection",
     "selectedFolders": "{count} folders selected",
     "selectedZikirs": "{count} zikir selected",
-    "seasonalZikirCount": "{count} dhikr"
+    "seasonalZikirCount": "{count} dhikr",
+    "quoteExpandAria": "Show full verse",
+    "quoteCollapseAria": "Collapse verse"
   },
   "folder": {
     "search": "Search",

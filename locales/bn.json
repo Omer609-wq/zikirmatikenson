@@ -23,7 +23,9 @@
     "delete": "মুছুন",
     "selectNone": "কিছু নির্বাচিত নয়",
     "selectedFolders": "{count}টি ফোল্ডার নির্বাচিত",
-    "selectedZikirs": "{count}টি জিকির নির্বাচিত"
+    "selectedZikirs": "{count}টি জিকির নির্বাচিত",
+    "quoteExpandAria": "আয়াত সম্পূর্ণ দেখান",
+    "quoteCollapseAria": "আয়াত সংকুচিত করুন"
   },
   "folder": {
     "search": "খুঁজুন",

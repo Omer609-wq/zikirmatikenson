@@ -23,7 +23,9 @@
     "delete": "Hapus",
     "selectNone": "Tidak ada pilihan",
     "selectedFolders": "{count} folder dipilih",
-    "selectedZikirs": "{count} zikir dipilih"
+    "selectedZikirs": "{count} zikir dipilih",
+    "quoteExpandAria": "Tampilkan ayat lengkap",
+    "quoteCollapseAria": "Ciutkan ayat"
   },
   "folder": {
     "search": "Cari",

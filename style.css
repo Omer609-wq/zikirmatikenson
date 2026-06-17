@@ -1476,22 +1476,63 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
     bottom: var(--bottom-nav-stack-height);
     left: 0;
     right: 0;
+    z-index: 12;
     background: var(--bg-dark);
     border-top: 1px solid var(--glass-border);
     padding: 0.85rem 1.2rem;
     display: flex;
     gap: 0.75rem;
-    align-items: center;
+    align-items: flex-start;
     box-shadow: none;
+    transition: box-shadow 0.22s ease;
+}
+.quote-footer--expandable {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.quote-footer--expandable:focus-visible {
+    outline: 2px solid var(--primary-green);
+    outline-offset: -2px;
+}
+.quote-footer--expanded {
+    z-index: 32;
+    max-height: min(58vh, calc(100vh - var(--bottom-nav-stack-height) - 3.5rem));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.38);
 }
 .quote-icon {
     color: var(--primary-green);
     opacity: 0.8;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 0.1rem;
 }
 #dailyQuoteText {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
     font-size: var(--text-sm);
     color: var(--text-gray);
     font-style: italic;
+    line-height: var(--leading-relaxed);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow-wrap: anywhere;
+}
+.quote-footer--compact #dailyQuoteText {
+    font-size: 0.75rem;
+    line-height: 1.45;
+}
+.quote-footer--expanded #dailyQuoteText {
+    display: block;
+    overflow: visible;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    font-size: var(--text-sm);
     line-height: var(--leading-relaxed);
 }
 

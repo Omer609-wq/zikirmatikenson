@@ -6,12 +6,13 @@ const icon = path.join(res, 'icon.png');
 const appIcon = path.join(res, 'app-icon.png');
 const logo = path.join(res, 'logo.png');
 
-if (fs.existsSync(icon)) process.exit(0);
+// app-icon.png kaynak; eski icon.png kalırsa cap:icons yanlış görsel üretir
 if (fs.existsSync(appIcon)) {
     fs.copyFileSync(appIcon, icon);
-    console.log('resources/icon.png ← app-icon.png (geçici kopya, cap:icons için)');
+    console.log('resources/icon.png ← app-icon.png');
     process.exit(0);
 }
+if (fs.existsSync(icon)) process.exit(0);
 if (fs.existsSync(logo)) {
     fs.copyFileSync(logo, icon);
     console.log('resources/icon.png ← logo.png');

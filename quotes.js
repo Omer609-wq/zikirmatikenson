@@ -1,6 +1,6 @@
 /**
  * Ana sayfa alt şeridi (#dailyQuoteText): her girişte rastgele bir satır.
- * Günlük hatırlatıcı bildirimi sabit metin kullanır (REMINDER_FIXED_BODY).
+ * Günlük hatırlatıcı: sabit Rad 13:28 — locale’e göre meal (getReminderQuoteBody).
  */
 import quranQuotesData from './data/quotes-quran.json';
 
@@ -84,27 +84,106 @@ function truncateQuote(text, maxLen = 160) {
     if (s.length <= maxLen) return s;
     const cut = s.slice(0, maxLen - 1);
     const lastSpace = cut.lastIndexOf(' ');
-    return `${(lastSpace > 60 ? cut.slice(0, lastSpace) : cut).trim()}…`;
+    return `${(lastSpace > 40 ? cut.slice(0, lastSpace) : cut).trim()}…`;
 }
 
-function pickRandomQuranQuote(locale) {
+function buildPreview(full, maxBodyLen) {
+    const { body, ref } = splitTrailingRef(full);
+    if (body.length <= maxBodyLen) return full;
+    const shortBody = truncateQuote(body, maxBodyLen);
+    return ref ? `${shortBody} ${ref}` : shortBody;
+}
+
+function splitTrailingRef(text) {
+    const m = String(text || '').match(/^(.+)\s+(\([^)]+\))$/);
+    return m ? { body: m[1].trim(), ref: m[2] } : { body: String(text || '').trim(), ref: '' };
+}
+
+/** Kapalı şeritte önizleme uzunluğu (gövde; sure:ayet / kaynak parantezi ayrı). */
+function quoteBodyMaxLen(locale) {
+    const code = normalizeQuoteLocale(locale);
+    const limits = {
+        ar: 130,
+        bn: 115,
+        ur: 120,
+        en: 120,
+        fr: 115,
+        id: 125,
+        ms: 100,
+        tr: 110,
+    };
+    return limits[code] ?? 120;
+}
+
+/** Bu uzunluğu aşan gövdeler küçük punto + dokununca genişletme alır. */
+function quoteCompactThreshold(locale) {
+    const code = normalizeQuoteLocale(locale);
+    const limits = {
+        ar: 95,
+        bn: 85,
+        ur: 90,
+        en: 90,
+        fr: 85,
+        id: 95,
+        ms: 75,
+        tr: 95,
+    };
+    return limits[code] ?? 90;
+}
+
+function pickRandomQuranQuoteEntry(locale) {
     const code = normalizeQuoteLocale(locale);
     const list = quranQuotesData?.quotes?.[code] || quranQuotesData?.quotes?.en || [];
     if (!Array.isArray(list) || !list.length) return null;
     const [s, a, t] = list[Math.floor(Math.random() * list.length)];
-    const text = truncateQuote(t, code === 'ar' ? 220 : 170);
-    return `${text} (${s}:${a})`;
+    const body = cleanQuoteText(t);
+    const ref = `(${s}:${a})`;
+    const full = `${body} ${ref}`;
+    const preview = buildPreview(full, quoteBodyMaxLen(code));
+    return {
+        full,
+        preview,
+        expandable: body.length > quoteCompactThreshold(code),
+    };
+}
+
+/**
+ * @returns {{ full: string, preview: string, expandable: boolean }}
+ */
+export function pickRandomQuoteEntry(locale = 'tr') {
+    const code = normalizeQuoteLocale(locale);
+    if (code !== 'tr') {
+        const q = pickRandomQuranQuoteEntry(code);
+        if (q) return q;
+    }
+    const full = APP_QUOTES[Math.floor(Math.random() * APP_QUOTES.length)];
+    const { body } = splitTrailingRef(full);
+    const preview = buildPreview(full, quoteBodyMaxLen(code));
+    return {
+        full,
+        preview,
+        expandable: body.length > quoteCompactThreshold(code),
+    };
 }
 
 export function pickRandomQuote(locale = 'tr') {
-    const code = normalizeQuoteLocale(locale);
-    if (code !== 'tr') {
-        const q = pickRandomQuranQuote(code);
-        if (q) return q;
-    }
-    return APP_QUOTES[Math.floor(Math.random() * APP_QUOTES.length)];
+    return pickRandomQuoteEntry(locale).preview;
 }
 
-/** Günlük hatırlatıcı: sabit Rad 28 — zikirmatik ruhuna uygun, her seferinde tanınır. */
-export const REMINDER_FIXED_BODY =
-    "Kalpler ancak Allah'ı anmakla mutmain olur. (Rad Suresi 28)";
+const REMINDER_AYAH_SURAH = 13;
+const REMINDER_AYAH_NUM = 28;
+
+/** Günlük hatırlatıcı bildirimi: Rad 13:28, uygulama diline göre. */
+export function getReminderQuoteBody(locale = 'tr') {
+    const code = normalizeQuoteLocale(locale);
+    if (code === 'tr') {
+        return "Kalpler ancak Allah'ı anmakla mutmain olur. (Rad Suresi 28)";
+    }
+    const list = quranQuotesData?.quotes?.[code] || quranQuotesData?.quotes?.en || [];
+    const hit = list.find((row) => row[0] === REMINDER_AYAH_SURAH && row[1] === REMINDER_AYAH_NUM);
+    const text = hit ? cleanQuoteText(hit[2]) : '';
+    if (text) {
+        return `${text} (${REMINDER_AYAH_SURAH}:${REMINDER_AYAH_NUM})`;
+    }
+    return "Kalpler ancak Allah'ı anmakla mutmain olur. (Rad Suresi 28)";
+}

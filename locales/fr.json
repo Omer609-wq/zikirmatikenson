@@ -23,7 +23,9 @@
     "delete": "Supprimer",
     "selectNone": "Aucune sélection",
     "selectedFolders": "{count} dossiers sélectionnés",
-    "selectedZikirs": "{count} zikir sélectionné(s)"
+    "selectedZikirs": "{count} zikir sélectionné(s)",
+    "quoteExpandAria": "Afficher le verset en entier",
+    "quoteCollapseAria": "Réduire le verset"
   },
   "folder": {
     "search": "Rechercher",

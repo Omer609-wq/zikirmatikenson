@@ -26,9 +26,11 @@ function quranSearchAssets() {
                 fs.createReadStream(filePath).pipe(res);
             });
 
-            // Serve footer Quran quotes JSON in dev.
+            // Serve footer Quran quotes JSON in dev (plain fetch only; Vite handles ?import).
             server.middlewares.use((req, res, next) => {
-                const url = req.url?.split('?')[0] || '';
+                const raw = req.url || '';
+                if (raw.includes('?')) return next();
+                const url = raw.split('?')[0] || '';
                 if (url !== '/data/quotes-quran.json') return next();
                 if (!fs.existsSync(QURAN_QUOTES_SRC) || !fs.statSync(QURAN_QUOTES_SRC).isFile()) return next();
                 res.setHeader('Content-Type', 'application/json; charset=utf-8');

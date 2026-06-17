@@ -23,7 +23,9 @@
     "delete": "حذف",
     "selectNone": "لا يوجد تحديد",
     "selectedFolders": "{count} مجلدات محددة",
-    "selectedZikirs": "{count} أذكار محددة"
+    "selectedZikirs": "{count} أذكار محددة",
+    "quoteExpandAria": "عرض الآية كاملة",
+    "quoteCollapseAria": "طي الآية"
   },
   "folder": {
     "search": "بحث",

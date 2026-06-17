@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Inset yuzdesi arttikca kufi kuculur; alt buyuk = yukari kayar.
-  Referans (onayli): sol/sag 5%, ust 2%, alt 12%
--->
 <inset xmlns:android="http://schemas.android.com/apk/res/android"
     android:drawable="@mipmap/ic_launcher_foreground"
-    android:insetLeft="5%"
-    android:insetTop="2%"
-    android:insetRight="5%"
-    android:insetBottom="12%" />
+    android:insetLeft="0%"
+    android:insetTop="0%"
+    android:insetRight="0%"
+    android:insetBottom="0%" />

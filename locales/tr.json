@@ -24,7 +24,9 @@
     "selectNone": "Seçim yok",
     "selectedFolders": "{count} klasör seçili",
     "selectedZikirs": "{count} zikir seçili",
-    "seasonalZikirCount": "{count} zikir"
+    "seasonalZikirCount": "{count} zikir",
+    "quoteExpandAria": "Ayeti tam göster",
+    "quoteCollapseAria": "Ayeti daralt"
   },
   "folder": {
     "search": "Ara",

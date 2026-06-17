@@ -1,6 +1,6 @@
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
-import { REMINDER_FIXED_BODY } from './quotes.js';
+import { getReminderQuoteBody } from './quotes.js';
 import { SystemChrome } from './system-chrome.js';
 
 /** İlk slot; ardışık id’ler kullanılır (günlük tekrar için çoklu tek-sefer alarm). */
@@ -161,7 +161,7 @@ export async function openExactAlarmSettings() {
     }
 }
 
-export async function syncNativeDailyReminder(enabled, timeStr) {
+export async function syncNativeDailyReminder(enabled, timeStr, locale = 'tr') {
     if (!isCapacitorNative()) return { ok: true };
 
     await cancelReminderSlots();
@@ -208,7 +208,7 @@ export async function syncNativeDailyReminder(enabled, timeStr) {
             id: REMINDER_BASE_ID + i,
             /* Sabit Rad 28 — hatırlatıcıda tanınır; ana sayfa şeridi yine dönen sözler */
             title: '',
-            body: REMINDER_FIXED_BODY,
+            body: getReminderQuoteBody(locale),
             schedule: {
                 at: at.toISOString()
             }

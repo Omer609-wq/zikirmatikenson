@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Adaptive ikon zemini; logo yesili farkliysa patch script COLOR_HEX ile guncelle -->
-    <color name="ic_launcher_background">#0f2918</color>
+    <color name="ic_launcher_background">#122a1c</color>
 </resources>

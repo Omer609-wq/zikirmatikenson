@@ -24,7 +24,7 @@ import { sanitizeLoadedData, mintId } from './lib/sanitize.js';
 import { showAppAlert, showAppConfirm, showAppPrompt, setupAppDialog } from './lib/app-dialog.js';
 import { applyNativeStatusBarTheme } from './status-bar-theme.js';
 import { runCounterVibration, runDragReorderNudge } from './haptics.js';
-import { pickRandomQuote, REMINDER_FIXED_BODY } from './quotes.js';
+import { pickRandomQuoteEntry, getReminderQuoteBody } from './quotes.js';
 import { ESMA_DEFAULT_FAZILET } from './esma-fazilet.js';
 import { ESMA_MEANING_EN } from './esma-meanings-en.js';
 import { ESMA_NAME_EN } from './esma-names-en.js';
@@ -32,6 +32,7 @@ import { ESMA_NAME_BN } from './esma-names-bn.js';
 import {
     applyLocaleToDocument,
     tForLocale,
+    getLocale,
     getLocaleTag,
     getZikirLibrary,
     getKnownLibraryFaziletTexts,
@@ -657,6 +658,8 @@ const folderGrid = document.getElementById('folderGrid');
 const updateBannerSlot = document.getElementById('updateBannerSlot');
 const newFolderBtn = document.getElementById('newFolderBtn');
 const homeQuoteFooter = document.getElementById('homeQuoteFooter');
+let currentDailyQuoteEntry = null;
+let dailyQuoteExpanded = false;
 const folderMultiSelectBar = document.getElementById('folderMultiSelectBar');
 const folderSelectCancelBtn = document.getElementById('folderSelectCancelBtn');
 const folderSelectDeleteBtn = document.getElementById('folderSelectDeleteBtn');
@@ -834,8 +837,8 @@ function init() {
             .catch(() => {});
     }
     loadData();
-    setupEventListeners();
     setDailyQuote();
+    setupEventListeners();
     setMultiSelectBarShown(folderMultiSelectBar, false);
     setMultiSelectBarShown(zikirMultiSelectBar, false);
     // Do not push on first paint; set the baseline history state.
@@ -1732,16 +1735,17 @@ function maybeRequestNotificationPermission() {
 
 function reminderNotificationPayload() {
     const base = new URL('assets/icons/icon-192.webp', document.baseURI).href;
+    const locale = getLocale();
     /* Başlık boş: ana sayfa hadis şeridindeki gibi yalnızca hadis/ayet metni öne çıksın (OS kendi satırında uygulama adını gösterebilir). */
     return {
         title: '',
         options: {
-            body: REMINDER_FIXED_BODY,
+            body: getReminderQuoteBody(locale),
             icon: base,
             badge: base,
             tag: 'zikir-gunluk-hatir',
             renotify: false,
-            lang: 'tr',
+            lang: getLocaleTag(),
             data: { url: window.location.origin + window.location.pathname + window.location.search }
         }
     };
@@ -1834,7 +1838,7 @@ function scheduleInAppReminderTick() {
 async function ensureReminderSchedule() {
     if (isCapacitorNative()) {
         clearInAppReminderTick();
-        const r = await syncNativeDailyReminder(reminderSettings.enabled, reminderSettings.time);
+        const r = await syncNativeDailyReminder(reminderSettings.enabled, reminderSettings.time, getLocale());
         if (reminderSettings.enabled && !r.ok && r.reason === 'denied') {
             await showAppAlert(t('reminderDialog.notificationPermDeniedNative'), {
                 title: t('reminderDialog.notificationPermTitle')
@@ -2424,7 +2428,14 @@ function showView(viewId, param = null, options = {}) {
         void releaseWakeLock();
     }
 
-    if (viewId === 'homeView') renderFolders();
+    if (viewId !== 'homeView') {
+        setDailyQuoteExpanded(false);
+    }
+
+    if (viewId === 'homeView') {
+        setDailyQuote();
+        renderFolders();
+    }
     else if (viewId === 'folderDetailView') {
         currentFolderId = param;
         renderFolderDetail();
@@ -2484,10 +2495,50 @@ function renderPremium() {
 }
 
 // ===================== VIEWS =====================
-function setDailyQuote() {
+function syncDailyQuoteFooterUI() {
+    if (!homeQuoteFooter) return;
+    const expandable = !!(currentDailyQuoteEntry && currentDailyQuoteEntry.expandable);
+    homeQuoteFooter.classList.toggle('quote-footer--expandable', expandable);
+    homeQuoteFooter.classList.toggle('quote-footer--compact', expandable && !dailyQuoteExpanded);
+    homeQuoteFooter.classList.toggle('quote-footer--expanded', dailyQuoteExpanded);
+    if (expandable) {
+        homeQuoteFooter.setAttribute('role', 'button');
+        homeQuoteFooter.tabIndex = 0;
+        homeQuoteFooter.setAttribute(
+            'aria-label',
+            dailyQuoteExpanded ? t('home.quoteCollapseAria') : t('home.quoteExpandAria')
+        );
+        homeQuoteFooter.setAttribute('aria-expanded', dailyQuoteExpanded ? 'true' : 'false');
+    } else {
+        homeQuoteFooter.setAttribute('role', 'presentation');
+        homeQuoteFooter.removeAttribute('tabindex');
+        homeQuoteFooter.removeAttribute('aria-label');
+        homeQuoteFooter.removeAttribute('aria-expanded');
+    }
+}
+
+function syncDailyQuoteText() {
     const el = document.getElementById('dailyQuoteText');
-    if (!el) return;
-    el.textContent = pickRandomQuote(getLocale());
+    if (!el || !currentDailyQuoteEntry) return;
+    el.textContent = dailyQuoteExpanded ? currentDailyQuoteEntry.full : currentDailyQuoteEntry.preview;
+}
+
+function setDailyQuoteExpanded(expanded) {
+    dailyQuoteExpanded = !!expanded;
+    syncDailyQuoteFooterUI();
+    syncDailyQuoteText();
+}
+
+function toggleDailyQuoteExpand() {
+    if (!currentDailyQuoteEntry?.expandable) return;
+    setDailyQuoteExpanded(!dailyQuoteExpanded);
+}
+
+function setDailyQuote() {
+    currentDailyQuoteEntry = pickRandomQuoteEntry(getLocale());
+    dailyQuoteExpanded = false;
+    syncDailyQuoteFooterUI();
+    syncDailyQuoteText();
 }
 
 // ——— Liste sıralama: uzun bas + sürükle (mobil) ———
@@ -3850,6 +3901,17 @@ function renderZikirStats() {
 // ===================== EVENT LISTENERS & MODALS =====================
 function setupEventListeners() {
     setupAppDialog();
+
+    if (homeQuoteFooter && homeQuoteFooter.dataset.bound !== '1') {
+        homeQuoteFooter.dataset.bound = '1';
+        homeQuoteFooter.addEventListener('click', () => toggleDailyQuoteExpand());
+        homeQuoteFooter.addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            e.preventDefault();
+            toggleDailyQuoteExpand();
+        });
+    }
+
     // Back Buttons
     document.querySelectorAll('.backBtn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -4222,6 +4284,9 @@ function setupEventListeners() {
             updateCounterUI();
             setDailyQuote();
             saveData();
+            if (reminderSettings.enabled) {
+                ensureReminderSchedule().catch(console.error);
+            }
             setLocalePickerOpen(false);
         });
     });
@@ -4458,4 +4523,8 @@ async function processCopyMove(actionType) {
     }
 }
 
-window.addEventListener('DOMContentLoaded', init);
+if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}

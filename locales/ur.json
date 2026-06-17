@@ -23,7 +23,9 @@
     "delete": "حذف",
     "selectNone": "کچھ منتخب نہیں",
     "selectedFolders": "{count} فولڈر منتخب",
-    "selectedZikirs": "{count} ذکر منتخب"
+    "selectedZikirs": "{count} ذکر منتخب",
+    "quoteExpandAria": "آیت مکمل دکھائیں",
+    "quoteCollapseAria": "آیت سمیٹیں"
   },
   "folder": {
     "search": "تلاش",
@@ -197,8 +199,8 @@
     "arabicFontSize": "عربی متن کا سائز",
     "arabicFontSmaller": "چھوٹا",
     "arabicFontLarger": "بڑا",
-    "vibrationTap": "ٹیپ پر vibration",
-    "vibrationTarget": "ہدف مکمل ہونے پر vibration",
+    "vibrationTap": "ٹیپ پر کمپن",
+    "vibrationTarget": "ہدف مکمل ہونے پر کمپن",
     "sound": "ٹیپ کی آواز",
     "wakeLock": "اسکرین جاگتی رکھیں",
     "wakeFootnote": "جاگتی رکھنا کاؤنٹر اسکرین پر کام کرتا ہے۔ پرانے آلات پر شاید نہ چلے۔",
@@ -227,7 +229,7 @@
     "backupTitle": "بیک اپ اور اکاؤنٹ",
     "backupText": "ڈیٹا فی الحال صرف اس آلے پر ہے۔ براؤزر/ایپ ڈیٹا صاف، آلہ بدلنا یا ان انسٹال سے سب مٹ سکتا ہے؛ اہم ڈیٹا کا بیک اپ رکھیں۔",
     "permissionsTitle": "اجازتیں",
-    "permissionsText": "vibration، آواز اور اسکرین جاگتی رکھنا صرف ایپ کے اندر کے لیے ہیں اور اختیاری ہیں۔"
+    "permissionsText": "کمپن، آواز اور اسکرین جاگتی رکھنا صرف ایپ کے اندر کے لیے ہیں اور اختیاری ہیں۔"
   },
   "premium": {
     "title": "پریمیم",
