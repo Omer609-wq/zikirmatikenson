@@ -2,6 +2,8 @@
  * Ana sayfa alt şeridi (#dailyQuoteText): her girişte rastgele bir satır.
  * Günlük hatırlatıcı bildirimi sabit metin kullanır (REMINDER_FIXED_BODY).
  */
+import quranQuotes from './data/quotes-quran.json' with { type: 'json' };
+
 export const APP_QUOTES = [
     'Ölmeden önce tövbe etmekte acele ediniz. (Hadis-i Şerif)',
     "Kalpler ancak Allah'ı anmakla mutmain olur. (Rad Suresi 28)",
@@ -66,7 +68,40 @@ export const APP_QUOTES = [
     'Yarım hurma ile de olsa ateşten korunun. (Buhari, Müslim)',
 ];
 
-export function pickRandomQuote() {
+function normalizeQuoteLocale(locale) {
+    return String(locale || 'tr').toLowerCase().split('-')[0];
+}
+
+function cleanQuoteText(text) {
+    return String(text || '')
+        .replace(/\s*["”]+$/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function truncateQuote(text, maxLen = 160) {
+    const s = cleanQuoteText(text);
+    if (s.length <= maxLen) return s;
+    const cut = s.slice(0, maxLen - 1);
+    const lastSpace = cut.lastIndexOf(' ');
+    return `${(lastSpace > 60 ? cut.slice(0, lastSpace) : cut).trim()}…`;
+}
+
+function pickRandomQuranQuote(locale) {
+    const code = normalizeQuoteLocale(locale);
+    const list = quranQuotes?.quotes?.[code] || quranQuotes?.quotes?.en || [];
+    if (!Array.isArray(list) || !list.length) return null;
+    const [s, a, t] = list[Math.floor(Math.random() * list.length)];
+    const text = truncateQuote(t, code === 'ar' ? 220 : 170);
+    return `${text} (${s}:${a})`;
+}
+
+export function pickRandomQuote(locale = 'tr') {
+    const code = normalizeQuoteLocale(locale);
+    if (code !== 'tr') {
+        const q = pickRandomQuranQuote(code);
+        if (q) return q;
+    }
     return APP_QUOTES[Math.floor(Math.random() * APP_QUOTES.length)];
 }
 

@@ -2487,7 +2487,7 @@ function renderPremium() {
 // ===================== VIEWS =====================
 function setDailyQuote() {
     if (!dailyQuoteText) return;
-    dailyQuoteText.textContent = pickRandomQuote();
+    dailyQuoteText.textContent = pickRandomQuote(getLocale());
 }
 
 // ——— Liste sıralama: uzun bas + sürükle (mobil) ———
