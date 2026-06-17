@@ -12,7 +12,7 @@ export const APP_QUOTES = [
     'Namaz dinin direğidir. (Hadis-i Şerif)',
     'Öyleyse Beni anın ki Ben de sizi anayım; Bana şükredin, nankörlük etmeyin. (Bakara Suresi 152)',
     'Ey iman edenler! Allah\'ı çok zikredin. (Ahzab Suresi 41)',
-    'Rabbinin adını zikret ve her şeyden yüz çevir. (Müzzemmil Suresi 8)',
+    'Rabbinin adını an ve bütün varlığınla O\'na yönel. (Müzzemmil Suresi 8)',
     'Şüphesiz Allah, sabredenlerle beraberdir. (Bakara Suresi 153)',
     "Biz Kur'an'ı müminlere şifa ve rahmet olarak indirdik. (İsrâ Suresi 82)",
     'İyilikler kötülükleri giderir. (Hud Suresi 114)',
@@ -23,7 +23,7 @@ export const APP_QUOTES = [
     'Şüphesiz namaz, müminler üzerine vakitleri belirlenmiş bir farzdır. (Nisa Suresi 103)',
     'Rabbinizi içinden ürperti duyarak ve alçak sesle zikredin. (Araf Suresi 205)',
     'Allah\'ı anan ile anmayanı, dirilerle ölülere benzetebilirsiniz. (Buhari, Müslim)',
-    'Kulum Beni andığında Ben onunla beraberim. (Hadis-i Kudsi, Buhari, Müslim)'
+    'Kulum Beni andığında Ben onunla beraberim. (Hadis-i Kudsi, Buhari, Müslim)',
     'Şüphesiz dua ibadetin özüdür. (Tirmizi)',
     'İnsan ancak dua ile ayakta durur. (Tirmizi)',
     'Kim bana bir defa salât ederse, Allah ona on salât eder. (Müslim)',
@@ -45,7 +45,17 @@ export const APP_QUOTES = [
     'Sahurda bereket vardır. (Buhari, Müslim)',
     'Oruçlunun iftar anındaki duası reddolunmaz. (Tirmizi)',
     'Kim Allah için bir karış yol yürürse, Allah ona iki karış yol yürütür. (Buhari, Müslim)',
-    'Allah yolunda atılan her adım, bir sadakadır. (Buhari, Müslim)'
+    'Allah yolunda atılan her adım, bir sadakadır. (Buhari, Müslim)',
+    'De ki: Ey kendilerine zulmeden kullarım! Allah\'ın rahmetinden ümit kesmeyin. (Zümer Suresi 53)',
+    'Şüphesiz Allah, kendisine dayanıp güvenenleri sever. (Al-i İmrân Suresi 159)',
+    'Kim Allah\'a tevekkül ederse, Allah ona yeter. (Talak Suresi 3)',
+    'Şüphesiz Allah, zorlukla beraber kolaylık verir. (İnşirah Suresi 6)',
+    'Allah bir toplumu, onlar kendilerini değiştirmedikçe değiştirmez. (Ra\'d Suresi 11)',
+    'Kalpler ancak Allah\'ı anmakla huzur bulur. (Ra\'d Suresi 28)',
+    'Muhakkak her zorlukla beraber bir ferahlık vardır. (İnşirah Suresi 5)',
+    'Allah Teâlâ buyurur: Ben kulumun zannı gibiyim. (Buhari, Müslim)',
+    'Allah, kulunun tövbesine çok sevinir. (Müslim)',
+    'Şükrederseniz elbette nimetimi artırırım. (İbrahim Suresi 7)'
 ];
 
 export function pickRandomQuote() {
