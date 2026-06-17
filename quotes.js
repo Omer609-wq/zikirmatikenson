@@ -55,7 +55,17 @@ export const APP_QUOTES = [
     'Muhakkak her zorlukla beraber bir ferahlık vardır. (İnşirah Suresi 5)',
     'Allah Teâlâ buyurur: Ben kulumun zannı gibiyim. (Buhari, Müslim)',
     'Allah, kulunun tövbesine çok sevinir. (Müslim)',
-    'Şükrederseniz elbette nimetimi artırırım. (İbrahim Suresi 7)'
+    'Şükrederseniz elbette nimetimi artırırım. (İbrahim Suresi 7)',
+    'Ameller niyetlere göredir. (Buhari, Müslim)',
+    'Kolaylaştırın, zorlaştırmayın; müjdeleyin, nefret ettirmeyin. (Buhari, Müslim)',
+    'Allah, kullarına karşı annesinin çocuğuna merhametinden daha merhametlidir. (Buhari, Müslim)',
+    'Müminin işi ne güzeldir! Her hali onun için hayırdır. (Müslim)',
+    'Allah, sizin suretlerinize ve mallarınıza değil; kalplerinize ve amellerinize bakar. (Müslim)',
+    'Kim bir müminin sıkıntısını giderirse, Allah da onun kıyamet sıkıntılarından birini giderir. (Müslim)',
+    'Allah, kullarına karşı yumuşaktır; yumuşaklığa verir. (Buhari, Müslim)',
+    'Biriniz, kendisi için sevdiğini kardeşi için de sevmedikçe iman etmiş olmaz. (Buhari, Müslim)',
+    'Yarım hurma ile de olsa ateşten korunun. (Buhari, Müslim)',
+    'Dünya, mümin için bir zindan; kâfir için bir cennettir. (Müslim)'
 ];
 
 export function pickRandomQuote() {
