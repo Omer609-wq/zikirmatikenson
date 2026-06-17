@@ -139,8 +139,10 @@ function fixMeal(mealId, mealsDir, { dryRun = false } = {}) {
             );
             flat.surahs.push({ n, ayahs: data.ayahs });
         }
+        const fullDir = path.join(__dirname, '..', 'data', 'quran', 'meals-full');
+        fs.mkdirSync(fullDir, { recursive: true });
         fs.writeFileSync(
-            path.join(mealsDir, `${mealId}-full.json`),
+            path.join(fullDir, `${mealId}-full.json`),
             JSON.stringify(flat) + '\n',
             'utf8'
         );

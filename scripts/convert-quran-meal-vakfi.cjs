@@ -9,6 +9,7 @@ const path = require('path');
 const DEFAULT_INPUT = path.join(process.env.USERPROFILE || '', 'OneDrive', 'Desktop', 'tr.vakfi');
 const inputPath = path.resolve(process.argv[2] || DEFAULT_INPUT);
 const outDir = path.join(__dirname, '..', 'data', 'quran', 'meals', 'vakfi');
+const fullDir = path.join(__dirname, '..', 'data', 'quran', 'meals-full');
 
 if (!fs.existsSync(inputPath)) {
     console.error('File not found:', inputPath);
@@ -88,7 +89,7 @@ const flat = {
     }))
 };
 fs.writeFileSync(
-    path.join(__dirname, '..', 'data', 'quran', 'meals', 'vakfi-full.json'),
+    path.join(fullDir, 'vakfi-full.json'),
     JSON.stringify(flat) + '\n',
     'utf8'
 );

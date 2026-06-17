@@ -113,6 +113,7 @@ const meta = {
     license: 'See Tanzil.net translation terms'
 };
 const outDir = path.join(__dirname, '..', 'data', 'quran', 'meals', meta.id);
+const fullDir = path.join(__dirname, '..', 'data', 'quran', 'meals-full');
 
 const raw = fs.readFileSync(inputPath, 'utf8');
 const lines = raw.split(/\r?\n/);
@@ -174,7 +175,7 @@ const flat = {
     }))
 };
 fs.writeFileSync(
-    path.join(__dirname, '..', 'data', 'quran', 'meals', `${meta.id}-full.json`),
+    path.join(fullDir, `${meta.id}-full.json`),
     JSON.stringify(flat) + '\n',
     'utf8'
 );

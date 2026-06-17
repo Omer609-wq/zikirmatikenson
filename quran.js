@@ -499,12 +499,16 @@ async function loadSurahContent(n, mealId, locale) {
     const pad = String(n).padStart(3, '0');
     const meal = normalizeQuranMeal(mealId, locale);
     const translitPack = getQuranTranslitPackId(locale);
+    const translitImport =
+        translitPack === 'translit-tr'
+            ? () => import(`./data/quran/translit-tr/${pad}.json`)
+            : () => import(`./data/quran/translit-en/${pad}.json`);
     const [arMod, mealMod, latMod] = await Promise.all([
         import(`./data/quran/ar/${pad}.json`),
         meal
             ? import(`./data/quran/meals/${meal}/${pad}.json`)
             : Promise.resolve({ default: { ayahs: [] } }),
-        import(`./data/quran/${translitPack}/${pad}.json`)
+        translitImport()
     ]);
     const ar = arMod.default || arMod;
     const trMeal = mealMod.default || mealMod;
