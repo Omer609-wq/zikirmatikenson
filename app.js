@@ -1359,6 +1359,163 @@ function syncSettingsUI() {
     syncLocaleUI();
 }
 
+function normalizeEsmaName(name) {
+    return String(name || '')
+        .toLocaleLowerCase('tr-TR')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9ğüşöçı]+/g, ' ')
+        .trim()
+        .replace(/\s+/g, ' ');
+}
+
+function createEsmaZikir(esma, index) {
+    return {
+        id: 'z_e_' + index,
+        folderId: 'f_esma',
+        name: esma.name,
+        arabic: esma.arabic || '',
+        target: esma.target,
+        meaning: esma.meaning,
+        count: 0,
+        lastClicked: 0,
+        order: index
+    };
+}
+
+function remapHistoryZikirIds(idMap) {
+    if (!idMap.size || !history || typeof history !== 'object') return false;
+    let changed = false;
+    Object.keys(history).forEach((day) => {
+        const block = history[day];
+        if (!block || typeof block !== 'object') return;
+        const moved = {};
+        idMap.forEach((toId, fromId) => {
+            if (Object.prototype.hasOwnProperty.call(block, fromId)) {
+                moved[fromId] = block[fromId];
+            }
+        });
+        Object.keys(moved).forEach((fromId) => {
+            delete block[fromId];
+            changed = true;
+        });
+        Object.keys(moved).forEach((fromId) => {
+            const toId = idMap.get(fromId);
+            const current = typeof block[toId] === 'number' && Number.isFinite(block[toId]) ? block[toId] : 0;
+            block[toId] = current + moved[fromId];
+        });
+    });
+    return changed;
+}
+
+function mergeZikirRecords(base, incoming) {
+    if (!incoming || incoming === base) return;
+    const incomingCount = Number.isFinite(incoming.count) ? incoming.count : 0;
+    const baseCount = Number.isFinite(base.count) ? base.count : 0;
+    base.count = baseCount + incomingCount;
+    base.lastClicked = Math.max(
+        Number.isFinite(base.lastClicked) ? base.lastClicked : 0,
+        Number.isFinite(incoming.lastClicked) ? incoming.lastClicked : 0
+    );
+    if (incoming.favorite) base.favorite = true;
+    if (typeof incoming.order === 'number' && (typeof base.order !== 'number' || incoming.order < base.order)) {
+        base.order = incoming.order;
+    }
+    if (!base.name && incoming.name) base.name = incoming.name;
+    if (!base.arabic && incoming.arabic) base.arabic = incoming.arabic;
+    if (!base.meaning && incoming.meaning) base.meaning = incoming.meaning;
+    if ((!Number.isFinite(base.target) || base.target <= 0) && Number.isFinite(incoming.target)) {
+        base.target = incoming.target;
+    }
+}
+
+function syncEsmaCatalog() {
+    const esmaFolder = folders.find(f => f.id === 'f_esma');
+    if (!esmaFolder) {
+        folders.push({ id: 'f_esma', name: 'Esma\'ül Hüsna' });
+    }
+
+    const canonicalNameToId = new Map();
+    const canonicalIds = new Set();
+    ESMA_LIST.forEach((esma, index) => {
+        const id = 'z_e_' + index;
+        canonicalIds.add(id);
+        canonicalNameToId.set(normalizeEsmaName(esma.name), id);
+    });
+
+    const idMap = new Map();
+    const groupedEsma = new Map();
+    const passthrough = [];
+    let changed = !esmaFolder;
+
+    zikirs.forEach((z) => {
+        if (!z || z.folderId !== 'f_esma' || !/^z_e_\d+$/.test(String(z.id))) {
+            passthrough.push(z);
+            return;
+        }
+
+        const canonicalId = canonicalNameToId.get(normalizeEsmaName(z.name));
+        const targetId = canonicalId || z.id;
+        if (canonicalId && targetId !== z.id) {
+            idMap.set(z.id, targetId);
+            changed = true;
+        }
+
+        const existing = groupedEsma.get(targetId);
+        if (existing) {
+            mergeZikirRecords(existing, z);
+            changed = true;
+        } else {
+            groupedEsma.set(targetId, z);
+        }
+    });
+
+    if (remapHistoryZikirIds(idMap)) changed = true;
+
+    ESMA_LIST.forEach((esma, index) => {
+        const id = 'z_e_' + index;
+        const z = groupedEsma.get(id);
+        if (!z) {
+            groupedEsma.set(id, createEsmaZikir(esma, index));
+            changed = true;
+            return;
+        }
+        if (z.id !== id) {
+            z.id = id;
+            changed = true;
+        }
+        z.folderId = 'f_esma';
+        if (typeof z.order !== 'number') {
+            z.order = index;
+            changed = true;
+        }
+        if (!z.name) {
+            z.name = esma.name;
+            changed = true;
+        }
+        if (!z.arabic && esma.arabic) {
+            z.arabic = esma.arabic;
+            changed = true;
+        }
+        if (!z.meaning) {
+            z.meaning = esma.meaning;
+            changed = true;
+        }
+        if (!Number.isFinite(z.target) || z.target <= 0) {
+            z.target = esma.target;
+            changed = true;
+        }
+    });
+
+    const orderedEsma = ESMA_LIST.map((_, index) => groupedEsma.get('z_e_' + index)).filter(Boolean);
+    groupedEsma.forEach((z, id) => {
+        if (!canonicalIds.has(id)) orderedEsma.push(z);
+    });
+    zikirs = passthrough.concat(orderedEsma);
+
+    return changed;
+}
+
 function loadData() {
     const sv = localStorage.getItem('zikirmatik_data_v2');
     if (sv) {
@@ -1423,38 +1580,7 @@ function loadData() {
         });
         if (touched) saveData();
 
-        // Migration for Esma folder (for existing users)
-        if (!folders.find(f => f.id === 'f_esma')) {
-            folders.push({ id: 'f_esma', name: 'Esma\'ül Hüsna' });
-            ESMA_LIST.forEach((esma, index) => {
-                zikirs.push({
-                    id: 'z_e_' + index, folderId: 'f_esma',
-                    name: esma.name, arabic: esma.arabic || '', target: esma.target, meaning: esma.meaning,
-                    count: 0, lastClicked: 0
-                });
-            });
-            saveData();
-        } else {
-            // Ensure all Esma items exist (if ESMA_LIST was expanded in later versions)
-            let changed = false;
-            ESMA_LIST.forEach((esma, index) => {
-                const id = 'z_e_' + index;
-                if (!zikirs.find(z => z.id === id)) {
-                    zikirs.push({
-                        id,
-                        folderId: 'f_esma',
-                        name: esma.name,
-                        arabic: esma.arabic || '',
-                        target: esma.target,
-                        meaning: esma.meaning,
-                        count: 0,
-                        lastClicked: 0
-                    });
-                    changed = true;
-                }
-            });
-            if (changed) saveData();
-        }
+        if (syncEsmaCatalog()) saveData();
 
         // Arapça metin yoksa Esma / varsayılan zikirlere doldur (eski kayıtlar)
         let arFix = false;
@@ -2168,6 +2294,10 @@ function isOverlayActive(el) {
     return !!(el && el.classList && el.classList.contains('active'));
 }
 
+function getBrowserHistory() {
+    return (typeof window !== 'undefined' && window.history) ? window.history : null;
+}
+
 function closeAllOverlays() {
     [
         document.getElementById('appDialogOverlay'),
@@ -2190,9 +2320,12 @@ function openOverlay(overlayId, { onOpen } = {}) {
     if (!el) return;
     ensureInitialHistoryState();
     try {
-        const cur = history && history.state ? history.state : null;
-        const next = getOverlayState(overlayId);
-        if (!isOverlayState(cur) || cur.overlayId !== next.overlayId) history.pushState(next, '');
+        const browserHistory = getBrowserHistory();
+        if (browserHistory) {
+            const cur = browserHistory.state || null;
+            const next = getOverlayState(overlayId);
+            if (!isOverlayState(cur) || cur.overlayId !== next.overlayId) browserHistory.pushState(next, '');
+        }
     } catch (_) {
         // ignore
     }
@@ -2208,9 +2341,10 @@ function closeOverlayPreferHistory(overlayId) {
     if (!el) return false;
     if (!isOverlayActive(el)) return false;
     try {
-        const st = history && history.state ? history.state : null;
+        const browserHistory = getBrowserHistory();
+        const st = browserHistory ? (browserHistory.state || null) : null;
         if (isOverlayState(st) && st.overlayId === overlayId) {
-            history.back();
+            browserHistory.back();
             return true;
         }
     } catch (_) {
@@ -2222,13 +2356,15 @@ function closeOverlayPreferHistory(overlayId) {
 
 function ensureInitialHistoryState() {
     try {
-        const st = history && history.state ? history.state : null;
+        const browserHistory = getBrowserHistory();
+        if (!browserHistory) return;
+        const st = browserHistory.state || null;
         // If we already have an in-app state (view or overlay), don't clobber it.
         if (st && typeof st === 'object') {
             if (typeof st.viewId === 'string') return;
             if (typeof st.overlayId === 'string') return;
         }
-        history.replaceState(getViewState('homeView', null), '');
+        browserHistory.replaceState(getViewState('homeView', null), '');
     } catch (_) {
         // ignore: some WebViews may block history state
     }
@@ -2361,9 +2497,10 @@ function showView(viewId, param = null, options = {}) {
     // Push new state BEFORE UI switch so Android back always has an entry.
     if (push) {
         try {
-            const cur = history && history.state ? history.state : null;
+            const browserHistory = getBrowserHistory();
+            const cur = browserHistory ? (browserHistory.state || null) : null;
             // Avoid pushing duplicates (e.g., tapping the same bottom tab).
-            if (!viewStateEquals(cur, nextState)) history.pushState(nextState, '');
+            if (browserHistory && !viewStateEquals(cur, nextState)) browserHistory.pushState(nextState, '');
         } catch (_) {
             // ignore
         }
