@@ -105,6 +105,7 @@
     "emptySearch": "Surah tidak ditemukan.",
     "mealLabel": "Terjemahan",
     "loading": "Memuat…",
+    "searchIndexError": "Indeks pencarian gagal dimuat. Mulai ulang aplikasi atau pasang versi terbaru.",
     "loadError": "Surah gagal dimuat. Coba lagi.",
     "surahFallback": "Surah {n}",
     "readerMenuAria": "Opsi bacaan",

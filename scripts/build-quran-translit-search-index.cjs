@@ -45,7 +45,7 @@ function buildIndex() {
             if (!text) continue;
             const norm = normalizeTranslitSearchText(text);
             if (!norm) continue;
-            ayahs.push({ s: surah, a: ay.n, t: text, n: norm });
+            ayahs.push({ s: surah, a: ay.n, t: text, n: norm, c: norm.replace(/\s+/g, '') });
         }
     }
 

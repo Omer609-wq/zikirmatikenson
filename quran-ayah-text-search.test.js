@@ -1,5 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import surahIndex from './data/quran/index.json' with { type: 'json' };
 import {
     MIN_TEXT_SEARCH_CHARS,
@@ -10,13 +13,20 @@ import {
     normalizeTranslitSearchText,
     preloadArabicAyahSearchIndex,
     preloadMealSearchIndex,
+    preloadTranslitSearchIndex,
     searchArabicAyahs,
     searchMealAyahs,
     searchTranslitAyahs,
     searchAyahTextHits,
     localeSupportsArabicAyahTextSearch,
-    localeSupportsMealTextSearch
+    localeSupportsMealTextSearch,
+    __setSearchIndexLoaderForTests
 } from './quran-ayah-text-search.js';
+
+const searchIndexDir = join(dirname(fileURLToPath(import.meta.url)), 'data', 'quran', 'search');
+__setSearchIndexLoaderForTests((fileName) =>
+    readFile(join(searchIndexDir, fileName), 'utf8').then((raw) => JSON.parse(raw))
+);
 
 test('normalizeMealSearchText folds Turkish', () => {
     assert.equal(normalizeMealSearchText('Şüphe GöTürMEyen'), 'suphe goturmeyen');
@@ -112,6 +122,7 @@ test('searchMealAyahs finds English Sahih meal phrase', async () => {
 });
 
 test('searchTranslitAyahs finds Turkish transliteration phrase', async () => {
+    await preloadTranslitSearchIndex();
     const hits = searchTranslitAyahs('la raybe fih', surahIndex, 'tr', { limit: 3 });
     assert.ok(hits.length >= 1);
     assert.equal(hits[0].surah, 2);
@@ -122,14 +133,34 @@ test('searchTranslitAyahs finds Turkish transliteration phrase', async () => {
 });
 
 test('searchTranslitAyahs tolerates one typo', async () => {
+    await preloadTranslitSearchIndex();
     const hits = searchTranslitAyahs('elhamdu lillahi rabbi', surahIndex, 'tr', { limit: 3 });
     assert.ok(hits.length >= 1);
     assert.equal(hits[0].surah, 1);
     assert.equal(hits[0].ayah, 2);
 });
 
+test('searchTranslitAyahs matches joined phrase without spaces or hyphens', async () => {
+    await preloadTranslitSearchIndex();
+    const ikhlas = searchTranslitAyahs('kulhuvellahu', surahIndex, 'tr', { limit: 3 });
+    assert.ok(ikhlas.some((h) => h.surah === 112 && h.ayah === 1));
+    const joined = searchTranslitAyahs('kul huvelleahu', surahIndex, 'tr', { limit: 3 });
+    assert.ok(joined.some((h) => h.surah === 112 && h.ayah === 1));
+    const fatiha = searchTranslitAyahs('bismillahi', surahIndex, 'tr', { limit: 3 });
+    assert.ok(fatiha.some((h) => h.surah === 1 && h.ayah === 1));
+});
+
+test('searchTranslitAyahs tolerates Turkish vowel variants', async () => {
+    await preloadTranslitSearchIndex();
+    const plain = searchTranslitAyahs('kul huve llahu', surahIndex, 'tr', { limit: 3 });
+    assert.ok(plain.some((h) => h.surah === 112 && h.ayah === 1));
+    const withUmlaut = searchTranslitAyahs('kul hüve llâhü', surahIndex, 'tr', { limit: 3 });
+    assert.ok(withUmlaut.some((h) => h.surah === 112 && h.ayah === 1));
+});
+
 test('searchAyahTextHits merges meal and translit', async () => {
     await preloadMealSearchIndex('tr');
+    await preloadTranslitSearchIndex();
     const mealHits = searchAyahTextHits('dogrulugu suphe goturmeyen', surahIndex, 'tr', { limit: 5 });
     assert.ok(mealHits.some((h) => h.kind === 'meal'));
     const translitHits = searchAyahTextHits('bismi llahi rrahman', surahIndex, 'tr', { limit: 5 });
@@ -152,6 +183,15 @@ test('searchMealAyahs finds French meal phrase', async () => {
     assert.equal(hits[0].surah, 2);
     assert.equal(hits[0].ayah, 2);
     assert.equal(hits[0].mealId, 'hamidullah');
+});
+
+test('searchMealAyahs finds Malay meal phrase', async () => {
+    await preloadMealSearchIndex('ms');
+    const hits = searchMealAyahs('tidak ada sebarang syak', surahIndex, 'ms', { limit: 3 });
+    assert.ok(hits.length >= 1);
+    assert.equal(hits[0].surah, 2);
+    assert.equal(hits[0].ayah, 2);
+    assert.equal(hits[0].mealId, 'basmeih');
 });
 
 test('searchMealAyahs finds Bengali meal phrase', async () => {

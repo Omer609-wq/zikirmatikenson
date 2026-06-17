@@ -2224,6 +2224,9 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
     cursor: default;
     pointer-events: none;
 }
+.quran-search-ref--error {
+    color: var(--danger, #dc2626);
+}
 
 .quran-search-guide-link {
     display: inline-flex;

@@ -15,7 +15,8 @@
         "translit:en:build:tanzil": "node scripts/convert-quran-translit-en.cjs --tanzil",
         "quran:meal-search-index": "node scripts/build-quran-meal-search-index.cjs",
         "quran:ar-ayah-search-index": "node scripts/build-quran-ar-ayah-search-index.cjs",
-        "quran:translit-search-index": "node scripts/build-quran-translit-search-index.cjs"
+        "quran:translit-search-index": "node scripts/build-quran-translit-search-index.cjs",
+        "quran:search-index": "npm run quran:meal-search-index && npm run quran:ar-ayah-search-index && npm run quran:translit-search-index"
     },
     "dependencies": {
         "@capacitor-community/keep-awake": "^5.0.1",

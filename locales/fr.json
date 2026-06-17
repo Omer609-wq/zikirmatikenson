@@ -105,6 +105,7 @@
     "emptySearch": "Aucune sourate trouvée.",
     "mealLabel": "Traduction",
     "loading": "Chargement…",
+    "searchIndexError": "Impossible de charger l'index de recherche. Redémarrez l'application ou installez la dernière version.",
     "loadError": "Impossible de charger la sourate. Réessayez.",
     "surahFallback": "Sourate {n}",
     "readerMenuAria": "Options de lecture",

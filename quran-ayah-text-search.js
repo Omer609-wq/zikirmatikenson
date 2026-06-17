@@ -2,7 +2,6 @@
  * Meal, Arapça mushaf ve (TR) okunuş metninde ayet araması — locale başına lazy indeks.
  */
 import { parseQuranRefQuery, getSurahRefDisplayName, normalizeArabicSearchText } from './quran-ref-search.js';
-import translitSearchIndex from './data/quran/search/translit-tr.json' with { type: 'json' };
 
 /** Gürültüyü azaltmak için minimum arama uzunluğu (boşluksuz). */
 export const MIN_TEXT_SEARCH_CHARS = 3;
@@ -413,6 +412,60 @@ const mealIndexCache = new Map();
 const mealIndexLoading = new Map();
 const arabicAyahIndexCache = new Map();
 let arabicAyahIndexLoading = null;
+let translitIndexCache = null;
+let translitIndexLoading = null;
+const indexLoadErrors = new Map();
+/** @type {((fileName: string) => Promise<unknown>) | null} */
+let searchIndexLoaderOverride = null;
+
+/** Node testleri için dosyadan okuma; üretim bundle'ına dahil edilmez. */
+export function __setSearchIndexLoaderForTests(loader) {
+    searchIndexLoaderOverride = typeof loader === 'function' ? loader : null;
+}
+
+const SEARCH_INDEX_FETCH_MS = 30000;
+
+function searchIndexUrl(fileName) {
+    const base = import.meta.env?.BASE_URL || './';
+    const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+    return `${normalizedBase}data/quran/search/${fileName}`;
+}
+
+async function fetchSearchIndexJson(fileName) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), SEARCH_INDEX_FETCH_MS);
+    try {
+        const res = await fetch(searchIndexUrl(fileName), { signal: controller.signal });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
+async function loadSearchIndexJson(fileName, cacheKey) {
+    try {
+        const index = searchIndexLoaderOverride
+            ? await searchIndexLoaderOverride(fileName)
+            : await fetchSearchIndexJson(fileName);
+        indexLoadErrors.delete(cacheKey);
+        return index;
+    } catch (cause) {
+        const err = new Error(`Search index load failed: ${fileName}`);
+        err.cause = cause;
+        indexLoadErrors.set(cacheKey, err);
+        throw err;
+    }
+}
+
+export function getAyahTextSearchIndexError(locale = 'tr') {
+    const code = normalizeSearchLocale(locale);
+    if (code === 'ar') return indexLoadErrors.get('ar') || null;
+    const mealErr = indexLoadErrors.get(code);
+    if (mealErr) return mealErr;
+    if (code === 'tr') return indexLoadErrors.get('translit-tr') || null;
+    return null;
+}
 
 function normalizeSearchLocale(locale = 'tr') {
     return String(locale || 'tr').toLowerCase().split('-')[0];
@@ -491,6 +544,10 @@ export function normalizeTranslitSearchText(value) {
         .trim();
 }
 
+export function compactTranslitSearchText(value) {
+    return normalizeTranslitSearchText(value).replace(/\s+/g, '');
+}
+
 function getMealLocaleConfig(locale) {
     return MEAL_LOCALE_CONFIG[normalizeSearchLocale(locale)] || null;
 }
@@ -518,7 +575,11 @@ export function localeSupportsAyahTextSearch(locale = 'tr') {
 export function isAyahTextSearchIndexReady(locale = 'tr') {
     const code = normalizeSearchLocale(locale);
     if (code === 'ar') return arabicAyahIndexCache.has('ar');
-    return mealIndexCache.has(code);
+    if (!mealIndexCache.has(code)) return false;
+    if (code === 'tr' && localeSupportsTranslitTextSearch(locale)) {
+        return Boolean(translitIndexCache);
+    }
+    return true;
 }
 
 export function isMealSearchIndexReady(locale = 'tr') {
@@ -531,14 +592,14 @@ export async function preloadArabicAyahSearchIndex() {
     if (arabicAyahIndexCache.has('ar')) return arabicAyahIndexCache.get('ar');
     if (arabicAyahIndexLoading) return arabicAyahIndexLoading;
 
-    arabicAyahIndexLoading = import('./data/quran/search/ar-ayah.json', { with: { type: 'json' } })
-        .then((mod) => {
-            const index = mod.default || mod;
+    arabicAyahIndexLoading = loadSearchIndexJson('ar-ayah.json', 'ar')
+        .then((index) => {
             arabicAyahIndexCache.set('ar', index);
             arabicAyahIndexLoading = null;
             return index;
         })
         .catch((err) => {
+            indexLoadErrors.set('ar', err);
             arabicAyahIndexLoading = null;
             throw err;
         });
@@ -549,7 +610,29 @@ export async function preloadArabicAyahSearchIndex() {
 export async function preloadAyahTextSearchIndex(locale = 'tr') {
     const code = normalizeSearchLocale(locale);
     if (code === 'ar') return preloadArabicAyahSearchIndex();
-    return preloadMealSearchIndex(locale);
+    const tasks = [preloadMealSearchIndex(locale)];
+    if (code === 'tr') tasks.push(preloadTranslitSearchIndex());
+    const results = await Promise.all(tasks);
+    return results[0];
+}
+
+export async function preloadTranslitSearchIndex() {
+    if (translitIndexCache) return translitIndexCache;
+    if (translitIndexLoading) return translitIndexLoading;
+
+    translitIndexLoading = loadSearchIndexJson('translit-tr.json', 'translit-tr')
+        .then((index) => {
+            translitIndexCache = index;
+            translitIndexLoading = null;
+            return index;
+        })
+        .catch((err) => {
+            indexLoadErrors.set('translit-tr', err);
+            translitIndexLoading = null;
+            throw err;
+        });
+
+    return translitIndexLoading;
 }
 
 export async function preloadMealSearchIndex(locale = 'tr') {
@@ -558,14 +641,14 @@ export async function preloadMealSearchIndex(locale = 'tr') {
     if (mealIndexCache.has(code)) return mealIndexCache.get(code);
     if (mealIndexLoading.has(code)) return mealIndexLoading.get(code);
 
-    const loadPromise = import(`./data/quran/search/meal-${code}.json`, { with: { type: 'json' } })
-        .then((mod) => {
-            const index = mod.default || mod;
+    const loadPromise = loadSearchIndexJson(`meal-${code}.json`, code)
+        .then((index) => {
             mealIndexCache.set(code, index);
             mealIndexLoading.delete(code);
             return index;
         })
         .catch((err) => {
+            indexLoadErrors.set(code, err);
             mealIndexLoading.delete(code);
             throw err;
         });
@@ -576,6 +659,10 @@ export async function preloadMealSearchIndex(locale = 'tr') {
 
 function getLoadedMealSearchIndex(locale) {
     return mealIndexCache.get(normalizeSearchLocale(locale)) || null;
+}
+
+function getLoadedTranslitSearchIndex() {
+    return translitIndexCache;
 }
 
 /**
@@ -684,6 +771,80 @@ function findTokenInHay(hay, token, from = 0, fuzzy = false) {
     }
 
     return best;
+}
+
+function findFuzzySubstringFrom(hay, token, from = 0) {
+    const minLen = Math.max(3, token.length - 1);
+    const maxLen = Math.min(hay.length - from, token.length + 1);
+    for (let start = from; start < hay.length; start += 1) {
+        for (let len = minLen; len <= maxLen; len += 1) {
+            if (start + len > hay.length) break;
+            const slice = hay.slice(start, start + len);
+            if (levenshteinAtMost1(slice, token) <= 1) {
+                return { pos: start, fuzz: 1, end: start + len };
+            }
+        }
+    }
+    return null;
+}
+
+function scoreTokensInCompact(hayCompact, tokens, fuzzy = false) {
+    let pos = 0;
+    let total = 0;
+
+    for (const tok of tokens) {
+        if (!tok) continue;
+        let idx = hayCompact.indexOf(tok, pos);
+        let fuzz = 0;
+        let end = idx >= 0 ? idx + tok.length : -1;
+
+        if (idx < 0 && fuzzy && tok.length >= 4) {
+            const found = findFuzzySubstringFrom(hayCompact, tok, pos);
+            if (!found) return null;
+            idx = found.pos;
+            fuzz = found.fuzz;
+            end = found.end;
+        } else if (idx < 0) {
+            return null;
+        }
+
+        total += idx * 0.01 + tok.length * 0.001 + fuzz * 40;
+        pos = Math.max(end, idx + 1);
+    }
+
+    return total;
+}
+
+function scoreTranslitHaystack(hay, hayCompact, tokens, raw) {
+    const spacedScore = scoreHaystack(hay, tokens, true);
+    const rawCompact = compactTranslitSearchText(raw);
+    const compactCandidates = [];
+
+    if (rawCompact.length >= MIN_TEXT_SEARCH_CHARS) {
+        compactCandidates.push(rawCompact);
+    }
+    if (tokens.length > 1) {
+        compactCandidates.push(tokens.join(''));
+    }
+
+    let bestCompact = null;
+    for (const needle of compactCandidates) {
+        if (needle.length < MIN_TEXT_SEARCH_CHARS) continue;
+        const idx = hayCompact.indexOf(needle);
+        if (idx >= 0) {
+            const score = idx * 0.01 + needle.length * 0.001;
+            bestCompact = bestCompact == null ? score : Math.min(bestCompact, score);
+        }
+    }
+
+    const orderedCompact = scoreTokensInCompact(hayCompact, tokens, true);
+    if (orderedCompact != null) {
+        bestCompact = bestCompact == null ? orderedCompact + 8 : Math.min(bestCompact, orderedCompact + 8);
+    }
+
+    if (spacedScore == null) return bestCompact;
+    if (bestCompact == null) return spacedScore;
+    return Math.min(spacedScore, bestCompact);
 }
 
 function scoreHaystack(hay, tokens, fuzzy = false) {
@@ -804,12 +965,13 @@ export function searchTranslitAyahs(raw, surahIndex, locale = 'tr', options = {}
     if (!tokens.length) return [];
 
     const limit = Number(options.limit) > 0 ? Number(options.limit) : 5;
-    const rows = translitSearchIndex?.ayahs || [];
+    const rows = getLoadedTranslitSearchIndex()?.ayahs || [];
     const scored = [];
 
     for (const row of rows) {
         const hay = row.n || '';
-        const score = scoreHaystack(hay, tokens, true);
+        const hayCompact = row.c || hay.replace(/\s+/g, '');
+        const score = scoreTranslitHaystack(hay, hayCompact, tokens, raw);
         if (score == null) continue;
         scored.push({
             surah: row.s,
@@ -982,13 +1144,15 @@ function searchTranslitAyahsInternal(raw, options = {}) {
     const limit = Number(options.limit) > 0 ? Number(options.limit) : 5;
     const surahFilter = Number(options.surah);
     const scopedSurah = Number.isFinite(surahFilter) && surahFilter >= 1 ? surahFilter : null;
-    const rows = translitSearchIndex?.ayahs || [];
+    const rows = getLoadedTranslitSearchIndex()?.ayahs || [];
     const translitCfg = { localeTag: 'tr', normalize: normalizeTranslitSearchText, stopWords: TRANSLIT_STOP_WORDS };
     const scored = [];
 
     for (const row of rows) {
         if (scopedSurah != null && row.s !== scopedSurah) continue;
-        const score = scoreHaystack(row.n || '', tokens, true);
+        const hay = row.n || '';
+        const hayCompact = row.c || hay.replace(/\s+/g, '');
+        const score = scoreTranslitHaystack(hay, hayCompact, tokens, raw);
         if (score == null) continue;
         scored.push({
             kind: 'translit',

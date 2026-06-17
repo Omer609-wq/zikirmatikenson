@@ -9,6 +9,7 @@ import {
     surahMatchesRefSearch
 } from './quran-ref-search.js';
 import {
+    getAyahTextSearchIndexError,
     isAyahTextSearchIndexReady,
     localeSupportsArabicAyahTextSearch,
     localeSupportsAyahTextSearch,
@@ -21,7 +22,7 @@ import {
 import { getSurahLocalizedName } from './quran-surah-names.js';
 
 export { getSurahLocalizedName } from './quran-surah-names.js';
-import { t, getLocale, getLocaleTag, normalizeAppLocale } from './i18n.js';
+import { t, getLocale, normalizeAppLocale } from './i18n.js';
 import { closeTafsirBridgeSheet, openTafsirBridgeSheet } from './tafsir-bridge.js';
 
 const VALID_MEAL_IDS = new Set(['vakfi', 'diyanet', 'bn', 'muyassar', 'sahih', 'hamidullah', 'basmeih', 'indonesian', 'ahmedali', 'jalandhry']);
@@ -117,6 +118,7 @@ export function syncQuranSettingsForLocale(settings) {
     settings.locale = locale;
     settings.quranMeal = normalizeQuranMeal(settings.quranMeal, locale);
     settings.quranReadMode = normalizeQuranReadModeForLocale(settings.quranReadMode, locale);
+    ensureAyahTextSearchIndexLoaded();
 }
 
 export function localeShowsQuran() {
@@ -188,6 +190,7 @@ export function syncQuranTabVisibility() {
     syncQuranTafsirVisibility();
     syncQuranGuideMealSelect();
     syncQuranSearchGuide();
+    ensureAyahTextSearchIndexLoaded();
 }
 
 export function syncQuranSearchGuide(locale = getLocale()) {
@@ -207,11 +210,16 @@ function ensureAyahTextSearchIndexLoaded() {
     if (isAyahTextSearchIndexReady(locale)) return;
 
     const token = ++ayahSearchPreloadToken;
-    void preloadAyahTextSearchIndex(locale).then(() => {
-        if (token !== ayahSearchPreloadToken) return;
-        if (!(quranSearchQuery || '').trim()) return;
-        renderQuranSurahList();
-    });
+    void preloadAyahTextSearchIndex(locale)
+        .then(() => {
+            if (token !== ayahSearchPreloadToken) return;
+            if (!(quranSearchQuery || '').trim()) return;
+            renderQuranSurahList();
+        })
+        .catch(() => {
+            if (token !== ayahSearchPreloadToken) return;
+            renderQuranSurahList();
+        });
 }
 
 function mealMetaById(mealId) {
@@ -433,19 +441,24 @@ function renderQuranSearchSuggestions(query) {
     if (
         textProbe &&
         localeSupportsAyahTextSearch(locale) &&
-        !isAyahTextSearchIndexReady(locale) &&
-        meetsMinTextSearchQuery(textProbe, locale)
+        meetsMinTextSearchQuery(textProbe, locale) &&
+        !isAyahTextSearchIndexReady(locale)
     ) {
-        const loading = document.createElement('p');
-        loading.className = 'quran-search-ref quran-search-ref--loading';
-        loading.textContent = t('quran.loading');
-        box.appendChild(loading);
+        ensureAyahTextSearchIndexLoaded();
+        const loadErr = getAyahTextSearchIndexError(locale);
+        const status = document.createElement('p');
+        status.className = `quran-search-ref quran-search-ref--loading${
+            loadErr ? ' quran-search-ref--error' : ''
+        }`;
+        status.textContent = loadErr ? t('quran.searchIndexError') : t('quran.loading');
+        box.appendChild(status);
         box.hidden = false;
+        return;
     }
 
     const hits = getQuranSearchSuggestionHits(query);
     if (!hits.length) {
-        if (!box.childElementCount) box.hidden = true;
+        box.hidden = true;
         return;
     }
 
