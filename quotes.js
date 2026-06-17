@@ -62,10 +62,8 @@ export const APP_QUOTES = [
     'Müminin işi ne güzeldir! Her hali onun için hayırdır. (Müslim)',
     'Allah, sizin suretlerinize ve mallarınıza değil; kalplerinize ve amellerinize bakar. (Müslim)',
     'Kim bir müminin sıkıntısını giderirse, Allah da onun kıyamet sıkıntılarından birini giderir. (Müslim)',
-    'Allah, kullarına karşı yumuşaktır; yumuşaklığa verir. (Buhari, Müslim)',
     'Biriniz, kendisi için sevdiğini kardeşi için de sevmedikçe iman etmiş olmaz. (Buhari, Müslim)',
     'Yarım hurma ile de olsa ateşten korunun. (Buhari, Müslim)',
-    'Dünya, mümin için bir zindan; kâfir için bir cennettir. (Müslim)'
 ];
 
 export function pickRandomQuote() {
