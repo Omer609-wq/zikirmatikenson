@@ -24,7 +24,7 @@ import { sanitizeLoadedData, mintId } from './lib/sanitize.js';
 import { showAppAlert, showAppConfirm, showAppPrompt, setupAppDialog } from './lib/app-dialog.js';
 import { applyNativeStatusBarTheme } from './status-bar-theme.js';
 import { runCounterVibration, runDragReorderNudge } from './haptics.js';
-import { pickRandomQuote, preloadQuranQuotes, REMINDER_FIXED_BODY } from './quotes.js';
+import { pickRandomQuote, REMINDER_FIXED_BODY } from './quotes.js';
 import { ESMA_DEFAULT_FAZILET } from './esma-fazilet.js';
 import { ESMA_MEANING_EN } from './esma-meanings-en.js';
 import { ESMA_NAME_EN } from './esma-names-en.js';
@@ -656,7 +656,6 @@ const views = document.querySelectorAll('.view');
 const folderGrid = document.getElementById('folderGrid');
 const updateBannerSlot = document.getElementById('updateBannerSlot');
 const newFolderBtn = document.getElementById('newFolderBtn');
-const dailyQuoteText = document.getElementById('dailyQuoteText');
 const homeQuoteFooter = document.getElementById('homeQuoteFooter');
 const folderMultiSelectBar = document.getElementById('folderMultiSelectBar');
 const folderSelectCancelBtn = document.getElementById('folderSelectCancelBtn');
@@ -837,7 +836,6 @@ function init() {
     loadData();
     setupEventListeners();
     setDailyQuote();
-    void preloadQuranQuotes().then(() => setDailyQuote());
     setMultiSelectBarShown(folderMultiSelectBar, false);
     setMultiSelectBarShown(zikirMultiSelectBar, false);
     // Do not push on first paint; set the baseline history state.
@@ -2487,8 +2485,9 @@ function renderPremium() {
 
 // ===================== VIEWS =====================
 function setDailyQuote() {
-    if (!dailyQuoteText) return;
-    dailyQuoteText.textContent = pickRandomQuote(getLocale());
+    const el = document.getElementById('dailyQuoteText');
+    if (!el) return;
+    el.textContent = pickRandomQuote(getLocale());
 }
 
 // ——— Liste sıralama: uzun bas + sürükle (mobil) ———
@@ -4221,6 +4220,7 @@ function setupEventListeners() {
             applyAppLocale(choice);
             syncLocaleUI();
             updateCounterUI();
+            setDailyQuote();
             saveData();
             setLocalePickerOpen(false);
         });
