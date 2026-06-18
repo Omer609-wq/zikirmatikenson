@@ -1233,10 +1233,10 @@ function syncThemeUI() {
     });
 }
 
-function applyAppLocale(locale) {
+function applyAppLocale(locale, { persistDefaults = true, refreshSeasonal = true, syncQuranZikirs = true } = {}) {
     appSettings.locale = normalizeAppLocale(locale);
     applyLocaleToDocument(appSettings.locale);
-    syncLocalizedDefaults({ persist: true });
+    syncLocalizedDefaults({ persist: persistDefaults });
     syncQuranSettingsForLocale(appSettings);
     syncQuranTabVisibility();
     clearQuranSurahCache();
@@ -1264,21 +1264,25 @@ function applyAppLocale(locale) {
     if (zikirStatsOverlay && zikirStatsOverlay.classList.contains('active')) renderZikirStats();
     updateFolderSelectChrome();
     updateZikirSelectChrome();
-    void refreshSeasonalContent(appSettings.locale).then(() => {
-        applySeasonalContentToAppState(folders, zikirs, appSettings.locale);
-        const hv = document.getElementById('homeView');
-        if (hv && hv.classList.contains('active')) renderFolders();
-        const fd = document.getElementById('folderDetailView');
-        if (fd && fd.classList.contains('active')) renderFolderDetail();
-    });
+    if (refreshSeasonal) {
+        void refreshSeasonalContent(appSettings.locale).then(() => {
+            applySeasonalContentToAppState(folders, zikirs, appSettings.locale);
+            const hv = document.getElementById('homeView');
+            if (hv && hv.classList.contains('active')) renderFolders();
+            const fd = document.getElementById('folderDetailView');
+            if (fd && fd.classList.contains('active')) renderFolderDetail();
+        });
+    }
     const premiumView = document.getElementById('premiumView');
     if (premiumView && premiumView.classList.contains('active')) renderPremium();
 
-    void syncQuranZikirLocalizedContent().then((changed) => {
-        if (!changed) return;
-        saveData();
-        refreshViewsAfterLocalizedZikirSync();
-    });
+    if (syncQuranZikirs) {
+        void syncQuranZikirLocalizedContent().then((changed) => {
+            if (!changed) return;
+            saveData();
+            refreshViewsAfterLocalizedZikirSync();
+        });
+    }
 }
 
 function setLocalePickerOpen(open) {
@@ -1343,7 +1347,7 @@ function syncArabicFontSettingUI() {
     syncArabicFontSettingVisibility();
 }
 
-function syncSettingsUI() {
+function syncSettingsUI({ persistLocale = true } = {}) {
     initLocaleOptionFlags();
     if (cbVibrationTap) cbVibrationTap.checked = !!appSettings.vibrationTap;
     if (cbVibrationTarget) cbVibrationTarget.checked = !!appSettings.vibrationTarget;
@@ -1354,7 +1358,11 @@ function syncSettingsUI() {
     if (cbReminderEnabled) cbReminderEnabled.checked = !!reminderSettings.enabled;
     if (reminderTimeInput) reminderTimeInput.value = reminderSettings.time || '21:00';
     applyAppTheme(appSettings.theme);
-    applyAppLocale(appSettings.locale);
+    applyAppLocale(appSettings.locale, {
+        persistDefaults: persistLocale,
+        refreshSeasonal: persistLocale,
+        syncQuranZikirs: persistLocale
+    });
     syncThemeUI();
     syncLocaleUI();
 }
@@ -1385,7 +1393,7 @@ function loadData() {
             reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
             entitlements = { premium: false };
             trash = { v: 1, entries: [] };
-            syncSettingsUI();
+            syncSettingsUI({ persistLocale: false });
             return;
         }
         const sanitized = sanitizeLoadedData(d);
