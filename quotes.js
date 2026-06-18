@@ -67,6 +67,14 @@ export const APP_QUOTES = [
     'Yarım hurma ile de olsa ateşten korunun. (Buhari, Müslim)',
 ];
 
+const FALLBACK_QURAN_QUOTES = {
+    en: [
+        [13, 28, 'Unquestionably, by the remembrance of Allah hearts are assured.'],
+        [94, 5, 'For indeed, with hardship will be ease.'],
+        [2, 152, 'So remember Me; I will remember you. And be grateful to Me and do not deny Me.']
+    ]
+};
+
 function normalizeQuoteLocale(locale) {
     return String(locale || 'tr').toLowerCase().split('-')[0];
 }
@@ -115,7 +123,13 @@ function truncateQuote(text, maxLen = 160) {
 
 function pickRandomQuranQuote(locale) {
     const code = normalizeQuoteLocale(locale);
-    const list = quranQuotesCache?.quotes?.[code] || quranQuotesCache?.quotes?.en || [];
+    const localeList = quranQuotesCache?.quotes?.[code];
+    const englishList = quranQuotesCache?.quotes?.en;
+    const list =
+        (Array.isArray(localeList) && localeList.length ? localeList : null) ||
+        (Array.isArray(englishList) && englishList.length ? englishList : null) ||
+        FALLBACK_QURAN_QUOTES[code] ||
+        FALLBACK_QURAN_QUOTES.en;
     if (!Array.isArray(list) || !list.length) return null;
     const [s, a, t] = list[Math.floor(Math.random() * list.length)];
     const text = truncateQuote(t, code === 'ar' ? 220 : 170);

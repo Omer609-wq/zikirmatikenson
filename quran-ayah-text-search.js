@@ -575,11 +575,10 @@ export function localeSupportsAyahTextSearch(locale = 'tr') {
 export function isAyahTextSearchIndexReady(locale = 'tr') {
     const code = normalizeSearchLocale(locale);
     if (code === 'ar') return arabicAyahIndexCache.has('ar');
-    if (!mealIndexCache.has(code)) return false;
     if (code === 'tr' && localeSupportsTranslitTextSearch(locale)) {
-        return Boolean(translitIndexCache);
+        return mealIndexCache.has(code) || Boolean(translitIndexCache);
     }
-    return true;
+    return mealIndexCache.has(code);
 }
 
 export function isMealSearchIndexReady(locale = 'tr') {

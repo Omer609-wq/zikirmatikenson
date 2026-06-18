@@ -12,8 +12,10 @@ import {
     normalizeMealSearchText,
     normalizeTranslitSearchText,
     preloadArabicAyahSearchIndex,
+    preloadAyahTextSearchIndex,
     preloadMealSearchIndex,
     preloadTranslitSearchIndex,
+    isAyahTextSearchIndexReady,
     searchArabicAyahs,
     searchMealAyahs,
     searchTranslitAyahs,
@@ -24,9 +26,9 @@ import {
 } from './quran-ayah-text-search.js';
 
 const searchIndexDir = join(dirname(fileURLToPath(import.meta.url)), 'data', 'quran', 'search');
-__setSearchIndexLoaderForTests((fileName) =>
-    readFile(join(searchIndexDir, fileName), 'utf8').then((raw) => JSON.parse(raw))
-);
+const readSearchIndexForTests = (fileName) =>
+    readFile(join(searchIndexDir, fileName), 'utf8').then((raw) => JSON.parse(raw));
+__setSearchIndexLoaderForTests(readSearchIndexForTests);
 
 test('normalizeMealSearchText folds Turkish', () => {
     assert.equal(normalizeMealSearchText('Şüphe GöTürMEyen'), 'suphe goturmeyen');
@@ -83,6 +85,31 @@ test('searchArabicAyahs finds هدى in Al-Kahf when scoped', async () => {
 test('searchAyahTextHits ignores bogus translit for hidayet without meal index', () => {
     const hits = searchAyahTextHits('hidayet', surahIndex, 'tr', { limit: 5 });
     assert.equal(hits.length, 0);
+});
+
+test('TR ayah text search remains ready when only meal index loads', async () => {
+    const mealTrIndex = JSON.parse(await readFile(join(searchIndexDir, 'meal-tr.json'), 'utf8'));
+    __setSearchIndexLoaderForTests((fileName) => {
+        if (fileName === 'meal-tr.json') return mealTrIndex;
+        if (fileName === 'translit-tr.json') throw new Error('missing translit index');
+        return readSearchIndexForTests(fileName);
+    });
+
+    try {
+        await assert.rejects(
+            preloadAyahTextSearchIndex('tr'),
+            /Search index load failed: translit-tr\.json/
+        );
+        await Promise.resolve();
+
+        assert.equal(isAyahTextSearchIndexReady('tr'), true);
+        const hits = searchMealAyahs('dogrulugu suphe goturmeyen', surahIndex, 'tr', { limit: 3 });
+        assert.ok(hits.length >= 1);
+        assert.equal(hits[0].surah, 2);
+        assert.equal(hits[0].ayah, 2);
+    } finally {
+        __setSearchIndexLoaderForTests(readSearchIndexForTests);
+    }
 });
 
 test('searchMealAyahs finds Diyanet meal phrase', async () => {
