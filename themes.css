@@ -104,6 +104,28 @@ html[data-theme="light"] .quran-surah-section__frame {
     --surah-meta-opacity: 0.92;
 }
 
+html[data-theme="light"] .quran-mushaf-surah-frame {
+    --mushaf-surah-border: color-mix(in srgb, var(--primary-green) 50%, #57534e);
+    --mushaf-surah-inner: color-mix(in srgb, var(--primary-green) 32%, #78716c);
+    --mushaf-surah-glow: color-mix(in srgb, var(--primary-green) 20%, #fffefb);
+    --mushaf-surah-base: linear-gradient(
+        165deg,
+        color-mix(in srgb, var(--primary-green) 12%, #fffefb) 0%,
+        color-mix(in srgb, var(--primary-green) 8%, #efe8dc) 100%
+    );
+    --mushaf-surah-corner: color-mix(in srgb, var(--primary-green) 80%, #292524);
+    --mushaf-surah-badge-bg: color-mix(in srgb, var(--primary-green) 20%, #ffffff);
+    --mushaf-surah-badge-border: color-mix(in srgb, var(--primary-green) 50%, #57534e);
+    --mushaf-surah-orn: color-mix(in srgb, var(--primary-green) 68%, #57534e);
+    box-shadow:
+        0 3px 14px rgba(28, 25, 23, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+html[data-theme="light"] .quran-mushaf-page__surah-name {
+    color: var(--text-arabic-header, #292524);
+}
+
 /* Lacivert (varsayılan) — :root ile aynı; lacivert tonları değiştirilmez */
 html[data-theme="navy"],
 html[data-theme="dark"] {

@@ -287,6 +287,16 @@ body {
     visibility: hidden !important;
     pointer-events: none !important;
 }
+html.quran-drawer-open #bottomNav {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+html.quran-mushaf-immersive.quran-mushaf-chrome--visible.quran-drawer-open #bottomNav {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
 html.quran-drawer-open .bottom-nav {
     display: none !important;
     visibility: hidden !important;
@@ -3055,7 +3065,13 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
     transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
     touch-action: pan-y;
     padding: calc(1rem + env(safe-area-inset-top, 0px)) 1rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    overflow-x: hidden;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    min-height: 0;
+    max-height: 100%;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
@@ -3244,6 +3260,389 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
 .quran-read-mode-option__desc {
     font-size: 0.78rem;
     line-height: 1.45;
+    color: var(--text-gray);
+}
+
+.quran-ayah-list--layout-mushaf {
+    gap: 1.25rem;
+}
+
+#quranSurahView.quran-surah-view--mushaf {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+}
+#quranSurahView.quran-surah-view--mushaf #quranMushafMeta:not([hidden]) {
+    flex-shrink: 0;
+}
+#quranSurahView.quran-surah-view--mushaf #quranMushafPager:not([hidden]) {
+    flex: 1 1 0%;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: auto;
+}
+#quranSurahView.quran-surah-view--mushaf .main-content.scrollable {
+    display: none !important;
+}
+#quranSurahView.quran-mushaf-chrome--visible #quranMushafPager:not([hidden]) {
+    padding-bottom: calc(6.5rem + var(--app-bottom-inset-merged));
+}
+#quranSurahView.quran-surah-view--mushaf .quran-meal-picker {
+    display: none;
+}
+#quranSurahView.quran-surah-view--mushaf .glass-header {
+    flex-shrink: 0;
+    z-index: 30;
+    transition: transform 0.28s ease;
+}
+#quranSurahView.quran-surah-view--mushaf:not(.quran-mushaf-chrome--visible) .glass-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    transform: translateY(-110%);
+    pointer-events: none;
+}
+#quranSurahView.quran-surah-view--mushaf.quran-mushaf-chrome--visible .glass-header {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    transform: none;
+    pointer-events: auto;
+    background: var(--bottom-nav-bg);
+    border-bottom-color: var(--bottom-nav-border);
+}
+#quranSurahView.quran-surah-view--mushaf.quran-mushaf-chrome--visible .glass-header h1,
+#quranSurahView.quran-surah-view--mushaf.quran-mushaf-chrome--visible .glass-header .icon-btn {
+    color: var(--text-white);
+}
+html.quran-mushaf-immersive #bottomNav {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+html.quran-mushaf-immersive.quran-mushaf-chrome--visible #bottomNav {
+    display: flex !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+html.quran-mushaf-immersive #quranSurahView.view.active {
+    padding-bottom: 0;
+}
+html.quran-mushaf-immersive.quran-mushaf-chrome--visible #quranSurahView.view.active {
+    padding-bottom: calc(6.5rem + var(--app-bottom-inset-merged));
+}
+.quran-mushaf-pager {
+    display: block;
+}
+/* [hidden] + display:block çakışması: Android WebView'da mushaf katmanı gizlenmiyordu */
+.quran-mushaf-pager[hidden] {
+    display: none !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+}
+.quran-mushaf-meta[hidden] {
+    display: none !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+}
+.quran-ayah-list[hidden] {
+    display: none !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+}
+.quran-mushaf-meta {
+    position: relative;
+    z-index: 8;
+    flex-shrink: 0;
+    padding: calc(0.35rem + env(safe-area-inset-top, 0px)) 0.85rem 0.4rem;
+    font-size: 0.72rem;
+    line-height: 1.35;
+    font-weight: 600;
+    color: var(--text-gray);
+    text-align: center;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid var(--bottom-nav-border);
+    background: var(--bg-darker);
+    -webkit-tap-highlight-color: transparent;
+}
+.quran-mushaf-meta__text {
+    display: block;
+}
+.quran-mushaf-remember-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0 0.15rem;
+    text-align: left;
+    pointer-events: none;
+    transition:
+        max-height 0.28s ease,
+        opacity 0.24s ease,
+        margin 0.28s ease,
+        padding 0.28s ease;
+}
+#quranSurahView.quran-mushaf-chrome--visible .quran-mushaf-remember-row:not([hidden]) {
+    max-height: 3.25rem;
+    opacity: 1;
+    margin-top: 0.55rem;
+    padding-top: 0.55rem;
+    padding-bottom: 0.1rem;
+    border-top: 1px solid var(--surface-border);
+    pointer-events: auto;
+}
+.quran-mushaf-remember-row__label {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    line-height: var(--leading-body);
+    color: var(--text-white);
+}
+.quran-mushaf-remember-row__switch {
+    flex-shrink: 0;
+}
+#quranSurahView.quran-mushaf-chrome--visible .quran-mushaf-meta {
+    padding-top: 0.35rem;
+}
+.quran-mushaf-canvas {
+    box-sizing: border-box;
+    padding: 0.65rem 1rem 0.35rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+.quran-mushaf-page__body {
+    flex: 1 1 auto;
+    font-family: var(--font-arabic, 'Scheherazade New', 'Amiri', serif);
+    font-size: clamp(1.25rem, 5.2vw, 1.65rem);
+    line-height: 2.1;
+    text-align: justify;
+    text-align-last: right;
+    color: var(--text-white);
+    margin: 0;
+    word-spacing: 0.02em;
+}
+.quran-mushaf-page__foot {
+    flex-shrink: 0;
+    margin-top: 0.35rem;
+    padding-top: 0.25rem;
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: color-mix(in srgb, var(--text-gray) 88%, var(--text-white));
+    font-family: var(--font-arabic, 'Scheherazade New', 'Amiri', serif);
+}
+.quran-mushaf-page__subs {
+    margin-top: 0;
+    padding: 1rem 1rem 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+.quran-mushaf-page__head .quran-juz-divider {
+    margin: 0 0 0.65rem;
+}
+.quran-mushaf-surah-block + .quran-mushaf-surah-block {
+    margin-top: 1.1rem;
+}
+.quran-mushaf-surah-block .quran-mushaf-page__surah-head {
+    margin: 0.25rem 0 0.65rem;
+}
+.quran-mushaf-page__surah-head {
+    margin: 0.25rem 0 0.9rem;
+    padding: 0 0.2rem;
+}
+.quran-mushaf-subs-block + .quran-mushaf-subs-block {
+    margin-top: 0.85rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.quran-mushaf-surah-frame {
+    --mushaf-surah-border: color-mix(in srgb, var(--primary-green) 40%, rgba(255, 255, 255, 0.1));
+    --mushaf-surah-inner: color-mix(in srgb, var(--primary-green) 24%, transparent);
+    --mushaf-surah-glow: color-mix(in srgb, var(--primary-green) 11%, transparent);
+    --mushaf-surah-base: color-mix(in srgb, var(--primary-green) 5%, transparent);
+    --mushaf-surah-corner: color-mix(in srgb, var(--primary-green) 72%, var(--text-gray));
+    --mushaf-surah-badge-bg: color-mix(in srgb, var(--primary-green) 16%, transparent);
+    --mushaf-surah-badge-border: color-mix(in srgb, var(--primary-green) 46%, var(--surface-border));
+    --mushaf-surah-orn: color-mix(in srgb, var(--primary-green) 58%, transparent);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    max-width: min(100%, 19rem);
+    margin: 0 auto;
+    padding: 0.55rem 1.45rem 0.5rem;
+    border: 1px solid var(--mushaf-surah-border);
+    border-radius: 0.4rem;
+    background:
+        radial-gradient(
+            ellipse 88% 72% at 50% 0%,
+            var(--mushaf-surah-glow),
+            transparent 74%
+        ),
+        var(--mushaf-surah-base);
+    box-shadow:
+        0 3px 14px color-mix(in srgb, var(--primary-green) 9%, transparent),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.quran-mushaf-surah-frame::before,
+.quran-mushaf-surah-frame::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+}
+.quran-mushaf-surah-frame::before {
+    inset: 5px;
+    border: 0.5px solid var(--mushaf-surah-inner);
+    border-radius: 0.28rem;
+}
+.quran-mushaf-surah-frame::after {
+    top: 50%;
+    left: 0.65rem;
+    right: 0.65rem;
+    height: 0.5px;
+    transform: translateY(-50%);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        color-mix(in srgb, var(--mushaf-surah-orn) 35%, transparent) 18%,
+        color-mix(in srgb, var(--mushaf-surah-orn) 35%, transparent) 82%,
+        transparent
+    );
+    opacity: 0.55;
+}
+.quran-mushaf-surah-frame__corner {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    color: var(--mushaf-surah-corner);
+    pointer-events: none;
+    z-index: 1;
+}
+.quran-mushaf-surah-frame__corner svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.quran-mushaf-surah-frame__corner--tl {
+    top: 3px;
+    left: 3px;
+}
+.quran-mushaf-surah-frame__corner--tr {
+    top: 3px;
+    right: 3px;
+    transform: scaleX(-1);
+}
+.quran-mushaf-surah-frame__corner--bl {
+    bottom: 3px;
+    left: 3px;
+    transform: scaleY(-1);
+}
+.quran-mushaf-surah-frame__corner--br {
+    right: 3px;
+    bottom: 3px;
+    transform: scale(-1);
+}
+.quran-mushaf-surah-frame__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.55rem;
+    height: 1.55rem;
+    padding: 0 0.35rem;
+    border-radius: 999px;
+    border: 1px solid var(--mushaf-surah-badge-border);
+    background: var(--mushaf-surah-badge-bg);
+    color: var(--primary-green);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1;
+}
+.quran-mushaf-surah-frame__ornament {
+    display: flex;
+    align-items: center;
+    width: min(100%, 8.5rem);
+    gap: 0.3rem;
+}
+.quran-mushaf-surah-frame__orn-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--mushaf-surah-orn),
+        transparent
+    );
+    opacity: 0.9;
+}
+.quran-mushaf-surah-frame__orn-gem {
+    flex-shrink: 0;
+    width: 0.34rem;
+    height: 0.34rem;
+    transform: rotate(45deg);
+    background: color-mix(in srgb, var(--primary-green) 75%, transparent);
+    box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--primary-green) 38%, transparent),
+        0 0 6px color-mix(in srgb, var(--primary-green) 22%, transparent);
+}
+.quran-mushaf-page__surah-name {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-arabic, 'Scheherazade New', 'Amiri', serif);
+    font-size: clamp(1.12rem, 4.9vw, 1.38rem);
+    font-weight: 600;
+    line-height: 1.55;
+    color: var(--text-white);
+    padding: 0 0.15rem;
+}
+.quran-mushaf-page__bismillah {
+    text-align: center;
+    font-size: 1.05rem;
+    line-height: 2;
+    margin: 0 0 0.65rem;
+    color: var(--text-white);
+}
+.quran-mushaf-inline-ayah {
+    -webkit-tap-highlight-color: transparent;
+}
+.quran-mushaf-inline-ayah__marker {
+    font-size: 0.72em;
+    color: rgba(34, 197, 94, 0.85);
+    font-weight: 600;
+}
+.quran-mushaf-inline-ayah--highlight {
+    background: rgba(34, 197, 94, 0.18);
+    border-radius: 0.2rem;
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.22);
+}
+.quran-mushaf-subs-ayah__ref {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-gray);
+    margin-bottom: 0.15rem;
+}
+.quran-mushaf-subs-ayah__meal,
+.quran-mushaf-subs-ayah__lat {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
     color: var(--text-gray);
 }
 

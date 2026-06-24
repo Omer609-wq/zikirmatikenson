@@ -1,8 +1,11 @@
 /**
  * Ana sayfa alt şeridi (#dailyQuoteText): her girişte rastgele bir satır.
- * Günlük hatırlatıcı: sabit Rad 13:28 — locale’e göre meal (getReminderQuoteBody).
+ * Günlük hatırlatıcı: sabit Rad 13:28 — locale’e göre meal (lib/reminder-quote.js).
  */
 import quranQuotesData from './data/quotes-quran.json';
+import { getReminderQuoteBody, getReminderQuoteNotificationPayload } from './lib/reminder-quote.js';
+
+export { getReminderQuoteBody, getReminderQuoteNotificationPayload } from './lib/reminder-quote.js';
 
 export const APP_QUOTES = [
     'Ölmeden önce tövbe etmekte acele ediniz. (Hadis-i Şerif)',
@@ -168,22 +171,4 @@ export function pickRandomQuoteEntry(locale = 'tr') {
 
 export function pickRandomQuote(locale = 'tr') {
     return pickRandomQuoteEntry(locale).preview;
-}
-
-const REMINDER_AYAH_SURAH = 13;
-const REMINDER_AYAH_NUM = 28;
-
-/** Günlük hatırlatıcı bildirimi: Rad 13:28, uygulama diline göre. */
-export function getReminderQuoteBody(locale = 'tr') {
-    const code = normalizeQuoteLocale(locale);
-    if (code === 'tr') {
-        return "Kalpler ancak Allah'ı anmakla mutmain olur. (Rad Suresi 28)";
-    }
-    const list = quranQuotesData?.quotes?.[code] || quranQuotesData?.quotes?.en || [];
-    const hit = list.find((row) => row[0] === REMINDER_AYAH_SURAH && row[1] === REMINDER_AYAH_NUM);
-    const text = hit ? cleanQuoteText(hit[2]) : '';
-    if (text) {
-        return `${text} (${REMINDER_AYAH_SURAH}:${REMINDER_AYAH_NUM})`;
-    }
-    return "Kalpler ancak Allah'ı anmakla mutmain olur. (Rad Suresi 28)";
 }

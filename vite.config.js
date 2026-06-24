@@ -51,10 +51,20 @@ function quranSearchAssets() {
 
             const assetsDir = path.join(__dirname, 'www', 'assets');
             const orphanSearchChunks =
-                /^(?:ar-ayah|translit-tr|meal-(?:tr|en|id|ms|fr|bn|ur))-[A-Za-z0-9_-]+\.js$/;
+                /^(?:ar-ayah|translit-tr|translit-en|meal-(?:tr|en|id|ms|fr|bn|ur))-[A-Za-z0-9_-]+\.js$/;
+            const orphanIndexChunks = /^index-[A-Za-z0-9_-]+\.js$/;
+            const indexHtmlPath = path.join(__dirname, 'www', 'index.html');
+            let activeIndexChunk = '';
+            if (fs.existsSync(indexHtmlPath)) {
+                const html = fs.readFileSync(indexHtmlPath, 'utf8');
+                const m = html.match(/\.\/assets\/(index-[A-Za-z0-9_-]+\.js)/);
+                activeIndexChunk = m ? m[1] : '';
+            }
             if (fs.existsSync(assetsDir)) {
                 for (const name of fs.readdirSync(assetsDir)) {
                     if (orphanSearchChunks.test(name)) {
+                        fs.unlinkSync(path.join(assetsDir, name));
+                    } else if (orphanIndexChunks.test(name) && name !== activeIndexChunk) {
                         fs.unlinkSync(path.join(assetsDir, name));
                     }
                 }

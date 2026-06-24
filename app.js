@@ -1,6 +1,7 @@
 import {
     applyModalOverlayBottomInset,
     applyNativeBottomInsetVar,
+    bindNativeReminderNotificationLaunch,
     isCapacitorNative,
     refreshNativeBottomInsetVar,
     syncNativeDailyReminder,
@@ -24,7 +25,8 @@ import { sanitizeLoadedData, mintId } from './lib/sanitize.js';
 import { showAppAlert, showAppConfirm, showAppPrompt, setupAppDialog } from './lib/app-dialog.js';
 import { applyNativeStatusBarTheme } from './status-bar-theme.js';
 import { runCounterVibration, runDragReorderNudge } from './haptics.js';
-import { pickRandomQuoteEntry, getReminderQuoteBody } from './quotes.js';
+import { setupCrashReporting } from './lib/crash-reporting.js';
+import { pickRandomQuoteEntry, getReminderQuoteNotificationPayload } from './quotes.js';
 import { ESMA_DEFAULT_FAZILET } from './esma-fazilet.js';
 import { ESMA_MEANING_EN } from './esma-meanings-en.js';
 import { ESMA_NAME_EN } from './esma-names-en.js';
@@ -53,6 +55,7 @@ import {
     ARABIC_SUBLINE_FONT_STEP_MIN,
     ARABIC_SUBLINE_FONT_STEP_MAX,
     normalizeAppLocale,
+    resolveLocaleFromSystem,
     SUPPORTED_LOCALES,
     t
 } from './i18n.js';
@@ -71,6 +74,8 @@ import {
     normalizeQuranMeal,
     normalizeQuranReadMode,
     normalizeQuranReadModeForLocale,
+    normalizeQuranReaderLayout,
+    isQuranMushafDomActive,
     syncQuranSettingsForLocale,
     clearQuranSurahCache,
     localeHasQuranMeal,
@@ -85,12 +90,27 @@ import {
     setQuranMealChangeHandler,
     setQuranNavigateToSurah,
     setQuranReadModeChangeHandler,
+    setQuranReaderLayoutChangeHandler,
+    setMushafSettingsApi,
     fetchSurahAyahs,
     getSurahLocalizedName,
     resolveQuranSurahInput,
     syncQuranAyahFavoriteButtons,
     syncQuranTabVisibility
 } from './quran.js';
+
+function mushafNavOptsForRerender() {
+    return appSettings.quranReaderLayout === 'mushaf' ? { preferSaved: true } : {};
+}
+
+/** Sure listesinden veya sure numarasıyla açılış (belirli ayet hariç). */
+function mushafNavOptsForSurahOpen(scrollAyah) {
+    if (scrollAyah != null && Number.isFinite(Number(scrollAyah))) return {};
+    if (appSettings.quranReaderLayout === 'mushaf' && appSettings.quranMushafRememberPage) {
+        return { preferSaved: true };
+    }
+    return {};
+}
 
 // ===================== DATA MODELS =====================
 function getDefaultFolders() {
@@ -483,22 +503,31 @@ ESMA_LIST.forEach((esma, index) => {
 
 // Kütüphane: data/library/*.json — editoryal kurallar docs/I18N.md
 
+function createDefaultAppSettings() {
+    const settings = {
+        vibrationTap: true,
+        vibrationTarget: true,
+        sound: false,
+        wakeLock: false,
+        counterNativeNumerals: false,
+        arabicSublineFontStep: 0,
+        theme: 'navy',
+        locale: resolveLocaleFromSystem(),
+        quranMeal: 'diyanet',
+        quranReadMode: 'meal-ar',
+        quranReaderLayout: 'scroll',
+        quranMushafRememberPage: false,
+        quranMushafSavedPage: 1
+    };
+    syncQuranSettingsForLocale(settings);
+    return settings;
+}
+
 // State
 let folders = [];
 let zikirs = [];
 let history = {};
-let appSettings = {
-    vibrationTap: true,
-    vibrationTarget: true,
-    sound: false,
-    wakeLock: false,
-    counterNativeNumerals: false,
-    arabicSublineFontStep: 0,
-    theme: 'navy',
-    locale: 'tr',
-    quranMeal: 'diyanet',
-    quranReadMode: 'meal-ar'
-};
+let appSettings = createDefaultAppSettings();
 let reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
 let entitlements = { premium: false };
 let trash = { v: 1, entries: [] }; // soft-deleted items
@@ -823,6 +852,7 @@ function init() {
 
     applyNativeBottomInsetVar();
     if (isCapacitorNative()) {
+        void setupCrashReporting();
         setTimeout(() => void refreshNativeBottomInsetVar(), 200);
         import('@capacitor/app')
             .then(({ App }) => {
@@ -837,6 +867,7 @@ function init() {
             .catch(() => {});
     }
     loadData();
+    bindNativeReminderNotificationLaunch(openAppFromReminderNotification);
     setDailyQuote();
     setupEventListeners();
     setMultiSelectBarShown(folderMultiSelectBar, false);
@@ -1257,7 +1288,10 @@ function applyAppLocale(locale) {
         void renderQuranSurahDetail(
             currentQuranSurahId,
             appSettings.quranMeal,
-            appSettings.quranReadMode
+            appSettings.quranReadMode,
+            null,
+            appSettings.quranReaderLayout,
+            mushafNavOptsForRerender()
         );
     }
     const statsView = document.getElementById('statsView');
@@ -1371,18 +1405,7 @@ function loadData() {
             folders = [...getDefaultFolders()];
             zikirs = [...DEFAULT_ZIKIRS];
             history = {};
-            appSettings = {
-                vibrationTap: true,
-                vibrationTarget: true,
-                sound: false,
-                wakeLock: false,
-                counterNativeNumerals: false,
-                arabicSublineFontStep: 0,
-                theme: 'navy',
-                locale: 'tr',
-                quranMeal: 'diyanet',
-                quranReadMode: 'meal-ar'
-            };
+            appSettings = createDefaultAppSettings();
             reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
             entitlements = { premium: false };
             trash = { v: 1, entries: [] };
@@ -1481,6 +1504,7 @@ function loadData() {
         zikirs = [...DEFAULT_ZIKIRS];
         history = {};
         trash = { v: 1, entries: [] };
+        appSettings = createDefaultAppSettings();
     }
 
     syncSettingsUI();
@@ -1733,20 +1757,25 @@ function maybeRequestNotificationPermission() {
     }
 }
 
+function openAppFromReminderNotification() {
+    closeAllOverlays();
+    showView('homeView', null, { push: false });
+}
+
 function reminderNotificationPayload() {
     const base = new URL('assets/icons/icon-192.webp', document.baseURI).href;
     const locale = getLocale();
-    /* Başlık boş: ana sayfa hadis şeridindeki gibi yalnızca hadis/ayet metni öne çıksın (OS kendi satırında uygulama adını gösterebilir). */
+    const quote = getReminderQuoteNotificationPayload(locale);
     return {
         title: '',
         options: {
-            body: getReminderQuoteBody(locale),
+            body: quote.body,
             icon: base,
             badge: base,
             tag: 'zikir-gunluk-hatir',
             renotify: false,
             lang: getLocaleTag(),
-            data: { url: window.location.origin + window.location.pathname + window.location.search }
+            data: { url: './', openApp: true, view: 'homeView' }
         }
     };
 }
@@ -2465,11 +2494,20 @@ function showView(viewId, param = null, options = {}) {
             param != null && typeof param === 'object' ? param.surah : param
         );
         if (!Number.isFinite(currentQuranSurahId)) currentQuranSurahId = 1;
+        const mushafNav =
+            typeof param === 'object' && param != null
+                ? {
+                      ...(param.preferSaved ? { preferSaved: true } : {}),
+                      ...(param.forceSurahStart ? { forceSurahStart: true } : {})
+                  }
+                : mushafNavOptsForSurahOpen(scrollAyah);
         void renderQuranSurahDetail(
             currentQuranSurahId,
             appSettings.quranMeal,
             appSettings.quranReadMode,
-            scrollAyah
+            scrollAyah,
+            appSettings.quranReaderLayout,
+            mushafNav
         );
     } else if (viewId === 'premiumView') {
         renderPremium();
@@ -3976,7 +4014,6 @@ function setupEventListeners() {
     bindQuranSearchInput();
     bindQuranSearchGuide();
     bindQuranMealSelect();
-    bindQuranReaderMenu(appSettings.quranReadMode);
     bindQuranAyahExpandOverlay();
     bindQuranTafsirBridgeOverlay();
 
@@ -4044,6 +4081,19 @@ function setupEventListeners() {
         isFavorite: isQuranAyahFavorite,
         toggleFavorite: toggleQuranAyahFavorite
     });
+    setMushafSettingsApi({
+        getRemember: () => !!appSettings.quranMushafRememberPage,
+        getSavedPage: () => Number(appSettings.quranMushafSavedPage) || 1,
+        setRemember: (on) => {
+            appSettings.quranMushafRememberPage = !!on;
+            saveData();
+        },
+        onPageSaved: (page) => {
+            const p = Math.max(1, Math.min(604, Number(page) || 1));
+            appSettings.quranMushafSavedPage = p;
+            saveData();
+        }
+    });
     setQuranNavigateToSurah((n, ayahN, mealId) => {
         if (mealId) {
             appSettings.quranMeal = normalizeQuranMeal(mealId, appSettings.locale);
@@ -4062,7 +4112,10 @@ function setupEventListeners() {
             void renderQuranSurahDetail(
                 currentQuranSurahId,
                 appSettings.quranMeal,
-                appSettings.quranReadMode
+                appSettings.quranReadMode,
+                null,
+                appSettings.quranReaderLayout,
+                mushafNavOptsForRerender()
             );
         }
     });
@@ -4073,10 +4126,43 @@ function setupEventListeners() {
             void renderQuranSurahDetail(
                 currentQuranSurahId,
                 appSettings.quranMeal,
-                appSettings.quranReadMode
+                appSettings.quranReadMode,
+                null,
+                appSettings.quranReaderLayout,
+                mushafNavOptsForRerender()
             );
         }
     });
+    setQuranReaderLayoutChangeHandler((readerLayout, opts = {}) => {
+        const nextLayout = normalizeQuranReaderLayout(readerLayout);
+        const wasMushaf = !!opts.wasMushaf || appSettings.quranReaderLayout === 'mushaf';
+        appSettings.quranReaderLayout = nextLayout;
+        saveData();
+
+        const qsv = document.getElementById('quranSurahView');
+        if (!qsv || qsv.classList.contains('hidden')) return;
+
+        let surahN = currentQuranSurahId ?? 1;
+        let scrollAyah = null;
+        let mushafNav = nextLayout === 'mushaf' ? mushafNavOptsForRerender() : {};
+
+        if (nextLayout === 'scroll' && wasMushaf) {
+            surahN = 1;
+            scrollAyah = 1;
+            currentQuranSurahId = 1;
+            mushafNav = { leavingMushaf: true };
+        }
+
+        void renderQuranSurahDetail(
+            surahN,
+            appSettings.quranMeal,
+            appSettings.quranReadMode,
+            scrollAyah,
+            nextLayout,
+            mushafNav
+        );
+    });
+    bindQuranReaderMenu(appSettings.quranReadMode, appSettings.quranReaderLayout);
     syncQuranTabVisibility();
 
     if (librarySearchInput) librarySearchInput.addEventListener('input', () => {

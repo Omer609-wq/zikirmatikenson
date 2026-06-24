@@ -1,5 +1,5 @@
 /**
- * Tanzil quran-simple.xml → JSON (index + per-surah files).
+ * Tanzil quran-uthmani.xml or quran-simple.xml → JSON (index + per-surah ar files).
  * Usage: node scripts/convert-quran-xml-to-json.cjs [path-to.xml]
  */
 const fs = require('fs');
@@ -20,7 +20,7 @@ const SURAH_NAMES_TR = [
     'Nasr', 'Tebbet', 'İhlâs', 'Felak', 'Nâs'
 ];
 
-const DEFAULT_XML = path.join(process.env.USERPROFILE || '', 'Downloads', 'quran-simple.xml');
+const DEFAULT_XML = path.join(process.env.USERPROFILE || '', 'Downloads', 'quran-uthmani.xml');
 const xmlPath = path.resolve(process.argv[2] || DEFAULT_XML);
 const outDir = path.join(__dirname, '..', 'data', 'quran');
 const arDir = path.join(outDir, 'ar');
@@ -31,6 +31,10 @@ if (!fs.existsSync(xmlPath)) {
 }
 
 const xml = fs.readFileSync(xmlPath, 'utf8');
+const isUthmani = /uthmani/i.test(xmlPath) || /Tanzil Quran Text \(Uthmani/i.test(xml);
+const editionLabel = isUthmani ? 'Uthmani' : 'Simple';
+const fullJsonName = isUthmani ? 'quran-uthmani.json' : 'quran-simple.json';
+const obsoleteFullJson = isUthmani ? 'quran-simple.json' : 'quran-uthmani.json';
 
 const suraRe = /<sura index="(\d+)" name="([^"]+)">([\s\S]*?)<\/sura>/g;
 const ayaRe = /<aya index="(\d+)" text="([^"]*)"(?: bismillah="([^"]*)")?\s*\/>/g;
@@ -65,6 +69,10 @@ if (surahs.length !== 114) {
     console.error('Expected 114 surahs, got', surahs.length);
     process.exit(1);
 }
+if (totalAyahs !== 6236) {
+    console.error('Expected 6236 ayahs, got', totalAyahs);
+    process.exit(1);
+}
 
 fs.mkdirSync(arDir, { recursive: true });
 
@@ -89,13 +97,17 @@ for (const s of surahs) {
     fs.writeFileSync(path.join(arDir, fileName), JSON.stringify(payload, null, 2) + '\n', 'utf8');
 }
 
+const arMeta = {
+    edition: editionLabel.toLowerCase(),
+    source: `Tanzil Quran Text (${editionLabel}, Version 1.1)`,
+    license: 'Creative Commons Attribution 3.0',
+    tanzil: 'https://tanzil.net',
+    convertedAt: new Date().toISOString().slice(0, 10)
+};
+fs.writeFileSync(path.join(arDir, '_meta.json'), JSON.stringify(arMeta, null, 2) + '\n', 'utf8');
+
 const full = {
-    meta: {
-        source: 'Tanzil Quran Text (Simple, Version 1.1)',
-        license: 'Creative Commons Attribution 3.0',
-        tanzil: 'https://tanzil.net',
-        convertedAt: new Date().toISOString().slice(0, 10)
-    },
+    meta: arMeta,
     surahs: surahs.map((s) => ({
         n: s.n,
         nameAr: s.nameAr,
@@ -103,11 +115,19 @@ const full = {
         ayahs: s.ayahs
     }))
 };
-fs.writeFileSync(path.join(outDir, 'quran-simple.json'), JSON.stringify(full) + '\n', 'utf8');
+fs.writeFileSync(path.join(outDir, fullJsonName), JSON.stringify(full) + '\n', 'utf8');
 
+const obsoletePath = path.join(outDir, obsoleteFullJson);
+if (fs.existsSync(obsoletePath)) {
+    fs.unlinkSync(obsoletePath);
+    console.log('Removed:', obsoletePath);
+}
+
+console.log('Edition:', editionLabel);
 console.log('Input:', xmlPath);
 console.log('Surahs:', surahs.length);
 console.log('Ayahs:', totalAyahs);
 console.log('Wrote:', path.join(outDir, 'index.json'));
+console.log('Wrote:', path.join(arDir, '_meta.json'));
 console.log('Wrote:', path.join(arDir, '*.json'), `(${surahs.length} files)`);
-console.log('Wrote:', path.join(outDir, 'quran-simple.json'));
+console.log('Wrote:', path.join(outDir, fullJsonName));

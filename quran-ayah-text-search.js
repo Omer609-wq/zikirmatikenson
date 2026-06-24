@@ -307,6 +307,34 @@ const UR_STOP_WORDS = new Set([
 
 const TRANSLIT_STOP_WORDS = new Set(['ve', 'el', 'lil', 'fi', 'min', 'vem', 'iley', 'min']);
 
+const EN_TRANSLIT_STOP_WORDS = new Set([
+    ...EN_STOP_WORDS,
+    'al',
+    'ar',
+    'as',
+    'ash',
+    'ad',
+    'an',
+    'ab',
+    'ibn',
+    'bin',
+    'li',
+    'lil',
+    'wa',
+    'fi',
+    'min',
+    'ila',
+    'bi',
+    'hu',
+    'ha',
+    'huwa',
+    'hiya',
+    'hum',
+    'hunna',
+    'inna',
+    'anna'
+]);
+
 const AR_STOP_WORDS = new Set([
     'في',
     'من',
@@ -412,8 +440,8 @@ const mealIndexCache = new Map();
 const mealIndexLoading = new Map();
 const arabicAyahIndexCache = new Map();
 let arabicAyahIndexLoading = null;
-let translitIndexCache = null;
-let translitIndexLoading = null;
+const translitIndexCache = new Map();
+const translitIndexLoading = new Map();
 const indexLoadErrors = new Map();
 /** @type {((fileName: string) => Promise<unknown>) | null} */
 let searchIndexLoaderOverride = null;
@@ -460,11 +488,13 @@ async function loadSearchIndexJson(fileName, cacheKey) {
 
 export function getAyahTextSearchIndexError(locale = 'tr') {
     const code = normalizeSearchLocale(locale);
-    if (code === 'ar') return indexLoadErrors.get('ar') || null;
+    if (code === 'ar') {
+        return indexLoadErrors.get('ar') || indexLoadErrors.get('translit-en') || null;
+    }
     const mealErr = indexLoadErrors.get(code);
     if (mealErr) return mealErr;
-    if (code === 'tr') return indexLoadErrors.get('translit-tr') || null;
-    return null;
+    const translitPack = getTranslitSearchPackId(code);
+    return indexLoadErrors.get(translitPack) || null;
 }
 
 function normalizeSearchLocale(locale = 'tr') {
@@ -548,6 +578,59 @@ export function compactTranslitSearchText(value) {
     return normalizeTranslitSearchText(value).replace(/\s+/g, '');
 }
 
+export function normalizeEnTranslitSearchText(value) {
+    return String(value || '')
+        .toLocaleLowerCase('en')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[''`´ʻʿ]/g, '')
+        .replace(/[-]/g, ' ')
+        .replace(/[^a-z0-9\s]/gi, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+export function compactEnTranslitSearchText(value) {
+    return normalizeEnTranslitSearchText(value).replace(/\s+/g, '');
+}
+
+export function getTranslitSearchPackId(locale = 'tr') {
+    return normalizeSearchLocale(locale) === 'tr' ? 'translit-tr' : 'translit-en';
+}
+
+function getTranslitSearchConfig(locale = 'tr') {
+    if (getTranslitSearchPackId(locale) === 'translit-tr') {
+        return {
+            packId: 'translit-tr',
+            normalize: normalizeTranslitSearchText,
+            compact: compactTranslitSearchText,
+            stopWords: TRANSLIT_STOP_WORDS,
+            localeTag: 'tr'
+        };
+    }
+    return {
+        packId: 'translit-en',
+        normalize: normalizeEnTranslitSearchText,
+        compact: compactEnTranslitSearchText,
+        stopWords: EN_TRANSLIT_STOP_WORDS,
+        localeTag: 'en'
+    };
+}
+
+function prepareTranslitIndexRows(ayahs, normalize) {
+    return (ayahs || []).map((row) => {
+        const text = String(row.t || '').trim();
+        const norm = normalize(text);
+        return {
+            s: row.s,
+            a: row.a,
+            t: text,
+            n: norm,
+            c: norm.replace(/\s+/g, '')
+        };
+    });
+}
+
 function getMealLocaleConfig(locale) {
     return MEAL_LOCALE_CONFIG[normalizeSearchLocale(locale)] || null;
 }
@@ -561,7 +644,9 @@ export function localeSupportsArabicAyahTextSearch(locale = 'tr') {
 }
 
 export function localeSupportsTranslitTextSearch(locale = 'tr') {
-    return normalizeSearchLocale(locale) === 'tr';
+    const code = normalizeSearchLocale(locale);
+    if (code === 'tr') return true;
+    return localeSupportsMealTextSearch(locale) || localeSupportsArabicAyahTextSearch(locale);
 }
 
 export function localeSupportsAyahTextSearch(locale = 'tr') {
@@ -574,10 +659,12 @@ export function localeSupportsAyahTextSearch(locale = 'tr') {
 
 export function isAyahTextSearchIndexReady(locale = 'tr') {
     const code = normalizeSearchLocale(locale);
-    if (code === 'ar') return arabicAyahIndexCache.has('ar');
+    if (code === 'ar') {
+        return arabicAyahIndexCache.has('ar') && translitIndexCache.has('translit-en');
+    }
     if (!mealIndexCache.has(code)) return false;
-    if (code === 'tr' && localeSupportsTranslitTextSearch(locale)) {
-        return Boolean(translitIndexCache);
+    if (localeSupportsTranslitTextSearch(locale)) {
+        return translitIndexCache.has(getTranslitSearchPackId(code));
     }
     return true;
 }
@@ -609,30 +696,48 @@ export async function preloadArabicAyahSearchIndex() {
 
 export async function preloadAyahTextSearchIndex(locale = 'tr') {
     const code = normalizeSearchLocale(locale);
-    if (code === 'ar') return preloadArabicAyahSearchIndex();
+    if (code === 'ar') {
+        const results = await Promise.all([
+            preloadArabicAyahSearchIndex(),
+            preloadTranslitSearchIndex('translit-en')
+        ]);
+        return results[0];
+    }
     const tasks = [preloadMealSearchIndex(locale)];
-    if (code === 'tr') tasks.push(preloadTranslitSearchIndex());
+    if (localeSupportsTranslitTextSearch(locale)) {
+        tasks.push(preloadTranslitSearchIndex(getTranslitSearchPackId(locale)));
+    }
     const results = await Promise.all(tasks);
     return results[0];
 }
 
-export async function preloadTranslitSearchIndex() {
-    if (translitIndexCache) return translitIndexCache;
-    if (translitIndexLoading) return translitIndexLoading;
+export async function preloadTranslitSearchIndex(packId = 'translit-tr') {
+    const id = packId === 'translit-en' ? 'translit-en' : 'translit-tr';
+    if (translitIndexCache.has(id)) return translitIndexCache.get(id);
+    if (translitIndexLoading.has(id)) return translitIndexLoading.get(id);
 
-    translitIndexLoading = loadSearchIndexJson('translit-tr.json', 'translit-tr')
+    const normalize =
+        id === 'translit-tr' ? normalizeTranslitSearchText : normalizeEnTranslitSearchText;
+    const fileName = `${id}.json`;
+
+    const loadPromise = loadSearchIndexJson(fileName, id)
         .then((index) => {
-            translitIndexCache = index;
-            translitIndexLoading = null;
-            return index;
+            const prepared = {
+                ...index,
+                ayahs: prepareTranslitIndexRows(index.ayahs, normalize)
+            };
+            translitIndexCache.set(id, prepared);
+            translitIndexLoading.delete(id);
+            return prepared;
         })
         .catch((err) => {
-            indexLoadErrors.set('translit-tr', err);
-            translitIndexLoading = null;
+            indexLoadErrors.set(id, err);
+            translitIndexLoading.delete(id);
             throw err;
         });
 
-    return translitIndexLoading;
+    translitIndexLoading.set(id, loadPromise);
+    return loadPromise;
 }
 
 export async function preloadMealSearchIndex(locale = 'tr') {
@@ -661,8 +766,8 @@ function getLoadedMealSearchIndex(locale) {
     return mealIndexCache.get(normalizeSearchLocale(locale)) || null;
 }
 
-function getLoadedTranslitSearchIndex() {
-    return translitIndexCache;
+function getLoadedTranslitSearchIndex(locale = 'tr') {
+    return translitIndexCache.get(getTranslitSearchPackId(locale)) || null;
 }
 
 /**
@@ -815,9 +920,9 @@ function scoreTokensInCompact(hayCompact, tokens, fuzzy = false) {
     return total;
 }
 
-function scoreTranslitHaystack(hay, hayCompact, tokens, raw) {
+function scoreTranslitHaystack(hay, hayCompact, tokens, raw, compactFn = compactTranslitSearchText) {
     const spacedScore = scoreHaystack(hay, tokens, true);
-    const rawCompact = compactTranslitSearchText(raw);
+    const rawCompact = compactFn(raw);
     const compactCandidates = [];
 
     if (rawCompact.length >= MIN_TEXT_SEARCH_CHARS) {
@@ -958,20 +1063,20 @@ export function searchMealAyahs(raw, surahIndex, locale = 'tr', options = {}) {
  */
 export function searchTranslitAyahs(raw, surahIndex, locale = 'tr', options = {}) {
     if (!localeSupportsTranslitTextSearch(locale)) return [];
-    if (!meetsMinTextSearchQuery(raw, 'tr')) return [];
+    if (!meetsMinTextSearchQuery(raw, locale)) return [];
 
-    const trCfg = MEAL_LOCALE_CONFIG.tr;
-    const tokens = searchTokensFromQuery(raw, normalizeTranslitSearchText, TRANSLIT_STOP_WORDS);
+    const cfg = getTranslitSearchConfig(locale);
+    const tokens = searchTokensFromQuery(raw, cfg.normalize, cfg.stopWords);
     if (!tokens.length) return [];
 
     const limit = Number(options.limit) > 0 ? Number(options.limit) : 5;
-    const rows = getLoadedTranslitSearchIndex()?.ayahs || [];
+    const rows = getLoadedTranslitSearchIndex(locale)?.ayahs || [];
     const scored = [];
 
     for (const row of rows) {
         const hay = row.n || '';
         const hayCompact = row.c || hay.replace(/\s+/g, '');
-        const score = scoreTranslitHaystack(hay, hayCompact, tokens, raw);
+        const score = scoreTranslitHaystack(hay, hayCompact, tokens, raw, cfg.compact);
         if (score == null) continue;
         scored.push({
             surah: row.s,
@@ -983,14 +1088,30 @@ export function searchTranslitAyahs(raw, surahIndex, locale = 'tr', options = {}
 
     scored.sort((a, b) => a.score - b.score || a.surah - b.surah || a.ayah - b.ayah);
 
-    const translitCfg = { localeTag: 'tr', normalize: normalizeTranslitSearchText, stopWords: TRANSLIT_STOP_WORDS };
+    const translitCfg = {
+        localeTag: cfg.localeTag,
+        normalize: cfg.normalize,
+        stopWords: cfg.stopWords
+    };
     return mapScoredHits(scored.slice(0, limit), surahIndex, locale, raw, 'translit', translitCfg, {
         fields: () => ({ readModeId: 'translit-ar' })
     }).map(({ score, ...hit }) => hit);
 }
 
+function combineDistinctTextSearchHits(rows, limit) {
+    return [...rows]
+        .sort(
+            (a, b) =>
+                a.score - b.score ||
+                a.surah - b.surah ||
+                a.ayah - b.ayah ||
+                (a.kind === 'meal' || a.kind === 'ar' ? 0 : 1)
+        )
+        .slice(0, limit);
+}
+
 /**
- * Meal + (TR) okunuş sonuçlarını birleştirir; aynı ayette en iyi eşleşmeyi seçer.
+ * Meal + okunuş sonuçlarını birleştirir; aynı ayette meal ve okunuş ayrı satır kalır.
  */
 export function searchAyahTextHits(raw, surahIndex, locale = 'tr', options = {}) {
     if (!localeSupportsAyahTextSearch(locale)) return [];
@@ -1003,35 +1124,33 @@ export function searchAyahTextHits(raw, surahIndex, locale = 'tr', options = {})
     const code = normalizeSearchLocale(locale);
 
     if (code === 'ar') {
-        return searchArabicAyahsInternal(raw, { limit, surah: scopedSurah }).map((hit) => {
+        const arRows = searchArabicAyahsInternal(raw, { limit: poolLimit, surah: scopedSurah });
+        const translitRows = searchTranslitAyahsInternal(raw, locale, {
+            limit: poolLimit,
+            surah: scopedSurah
+        });
+        const merged = combineDistinctTextSearchHits([...arRows, ...translitRows], limit);
+        return merged.map((hit) => {
             const meta = (surahIndex || []).find((s) => s.n === hit.surah);
-            return {
-                kind: 'ar',
+            const base = {
+                kind: hit.kind,
                 surah: hit.surah,
                 ayah: hit.ayah,
                 displayName: getSurahRefDisplayName(meta || { n: hit.surah }, locale),
-                snippet: hit.snippet,
-                readModeId: 'ar-only'
+                snippet: hit.snippet
             };
+            if (hit.kind === 'ar') return { ...base, readModeId: 'ar-only' };
+            return { ...base, readModeId: hit.readModeId };
         });
     }
 
     const mealRows = searchMealAyahsInternal(raw, locale, { limit: poolLimit, surah: scopedSurah });
     const translitRows = localeSupportsTranslitTextSearch(locale)
-        ? searchTranslitAyahsInternal(raw, { limit: poolLimit, surah: scopedSurah })
+        ? searchTranslitAyahsInternal(raw, locale, { limit: poolLimit, surah: scopedSurah })
         : [];
-    const bestByAyah = new Map();
+    const merged = combineDistinctTextSearchHits([...mealRows, ...translitRows], limit);
 
-    for (const hit of [...mealRows, ...translitRows]) {
-        const key = `${hit.surah}:${hit.ayah}`;
-        const prev = bestByAyah.get(key);
-        if (!prev || hit.score < prev.score) bestByAyah.set(key, hit);
-    }
-
-    const merged = [...bestByAyah.values()];
-    merged.sort((a, b) => a.score - b.score || a.surah - b.surah || a.ayah - b.ayah);
-
-    return merged.slice(0, limit).map((hit) => {
+    return merged.map((hit) => {
         const meta = (surahIndex || []).find((s) => s.n === hit.surah);
         const base = {
             kind: hit.kind,
@@ -1138,21 +1257,26 @@ function searchMealAyahsInternal(raw, locale, options = {}) {
         .slice(0, limit);
 }
 
-function searchTranslitAyahsInternal(raw, options = {}) {
-    const tokens = searchTokensFromQuery(raw, normalizeTranslitSearchText, TRANSLIT_STOP_WORDS);
+function searchTranslitAyahsInternal(raw, locale = 'tr', options = {}) {
+    const cfg = getTranslitSearchConfig(locale);
+    const tokens = searchTokensFromQuery(raw, cfg.normalize, cfg.stopWords);
     if (!tokens.length) return [];
     const limit = Number(options.limit) > 0 ? Number(options.limit) : 5;
     const surahFilter = Number(options.surah);
     const scopedSurah = Number.isFinite(surahFilter) && surahFilter >= 1 ? surahFilter : null;
-    const rows = getLoadedTranslitSearchIndex()?.ayahs || [];
-    const translitCfg = { localeTag: 'tr', normalize: normalizeTranslitSearchText, stopWords: TRANSLIT_STOP_WORDS };
+    const rows = getLoadedTranslitSearchIndex(locale)?.ayahs || [];
+    const translitCfg = {
+        localeTag: cfg.localeTag,
+        normalize: cfg.normalize,
+        stopWords: cfg.stopWords
+    };
     const scored = [];
 
     for (const row of rows) {
         if (scopedSurah != null && row.s !== scopedSurah) continue;
         const hay = row.n || '';
         const hayCompact = row.c || hay.replace(/\s+/g, '');
-        const score = scoreTranslitHaystack(hay, hayCompact, tokens, raw);
+        const score = scoreTranslitHaystack(hay, hayCompact, tokens, raw, cfg.compact);
         if (score == null) continue;
         scored.push({
             kind: 'translit',

@@ -14,6 +14,15 @@ import libraryAr from './data/library/ar.json';
 import libraryPremiumTr from './data/library/premium-tr.json';
 import libraryPremiumId from './data/library/premium-id.json';
 
+import {
+    DEFAULT_APP_LOCALE,
+    normalizeAppLocale,
+    resolveLocaleFromSystem,
+    resolveLocaleFromTag
+} from './lib/app-locale.js';
+
+export { DEFAULT_APP_LOCALE, normalizeAppLocale, resolveLocaleFromSystem, resolveLocaleFromTag };
+
 /** TR dışında meal + kütüphane dua bağlamı için ortak İngilizce katman. */
 export function localeUsesEnglishMeals(locale) {
     return normalizeAppLocale(locale || currentLocale) !== 'tr';
@@ -116,17 +125,12 @@ const LIBRARY_BY_LOCALE = {
     ur: { base: libraryEn, premium: libraryPremiumId }
 };
 
-let currentLocale = 'tr';
-let uiStrings = trUi;
+let currentLocale = DEFAULT_APP_LOCALE;
+let uiStrings = enUi;
 const fallbackUi = trUi;
 
 function nestedGet(obj, path) {
     return path.split('.').reduce((o, k) => (o && o[k] != null ? o[k] : undefined), obj);
-}
-
-export function normalizeAppLocale(locale) {
-    const code = String(locale || 'tr').toLowerCase();
-    return SUPPORTED_LOCALES.some((l) => l.code === code) ? code : 'tr';
 }
 
 export function getLocale() {
@@ -135,7 +139,7 @@ export function getLocale() {
 
 export function getLocaleTag() {
     const meta = SUPPORTED_LOCALES.find((l) => l.code === currentLocale);
-    return meta?.bcp47 || 'tr-TR';
+    return meta?.bcp47 || 'en-US';
 }
 
 export function getLocaleDir() {
@@ -307,7 +311,7 @@ export function inferLibraryIdForZikir(z) {
 export function applyLocaleToDocument(locale) {
     const code = normalizeAppLocale(locale);
     currentLocale = code;
-    uiStrings = UI_BY_LOCALE[code] || trUi;
+    uiStrings = UI_BY_LOCALE[code] || enUi;
 
     const html = document.documentElement;
     html.setAttribute('lang', code);

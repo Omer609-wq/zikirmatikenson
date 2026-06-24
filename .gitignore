@@ -7,3 +7,6 @@ dist/
 *.log
 .idea/
 .capacitor/
+android/app/google-services.json
+android/*.jks
+android/keystore.properties

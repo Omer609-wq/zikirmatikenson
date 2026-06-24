@@ -1,5 +1,5 @@
 /* Vite çıktısı: önbellek listesinde hash’li dosya yok; ağ öncelikli */
-const CACHE_NAME = 'zikirmatik-cache-v5';
+const CACHE_NAME = 'zikirmatik-cache-v8';
 
 self.addEventListener('install', (event) => {
     event.waitUntil(self.skipWaiting());
@@ -43,14 +43,17 @@ self.addEventListener('fetch', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
-    const openUrl = event.notification.data && event.notification.data.url;
+    const data = (event.notification && event.notification.data) || {};
+    const openUrl = data.url || './';
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
             for (const c of clientList) {
-                if (c.url && 'focus' in c) return c.focus();
+                if (!c.url) continue;
+                if ('focus' in c) {
+                    return c.focus();
+                }
             }
-            if (clients.openWindow && openUrl) return clients.openWindow(openUrl);
-            if (clients.openWindow) return clients.openWindow('/');
+            if (clients.openWindow) return clients.openWindow(openUrl);
         })
     );
 });

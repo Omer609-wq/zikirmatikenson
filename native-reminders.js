@@ -1,6 +1,6 @@
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
-import { getReminderQuoteBody } from './quotes.js';
+import { getReminderQuoteNotificationPayload } from './lib/reminder-quote.js';
 import { SystemChrome } from './system-chrome.js';
 
 /** İlk slot; ardışık id’ler kullanılır (günlük tekrar için çoklu tek-sefer alarm). */
@@ -9,6 +9,9 @@ const REMINDER_BASE_ID = 9001;
 const REMINDER_DAYS_AHEAD = 28;
 /** Eski tek-id veya önceki yığın için iptal aralığı. */
 const REMINDER_CANCEL_COUNT = 40;
+const REMINDER_NOTIFICATION_EXTRA = { openApp: true, view: 'homeView' };
+
+let reminderNotificationLaunchBound = false;
 
 /** Android bildirim ikonları — res/drawable altında */
 const ANDROID_NOTIFICATION_ICONS = {
@@ -161,6 +164,23 @@ export async function openExactAlarmSettings() {
     }
 }
 
+export function isReminderNotificationId(id) {
+    const n = Number(id);
+    return Number.isFinite(n) && n >= REMINDER_BASE_ID && n < REMINDER_BASE_ID + REMINDER_CANCEL_COUNT;
+}
+
+/** Bildirime dokununca ana ekrana yönlendir (native). */
+export function bindNativeReminderNotificationLaunch(onOpen) {
+    if (!isCapacitorNative() || reminderNotificationLaunchBound) return;
+    reminderNotificationLaunchBound = true;
+
+    void LocalNotifications.addListener('localNotificationActionPerformed', (action) => {
+        const id = action?.notification?.id;
+        if (!isReminderNotificationId(id)) return;
+        if (typeof onOpen === 'function') onOpen();
+    });
+}
+
 export async function syncNativeDailyReminder(enabled, timeStr, locale = 'tr') {
     if (!isCapacitorNative()) return { ok: true };
 
@@ -203,15 +223,17 @@ export async function syncNativeDailyReminder(enabled, timeStr, locale = 'tr') {
      * Güvenilir yol: her gün için ayrı tek-sefer `at` (UTC ISO) + uygulama görünür olunca yenileme.
      */
     const dates = buildUpcomingLocalDates(hh, mm, REMINDER_DAYS_AHEAD);
+    const quote = getReminderQuoteNotificationPayload(locale);
     const notifications = dates.map((at, i) => {
         const n = {
             id: REMINDER_BASE_ID + i,
-            /* Sabit Rad 28 — hatırlatıcıda tanınır; ana sayfa şeridi yine dönen sözler */
             title: '',
-            body: getReminderQuoteBody(locale),
+            body: quote.body,
+            largeBody: quote.largeBody,
             schedule: {
                 at: at.toISOString()
-            }
+            },
+            extra: REMINDER_NOTIFICATION_EXTRA
         };
         if (Capacitor.getPlatform() === 'android') {
             n.schedule.allowWhileIdle = true;
@@ -219,6 +241,10 @@ export async function syncNativeDailyReminder(enabled, timeStr, locale = 'tr') {
             n.smallIcon = ANDROID_NOTIFICATION_ICONS.smallIcon;
             n.largeIcon = ANDROID_NOTIFICATION_ICONS.largeIcon;
             n.iconColor = ANDROID_NOTIFICATION_ICONS.iconColor;
+            n.autoCancel = true;
+            if (quote.inboxLines.length > 1) {
+                n.inboxList = quote.inboxLines;
+            }
         }
         return n;
     });

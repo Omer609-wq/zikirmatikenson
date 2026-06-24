@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr" dir="ltr">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -561,7 +561,40 @@
                             <span class="quran-read-mode-option__desc" data-i18n="quran.readModeArOnlyDesc">Yalnızca Arapça metin</span>
                         </button>
                     </div>
+                    <h2 id="quranReaderLayoutTitle" class="quran-reader-drawer__title quran-reader-drawer__title--section" data-i18n="quran.readerLayoutTitle">Kur'an düzeni</h2>
+                    <div class="quran-read-mode-list" id="quranReaderLayoutList" role="radiogroup" aria-labelledby="quranReaderLayoutTitle">
+                        <button type="button" class="quran-read-mode-option" data-reader-layout="scroll" role="radio" aria-checked="true">
+                            <span class="quran-read-mode-option__label" data-i18n="quran.readerLayoutScroll">Ayet listesi</span>
+                            <span class="quran-read-mode-option__desc" data-i18n="quran.readerLayoutScrollDesc">Sure sure kaydırılan kartlar (varsayılan)</span>
+                        </button>
+                        <button type="button" class="quran-read-mode-option" data-reader-layout="mushaf" role="radio" aria-checked="false">
+                            <span class="quran-read-mode-option__label" data-i18n="quran.readerLayoutMushaf">Mushaf sayfa</span>
+                            <span class="quran-read-mode-option__desc" data-i18n="quran.readerLayoutMushafDesc">604 sayfa Medine düzeni; akan Arapça metin</span>
+                        </button>
+                    </div>
                 </aside>
+            </div>
+
+            <div id="quranMushafMeta" class="quran-mushaf-meta" hidden aria-live="polite">
+                <span id="quranMushafMetaText" class="quran-mushaf-meta__text"></span>
+                <div id="quranMushafRememberRow" class="quran-mushaf-remember-row" hidden>
+                    <span class="quran-mushaf-remember-row__label" data-i18n="quran.mushafRememberPage">Kaldığım sayfayı kaydet</span>
+                    <label class="switch quran-mushaf-remember-row__switch">
+                        <input type="checkbox" id="quranMushafRememberPage" />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div id="quranMushafPager" class="quran-mushaf-pager" hidden>
+                <div id="quranMushafPageHost" class="quran-mushaf-page-host">
+                    <div class="quran-mushaf-canvas">
+                        <div class="quran-mushaf-page__head"></div>
+                        <div class="quran-mushaf-page__body" dir="rtl" lang="ar"></div>
+                        <div class="quran-mushaf-page__foot" aria-hidden="true"></div>
+                    </div>
+                    <div class="quran-mushaf-page__subs" hidden></div>
+                </div>
             </div>
 
             <section class="main-content scrollable">

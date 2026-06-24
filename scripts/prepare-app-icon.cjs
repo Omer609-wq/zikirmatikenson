@@ -13,8 +13,11 @@ const src =
     path.join(ROOT, 'resources', 'app-icon-source.png');
 const appIcon = path.join(ROOT, 'resources', 'app-icon.png');
 const master = path.join(ROOT, 'resources', 'app-icon-1920.png');
-/** Tuvalde sembol oranı; 1 = kaynak aynen, küçültmek için 0.6–0.85 */
+const playIcon = path.join(ROOT, 'resources', 'play-console-icon-512.png');
+/** Launcher / uygulama ikonu (adaptive mask için kenar boşluğu) */
 const SYMBOL_SCALE = 0.68;
+/** Play Store listesi — maske yok, sembol kaynağa yakın (kenar boşluğu kaynakta) */
+const PLAY_STORE_SCALE = 1;
 
 const RESIZE = { kernel: sharp.kernel.lanczos3 };
 
@@ -42,9 +45,38 @@ async function normalizeGreenBg(buf, width, height) {
 function exportPng(pipeline, dest, size) {
     return pipeline
         .resize(size, size, RESIZE)
-        .sharpen({ sigma: size >= 1024 ? 0.55 : 0.45 })
+        .sharpen({ sigma: size >= 1024 ? 0.55 : size >= 512 ? 0.5 : 0.45 })
         .png({ compressionLevel: 6, effort: 10 })
         .toFile(dest);
+}
+
+async function buildSquareCanvas(normalizedBuf, width, height, scale) {
+    if (scale >= 1 && width === height) {
+        return sharp(normalizedBuf).sharpen({ sigma: 0.4 }).png().toBuffer();
+    }
+    const canvas = Math.max(width, height);
+    const fit = (canvas * scale) / Math.max(width, height);
+    const scaledW = Math.round(width * fit);
+    const scaledH = Math.round(height * fit);
+    const scaledBuf = await sharp(normalizedBuf)
+        .resize(scaledW, scaledH, RESIZE)
+        .sharpen({ sigma: 0.5 })
+        .png()
+        .toBuffer();
+    const left = Math.floor((canvas - scaledW) / 2);
+    const top = Math.floor((canvas - scaledH) / 2);
+
+    return sharp({
+        create: {
+            width: canvas,
+            height: canvas,
+            channels: 3,
+            background: bgCss(),
+        },
+    })
+        .composite([{ input: scaledBuf, left, top }])
+        .png()
+        .toBuffer();
 }
 
 if (!fs.existsSync(src)) {
@@ -61,42 +93,18 @@ if (!fs.existsSync(src)) {
     console.log('trimmed', width, 'x', height);
     const normalizedBuf = await normalizeGreenBg(trimmedBuf, width, height);
 
-    let squareBuf;
-    if (SYMBOL_SCALE >= 1 && width === height) {
-        squareBuf = await sharp(normalizedBuf).sharpen({ sigma: 0.4 }).png().toBuffer();
-        console.log('square source, light sharpen');
-    } else {
-        const canvas = Math.max(width, height);
-        const fit = (canvas * SYMBOL_SCALE) / Math.max(width, height);
-        const scaledW = Math.round(width * fit);
-        const scaledH = Math.round(height * fit);
-        const scaledBuf = await sharp(normalizedBuf)
-            .resize(scaledW, scaledH, RESIZE)
-            .sharpen({ sigma: 0.5 })
-            .png()
-            .toBuffer();
-        const left = Math.floor((canvas - scaledW) / 2);
-        const top = Math.floor((canvas - scaledH) / 2);
+    const squareBuf = await buildSquareCanvas(normalizedBuf, width, height, SYMBOL_SCALE);
+    console.log('launcher symbol scale', Math.round(SYMBOL_SCALE * 100) + '%', 'bg', BG_HEX);
 
-        squareBuf = await sharp({
-            create: {
-                width: canvas,
-                height: canvas,
-                channels: 3,
-                background: bgCss(),
-            },
-        })
-            .composite([{ input: scaledBuf, left, top }])
-            .png()
-            .toBuffer();
-
-        console.log('symbol scale', Math.round(SYMBOL_SCALE * 100) + '%', 'bg', BG_HEX);
-    }
+    const playSquareBuf = await buildSquareCanvas(normalizedBuf, width, height, PLAY_STORE_SCALE);
+    console.log('play store symbol scale', Math.round(PLAY_STORE_SCALE * 100) + '%');
 
     await exportPng(sharp(squareBuf), master, 1920);
     await exportPng(sharp(squareBuf), appIcon, 1024);
+    await exportPng(sharp(playSquareBuf), playIcon, 512);
     console.log('saved', path.relative(ROOT, master));
     console.log('saved', path.relative(ROOT, appIcon));
+    console.log('saved', path.relative(ROOT, playIcon));
 })().catch((e) => {
     console.error(e);
     process.exit(1);

@@ -9,10 +9,13 @@ const path = require('path');
 const AR_DIR = path.join(__dirname, '..', 'data', 'quran', 'ar');
 const OUT_PATH = path.join(__dirname, '..', 'data', 'quran', 'search', 'ar-ayah.json');
 
+/** Strip tashkil + Uthmani layout marks; fold hamza/wasla for search. */
 function normalizeArabicAyahText(value) {
     return String(value || '')
-        .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, '')
-        .replace(/[أإآٱ]/g, 'ا')
+        .replace(/\u0670/g, 'ا')
+        .replace(/[\u064B-\u065F\u06D6-\u06ED\u08F0-\u08FF]/g, '')
+        .replace(/\u0640/g, '')
+        .replace(/[أإآٱء]/g, 'ا')
         .replace(/ى/g, 'ي')
         .replace(/ة/g, 'ه')
         .replace(/[^\u0600-\u06FF\s]/g, '')
@@ -46,9 +49,19 @@ function buildRows() {
 
 function main() {
     const ayahs = buildRows();
+    let edition = 'uthmani';
+    const metaPath = path.join(AR_DIR, '_meta.json');
+    if (fs.existsSync(metaPath)) {
+        try {
+            edition = JSON.parse(fs.readFileSync(metaPath, 'utf8')).edition || edition;
+        } catch {
+            /* keep default */
+        }
+    }
+
     const index = {
         locale: 'ar',
-        source: 'mushaf',
+        source: `tanzil-${edition}`,
         ayahCount: ayahs.length,
         ayahs
     };

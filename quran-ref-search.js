@@ -33,8 +33,10 @@ export function normalizeLatinSearchText(value) {
 
 export function normalizeArabicSearchText(value) {
     return String(value || '')
-        .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, '')
-        .replace(/[أإآٱ]/g, 'ا')
+        .replace(/\u0670/g, 'ا')
+        .replace(/[\u064B-\u065F\u06D6-\u06ED\u08F0-\u08FF]/g, '')
+        .replace(/\u0640/g, '')
+        .replace(/[أإآٱء]/g, 'ا')
         .replace(/ى/g, 'ي')
         .replace(/ة/g, 'ه')
         .replace(/[^\u0600-\u06FF\s]/g, '')
