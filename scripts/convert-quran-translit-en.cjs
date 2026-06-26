@@ -1,12 +1,12 @@
 /**
  * İngilizce latin okunuş → data/quran/translit-en/
  *
- * Varsayılan: Quran Phonetics (ASCII) — fawazahmed0/quran-api ara-quranphoneticst-la
- * Eski Tanzil: --tanzil veya en.transliteration.txt dosya yolu
+ * Varsayılan: Tanzil en.transliteration — fawazahmed0/quran-api ara-quran-la
+ * Alternatif: --phonetic (Quran Phonetics ASCII) veya en.transliteration.txt dosya yolu
  *
  * Usage:
  *   node scripts/convert-quran-translit-en.cjs
- *   node scripts/convert-quran-translit-en.cjs --tanzil
+ *   node scripts/convert-quran-translit-en.cjs --phonetic
  *   node scripts/convert-quran-translit-en.cjs path/to/en.transliteration.txt
  *
  * Doğrulama:
@@ -30,7 +30,7 @@ const EDITIONS = {
             author: 'Quran Phonetics Transliteration',
             source: 'fawazahmed0/quran-api (ara-quranphoneticst-la)',
             license: 'See upstream quran-api / edition terms',
-            note: 'Okunaklı ASCII okunuş (Ar-Rahman, Al-Hamdu). Varsayılan EN paketi.'
+            note: 'Okunaklı ASCII okunuş (Ar-Rahman, Al-Hamdu). --phonetic ile üretilir.'
         }
     },
     tanzil: {
@@ -39,9 +39,9 @@ const EDITIONS = {
             id: 'translit-en',
             nameTr: 'İngilizce Latin Okunuş',
             language: 'en',
-            source: 'Tanzil.net (en.transliteration)',
+            source: 'Tanzil.net (en.transliteration) via quran-api ara-quran-la',
             license: 'See Tanzil.net translation terms',
-            note: 'Tanzil resmi okunuşu (alrrahmani). --tanzil ile üretilir.'
+            note: 'Tanzil resmi okunuşu (alrrahmani). Varsayılan EN paketi.'
         }
     }
 };
@@ -126,7 +126,7 @@ function writeOutput(bySurah, meta) {
 
 async function main() {
     const argv = process.argv.slice(2);
-    const useTanzil = argv.includes('--tanzil');
+    const usePhonetic = argv.includes('--phonetic');
     const fileArg = argv.find((a) => !a.startsWith('--') && fs.existsSync(path.resolve(a)));
 
     let result;
@@ -137,16 +137,16 @@ async function main() {
         console.log('Input (Tanzil pipe):', inputPath);
         result = parseTanzilPipeFile(inputPath);
         meta = EDITIONS.tanzil.meta;
-    } else if (useTanzil) {
-        const editionId = EDITIONS.tanzil.id;
-        console.log('Fetching Tanzil edition:', editionId);
-        result = await fetchEditionFromGithub(editionId);
-        meta = EDITIONS.tanzil.meta;
-    } else {
+    } else if (usePhonetic) {
         const editionId = EDITIONS.phonetic.id;
         console.log('Fetching phonetic edition:', editionId);
         result = await fetchEditionFromGithub(editionId);
         meta = EDITIONS.phonetic.meta;
+    } else {
+        const editionId = EDITIONS.tanzil.id;
+        console.log('Fetching Tanzil edition:', editionId);
+        result = await fetchEditionFromGithub(editionId);
+        meta = EDITIONS.tanzil.meta;
     }
 
     const { bySurah, parsed, skipped } = result;

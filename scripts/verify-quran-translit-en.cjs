@@ -1,13 +1,14 @@
 /**
  * data/quran/translit-en ↔ kaynak doğrulama.
  *
- * Varsayılan: quran-api ara-quranphoneticst-la
- * Tanzil txt: --tanzil path/to/en.transliteration.txt
+ * Varsayılan: quran-api ara-quran-la (Tanzil en.transliteration)
+ * Alternatif: --phonetic | yerel Tanzil pipe dosyası
  *
  * Usage:
  *   node scripts/verify-quran-translit-en.cjs
  *   node scripts/verify-quran-translit-en.cjs --fix
- *   node scripts/verify-quran-translit-en.cjs --tanzil path/to/en.transliteration.txt
+ *   node scripts/verify-quran-translit-en.cjs --phonetic
+ *   node scripts/verify-quran-translit-en.cjs path/to/en.transliteration.txt
  */
 const path = require('path');
 const { spawnSync } = require('child_process');
@@ -21,6 +22,7 @@ const {
 } = require('./lib/tanzil-translit-parse.cjs');
 
 const outDir = path.join(__dirname, '..', 'data', 'quran', 'translit-en');
+const TANZIL_EDITION = 'ara-quran-la';
 const PHONETIC_EDITION = 'ara-quranphoneticst-la';
 const API_ROOT = 'https://raw.githubusercontent.com/fawazahmed0/quran-api/1/editions';
 
@@ -51,12 +53,12 @@ function getJson(url) {
     });
 }
 
-async function loadExpectedFromPhoneticApi() {
+async function loadExpectedFromApi(editionId) {
     const bySurah = new Map();
     let parsed = 0;
 
     for (let surah = 1; surah <= 114; surah += 1) {
-        const data = await getJson(`${API_ROOT}/${PHONETIC_EDITION}/${surah}.json`);
+        const data = await getJson(`${API_ROOT}/${editionId}/${surah}.json`);
         const ayahs = (data.chapter || [])
             .map((v) => ({
                 n: Number(v.verse),
@@ -86,8 +88,9 @@ function printSamples(mismatches, limit) {
 
 async function main() {
     const argv = process.argv.slice(2);
-    const useTanzil = argv.includes('--tanzil');
+    const usePhonetic = argv.includes('--phonetic');
     const shouldFix = argv.includes('--fix');
+    const fileArg = argv.find((a) => !a.startsWith('--') && fs.existsSync(path.resolve(a)));
     const sampleN = (() => {
         const i = argv.indexOf('--sample');
         if (i === -1) return 8;
@@ -99,21 +102,23 @@ async function main() {
     let parsed;
     let skipped;
     let sourceLabel;
+    let fixMode = 'tanzil';
 
-    if (useTanzil) {
-        const fileArg = argv.find((a) => !a.startsWith('--'));
-        const defaultTxt = path.join(__dirname, '..', 'data', 'raw', 'en.transliteration.txt');
-        const txtPath = fileArg ? path.resolve(fileArg) : defaultTxt;
-        if (!fs.existsSync(txtPath)) {
-            console.error('Tanzil txt bulunamadı:', txtPath);
-            process.exit(1);
-        }
+    if (fileArg) {
+        const txtPath = path.resolve(fileArg);
         sourceLabel = txtPath;
+        fixMode = 'file';
         ({ bySurah, parsed, skipped } = parseTanzilPipeFile(txtPath));
-    } else {
+    } else if (usePhonetic) {
         sourceLabel = `quran-api/${PHONETIC_EDITION}`;
+        fixMode = 'phonetic';
         console.log('Kaynak indiriliyor:', sourceLabel);
-        ({ bySurah, parsed, skipped } = await loadExpectedFromPhoneticApi());
+        ({ bySurah, parsed, skipped } = await loadExpectedFromApi(PHONETIC_EDITION));
+    } else {
+        sourceLabel = `quran-api/${TANZIL_EDITION}`;
+        fixMode = 'tanzil';
+        console.log('Kaynak indiriliyor:', sourceLabel);
+        ({ bySurah, parsed, skipped } = await loadExpectedFromApi(TANZIL_EDITION));
     }
 
     console.log('Hedef JSON:', outDir);
@@ -149,22 +154,34 @@ async function main() {
     }
 
     if (!shouldFix) {
-        const fixCmd = useTanzil
-            ? `node scripts/verify-quran-translit-en.cjs --tanzil "${sourceLabel}" --fix`
-            : 'node scripts/verify-quran-translit-en.cjs --fix';
+        let fixCmd = 'node scripts/verify-quran-translit-en.cjs --fix';
+        if (fixMode === 'phonetic') fixCmd = 'node scripts/verify-quran-translit-en.cjs --phonetic --fix';
+        else if (fixMode === 'file') {
+            fixCmd = `node scripts/verify-quran-translit-en.cjs "${sourceLabel}" --fix`;
+        }
         console.log('\nDüzeltmek için:', fixCmd);
         process.exit(1);
     }
 
     console.log('\n--fix: JSON yeniden üretiliyor...');
     const convert = path.join(__dirname, 'convert-quran-translit-en.cjs');
-    const args = useTanzil ? [convert, '--tanzil'] : [convert];
+    const args =
+        fixMode === 'phonetic'
+            ? [convert, '--phonetic']
+            : fixMode === 'file'
+              ? [convert, sourceLabel]
+              : [convert];
     const run = spawnSync(process.execPath, args, { stdio: 'inherit' });
     if (run.status !== 0) process.exit(run.status || 1);
 
-    const afterSource = useTanzil
-        ? parseTanzilPipeFile(sourceLabel).bySurah
-        : (await loadExpectedFromPhoneticApi()).bySurah;
+    let afterSource;
+    if (fixMode === 'file') {
+        afterSource = parseTanzilPipeFile(sourceLabel).bySurah;
+    } else if (fixMode === 'phonetic') {
+        afterSource = (await loadExpectedFromApi(PHONETIC_EDITION)).bySurah;
+    } else {
+        afterSource = (await loadExpectedFromApi(TANZIL_EDITION)).bySurah;
+    }
     const after = compareTranslitMaps(afterSource, loadTranslitEnJsonDir(outDir));
     const fixed =
         !after.mismatches.length && !after.missingInJson.length && !after.extraInJson.length;

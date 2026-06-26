@@ -137,7 +137,7 @@ test('searchMealAyahs finds English Sahih meal phrase', async () => {
 
 test('searchTranslitAyahs finds English transliteration phrase', async () => {
     await preloadTranslitSearchIndex('translit-en');
-    const hits = searchTranslitAyahs('la rayba fihi', surahIndex, 'en', { limit: 3 });
+    const hits = searchTranslitAyahs('la rayba feehi', surahIndex, 'en', { limit: 3 });
     assert.ok(hits.length >= 1);
     assert.equal(hits[0].surah, 2);
     assert.equal(hits[0].ayah, 2);
@@ -201,7 +201,7 @@ test('searchAyahTextHits merges meal and translit', async () => {
 test('searchAyahTextHits keeps meal and translit as separate rows', async () => {
     await preloadMealSearchIndex('en');
     await preloadTranslitSearchIndex('translit-en');
-    const translitHits = searchAyahTextHits('la rayba fihi', surahIndex, 'en', { limit: 8 });
+    const translitHits = searchAyahTextHits('la rayba feehi', surahIndex, 'en', { limit: 8 });
     assert.ok(translitHits.some((h) => h.kind === 'translit' && h.surah === 2 && h.ayah === 2));
     const mealHits = searchAyahTextHits('no doubt guidance', surahIndex, 'en', { limit: 8 });
     assert.ok(mealHits.some((h) => h.kind === 'meal' && h.surah === 2 && h.ayah === 2));

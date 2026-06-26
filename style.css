@@ -3012,6 +3012,22 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
     line-height: 1.6;
     color: var(--text-gray);
 }
+/* WebView: [hidden] bazen meal/okunuş satırlarını gizlemez; okuma moduna göre zorla */
+.quran-ayah-expand__bism[hidden],
+.quran-ayah-expand__tr[hidden],
+.quran-ayah-expand__lat[hidden] {
+    display: none !important;
+}
+.quran-ayah-expand__card--meal-ar .quran-ayah-expand__lat {
+    display: none !important;
+}
+.quran-ayah-expand__card--translit-ar .quran-ayah-expand__tr {
+    display: none !important;
+}
+.quran-ayah-expand__card--ar-only .quran-ayah-expand__tr,
+.quran-ayah-expand__card--ar-only .quran-ayah-expand__lat {
+    display: none !important;
+}
 .quran-ayah-expand__folder-btn {
     width: 100%;
     margin-top: 0.85rem;

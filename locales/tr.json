@@ -122,6 +122,7 @@
     "guideMealSelect": "Sayfanın üstünden meal kaynağını seçin ({meals}).",
     "guideMealOr": "veya",
     "guideReadMode": "Bu menüden görünümü değiştirin: meal + Arapça, okunuş + Arapça veya sadece Arapça.",
+    "guideReaderLayout": "Kur'an düzeni menüsünden ayet listesi veya mushaf sayfa görünümünü seçin.",
     "guideGoto": "Sure ve ayet numarası yazarak doğrudan istediğiniz ayete gidin.",
     "guideTapExpand": "Ayete kısa dokunun; büyük kartta okuyun. Sağa kaydırın sonraki ayet, sola kaydırın önceki ayet.",
     "guideHoldTafsir": "Ayete basılı tutun; Türkçe tefsir kaynaklarından birini harici sitede açın.",

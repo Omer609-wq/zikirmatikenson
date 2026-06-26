@@ -24,6 +24,9 @@ function mainIndexChunk(html, baseDir) {
     if (!js.includes('quranMushafPager')) {
         return { ok: false, reason: `${m[1]} içinde mushaf kodu yok` };
     }
+    if (!js.includes('backButton')) {
+        return { ok: false, reason: `${m[1]} içinde Android geri tuşu dinleyicisi yok` };
+    }
     return { ok: true, chunk: m[1], bytes: fs.statSync(chunkPath).size };
 }
 

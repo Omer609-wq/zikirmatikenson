@@ -122,6 +122,7 @@
     "guideMealSelect": "Pick a translation at the top ({meals}).",
     "guideMealOr": "or",
     "guideReadMode": "Change display here: translation + Arabic, transliteration + Arabic, or Arabic only.",
+    "guideReaderLayout": "In Quran layout, choose the ayah list or mushaf page view.",
     "guideGoto": "Jump to a verse by entering surah and verse numbers.",
     "guideTapExpand": "Tap a verse briefly to read it enlarged; swipe right for the next verse, left for the previous.",
     "guideHoldTafsir": "Press and hold a verse to open Turkish tafsir in an external site.",

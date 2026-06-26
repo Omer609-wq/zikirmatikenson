@@ -1,6 +1,6 @@
 {
     "appId": "com.omerzikirmatik.app",
-    "appName": "Zikirmatik",
+    "appName": "Zikirmatik Dhikr Quran",
     "webDir": "www",
     "server": {
         "androidScheme": "https"

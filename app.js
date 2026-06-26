@@ -26,6 +26,7 @@ import { showAppAlert, showAppConfirm, showAppPrompt, setupAppDialog } from './l
 import { applyNativeStatusBarTheme } from './status-bar-theme.js';
 import { runCounterVibration, runDragReorderNudge } from './haptics.js';
 import { setupCrashReporting } from './lib/crash-reporting.js';
+import { App } from '@capacitor/app';
 import { pickRandomQuoteEntry, getReminderQuoteNotificationPayload } from './quotes.js';
 import { ESMA_DEFAULT_FAZILET } from './esma-fazilet.js';
 import { ESMA_MEANING_EN } from './esma-meanings-en.js';
@@ -78,6 +79,7 @@ import {
     isQuranMushafDomActive,
     syncQuranSettingsForLocale,
     clearQuranSurahCache,
+    guardQuranReaderSettingsChange,
     localeHasQuranMeal,
     getDefaultQuranReadModeForLocale,
     getQuranViewTab,
@@ -854,17 +856,13 @@ function init() {
     if (isCapacitorNative()) {
         void setupCrashReporting();
         setTimeout(() => void refreshNativeBottomInsetVar(), 200);
-        import('@capacitor/app')
-            .then(({ App }) => {
-                App.addListener('appStateChange', ({ isActive }) => {
-                    if (isActive) void refreshNativeBottomInsetVar();
-                });
-                App.addListener('backButton', () => {
-                    if (canNavigateBackInApp()) goBackInApp();
-                    else App.exitApp();
-                });
-            })
-            .catch(() => {});
+        App.addListener('appStateChange', ({ isActive }) => {
+            if (isActive) void refreshNativeBottomInsetVar();
+        });
+        App.addListener('backButton', () => {
+            if (canNavigateBackInApp()) goBackInApp();
+            else void App.exitApp();
+        });
     }
     loadData();
     bindNativeReminderNotificationLaunch(openAppFromReminderNotification);
@@ -4120,6 +4118,7 @@ function setupEventListeners() {
         }
     });
     setQuranReadModeChangeHandler((readMode) => {
+        guardQuranReaderSettingsChange();
         appSettings.quranReadMode = normalizeQuranReadModeForLocale(readMode, appSettings.locale);
         saveData();
         if (currentQuranSurahId != null) {
