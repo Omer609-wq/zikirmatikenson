@@ -858,6 +858,7 @@ function init() {
         setTimeout(() => void refreshNativeBottomInsetVar(), 200);
         App.addListener('appStateChange', ({ isActive }) => {
             if (isActive) void refreshNativeBottomInsetVar();
+            else flushSave(); // arka plana atılırken bekleyen sayaç yazmasını kaybetme
         });
         App.addListener('backButton', () => {
             if (canNavigateBackInApp()) goBackInApp();
@@ -883,9 +884,13 @@ function init() {
     }
     document.addEventListener('visibilitychange', onAppBecameVisibleForReminders);
     document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState !== 'visible') return;
+        if (document.visibilityState !== 'visible') {
+            flushSave(); // sekme gizlenince bekleyen sayaç yazmasını diske işle
+            return;
+        }
         refreshRemoteHomeContent();
     });
+    window.addEventListener('pagehide', flushSave);
     window.addEventListener('pageshow', onPageShowForReminders);
     // Make Android/iOS/WebView back follow in-app navigation.
     window.addEventListener('popstate', (e) => {
@@ -1507,7 +1512,33 @@ function loadData() {
 
     syncSettingsUI();
 }
+// Sayaç gibi sık tetiklenen işlemlerde diske yazmayı ertelemek için debounce.
+// Tık anında sadece RAM'deki state güncellenir; yazma SAVE_DEBOUNCE_MS sonra olur.
+const SAVE_DEBOUNCE_MS = 800;
+let _saveTimer = null;
+
+function scheduleSave() {
+    if (_saveTimer) clearTimeout(_saveTimer);
+    _saveTimer = setTimeout(() => {
+        _saveTimer = null;
+        saveData();
+    }, SAVE_DEBOUNCE_MS);
+}
+
+// Bekleyen ertelenmiş yazmayı hemen diske işler (uygulama arka plana atılırken vb.).
+function flushSave() {
+    if (!_saveTimer) return;
+    clearTimeout(_saveTimer);
+    _saveTimer = null;
+    saveData();
+}
+
 function saveData() {
+    // Gerçek yazma olduğunda bekleyen ertelenmiş yazma gereksizdir.
+    if (_saveTimer) {
+        clearTimeout(_saveTimer);
+        _saveTimer = null;
+    }
     persistSeasonalCountsFromZikirs(zikirs);
     const payload = {
         folders: folders.filter((f) => !isSeasonalFolderId(f.id)),
@@ -1912,8 +1943,8 @@ function logClick(zId) {
     // Update lastClicked
     const z = zikirs.find(x => x.id === zId);
     if (z) z.lastClicked = Date.now();
-    
-    saveData();
+
+    scheduleSave();
 }
 
 function logDecrement(zId) {
@@ -1923,7 +1954,7 @@ function logDecrement(zId) {
         if (history[today][zId] <= 0) delete history[today][zId];
         if (Object.keys(history[today]).length === 0) delete history[today];
     }
-    saveData();
+    scheduleSave();
 }
 
 function removeHistoryForZikirIds(zidSet) {
