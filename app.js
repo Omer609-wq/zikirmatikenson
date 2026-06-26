@@ -3365,6 +3365,53 @@ function applyQuranCounterLayout(zikir) {
     return { useHeaderAyahText: false };
 }
 
+// Sayaç değerleri: her tıkta değişen ve hafif olması gereken kısım.
+// Başlık/Arapça/anlam gibi sabit öğeler updateCounterUI'da, yalnızca ekran açılışında güncellenir.
+function updateCounterValues(zikir, target) {
+    // Mevcut turdaki okuma: tam tur sonrası (33, 66…) yeni turun başı → 0 göster;
+    // geri alınca önce 0, bir basım daha önceki turun son adımına düşer.
+    let currentRoundDisplay = 0;
+    if (zikir.count > 0) {
+        const r = zikir.count % target;
+        currentRoundDisplay = r === 0 ? 0 : r;
+    }
+
+    if (countDisplay) countDisplay.textContent = formatCounterDisplay(currentRoundDisplay);
+    if (totalDisplay) totalDisplay.textContent = formatCounterDisplay(zikir.count);
+    if (stealthCounter) stealthCounter.textContent = formatCounterDisplay(zikir.count);
+
+    const completedRounds = Math.floor(zikir.count / target);
+    if (roundDisplay) {
+        if (completedRounds > 0) {
+            roundDisplay.textContent = formatCounterDisplay(completedRounds);
+            roundDisplay.classList.toggle('round-badge--compact', completedRounds >= 1000);
+            roundDisplay.classList.add('visible');
+        } else {
+            roundDisplay.classList.remove('visible', 'round-badge--compact');
+        }
+    }
+
+    let circleProgress = 0;
+    if (zikir.count > 0 && zikir.count % target !== 0) {
+        circleProgress = (zikir.count % target) / target;
+    }
+    const offset = CIRCLE_CIRCUMFERENCE - circleProgress * CIRCLE_CIRCUMFERENCE;
+
+    if (zikir.count > 0 && zikir.count % target === 0) {
+        if (mainCounterBtn) {
+            const now = performance.now();
+            if (now - lastCounterGlowBurstAt >= COUNTER_GLOW_BURST_MIN_MS) {
+                lastCounterGlowBurstAt = now;
+                mainCounterBtn.classList.remove('glow-burst');
+                void mainCounterBtn.offsetWidth;
+                mainCounterBtn.classList.add('glow-burst');
+            }
+        }
+        /* Titreşim: yalnızca incrementCounter içinde (çift tetiklenmesin) */
+    }
+    if (progressCircle) progressCircle.style.strokeDashoffset = offset;
+}
+
 function updateCounterUI() {
     const zikir = zikirs.find(z => z.id === currentZikirId);
     if (!zikir) return;
@@ -3404,53 +3451,13 @@ function updateCounterUI() {
     }
     const zikirHeaderScroll = document.getElementById('zikirHeaderScroll');
     if (zikirHeaderScroll) zikirHeaderScroll.scrollTop = 0;
-    
-    // Mevcut turdaki okuma: tam tur sonrası (33, 66…) yeni turun başı → 0 göster;
-    // geri alınca önce 0, bir basım daha önceki turun son adımına düşer.
-    let currentRoundDisplay = 0;
-    if (zikir.count > 0) {
-        const r = zikir.count % target;
-        currentRoundDisplay = r === 0 ? 0 : r;
-    }
-    
-    if (countDisplay) countDisplay.textContent = formatCounterDisplay(currentRoundDisplay);
+
+    // Sabit öğeler (hedef sayısı, gizli mod başlığı) — tık başına değişmez, burada kalır.
     if (targetDisplay) targetDisplay.textContent = formatCounterDisplay(target);
-    if (totalDisplay) totalDisplay.textContent = formatCounterDisplay(zikir.count);
-    
-    // Stealth Update
-    if (stealthZikirName) stealthZikirName.textContent = getZikirDisplayName(zikir);
-    if (stealthCounter) stealthCounter.textContent = formatCounterDisplay(zikir.count);
+    if (stealthZikirName) stealthZikirName.textContent = counterDisplayName;
 
-    const completedRounds = Math.floor(zikir.count / target);
-    if (roundDisplay) {
-        if (completedRounds > 0) {
-            roundDisplay.textContent = formatCounterDisplay(completedRounds);
-            roundDisplay.classList.toggle('round-badge--compact', completedRounds >= 1000);
-            roundDisplay.classList.add('visible');
-        } else {
-            roundDisplay.classList.remove('visible', 'round-badge--compact');
-        }
-    }
-
-    let circleProgress = 0;
-    if (zikir.count > 0 && zikir.count % target !== 0) {
-        circleProgress = (zikir.count % target) / target;
-    }
-    const offset = CIRCLE_CIRCUMFERENCE - circleProgress * CIRCLE_CIRCUMFERENCE;
-
-    if (zikir.count > 0 && zikir.count % target === 0) {
-        if (mainCounterBtn) {
-            const now = performance.now();
-            if (now - lastCounterGlowBurstAt >= COUNTER_GLOW_BURST_MIN_MS) {
-                lastCounterGlowBurstAt = now;
-                mainCounterBtn.classList.remove('glow-burst');
-                void mainCounterBtn.offsetWidth;
-                mainCounterBtn.classList.add('glow-burst');
-            }
-        }
-        /* Titreşim: yalnızca incrementCounter içinde (çift tetiklenmesin) */
-    }
-    if (progressCircle) progressCircle.style.strokeDashoffset = offset;
+    // Tık başına değişen değerler ortak hafif fonksiyonda.
+    updateCounterValues(zikir, target);
 }
 
 // ===================== HARDWARE LOGIC =====================
@@ -3539,10 +3546,11 @@ function incrementCounter() {
 
     zikir.count++;
     logClick(zikir.id);
-    updateCounterUI();
+    const target = safeZikirTarget(zikir);
+    updateCounterValues(zikir, target);
     maybeRefreshZikirStatsModal();
 
-    const isTargetHit = zikir.count % safeZikirTarget(zikir) === 0;
+    const isTargetHit = zikir.count % target === 0;
     handleVibration(isTargetHit);
     playTickSound(isTargetHit);
 }
@@ -3553,7 +3561,7 @@ function decrementCounter() {
 
     zikir.count--;
     logDecrement(zikir.id);
-    updateCounterUI();
+    updateCounterValues(zikir, safeZikirTarget(zikir));
     maybeRefreshZikirStatsModal();
 }
 
