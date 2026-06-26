@@ -3053,6 +3053,12 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
     pointer-events: auto;
     visibility: visible;
 }
+/* Acilis "priming": --open eklenmeden bir frame once paneli gorunur kilar ki
+   baslangic konumu (sagda) commit edilsin; boylece ilk acilista transition
+   "tak" diye atlanmaz. */
+.quran-reader-drawer--prep {
+    visibility: visible;
+}
 .quran-reader-drawer__backdrop {
     position: absolute;
     inset: 0;
@@ -3079,6 +3085,7 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
     box-shadow: -8px 0 32px rgba(0, 0, 0, 0.28);
     transform: translateX(100%);
     transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
     touch-action: pan-y;
     padding: calc(1rem + env(safe-area-inset-top, 0px)) 1rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
     overflow-x: hidden;

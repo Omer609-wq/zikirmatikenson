@@ -2089,7 +2089,39 @@ function setQuranReaderDrawerOpen(open) {
     const menuBtn = document.getElementById('quranReaderMenuBtn');
     if (!drawer) return;
     const isOpen = !!open;
-    drawer.classList.toggle('quran-reader-drawer--open', isOpen);
+    if (isOpen) {
+        // Soguk-gecisi onle: once paneli gorunur kil (prep) ve baslangic konumunu
+        // reflow ile commit et; sonraki frame'de --open ekleyince transition akar.
+        drawer.classList.add('quran-reader-drawer--prep');
+        void drawer.offsetWidth; // baslangic transform'unu (translateX(100%)) zorla
+        requestAnimationFrame(() => {
+            // Bu frame'e gelene kadar kapatildiysa acma.
+            if (drawer.getAttribute('aria-hidden') === 'false') {
+                drawer.classList.add('quran-reader-drawer--open');
+            }
+        });
+    } else {
+        drawer.classList.remove('quran-reader-drawer--open');
+        // Kapanis animasyonu bitince prep'i (visibility) kaldir; boylece kapali
+        // panel focus/screen-reader'a yakalanmaz. Hala kapaliysa uygula.
+        const panel = document.getElementById('quranReaderDrawerPanel');
+        const cleanup = () => {
+            if (drawer.getAttribute('aria-hidden') === 'true') {
+                drawer.classList.remove('quran-reader-drawer--prep');
+            }
+        };
+        if (panel) {
+            const onEnd = (e) => {
+                if (e.target !== panel || e.propertyName !== 'transform') return;
+                panel.removeEventListener('transitionend', onEnd);
+                cleanup();
+            };
+            panel.addEventListener('transitionend', onEnd);
+            setTimeout(cleanup, 400); // transitionend gelmezse guvenlik agi
+        } else {
+            cleanup();
+        }
+    }
     drawer.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
     if (menuBtn) menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     document.documentElement.classList.toggle('quran-drawer-open', isOpen);
