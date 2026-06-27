@@ -6,7 +6,7 @@
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
-        "cap:sync": "npm run build && npx cap sync",
+        "cap:sync": "npm run build && npx cap sync && node scripts/patch-capacitor-proguard.cjs",
         "cap:verify:android": "node scripts/verify-android-web-bundle.cjs",
         "cap:bundle:android": "npm run cap:verify:android && node scripts/run-android-gradle.cjs clean bundleRelease",
         "cap:release:android": "npm run build && npx cap sync android && npm run cap:verify:android && node scripts/run-android-gradle.cjs clean bundleRelease",
@@ -24,7 +24,8 @@
         "quran:ar:import": "node scripts/convert-quran-xml-to-json.cjs",
         "quran:ar-ayah-search-index": "node scripts/build-quran-ar-ayah-search-index.cjs",
         "quran:translit-search-index": "node scripts/build-quran-translit-search-index.cjs",
-        "quran:search-index": "npm run quran:meal-search-index && npm run quran:ar-ayah-search-index && npm run quran:translit-search-index"
+        "quran:search-index": "npm run quran:meal-search-index && npm run quran:ar-ayah-search-index && npm run quran:translit-search-index",
+        "postinstall": "node scripts/patch-capacitor-proguard.cjs"
     },
     "dependencies": {
         "@capacitor-community/keep-awake": "^5.0.1",
