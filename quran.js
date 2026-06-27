@@ -1689,22 +1689,15 @@ function initMushafPager(mealId, readMode, readerLayout) {
     scheduleMushafCanvasFill();
 }
 
-const SURAH_CORNER_SVG =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true">' +
-    '<path d="M2 15.5V2H15.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>' +
-    '<path d="M4.2 13.3V4.2H13.3" fill="none" stroke="currentColor" stroke-width="0.55" opacity="0.55"/>' +
-    '<path d="M2 10.2C2 5.8 5.4 2.4 9.8 2.4" fill="none" stroke="currentColor" stroke-width="0.65" opacity="0.5"/>' +
-    '<path d="M2 6.2L6.2 2" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.38"/>' +
-    '<circle cx="2" cy="2" r="1.15" fill="currentColor"/>' +
-    '<circle cx="2" cy="2" r="0.4" fill="currentColor" opacity="0.22"/>' +
-    '</svg>';
-
+// Köşe süslemeleri eskiden her köşeye ~7 node'luk bir SVG (SURAH_CORNER_SVG)
+// basıyordu; sure başına 4 köşe × ~7 = ~28 fazladan DOM node. Artık süsleme
+// CSS mask ile çizilir (--surah-corner-mask), böylece kabuk başına yalnızca 4
+// boş span kalır ve ilk render belirgin biçimde hafifler.
 function appendFrameCornerMotifs(frame, baseClass) {
     ['tl', 'tr', 'bl', 'br'].forEach((pos) => {
         const corner = document.createElement('span');
         corner.className = `${baseClass}__corner ${baseClass}__corner--${pos}`;
         corner.setAttribute('aria-hidden', 'true');
-        corner.innerHTML = SURAH_CORNER_SVG;
         frame.appendChild(corner);
     });
 }
