@@ -2342,8 +2342,8 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
     left: 50%;
     transform: translateX(-50%);
     z-index: 30;
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     border: 1px solid var(--surface-border, rgba(255, 255, 255, 0.14));
     background: var(--surface-card, rgba(18, 26, 36, 0.85));
@@ -2358,7 +2358,7 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
     transition: opacity 0.2s ease, transform 0.15s ease, background 0.2s ease;
 }
 .quran-surah-scroll-nav[hidden] { display: none; }
-.quran-surah-scroll-nav .material-icons-outlined { font-size: 18px; }
+.quran-surah-scroll-nav svg { width: 14px; height: 14px; display: block; }
 /* Üst ok header'ın hemen altında, alt ok bottom-nav'ın hemen üstünde */
 .quran-surah-scroll-nav--up { top: calc(4.4rem + env(safe-area-inset-top, 0px)); }
 .quran-surah-scroll-nav--down { bottom: calc(4.6rem + var(--app-bottom-inset-merged, 0px)); }
