@@ -2441,9 +2441,16 @@ export function bindQuranSearchInput() {
     if (!input || input.dataset.quranBound === '1') return;
     input.dataset.quranBound = '1';
     ensureAyahTextSearchIndexLoaded();
+    // Metin araması her tuşta tüm meal indeksini tarıyor (tr'de ~12.5k satır);
+    // gecikmesiz çağrı yazarken klavyeyi kasıyordu. Yazma durunca bir kez çalıştır.
+    let searchRenderTimer = null;
     input.addEventListener('input', () => {
         quranSearchQuery = input.value || '';
-        renderQuranSurahList();
+        if (searchRenderTimer) clearTimeout(searchRenderTimer);
+        searchRenderTimer = setTimeout(() => {
+            searchRenderTimer = null;
+            renderQuranSurahList();
+        }, 160);
     });
     input.addEventListener('keydown', (e) => {
         if (e.key !== 'Enter') return;
