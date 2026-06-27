@@ -114,7 +114,11 @@ function scoreNameMatch(queryNorm, nameNorm) {
     if (!queryNorm || !nameNorm) return null;
     if (nameNorm === queryNorm) return 0;
     if (nameNorm.startsWith(queryNorm) || queryNorm.startsWith(nameNorm)) return 2;
-    if (nameNorm.includes(queryNorm) || queryNorm.includes(nameNorm)) return 4;
+    const shorter = Math.min(nameNorm.length, queryNorm.length);
+    const longer = Math.max(nameNorm.length, queryNorm.length);
+    if (shorter >= 4 && shorter / longer >= 0.45) {
+        if (nameNorm.includes(queryNorm) || queryNorm.includes(nameNorm)) return 4;
+    }
     const dist = levenshtein(queryNorm, nameNorm);
     const limit = queryNorm.length <= 4 ? 1 : 2;
     if (dist <= limit) return 10 + dist;
@@ -269,13 +273,15 @@ export function parseScopedMealSearchQuery(raw, surahIndex, locale = 'tr') {
     for (let prefixLen = tokens.length - 1; prefixLen >= 1; prefixLen -= 1) {
         const namePart = tokens.slice(0, prefixLen).join(' ');
         const textPart = tokens.slice(prefixLen).join(' ');
-        const resolved = resolveSurahNameQuery(namePart, surahIndex, locale);
-        if (!resolved?.surah || resolved.ambiguous) continue;
+        const fuzzy = findSurahByFuzzyName(namePart, surahIndex, locale);
+        if (!fuzzy.length || fuzzy[0].score > 2) continue;
+        if (fuzzy.length > 1 && fuzzy[1].score === fuzzy[0].score) continue;
         if (textPart.replace(/\s+/g, '').length < 3) continue;
+        const surah = fuzzy[0].surah;
         return {
-            surah: resolved.surah.n,
+            surah: surah.n,
             text: textPart,
-            surahName: getSurahRefDisplayName(resolved.surah, locale)
+            surahName: getSurahRefDisplayName(surah, locale)
         };
     }
     return null;

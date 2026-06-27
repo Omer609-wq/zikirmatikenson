@@ -76,6 +76,10 @@ test('parseScopedMealSearchQuery splits surah and text', () => {
     assert.equal(scoped?.surahName, 'Kehf');
 });
 
+test('parseScopedMealSearchQuery ignores meal words mistaken for surah names', () => {
+    assert.equal(parseScopedMealSearchQuery('goturmeyen suphe dogruluk', surahIndex, 'tr'), null);
+});
+
 test('normalizeLatinSearchText', () => {
     assert.equal(normalizeLatinSearchText('Al-Baqarah'), 'al baqarah');
 });

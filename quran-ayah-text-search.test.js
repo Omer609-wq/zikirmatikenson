@@ -109,6 +109,16 @@ test('searchMealAyahs finds Diyanet meal phrase', async () => {
     assert.match(hits[0].snippet, /şüphe|suphe/i);
 });
 
+test('searchMealAyahs matches all Turkish meal tokens in any order', async () => {
+    await preloadMealSearchIndex('tr');
+    const ordered = searchMealAyahs('suphe goturmeyen dogruluk', surahIndex, 'tr', { limit: 5 });
+    const reversed = searchMealAyahs('goturmeyen suphe dogrulugu', surahIndex, 'tr', { limit: 5 });
+    assert.ok(ordered.some((h) => h.surah === 2 && h.ayah === 2));
+    assert.ok(reversed.some((h) => h.surah === 2 && h.ayah === 2));
+    const phrase = searchMealAyahs('kitap suphe goturmeyen', surahIndex, 'tr', { limit: 5 });
+    assert.ok(phrase.some((h) => h.surah === 2 && h.ayah === 2));
+});
+
 test('searchMealAyahs finds hidayet in Kehf when scoped', async () => {
     await preloadMealSearchIndex('tr');
     const hits = searchAyahTextHits('hidayet', surahIndex, 'tr', { limit: 10, surah: 18 });

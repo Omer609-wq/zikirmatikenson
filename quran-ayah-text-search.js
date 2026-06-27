@@ -841,6 +841,15 @@ function compareTokenHit(a, b) {
     return a.pos <= b.pos ? a : b;
 }
 
+function turkishTokenStemMatch(token, word) {
+    if (token.length < 5 || word.length < 5) return 0;
+    const maxStem = Math.min(token.length, word.length);
+    for (let len = maxStem; len >= 5; len -= 1) {
+        if (token.slice(0, len) === word.slice(0, len)) return len;
+    }
+    return 0;
+}
+
 function findTokenInHay(hay, token, from = 0, fuzzy = false) {
     let best = null;
     let i = from;
@@ -859,20 +868,27 @@ function findTokenInHay(hay, token, from = 0, fuzzy = false) {
         }
         if (word.startsWith(token)) {
             best = compareTokenHit(best, { pos: wordStart, fuzz: 0, rank: 1 });
+        } else if (token.startsWith(word) && word.length >= 4) {
+            best = compareTokenHit(best, { pos: wordStart, fuzz: 0, rank: 2 });
         } else if (word.includes(token)) {
             best = compareTokenHit(best, {
                 pos: wordStart + word.indexOf(token),
                 fuzz: 0,
                 rank: 2
             });
-        } else if (fuzzy && token.length >= 4 && levenshteinAtMost1(word, token) <= 1) {
-            best = compareTokenHit(best, { pos: wordStart, fuzz: 1, rank: 3 });
+        } else {
+            const stemLen = turkishTokenStemMatch(token, word);
+            if (stemLen >= 5) {
+                best = compareTokenHit(best, { pos: wordStart, fuzz: 0, rank: 3 });
+            } else if (fuzzy && token.length >= 4 && levenshteinAtMost1(word, token) <= 1) {
+                best = compareTokenHit(best, { pos: wordStart, fuzz: 1, rank: 4 });
+            }
         }
     }
 
     const idx = hay.indexOf(token, from);
     if (idx >= 0) {
-        return compareTokenHit(best, { pos: idx, fuzz: 0, rank: 4 }) || { pos: idx, fuzz: 0, rank: 4 };
+        return compareTokenHit(best, { pos: idx, fuzz: 0, rank: 5 }) || { pos: idx, fuzz: 0, rank: 5 };
     }
 
     return best;
@@ -966,6 +982,30 @@ function scoreHaystack(hay, tokens, fuzzy = false) {
     return total;
 }
 
+/** Meal: tüm kelimeler ayette geçmeli; sıralı eşleşme varsa öncelikli, yoksa sıra bağımsız AND. */
+function scoreHaystackMeal(hay, tokens, fuzzy = false) {
+    if (!tokens.length) return null;
+
+    const sequential = tokens.length > 1 ? scoreHaystack(hay, tokens, fuzzy) : null;
+
+    let total = 0;
+    const positions = [];
+    for (const tok of tokens) {
+        const hit = findTokenInHay(hay, tok, 0, fuzzy);
+        if (!hit) return null;
+        total += hit.rank * 1000 + hit.pos * 0.01 + hit.fuzz * 40;
+        positions.push(hit.pos);
+    }
+
+    if (sequential != null) return sequential;
+
+    if (tokens.length === 1) return total;
+
+    positions.sort((a, b) => a - b);
+    const span = positions[positions.length - 1] - positions[0];
+    return total + span * 0.02 + 2500;
+}
+
 function makeSnippet(text, rawQuery, cfg, maxLen = 72) {
     const original = String(text || '').trim();
     if (!original) return '';
@@ -1028,7 +1068,7 @@ export function searchMealAyahs(raw, surahIndex, locale = 'tr', options = {}) {
 
     for (const row of rows) {
         const hay = row.n || '';
-        const score = scoreHaystack(hay, tokens, false);
+        const score = scoreHaystackMeal(hay, tokens, true);
         if (score == null) continue;
 
         const key = `${row.s}:${row.a}`;
@@ -1236,7 +1276,7 @@ function searchMealAyahsInternal(raw, locale, options = {}) {
 
     for (const row of rows) {
         if (scopedSurah != null && row.s !== scopedSurah) continue;
-        const score = scoreHaystack(row.n || '', tokens, false);
+        const score = scoreHaystackMeal(row.n || '', tokens, true);
         if (score == null) continue;
         const key = `${row.s}:${row.a}`;
         const prev = bestByAyah.get(key);
