@@ -1112,7 +1112,7 @@ function restoreReaderScrollSnapshot(snapshot) {
     ) {
         const meal = getQuranReaderMealId();
         const mode = getCurrentQuranReadMode();
-        void showMushafPage(snapshot.page, meal, mode, renderGeneration);
+        void showMushafPage(snapshot.page, meal, mode, renderGeneration, { persist: false });
         return;
     }
 
@@ -1703,7 +1703,7 @@ async function prefetchMushafSurahsForPages(pages, meal, gen) {
     }
 }
 
-async function showMushafPage(pageNum, meal, readMode, gen) {
+async function showMushafPage(pageNum, meal, readMode, gen, { persist = true } = {}) {
     const p = Math.max(1, Math.min(MUSHAF_PAGE_COUNT, Number(pageNum)));
     mushafCurrentPage = p;
 
@@ -1720,7 +1720,9 @@ async function showMushafPage(pageNum, meal, readMode, gen) {
 
     scheduleMushafCanvasFill();
     syncMushafMetaBar(p);
-    notifyMushafPageSaved(p);
+    // Yalnızca gerçek sayfa çevirme "kaldığım sayfa"yı günceller. Arama/goto ile
+    // bir ayete atlama (persist:false) kaydedilmiş sayfayı EZMEMELİDİR.
+    if (persist) notifyMushafPageSaved(p);
     void prefetchMushafSurahsForPages([p - 1, p + 1, p - 2, p + 2], meal, gen);
 }
 
@@ -2074,12 +2076,12 @@ function refreshLoadedSections(readMode, readerLayout = DEFAULT_QURAN_READER_LAY
     restoreQuranReaderScrollTop(scroller, savedScrollTop);
 }
 
-async function scrollToMushafPage(pageNum, mealId, readMode, gen) {
+async function scrollToMushafPage(pageNum, mealId, readMode, gen, { persist = false } = {}) {
     const pager = document.getElementById('quranMushafPager');
     if (!pager || pager.hidden) return;
     const meal = mealId ?? getQuranReaderMealId();
     const mode = readMode ?? pager.dataset.readMode ?? DEFAULT_QURAN_READ_MODE;
-    await showMushafPage(pageNum, meal, mode, gen ?? renderGeneration);
+    await showMushafPage(pageNum, meal, mode, gen ?? renderGeneration, { persist });
 }
 
 async function scrollToSurahSection(surahN, readerLayout = DEFAULT_QURAN_READER_LAYOUT, mealId, readMode, gen) {
