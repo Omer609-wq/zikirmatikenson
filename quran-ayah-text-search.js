@@ -598,6 +598,14 @@ export function getTranslitSearchPackId(locale = 'tr') {
     return normalizeSearchLocale(locale) === 'tr' ? 'translit-tr' : 'translit-en';
 }
 
+// Okunuş metni her zaman latin alfabededir. Bu yüzden okunuş aramasının
+// min-uzunluk/geçerlilik geçidi, dilin meal-normalize'ı yerine okunuş pack'inin
+// latin diliyle (tr veya en) yapılmalıdır. Aksi halde bn/ur/ar gibi non-latin
+// meal-normalize'ları latin sorguyu silip okunuş aramasını tamamen engeller.
+function getTranslitGateLocale(locale = 'tr') {
+    return getTranslitSearchPackId(locale) === 'translit-tr' ? 'tr' : 'en';
+}
+
 function getTranslitSearchConfig(locale = 'tr') {
     if (getTranslitSearchPackId(locale) === 'translit-tr') {
         return {
@@ -1103,7 +1111,7 @@ export function searchMealAyahs(raw, surahIndex, locale = 'tr', options = {}) {
  */
 export function searchTranslitAyahs(raw, surahIndex, locale = 'tr', options = {}) {
     if (!localeSupportsTranslitTextSearch(locale)) return [];
-    if (!meetsMinTextSearchQuery(raw, locale)) return [];
+    if (!meetsMinTextSearchQuery(raw, getTranslitGateLocale(locale))) return [];
 
     const cfg = getTranslitSearchConfig(locale);
     const tokens = searchTokensFromQuery(raw, cfg.normalize, cfg.stopWords);
@@ -1155,7 +1163,14 @@ function combineDistinctTextSearchHits(rows, limit) {
  */
 export function searchAyahTextHits(raw, surahIndex, locale = 'tr', options = {}) {
     if (!localeSupportsAyahTextSearch(locale)) return [];
-    if (!meetsMinTextSearchQuery(raw, locale)) return [];
+    // Sorgu ya ana-script meal/Arapça ya da latin okunuş olabilir; herhangi biri
+    // geçerliyse devam et. (bn/ur/ar'da latin okunuş sorgusu, meal-normalize'lı
+    // ana geçidi geçemez; ayrı bir latin okunuş geçidiyle kabul edilir.)
+    const passesMainGate = meetsMinTextSearchQuery(raw, locale);
+    const passesTranslitGate =
+        localeSupportsTranslitTextSearch(locale) &&
+        meetsMinTextSearchQuery(raw, getTranslitGateLocale(locale));
+    if (!passesMainGate && !passesTranslitGate) return [];
 
     const limit = Number(options.limit) > 0 ? Number(options.limit) : 5;
     const poolLimit = Math.max(limit * 2, 8);

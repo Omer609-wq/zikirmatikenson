@@ -217,6 +217,30 @@ test('searchAyahTextHits keeps meal and translit as separate rows', async () => 
     assert.ok(mealHits.some((h) => h.kind === 'meal' && h.surah === 2 && h.ayah === 2));
 });
 
+// Regresyon: non-latin meal dillerinde (bn, ur) ve ar'da latin okunuş sorgusu,
+// meal/Arapça normalize'lı geçit tarafından silinip reddedilmemeli.
+test('searchTranslitAyahs accepts latin query for non-latin locales (bn, ur, ar)', async () => {
+    await preloadTranslitSearchIndex('translit-en');
+    for (const code of ['bn', 'ur', 'ar']) {
+        const hits = searchTranslitAyahs('bismi allahi', surahIndex, code, { limit: 3 });
+        assert.ok(hits.length >= 1, `${code}: okunuş sonucu dönmeli`);
+        assert.equal(hits[0].surah, 1, `${code}: surah 1`);
+        assert.equal(hits[0].ayah, 1, `${code}: ayah 1`);
+    }
+});
+
+test('searchAyahTextHits surfaces translit hit for non-latin locales (bn, ur)', async () => {
+    await preloadTranslitSearchIndex('translit-en');
+    for (const code of ['bn', 'ur']) {
+        await preloadMealSearchIndex(code);
+        const hits = searchAyahTextHits('bismi allahi', surahIndex, code, { limit: 8 });
+        assert.ok(
+            hits.some((h) => h.readModeId === 'translit-ar' && h.surah === 1 && h.ayah === 1),
+            `${code}: birleşik aramada okunuş 1:1 görünmeli`
+        );
+    }
+});
+
 test('searchMealAyahs finds Indonesian meal phrase', async () => {
     await preloadMealSearchIndex('id');
     const hits = searchMealAyahs('kitab tidak ada keraguan padanya', surahIndex, 'id', { limit: 3 });
