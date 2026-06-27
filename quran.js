@@ -2716,6 +2716,10 @@ function attachReaderDrawerSwipe(panel, backdrop) {
     let startX = 0;
     let startY = 0;
     let lastX = 0;
+    // Panel genişliği sürükleme boyunca değişmez; her pointermove'da offsetWidth
+    // okumak forced reflow (layout thrashing) yaratıp paneli parmaktan geriletiyordu.
+    // Sürükleme başında bir kez ölçüp burada saklıyoruz.
+    let panelWidth = 0;
     /** @type {'h' | 'v' | null} */
     let axisLock = null;
 
@@ -2760,6 +2764,7 @@ function attachReaderDrawerSwipe(panel, backdrop) {
         startX = lastX = e.clientX;
         startY = e.clientY;
         axisLock = null;
+        panelWidth = panel.offsetWidth || 1; // bir kez ölç; pointermove'da yeniden okuma
         panel.style.transition = 'none';
         if (backdrop) backdrop.style.transition = 'none';
         try {
@@ -2796,7 +2801,7 @@ function attachReaderDrawerSwipe(panel, backdrop) {
             if (tx < 0) tx *= 0.2;
             panel.style.transform = `translateX(${tx}px)`;
             if (backdrop) {
-                const w = panel.offsetWidth || 1;
+                const w = panelWidth || 1;
                 const progress = Math.max(0, Math.min(1, Math.max(0, tx) / w));
                 backdrop.style.opacity = String(1 - progress);
             }
