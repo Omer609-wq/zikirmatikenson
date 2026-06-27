@@ -801,6 +801,15 @@ export function meetsMinTextSearchQuery(raw, locale = 'tr') {
     return tokens.join('').length >= MIN_TEXT_SEARCH_CHARS;
 }
 
+/** Meal/Arapça veya latin okunuş geçidinden biri geçerliyse metin aramasına izin ver. */
+export function passesAyahTextSearchQueryGate(raw, locale = 'tr') {
+    if (meetsMinTextSearchQuery(raw, locale)) return true;
+    return (
+        localeSupportsTranslitTextSearch(locale) &&
+        meetsMinTextSearchQuery(raw, getTranslitGateLocale(locale))
+    );
+}
+
 function searchTokensFromQuery(raw, normalize, stopWords) {
     const norm = normalize(raw);
     const tokens = norm.split(/\s+/).filter((t) => t.length >= 2 && !stopWords.has(t));
@@ -1163,14 +1172,7 @@ function combineDistinctTextSearchHits(rows, limit) {
  */
 export function searchAyahTextHits(raw, surahIndex, locale = 'tr', options = {}) {
     if (!localeSupportsAyahTextSearch(locale)) return [];
-    // Sorgu ya ana-script meal/Arapça ya da latin okunuş olabilir; herhangi biri
-    // geçerliyse devam et. (bn/ur/ar'da latin okunuş sorgusu, meal-normalize'lı
-    // ana geçidi geçemez; ayrı bir latin okunuş geçidiyle kabul edilir.)
-    const passesMainGate = meetsMinTextSearchQuery(raw, locale);
-    const passesTranslitGate =
-        localeSupportsTranslitTextSearch(locale) &&
-        meetsMinTextSearchQuery(raw, getTranslitGateLocale(locale));
-    if (!passesMainGate && !passesTranslitGate) return [];
+    if (!passesAyahTextSearchQueryGate(raw, locale)) return [];
 
     const limit = Number(options.limit) > 0 ? Number(options.limit) : 5;
     const poolLimit = Math.max(limit * 2, 8);

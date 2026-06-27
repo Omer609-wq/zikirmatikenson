@@ -7,6 +7,7 @@ import surahIndex from './data/quran/index.json' with { type: 'json' };
 import {
     MIN_TEXT_SEARCH_CHARS,
     meetsMinTextSearchQuery,
+    passesAyahTextSearchQueryGate,
     normalizeArabicAyahSearchText,
     normalizeEnMealSearchText,
     normalizeEnTranslitSearchText,
@@ -51,6 +52,21 @@ test('meetsMinTextSearchQuery rejects short and ref queries', () => {
     assert.equal(meetsMinTextSearchQuery('bakara 12'), false);
     assert.equal(meetsMinTextSearchQuery('suphe'), true);
     assert.equal(MIN_TEXT_SEARCH_CHARS, MIN_TEXT_SEARCH_CHARS);
+});
+
+test('passesAyahTextSearchQueryGate accepts latin translit for bn, ur, ar', () => {
+    for (const code of ['bn', 'ur', 'ar']) {
+        assert.equal(
+            meetsMinTextSearchQuery('bismi allahi', code),
+            false,
+            `${code}: meal gate rejects latin`
+        );
+        assert.equal(
+            passesAyahTextSearchQueryGate('bismi allahi', code),
+            true,
+            `${code}: combined gate accepts latin translit`
+        );
+    }
 });
 
 test('localeSupportsMealTextSearch for meal locales', () => {

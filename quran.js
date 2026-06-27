@@ -21,7 +21,7 @@ import {
     localeSupportsAyahTextSearch,
     localeSupportsMealTextSearch,
     localeSupportsTranslitTextSearch,
-    meetsMinTextSearchQuery,
+    passesAyahTextSearchQueryGate,
     preloadAyahTextSearchIndex,
     searchAyahTextHits
 } from './quran-ayah-text-search.js';
@@ -410,7 +410,7 @@ function getQuranSearchSuggestionHits(query) {
 
     const scoped = parseScopedMealSearchQuery(q, surahIndex, locale);
     const searchQ = scoped ? scoped.text : q;
-    if (!meetsMinTextSearchQuery(searchQ, locale)) return [];
+    if (!passesAyahTextSearchQueryGate(searchQ, locale)) return [];
 
     const searchOpts = {
         limit: TEXT_SEARCH_SUGGESTION_LIMIT,
@@ -477,7 +477,7 @@ function renderQuranSearchSuggestions(query) {
     if (
         textProbe &&
         localeSupportsAyahTextSearch(locale) &&
-        meetsMinTextSearchQuery(textProbe, locale) &&
+        passesAyahTextSearchQueryGate(textProbe, locale) &&
         !isAyahTextSearchIndexReady(locale)
     ) {
         ensureAyahTextSearchIndexLoaded();
