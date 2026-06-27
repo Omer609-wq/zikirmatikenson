@@ -1087,10 +1087,15 @@ function captureReaderScrollSnapshot() {
     const scroller = getQuranReaderScroller();
     if (!scroller) return null;
     const layout = getCurrentReaderLayout();
+    // Liste modunda scrollTop, lazy yükleme/boşaltma ile bölüm yükseklikleri
+    // değiştiği için kararsızdır; geri yükleme yanlış ayete götürüyordu. Snapshot
+    // yalnızca mushaf'ta (sayfa-bazlı, kararlı) alınır. Liste modunda panel bir
+    // overlay olduğundan açılış/kapanış zaten okuma konumunu değiştirmez.
+    if (layout !== 'mushaf') return null;
     return {
         layout,
         scrollTop: scroller.scrollTop,
-        page: layout === 'mushaf' ? mushafCurrentPage : null
+        page: mushafCurrentPage
     };
 }
 
@@ -2918,8 +2923,12 @@ function attachReaderDrawerSwipe(panel, backdrop) {
         const onExitDone = (ev) => {
             if (ev.propertyName !== 'transform') return;
             panel.removeEventListener('transitionend', onExitDone);
-            resetSwipeTransform(false);
+            // Önce --open'ı kaldır (panel kapalı konumda kalsın), SONRA inline
+            // transform'u temizle. Ters sırada, --open hâlâ dururken transform
+            // silinince panel bir an açık konuma snap edip "yeniden açılıp kapanıyor"
+            // gibi görünüyordu.
             setQuranReaderDrawerOpen(false);
+            resetSwipeTransform(false);
         };
         panel.addEventListener('transitionend', onExitDone);
     }
