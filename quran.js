@@ -1078,6 +1078,74 @@ function restoreQuranReaderScrollTop(scroller, scrollTop) {
     });
 }
 
+function isReaderDrawerOpen() {
+    return document.documentElement.classList.contains('quran-drawer-open');
+}
+
+/** Sağ panel açılınca alt menü gizlenir; layout değişince okuma konumu kaybolmasın diye. */
+function captureReaderScrollSnapshot() {
+    const scroller = getQuranReaderScroller();
+    if (!scroller) return null;
+    const layout = getCurrentReaderLayout();
+    return {
+        layout,
+        scrollTop: scroller.scrollTop,
+        page: layout === 'mushaf' ? mushafCurrentPage : null
+    };
+}
+
+function restoreReaderScrollSnapshot(snapshot) {
+    if (!snapshot) return;
+    const scroller = getQuranReaderScroller();
+    if (!scroller) return;
+
+    if (
+        snapshot.layout === 'mushaf' &&
+        snapshot.page != null &&
+        snapshot.page >= 1 &&
+        snapshot.page !== mushafCurrentPage
+    ) {
+        const meal = getQuranReaderMealId();
+        const mode = getCurrentQuranReadMode();
+        void showMushafPage(snapshot.page, meal, mode, renderGeneration);
+        return;
+    }
+
+    restoreQuranReaderScrollTop(scroller, snapshot.scrollTop);
+    if (snapshot.layout === 'mushaf') {
+        scheduleMushafCanvasFill();
+    } else {
+        scheduleVisibleSurahLoad();
+    }
+}
+
+let readerScrollRestoreRaf = 0;
+let readerScrollRestoreTimer = 0;
+
+/** Bekleyen okuma-konumu geri yüklemesini iptal eder (örn. kullanıcı kasıtlı
+ *  başka bir sureye/ayete gidiyorsa, eski konuma geri dönülmemeli). */
+function cancelReaderScrollRestore() {
+    if (readerScrollRestoreRaf) {
+        cancelAnimationFrame(readerScrollRestoreRaf);
+        readerScrollRestoreRaf = 0;
+    }
+    if (readerScrollRestoreTimer) {
+        clearTimeout(readerScrollRestoreTimer);
+        readerScrollRestoreTimer = 0;
+    }
+}
+
+function scheduleReaderScrollRestoreAfterLayout(snapshot) {
+    cancelReaderScrollRestore();
+    if (!snapshot) return;
+    const run = () => {
+        cancelReaderScrollRestore();
+        restoreReaderScrollSnapshot(snapshot);
+    };
+    readerScrollRestoreRaf = requestAnimationFrame(() => requestAnimationFrame(run));
+    readerScrollRestoreTimer = window.setTimeout(run, 100);
+}
+
 function isAyahExpandSuppressed() {
     return Date.now() < ayahExpandSuppressUntil;
 }
@@ -1486,6 +1554,9 @@ function resolveMushafStartPage(surahN, scrollAyah, { forceSurahStart = false, p
         const saved = Number(mushafSettingsApi?.getSavedPage?.());
         if (saved >= 1 && saved <= MUSHAF_PAGE_COUNT) return saved;
     }
+    if (isQuranMushafDomActive() && mushafCurrentPage >= 1) {
+        return mushafCurrentPage;
+    }
     return getPageForAyah(surahN, 1);
 }
 
@@ -1884,7 +1955,7 @@ function setupLazyObserver(meal, readMode, readerLayout = DEFAULT_QURAN_READER_L
 
                 const rect = section.getBoundingClientRect();
                 const gap = Math.max(rootRect.top - rect.bottom, rect.top - rootRect.bottom, 0);
-                if (gap > unloadDistance) {
+                if (gap > unloadDistance && !isReaderDrawerOpen()) {
                     unloadSurahSection(section);
                 }
             });
@@ -2082,6 +2153,7 @@ function setQuranReaderDrawerOpen(open) {
     const menuBtn = document.getElementById('quranReaderMenuBtn');
     if (!drawer) return;
     const isOpen = !!open;
+    const scrollSnapshot = captureReaderScrollSnapshot();
     if (isOpen) {
         // Soguk-gecisi onle: once paneli gorunur kil (prep) ve baslangic konumunu
         // reflow ile commit et; sonraki frame'de --open ekleyince transition akar.
@@ -2127,6 +2199,7 @@ function setQuranReaderDrawerOpen(open) {
         }
         document.dispatchEvent(new CustomEvent('quran-reader-drawer-close'));
     }
+    scheduleReaderScrollRestoreAfterLayout(scrollSnapshot);
 }
 
 function setQuranGotoError(message) {
@@ -2196,6 +2269,10 @@ function submitQuranAyahGoto() {
 
     setQuranGotoError('');
     setQuranReaderDrawerOpen(false);
+    // Panel kapanışı okuma konumunu geri yüklemeye çalışır; ama burada kullanıcı
+    // kasıtlı olarak başka bir sure/ayete gidiyor — bekleyen geri yüklemeyi iptal et,
+    // yoksa navigasyon ~100ms sonra eski konuma ezilir.
+    cancelReaderScrollRestore();
     if (navigateToSurah) navigateToSurah(result.surah, result.ayah);
 }
 
@@ -2218,6 +2295,8 @@ export async function renderQuranSurahDetail(
     const leavingMushaf = !!mushafNav.leavingMushaf;
     const targetIsMushaf = layout === 'mushaf';
     const forceShell = wasMushafAtStart !== targetIsMushaf || leavingMushaf;
+    const savedReaderScrollTop =
+        !targetIsMushaf && !leavingMushaf ? getQuranReaderScroller()?.scrollTop ?? null : null;
     const gen = ++renderGeneration;
     syncMealSelect(meal, locale);
     syncReaderTitle();
@@ -2276,6 +2355,8 @@ export async function renderQuranSurahDetail(
                 mode,
                 gen
             );
+        } else if (savedReaderScrollTop != null && savedReaderScrollTop > 0) {
+            restoreQuranReaderScrollTop(getQuranReaderScroller(), savedReaderScrollTop);
         } else {
             await scrollToSurahSection(n, layout, meal, mode, gen);
         }
