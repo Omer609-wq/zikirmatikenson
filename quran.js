@@ -2446,9 +2446,49 @@ export async function renderQuranSurahDetail(
     }
 }
 
+let updateSurahScrollNav = () => {};
+
+// Sure listesinde "başa/sona git" oklarini bagla (bir kez). Oklar ekranin
+// dikey ortasinda; en ustte ust ok, en altta alt ok gizlenir.
+function ensureSurahScrollNavBound() {
+    const scroller = document.querySelector('#quranView .main-content.scrollable');
+    const upBtn = document.getElementById('quranSurahScrollUp');
+    const downBtn = document.getElementById('quranSurahScrollDown');
+    if (!scroller || !upBtn || !downBtn) return;
+    if (scroller.dataset.surahScrollNavBound === '1') return;
+    scroller.dataset.surahScrollNavBound = '1';
+
+    let rafPending = false;
+    const apply = () => {
+        rafPending = false;
+        const surahsPanel = document.getElementById('quranSurahsPanel');
+        const onSurahsTab = !!surahsPanel && !surahsPanel.hidden;
+        const max = scroller.scrollHeight - scroller.clientHeight;
+        const top = scroller.scrollTop;
+        const scrollable = max > 60;
+        upBtn.hidden = !onSurahsTab || !scrollable || top <= 8;
+        downBtn.hidden = !onSurahsTab || !scrollable || top >= max - 8;
+    };
+    updateSurahScrollNav = () => {
+        if (rafPending) return;
+        rafPending = true;
+        requestAnimationFrame(apply);
+    };
+
+    scroller.addEventListener('scroll', updateSurahScrollNav, { passive: true });
+    upBtn.addEventListener('click', () => scroller.scrollTo({ top: 0, behavior: 'smooth' }));
+    downBtn.addEventListener('click', () =>
+        scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' })
+    );
+    updateSurahScrollNav();
+}
+
 export function renderQuranSurahList() {
     const list = document.getElementById('quranSurahList');
     if (!list) return;
+
+    ensureSurahScrollNavBound();
+    requestAnimationFrame(() => updateSurahScrollNav());
 
     ensureAyahTextSearchIndexLoaded();
 
@@ -2575,6 +2615,7 @@ function syncQuranViewTabsUI() {
     const favPanel = document.getElementById('quranFavoritesPanel');
     if (surahsPanel) surahsPanel.hidden = quranViewTab !== 'surahs';
     if (favPanel) favPanel.hidden = quranViewTab !== 'favorites';
+    updateSurahScrollNav();
 }
 
 export function setQuranViewTab(tab) {

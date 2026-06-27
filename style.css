@@ -2335,6 +2335,36 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
     gap: 0.65rem;
     margin-top: 1rem;
 }
+
+/* Sure listesinde hızlı başa/sona gitme okları (ekran ortasında dikey) */
+.quran-surah-scroll-nav {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 1px solid var(--surface-border, rgba(255, 255, 255, 0.12));
+    background: var(--surface-card, rgba(18, 26, 36, 0.92));
+    color: var(--text-white);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.9;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.2s ease, transform 0.15s ease, background 0.2s ease;
+}
+.quran-surah-scroll-nav[hidden] { display: none; }
+.quran-surah-scroll-nav .material-icons-outlined { font-size: 28px; }
+.quran-surah-scroll-nav--up { top: 30%; }
+.quran-surah-scroll-nav--down { bottom: 30%; }
+.quran-surah-scroll-nav:active { transform: translateX(-50%) scale(0.92); }
+@media (hover: hover) {
+    .quran-surah-scroll-nav:hover { opacity: 1; background: var(--icon-hover-bg, rgba(40, 52, 66, 0.96)); }
+}
 .quran-surah-card {
     display: flex;
     align-items: center;
