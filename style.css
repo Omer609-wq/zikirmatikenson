@@ -262,7 +262,11 @@ body {
     justify-content: center;
     transition: background 0.2s;
 }
-.icon-btn:hover { background: var(--icon-hover-bg, rgba(255, 255, 255, 0.1)); }
+/* :hover yalnızca gerçek imleç (mouse) olan cihazlarda uygulanır; dokunmatikte
+   :hover dokunuş sonrası takılıp butonun arkasında yuvarlak iz bırakıyordu. */
+@media (hover: hover) {
+    .icon-btn:hover { background: var(--icon-hover-bg, rgba(255, 255, 255, 0.1)); }
+}
 
 /* ================== BOTTOM NAV ================== */
 .bottom-nav {
