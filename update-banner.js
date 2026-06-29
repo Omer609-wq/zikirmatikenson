@@ -1,13 +1,15 @@
 /**
  * Güncelleme duyurusu (ana ekran / Klasörlerim).
  * Görünüm: style.css → .update-banner--teaser (altın kart, nabız, dokununca modal).
- * İçerik: GitHub public/update-banner.json (latestVersionCode, title, message).
+ * İçerik: public/update-banner.json (latestVersionCode, title, message).
+ * jsDelivr CDN üzerinden sunulur (kaynak: GitHub @main); git push ile güncellenir.
+ * Acil purge: https://purge.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/update-banner.json
  * Test: UPDATE_BANNER_PREVIEW = true. Yayında: false (kapalı).
  */
 import { Capacitor } from '@capacitor/core';
 
 export const UPDATE_BANNER_CONFIG_URL =
-    'https://raw.githubusercontent.com/Omer609-wq/zikirmatikenson/main/public/update-banner.json';
+    'https://cdn.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/update-banner.json';
 
 export const UPDATE_BANNER_DISABLED = false;
 

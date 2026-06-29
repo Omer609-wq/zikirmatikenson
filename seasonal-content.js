@@ -1,12 +1,15 @@
 /**
- * Özel gün / gece zikirleri — GitHub public/seasonal-content.json
+ * Özel gün / gece zikirleri — public/seasonal-content.json
+ * jsDelivr CDN üzerinden sunulur (kaynak: GitHub @main). Edge cache ölçeği
+ * korur; içeriği git push ile güncellersin. Acil güncellemede cache purge:
+ * https://purge.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/seasonal-content.json
  * Tarih aralığı: start ≤ now < end (ISO 8601, örn. Europe/Istanbul +03:00)
  * Test: SEASONAL_CONTENT_PREVIEW = true
  */
 import { Capacitor } from '@capacitor/core';
 
 export const SEASONAL_CONTENT_URL =
-    'https://raw.githubusercontent.com/Omer609-wq/zikirmatikenson/main/public/seasonal-content.json';
+    'https://cdn.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/seasonal-content.json';
 
 export const SEASONAL_CONTENT_DISABLED = false;
 
