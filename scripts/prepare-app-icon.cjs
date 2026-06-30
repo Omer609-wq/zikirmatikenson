@@ -6,21 +6,24 @@
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
-const { BG_HEX, BG_RGB, SHARPEN, applySharpen } = require('./icon-colors.cjs');
+const { BG_HEX, BG_RGB } = require('./icon-colors.cjs');
 
 const ROOT = path.join(__dirname, '..');
+const argv = process.argv.slice(2);
+const LAUNCHER_ONLY = argv.includes('--launcher-only');
+const cliArgs = argv.filter((a) => !a.startsWith('--'));
 const src =
-    process.argv[2] ||
-    path.join(ROOT, 'resources', 'app-icon-source.png');
-const scaleArg = parseFloat(process.argv[3], 10);
+    cliArgs[0] || path.join(ROOT, 'resources', 'app-icon-source.png');
+const scaleArg = parseFloat(cliArgs[1], 10);
 const appIcon = path.join(ROOT, 'resources', 'app-icon.png');
 const master = path.join(ROOT, 'resources', 'app-icon-1920.png');
 const playIcon = path.join(ROOT, 'resources', 'play-console-icon-512.png');
+const LAUNCHER_SIZE = 1024;
 /** Launcher — kaynak tam ikon kompozisyonu (çerçeve + filigran dahil) */
-const SYMBOL_SCALE = Number.isFinite(scaleArg) ? scaleArg : 0.95;
-/** Play Console ikonu launcher ile aynı kompozisyon (ayrı ölçek gerekirse CLI arg 4) */
-const playScaleArg = parseFloat(process.argv[4], 10);
-const PLAY_STORE_SCALE = Number.isFinite(playScaleArg) ? playScaleArg : SYMBOL_SCALE;
+const SYMBOL_SCALE = Number.isFinite(scaleArg) ? scaleArg : LAUNCHER_ONLY ? 1 : 0.95;
+/** Play Console — maske yok, amblem daha dolu; launcher’dan ayrı ölçek (CLI arg 3) */
+const playScaleArg = parseFloat(cliArgs[2], 10);
+const PLAY_STORE_SCALE = Number.isFinite(playScaleArg) ? playScaleArg : 1.0;
 /** Programatik çerçeve — yeni kaynakta çerçeve/filigran gömülü */
 const ADD_GOLD_FRAME = false;
 
@@ -28,6 +31,87 @@ const RESIZE = { kernel: sharp.kernel.lanczos3 };
 
 function bgCss() {
     return `rgb(${BG_RGB.r}, ${BG_RGB.g}, ${BG_RGB.b})`;
+}
+
+function isGoldPixel(r, g, b) {
+    const { r: tr, g: tg, b: tb } = BG_RGB;
+    if (Math.abs(r - tr) < 10 && Math.abs(g - tg) < 10 && Math.abs(b - tb) < 10) return false;
+    return r > 95 && g > 65 && b < 135 && r >= g - 35 && r + g > b + 70;
+}
+
+/** Altın gölge / kenar pikselleri korunur; geri kalan zemin tek renge çekilir */
+function isEmblemPixel(r, g, b) {
+    if (isGoldPixel(r, g, b)) return true;
+    const { r: tr, g: tg, b: tb } = BG_RGB;
+    if (Math.abs(r - tr) < 5 && Math.abs(g - tg) < 5 && Math.abs(b - tb) < 5) return false;
+    const lum = r * 0.299 + g * 0.587 + b * 0.114;
+    if (lum >= 34 && lum <= 125 && r >= 36 && g >= 24 && b <= 98 && r + 8 >= b) return true;
+    if (lum > 118 && r > 92 && g > 68 && b < 165 && r + g > b + 55) return true;
+    return false;
+}
+
+function shouldFlattenToBg(r, g, b) {
+    if (isEmblemPixel(r, g, b)) return false;
+    const { r: tr, g: tg, b: tb } = BG_RGB;
+    const dr = r - tr;
+    const dg = g - tg;
+    const db = b - tb;
+    const dist = Math.sqrt(dr * dr + dg * dg + db * db);
+    const lum = (r + g + b) / 3;
+    if (dist <= 32) return true;
+    if (g > r + 20 && g > b + 12 && g > 40 && lum < 100) return true;
+    return false;
+}
+
+async function solidifyFlatBackground(buf, width, height) {
+    const { data, info } = await sharp(buf).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    const ch = info.channels;
+    const emblem = new Uint8Array(width * height);
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const i = (y * width + x) * ch;
+            if (isEmblemPixel(data[i], data[i + 1], data[i + 2])) emblem[y * width + x] = 1;
+        }
+    }
+    const keep = new Uint8Array(width * height);
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const idx = y * width + x;
+            if (emblem[idx]) {
+                keep[idx] = 1;
+                continue;
+            }
+            for (let dy = -1; dy <= 1; dy++) {
+                for (let dx = -1; dx <= 1; dx++) {
+                    const ny = y + dy;
+                    const nx = x + dx;
+                    if (ny < 0 || ny >= height || nx < 0 || nx >= width) continue;
+                    if (emblem[ny * width + nx]) {
+                        keep[idx] = 1;
+                        break;
+                    }
+                }
+                if (keep[idx]) break;
+            }
+        }
+    }
+    const { r: tr, g: tg, b: tb } = BG_RGB;
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const idx = y * width + x;
+            if (keep[idx]) continue;
+            const i = idx * ch;
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            if (!shouldFlattenToBg(r, g, b)) continue;
+            data[i] = tr;
+            data[i + 1] = tg;
+            data[i + 2] = tb;
+            if (ch === 4) data[i + 3] = 255;
+        }
+    }
+    return sharp(data, { raw: { width, height, channels: ch } }).png().toBuffer();
 }
 
 async function normalizeGreenBg(buf, width, height) {
@@ -42,25 +126,36 @@ async function normalizeGreenBg(buf, width, height) {
             data[i] = tr;
             data[i + 1] = tg;
             data[i + 2] = tb;
+            if (ch === 4) data[i + 3] = 255;
         }
     }
     return sharp(data, { raw: { width, height, channels: ch } }).png().toBuffer();
 }
 
-function exportPng(pipeline, dest, size) {
-    return applySharpen(
-        pipeline.resize(size, size, RESIZE),
-        size >= 1024 ? SHARPEN.light1024 : SHARPEN.light512
-    )
-        .png({ compressionLevel: 6, effort: 10 })
+function exportPngFromSquare(squareBuf, dest, size) {
+    const pipeline = sharp(squareBuf);
+    const sized =
+        size === LAUNCHER_SIZE ? pipeline : pipeline.resize(size, size, RESIZE);
+    return sized
+        .flatten({ background: BG_RGB })
+        .png({ compressionLevel: 0, effort: 1 })
         .toFile(dest);
 }
 
-/** Play Console: 512×512, opak zemin, ≤1 MB */
-async function exportPlayStoreIcon(squareBuf, dest) {
-    const buf = await applySharpen(sharp(squareBuf).resize(512, 512, RESIZE), SHARPEN.light512)
+/** 1024 kare kaynak + %100 ölçek: yeniden boyutlandırma yok, netlik korunur */
+async function exportLauncherPassthrough(buf, dest) {
+    await sharp(buf)
         .flatten({ background: BG_RGB })
-        .png({ compressionLevel: 6, effort: 10 })
+        .png({ compressionLevel: 0, effort: 1 })
+        .toFile(dest);
+}
+
+/** Play Console: tek küçültme 1024→512, ek işlem yok */
+async function exportPlayStoreIcon(playBuf, dest) {
+    const buf = await sharp(playBuf)
+        .resize(512, 512, RESIZE)
+        .flatten({ background: BG_RGB })
+        .png({ compressionLevel: 2, effort: 10 })
         .toBuffer();
     const kb = buf.length / 1024;
     if (kb > 1024) {
@@ -68,12 +163,6 @@ async function exportPlayStoreIcon(squareBuf, dest) {
     }
     await fs.promises.writeFile(dest, buf);
     return kb;
-}
-
-function isGoldPixel(r, g, b) {
-    const { r: tr, g: tg, b: tb } = BG_RGB;
-    if (Math.abs(r - tr) < 10 && Math.abs(g - tg) < 10 && Math.abs(b - tb) < 10) return false;
-    return r > 95 && g > 65 && b < 135 && r >= g - 35 && r + g > b + 70;
 }
 
 function rgbCss({ r, g, b }) {
@@ -236,8 +325,8 @@ async function buildFramePng(canvas, bbox, stroke, gap, gold) {
     return sharp(frameRingSvg(canvas, bbox, stroke, gap, gold)).png().toBuffer();
 }
 
-async function buildSquareCanvas(normalizedBuf, width, height, scale, frameOpts = null) {
-    const canvas = Math.max(width, height);
+async function buildSquareCanvas(normalizedBuf, width, height, scale, frameOpts = null, canvasSize = null) {
+    const canvas = canvasSize || Math.max(width, height);
     const fit = (canvas * scale) / Math.max(width, height);
     const scaledW = Math.round(width * fit);
     const scaledH = Math.round(height * fit);
@@ -311,8 +400,8 @@ if (!fs.existsSync(src)) {
             : await sharp(src).trim({ threshold: 15, background: BG_HEX }).png().toBuffer();
     const { width: w, height: h } = await sharp(trimmedBuf).metadata();
     console.log('source', w, 'x', h);
-    const normalizedBuf = await normalizeGreenBg(trimmedBuf, w, h);
-    const goldMeta = ADD_GOLD_FRAME ? await analyzeGoldGeometry(normalizedBuf, w, h) : null;
+    const workBuf = trimmedBuf;
+    const goldMeta = ADD_GOLD_FRAME ? await analyzeGoldGeometry(workBuf, w, h) : null;
     if (goldMeta) {
         console.log(
             'stroke',
@@ -324,8 +413,18 @@ if (!fs.existsSync(src)) {
         );
     }
 
+    const passthrough =
+        LAUNCHER_ONLY && w === h && w === LAUNCHER_SIZE && SYMBOL_SCALE === 1;
+
+    if (passthrough) {
+        await exportLauncherPassthrough(workBuf, appIcon);
+        console.log('launcher: 1024 doğrudan (ölçekleme/işlem yok)', 'bg', BG_HEX);
+        console.log('saved', path.relative(ROOT, appIcon));
+        return;
+    }
+
     const squareBuf = await buildSquareCanvas(
-        normalizedBuf,
+        workBuf,
         w,
         h,
         SYMBOL_SCALE,
@@ -333,11 +432,16 @@ if (!fs.existsSync(src)) {
     );
     console.log('launcher symbol scale', Math.round(SYMBOL_SCALE * 100) + '%', 'bg', BG_HEX);
 
+    await exportPngFromSquare(squareBuf, appIcon, LAUNCHER_SIZE);
+    console.log('saved', path.relative(ROOT, appIcon));
+
+    if (LAUNCHER_ONLY) return;
+
     const playBuf =
         PLAY_STORE_SCALE === SYMBOL_SCALE
             ? squareBuf
             : await buildSquareCanvas(
-                  normalizedBuf,
+                  workBuf,
                   w,
                   h,
                   PLAY_STORE_SCALE,
@@ -345,11 +449,9 @@ if (!fs.existsSync(src)) {
               );
     console.log('play store symbol scale', Math.round(PLAY_STORE_SCALE * 100) + '%');
 
-    await exportPng(sharp(squareBuf), master, 1920);
-    await exportPng(sharp(squareBuf), appIcon, 1024);
+    await exportPngFromSquare(squareBuf, master, 1920);
     const playKb = await exportPlayStoreIcon(playBuf, playIcon);
     console.log('saved', path.relative(ROOT, master));
-    console.log('saved', path.relative(ROOT, appIcon));
     console.log('saved', path.relative(ROOT, playIcon), `(${playKb.toFixed(1)} KB, Play Console)`);
 })().catch((e) => {
     console.error(e);

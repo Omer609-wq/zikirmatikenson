@@ -12,7 +12,7 @@ const logoPath = path.join(ROOT, 'resources', 'play-console-icon-512.png');
 const outPath = path.join(ROOT, 'resources', 'play-feature-1024x500.png');
 
 const RESIZE = { kernel: sharp.kernel.lanczos3 };
-const LOGO = 308;
+const LOGO = 340;
 const OUT_H = 500;
 
 /** Play özellik grafiği — global listing ile uyumlu, reklamsız vurgusu */
@@ -159,7 +159,7 @@ async function solidRect(w, h, rgb) {
     const logoLeft = cx - Math.round(LOGO / 2);
     const logoTop = cy - Math.round(LOGO / 2);
 
-    const logoBuf = await applySharpen(sharp(logoPath).resize(LOGO, LOGO, RESIZE), SHARPEN.light512)
+    const logoBuf = await applySharpen(sharp(logoPath).resize(LOGO, LOGO, RESIZE), SHARPEN.play512)
         .png()
         .toBuffer();
     const logoCut = await logoWithTransparentBg(logoBuf, LOGO, LOGO);

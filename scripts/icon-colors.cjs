@@ -1,11 +1,13 @@
 /** Launcher / ikon yeşil zemin — prepare + patch + cap:icons aynı renk */
-/** Ek keskinleştirme — hafif preset (karşılaştırmada onaylanan) */
-const SHARPEN_ENABLED = true;
+/** Ek keskinleştirme — kaynak zaten netse kapalı */
+const SHARPEN_ENABLED = false;
 
 const SHARPEN = {
     /** Hafif ince ayar — karşılaştırma / isteğe bağlı üretim */
     light1024: { sigma: 0.42, m1: 0.45, m2: 2.0 },
     light512: { sigma: 0.48, m1: 0.47, m2: 2.15 },
+    /** Play Console 512 — hafif + son küçültme sonrası */
+    play512: { sigma: 0.44, m1: 0.46, m2: 2.05 },
     /** Kaynak ölçeklendirmeden sonra (1024 kanvas) */
     composite: { sigma: 0.72, m1: 0.5, m2: 2.6 },
     /** 1024 / 1920 dışa aktarım */

@@ -13,6 +13,7 @@
         "cap:open:android": "npx cap open android",
         "cap:icons": "node scripts/ensure-icon-source.cjs && capacitor-assets generate --android --pwa --assetPath resources --iconBackgroundColor \"#122a1c\" --pwaManifestPath public/manifest.json && node scripts/patch-adaptive-icon.cjs",
         "cap:icon:prepare": "node scripts/prepare-app-icon.cjs",
+        "cap:icon:launcher": "node scripts/prepare-app-icon.cjs --launcher-only && npm run cap:icons",
         "cap:icon:compare": "node scripts/compare-icon-sharpen.cjs",
         "cap:feature-graphic": "node scripts/generate-play-feature.cjs",
         "cap:play-store": "node scripts/prepare-app-icon.cjs && node scripts/generate-play-feature.cjs && node scripts/verify-play-store-assets.cjs",
