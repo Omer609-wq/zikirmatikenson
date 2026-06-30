@@ -4,7 +4,7 @@
  */
 const path = require('path');
 const sharp = require('sharp');
-const { BG_RGB } = require('./icon-colors.cjs');
+const { BG_RGB, SHARPEN, applySharpen } = require('./icon-colors.cjs');
 
 const ROOT = path.join(__dirname, '..');
 const basePath = path.join(ROOT, 'resources', 'play-feature-base.png');
@@ -159,7 +159,9 @@ async function solidRect(w, h, rgb) {
     const logoLeft = cx - Math.round(LOGO / 2);
     const logoTop = cy - Math.round(LOGO / 2);
 
-    const logoBuf = await sharp(logoPath).resize(LOGO, LOGO, RESIZE).sharpen({ sigma: 0.5 }).png().toBuffer();
+    const logoBuf = await applySharpen(sharp(logoPath).resize(LOGO, LOGO, RESIZE), SHARPEN.light512)
+        .png()
+        .toBuffer();
     const logoCut = await logoWithTransparentBg(logoBuf, LOGO, LOGO);
     const patchPad = 6;
     const patchBuf = await solidRect(LOGO + patchPad * 2, LOGO + patchPad * 2, bgAt());

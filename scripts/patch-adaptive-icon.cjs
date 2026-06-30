@@ -6,7 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
-const { BG_HEX } = require('./icon-colors.cjs');
+const { BG_HEX, SHARPEN, SHARPEN_ENABLED, applySharpen } = require('./icon-colors.cjs');
 
 const ROOT = path.join(__dirname, '..');
 const COLOR_HEX = BG_HEX;
@@ -45,9 +45,9 @@ const appIcon = path.join(ROOT, 'resources', 'app-icon.png');
 const pwaDir = path.join(ROOT, 'public', 'assets', 'icons');
 
 function sharpenSigmaForPx(px) {
-    if (px <= 72) return 0.4;
-    if (px <= 192) return 0.55;
-    return 0.7;
+    if (px <= 72) return { sigma: 0.38, m1: 0.42, m2: 1.9 };
+    if (px <= 192) return { sigma: 0.44, m1: 0.45, m2: 2.05 };
+    return SHARPEN.light512;
 }
 
 async function sharpenMipmapTree() {
@@ -58,9 +58,13 @@ async function sharpenMipmapTree() {
         const folder = path.join(resRoot, dir);
         const fg = path.join(folder, 'ic_launcher_foreground.png');
         if (!fs.existsSync(fg)) continue;
-        const out = await sharp(fg).sharpen({ sigma: 0.65 }).png({ compressionLevel: 6 }).toBuffer();
-        fs.writeFileSync(fg, out);
-        console.log('sharpened', path.relative(ROOT, fg));
+        const out = await applySharpen(sharp(fg), SHARPEN.light512)
+            .png({ compressionLevel: 6 })
+            .toBuffer();
+        if (SHARPEN_ENABLED) {
+            fs.writeFileSync(fg, out);
+            console.log('sharpened', path.relative(ROOT, fg));
+        }
     }
 }
 
@@ -69,9 +73,7 @@ async function regeneratePwaIcons() {
     fs.mkdirSync(pwaDir, { recursive: true });
     for (const size of PWA_SIZES) {
         const dest = path.join(pwaDir, `icon-${size}.webp`);
-        const out = await sharp(appIcon)
-            .resize(size, size, RESIZE)
-            .sharpen({ sigma: sharpenSigmaForPx(size) })
+        const out = await applySharpen(sharp(appIcon).resize(size, size, RESIZE), sharpenSigmaForPx(size))
             .webp({ quality: 95, effort: 6, smartSubsample: false })
             .toBuffer();
         fs.writeFileSync(dest, out);
