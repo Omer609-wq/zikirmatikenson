@@ -5,6 +5,9 @@ import { SystemChrome } from './system-chrome.js';
 
 /** İlk slot; ardışık id’ler kullanılır (günlük tekrar için çoklu tek-sefer alarm). */
 const REMINDER_BASE_ID = 9001;
+/** Premium akıllı hatırlatıcılar */
+const SMART_REMINDER_BASE_ID = 9100;
+const SMART_REMINDER_CANCEL_COUNT = 500;
 /** Kaç gün önceden planlansın (uygulama açılmadan ardışık günler). */
 const REMINDER_DAYS_AHEAD = 28;
 /** Eski tek-id veya önceki yığın için iptal aralığı. */
@@ -164,12 +167,27 @@ export async function openExactAlarmSettings() {
     }
 }
 
-export function isReminderNotificationId(id) {
-    const n = Number(id);
-    return Number.isFinite(n) && n >= REMINDER_BASE_ID && n < REMINDER_BASE_ID + REMINDER_CANCEL_COUNT;
+export const WEEKLY_REPORT_NOTIFICATION_ID = 9200;
+
+export function isWeeklyReportNotificationId(id) {
+    return Number(id) === WEEKLY_REPORT_NOTIFICATION_ID;
 }
 
-/** Bildirime dokununca ana ekrana yönlendir (native). */
+export function isReminderNotificationId(id) {
+    const n = Number(id);
+    return (
+        (Number.isFinite(n) && n >= REMINDER_BASE_ID && n < REMINDER_BASE_ID + REMINDER_CANCEL_COUNT) ||
+        isSmartReminderNotificationId(id) ||
+        isWeeklyReportNotificationId(id)
+    );
+}
+
+export function isSmartReminderNotificationId(id) {
+    const n = Number(id);
+    return Number.isFinite(n) && n >= SMART_REMINDER_BASE_ID && n < SMART_REMINDER_BASE_ID + SMART_REMINDER_CANCEL_COUNT;
+}
+
+/** Bildirime dokununca uygulamayı aç (native). */
 export function bindNativeReminderNotificationLaunch(onOpen) {
     if (!isCapacitorNative() || reminderNotificationLaunchBound) return;
     reminderNotificationLaunchBound = true;
@@ -177,7 +195,8 @@ export function bindNativeReminderNotificationLaunch(onOpen) {
     void LocalNotifications.addListener('localNotificationActionPerformed', (action) => {
         const id = action?.notification?.id;
         if (!isReminderNotificationId(id)) return;
-        if (typeof onOpen === 'function') onOpen();
+        const extra = action?.notification?.extra;
+        if (typeof onOpen === 'function') onOpen(extra && typeof extra === 'object' ? extra : null);
     });
 }
 
@@ -205,17 +224,7 @@ export async function syncNativeDailyReminder(enabled, timeStr, locale = 'tr') {
     if (Number.isNaN(hh) || Number.isNaN(mm)) return { ok: false, reason: 'badtime' };
 
     if (Capacitor.getPlatform() === 'android') {
-        try {
-            await LocalNotifications.createChannel({
-                id: 'reminders',
-                name: 'Hatırlatıcılar',
-                description: 'Günlük zikir hatırlatıcısı',
-                importance: 4,
-                visibility: 1
-            });
-        } catch {
-            /* kanal zaten var olabilir */
-        }
+        await ensureReminderChannels();
     }
 
     /*
@@ -264,6 +273,107 @@ export async function syncNativeDailyReminder(enabled, timeStr, locale = 'tr') {
         return { ok: true };
     } catch (e) {
         console.error('LocalNotifications.schedule', e);
+        return { ok: false, reason: 'schedule' };
+    }
+}
+
+async function cancelSmartReminderSlots() {
+    const notifications = [];
+    for (let i = 0; i < SMART_REMINDER_CANCEL_COUNT; i++) {
+        notifications.push({ id: SMART_REMINDER_BASE_ID + i });
+    }
+    try {
+        await LocalNotifications.cancel({ notifications });
+    } catch {
+        /* yok say */
+    }
+}
+
+async function ensureReminderChannels() {
+    if (!isCapacitorNative() || Capacitor.getPlatform() !== 'android') return;
+    try {
+        await LocalNotifications.createChannel({
+            id: 'reminders',
+            name: 'Hatırlatıcılar',
+            description: 'Günlük zikir hatırlatıcısı',
+            importance: 4,
+            visibility: 1,
+            vibration: true
+        });
+        await LocalNotifications.createChannel({
+            id: 'reminders-quiet',
+            name: 'Hatırlatıcılar (sessiz)',
+            description: 'Titreşimsiz hatırlatıcılar',
+            importance: 4,
+            visibility: 1,
+            vibration: false
+        });
+    } catch {
+        /* kanal zaten var olabilir */
+    }
+}
+
+/**
+ * @param {{ at: Date, body: string, vibrate?: boolean, extra?: object }[]} slots
+ * @returns {Promise<{ ok: boolean, reason?: string, warnExactAlarm?: boolean }>}
+ */
+export async function syncNativeSmartReminders(slots) {
+    if (!isCapacitorNative()) return { ok: true };
+
+    await cancelSmartReminderSlots();
+    if (!slots.length) return { ok: true };
+
+    let perm = await LocalNotifications.checkPermissions().catch(() => ({ display: 'prompt' }));
+    if (perm.display !== 'granted') {
+        try {
+            perm = await LocalNotifications.requestPermissions();
+        } catch (e) {
+            console.error('LocalNotifications.requestPermissions', e);
+            return { ok: false, reason: 'denied' };
+        }
+    }
+    if (perm.display !== 'granted') {
+        return { ok: false, reason: perm.display === 'denied' ? 'denied' : 'default' };
+    }
+
+    await ensureReminderChannels();
+
+    const notifications = slots.map((slot, i) => {
+        const n = {
+            id: SMART_REMINDER_BASE_ID + i,
+            title: '',
+            body: slot.body || '',
+            schedule: {
+                at: slot.at.toISOString()
+            },
+            extra: slot.extra || { openApp: true, view: 'homeView' }
+        };
+        if (Capacitor.getPlatform() === 'android') {
+            n.schedule.allowWhileIdle = true;
+            n.channelId = slot.vibrate === false ? 'reminders-quiet' : 'reminders';
+            n.smallIcon = ANDROID_NOTIFICATION_ICONS.smallIcon;
+            n.largeIcon = ANDROID_NOTIFICATION_ICONS.largeIcon;
+            n.iconColor = ANDROID_NOTIFICATION_ICONS.iconColor;
+            n.autoCancel = true;
+        }
+        return n;
+    });
+
+    try {
+        await LocalNotifications.schedule({ notifications });
+        if (Capacitor.getPlatform() === 'android') {
+            try {
+                const st = await LocalNotifications.checkExactNotificationSetting();
+                if (st && st.exact_alarm !== 'granted') {
+                    return { ok: true, warnExactAlarm: true };
+                }
+            } catch {
+                /* Android < 12 */
+            }
+        }
+        return { ok: true };
+    } catch (e) {
+        console.error('LocalNotifications.schedule smart', e);
         return { ok: false, reason: 'schedule' };
     }
 }

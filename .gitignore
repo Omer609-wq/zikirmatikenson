@@ -8,5 +8,6 @@ dist/
 .idea/
 .capacitor/
 android/app/google-services.json
+public/firebase-config.json
 android/*.jks
 android/keystore.properties

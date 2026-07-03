@@ -10,6 +10,7 @@ import urUi from './locales/ur.json';
 import libraryTr from './data/library/tr.json';
 import libraryEn from './data/library/en.json';
 import libraryBn from './data/library/bn.json';
+import libraryUr from './data/library/ur.json';
 import libraryAr from './data/library/ar.json';
 import libraryPremiumTr from './data/library/premium-tr.json';
 import libraryPremiumId from './data/library/premium-id.json';
@@ -107,6 +108,7 @@ const UI_BY_LOCALE = { tr: trUi, en: enUi, id: idUi, ms: msUi, fr: frUi, bn: bnU
 
 const libraryContextEnById = new Map((libraryEn || []).map((item) => [item.id, item]));
 const libraryBnById = new Map((libraryBn || []).map((item) => [item.id, item]));
+const libraryUrById = new Map((libraryUr || []).map((item) => [item.id, item]));
 const libraryArById = new Map((libraryAr || []).map((item) => [item.id, item]));
 const libraryTrById = new Map([
     ...(libraryTr || []).map((item) => [item.id, item]),
@@ -116,7 +118,7 @@ const libraryPremiumEnById = new Map((libraryPremiumId || []).map((item) => [ite
 
 const LIBRARY_BY_LOCALE = {
     tr: { base: libraryTr, premium: libraryPremiumTr },
-    en: { base: libraryEn, premium: [] },
+    en: { base: libraryEn, premium: libraryPremiumId },
     id: { base: libraryEn, premium: libraryPremiumId },
     ms: { base: libraryEn, premium: libraryPremiumId },
     fr: { base: libraryEn, premium: libraryPremiumId },
@@ -180,7 +182,7 @@ function mergeLibraryItem(base, overlay) {
     return merged;
 }
 
-/** Kütüphane okunuş adı: TR Latin; AR Arapça; BN Bengalce; diğerleri en.json Latin. */
+/** Kütüphane okunuş adı: TR Latin; AR Arapça; BN Bengalce; UR Urduca; diğerleri en.json Latin. */
 export function getLibraryNameForLocale(id, locale) {
     const base = libraryTrById.get(id);
     if (!base) return '';
@@ -196,6 +198,10 @@ export function getLibraryNameForLocale(id, locale) {
         const bn = libraryBnById.get(id);
         if (bn && bn.name) return String(bn.name).trim();
     }
+    if (code === 'ur') {
+        const ur = libraryUrById.get(id);
+        if (ur && ur.name) return String(ur.name).trim();
+    }
     const en = libraryContextEnById.get(id) || libraryPremiumEnById.get(id);
     if (en && en.name) return String(en.name).trim();
     return String(base.name || '').trim();
@@ -206,11 +212,13 @@ export function getKnownLibraryNameTexts(id) {
     const tr = libraryTrById.get(id);
     const en = libraryContextEnById.get(id) || libraryPremiumEnById.get(id);
     const bn = libraryBnById.get(id);
+    const ur = libraryUrById.get(id);
     const ar = libraryArById.get(id);
     if (tr && tr.name) known.add(String(tr.name).trim());
     if (tr && tr.arabic) known.add(String(tr.arabic).trim());
     if (en && en.name) known.add(String(en.name).trim());
     if (bn && bn.name) known.add(String(bn.name).trim());
+    if (ur && ur.name) known.add(String(ur.name).trim());
     if (ar && ar.name) known.add(String(ar.name).trim());
     return known;
 }
@@ -221,7 +229,7 @@ export function getKnownLibraryNameTexts(id) {
  */
 function applyLibraryLocalePolicy(item, locale) {
     if (normalizeAppLocale(locale) === 'tr') return item;
-    const enRow = libraryContextEnById.get(item.id);
+    const enRow = libraryContextEnById.get(item.id) || libraryPremiumEnById.get(item.id);
     const out = {
         ...item,
         name: getLibraryNameForLocale(item.id, locale),
@@ -257,6 +265,17 @@ function buildLibrary(locale, includePremium) {
 
 export function getZikirLibrary(includePremium = false) {
     return buildLibrary(currentLocale, includePremium);
+}
+
+/** Yalnızca premium paket (locale overlay ile). */
+export function getZikirLibraryPremiumOnly() {
+    const code = normalizeAppLocale(currentLocale);
+    const pack = LIBRARY_BY_LOCALE[code] || LIBRARY_BY_LOCALE.tr;
+    const premOverlay = new Map((pack.premium || []).map((item) => [item.id, item]));
+    return libraryPremiumTr.map((item) => {
+        const merged = mergeLibraryItem(item, premOverlay.get(item.id));
+        return applyLibraryLocalePolicy(merged, code);
+    });
 }
 
 /** Kütüphane maddesi (TR kanon + locale politikası). */

@@ -1,1 +1,352 @@
-[]
+[
+  {
+    "id": "plib_07",
+    "name": "Alhamdulillahil-ladhi 'afani fi jasadi wa radda 'alayya ruhi wa adhina li dhikrih",
+    "meaning": "All praise is for Allah who restored my body to health, returned my soul to me, and let me remember Him.",
+    "context": "From Abu Hurayrah (r.a.): the Prophet would say this when he woke up. Say it when you wake from sleep.",
+    "keywords": "wake sleep morning night soul health gratitude praise dhikr"
+  },
+  {
+    "id": "plib_09",
+    "name": "La ilaha illa anta subhanaka Allahumma astaghfiruka li dhanbi wa as'aluka rahmataka Allahumma zidni 'ilman wa la tuzigh qalbi ba'da idh hadaytani wa hab li min ladunka rahmatan innaka antal-Wahhab",
+    "meaning": "There is no god but You; You are free from all imperfection. O Allah, forgive my sins and have mercy on me. O Allah, increase me in knowledge, do not let my heart stray after You have guided me, and grant me mercy from Yourself—for You are the Bestower.",
+    "context": "From Aisha (r.a.): the Prophet would say this when he woke during the night. Say it if you wake at night before going back to sleep.",
+    "keywords": "night sleep waking istighfar knowledge mercy heart"
+  },
+  {
+    "id": "plib_10",
+    "name": "Allahumma lakal-hamdu anta kasawtanihi as'aluka khayrahu wa khayra ma suni'a lahu wa a'udhu bika min sharrihi wa sharri ma suni'a lahu",
+    "meaning": "O Allah, all praise is Yours—you clothed me in it. I ask You for its good and the good it was made for, and I seek refuge in You from its harm and from whatever harm it was made for.",
+    "context": "From Abu Sa'id al-Khudri (r.a.): when the Prophet wore something new he would name it (a shirt, turban, or cloak), then say this. Say it when you put on a new garment.",
+    "keywords": "clothes clothing new garment shirt turban cloak"
+  },
+  {
+    "id": "plib_11",
+    "name": "Alhamdulillahil-ladhi kasani hadha thawba wa razaqanihi min ghayri hawlin minni wa la quwwah",
+    "meaning": "All praise is for Allah who clothed me in this garment and gave it to me without any power or strength of my own.",
+    "context": "From Mu'adh ibn Anas (r.a.): whoever puts on clothes and says this will have past and future sins forgiven. Say it when dressing—new clothes or everyday wear.",
+    "keywords": "clothes clothing wearing gratitude praise istighfar"
+  },
+  {
+    "id": "plib_12",
+    "name": "Alhamdulillahil-ladhi kasani ma uwari bihi 'awrati wa atajammalu bihi fi hayati",
+    "meaning": "All praise is for Allah who clothed me in what covers my modesty and lets me present myself decently in life.",
+    "context": "From Umar (r.a.): he would say this with a new garment; the Prophet said whoever says it is under Allah's protection. Say it when wearing something new.",
+    "keywords": "clothes clothing new garment modesty gratitude"
+  },
+  {
+    "id": "plib_13",
+    "name": "Tubli wa yukhlifullahu ta'ala",
+    "meaning": "May you wear it out—and may Allah replace it with something better for you.",
+    "context": "From Abu Sa'id al-Khudri (r.a.): the Companions would say this to someone in new clothes. You say it to the wearer, not to yourself.",
+    "keywords": "clothes new congratulations family friends garment"
+  },
+  {
+    "id": "plib_14",
+    "name": "Bismillahil-ladhi la ilaha illa Huwa",
+    "meaning": "In the name of Allah, besides whom there is no god.",
+    "context": "From Anas ibn Malik (r.a.): if a Muslim says this before undressing, it is a veil between him and the jinn. Say it before bathing, sleeping, or taking off clothes.",
+    "keywords": "undress bathing sleep modesty clothes bismillah"
+  },
+  {
+    "id": "plib_15",
+    "name": "Allahumma inni as'aluka khayral-mawliji wa khayral-makhraji. Bismillahi walajna wa bismillahi kharajna wa 'ala Allahi rabbina tawakkalna",
+    "meaning": "O Allah, I ask You for the best of entering and the best of leaving. In Allah's name we enter; in Allah's name we leave; and upon our Lord we rely.",
+    "context": "From Abu Malik al-Ash'ari (r.a.): say this when you enter your home, then greet your family. Say it at the door when coming in.",
+    "keywords": "home entering door family greeting tawakkul bismillah"
+  },
+  {
+    "id": "plib_16",
+    "name": "Alhamdulillahil-ladhi adhhaba 'anni al-adha wa 'afani",
+    "meaning": "All praise is for Allah who removed hardship from me and restored me to well-being.",
+    "context": "From Anas ibn Malik (r.a.): the Prophet would say this when leaving the toilet. Say it when you leave the restroom.",
+    "keywords": "toilet restroom leaving praise gratitude hygiene"
+  },
+  {
+    "id": "plib_17",
+    "name": "Allahumma aj'al fi qalbi nuran wa fi lisani nuran wa fi sam'i nuran wa fi basari nuran wa 'an yamini nuran wa 'an shimali nuran wa min fawqi nuran wa min tahti nuran wa min amami nuran wa min khalfi nuran waj'al fi nafsi nuran wa a'zim li nuran",
+    "meaning": "O Allah, place light in my heart, on my tongue, in my hearing and sight; to my right and left, above and below me, before and behind me; light within my soul—and increase my light.",
+    "context": "From Abdullah ibn Abbas (r.a.): the Prophet would say this on his way to prayer. Say it while walking to the mosque.",
+    "keywords": "mosque masjid prayer walking light worship"
+  },
+  {
+    "id": "plib_18",
+    "name": "Bismillah. Allahumma salli 'ala Muhammad. Allahummaghfir li dhunubi waftah li abwaba rahmatik",
+    "meaning": "In the name of Allah. O Allah, bless Muhammad. O Allah, forgive my sins and open for me the doors of Your mercy.",
+    "context": "From Fatimah, the daughter of the Prophet (r.a.): he would say this when entering the mosque. Say it when you enter (right foot first).",
+    "keywords": "mosque masjid entering prayer salawat mercy"
+  },
+  {
+    "id": "plib_19",
+    "name": "Bismillah. Allahumma salli 'ala Muhammad. Allahummaghfir li dhunubi waftah li abwaba fadlik",
+    "meaning": "In the name of Allah. O Allah, bless Muhammad. O Allah, forgive my sins and open for me the doors of Your bounty.",
+    "context": "From Fatimah, the daughter of the Prophet (r.a.): he would say this when leaving the mosque. Say it when you leave (left foot first).",
+    "keywords": "mosque masjid leaving prayer salawat bounty"
+  },
+  {
+    "id": "plib_20",
+    "name": "Astaghfirullahal-ladhi la ilaha illa Huwal-Hayyul-Qayyumu wa atubu ilayh",
+    "meaning": "I seek forgiveness from Allah—there is no god but He, the Ever-Living, the Sustainer—and I turn to Him in repentance.",
+    "context": "From Abu Sa'id al-Khudri (r.a.): say this three times at bedtime; sins are forgiven. Al-Nawawi encourages extra istighfar on Fridays in Al-Adhkar.",
+    "keywords": "istighfar repentance forgiveness hayy qayyum friday bedtime night"
+  },
+  {
+    "id": "plib_21",
+    "name": "Allahumma anta rabbi la ilaha illa anta, khalaqtani wa ana 'abduka wa ana 'ala 'ahdika wa wa'dika mastata'tu, a'udhu bika min sharri ma sana'tu, abu'u laka bini'matika 'alayya wa abu'u bidhanbi faghfir li fa innahu la yaghfirudh-dhunuba illa ant",
+    "meaning": "O Allah, You are my Lord; there is no god but You. You created me and I am Your servant. I keep Your covenant and promise as best I can. I seek refuge in You from the evil of what I have done. I admit Your blessings upon me and confess my sin—so forgive me, for none forgives sins but You.",
+    "context": "From Shaddad ibn Aws (r.a.): the Prophet called this Sayyid al-Istighfar—the finest words of seeking forgiveness. Say it in the morning or at bedtime.",
+    "keywords": "istighfar sayyid repentance forgiveness morning bedtime"
+  },
+  {
+    "id": "plib_22",
+    "name": "Allahumma inni a'udhu bika minal-hammi wal-hazan, wa a'udhu bika minal-'ajzi wal-kasal, wa a'udhu bika minal-jubni wal-bukhl, wa a'udhu bika min ghalabatid-dayni wa qahrir-rijal",
+    "meaning": "O Allah, I seek refuge in You from worry and grief, from weakness and laziness, from cowardice and miserliness, and from debt weighing me down and people overpowering me.",
+    "context": "From Abu Umamah al-Bahili (r.a.): the Prophet would often say this. Say it when you feel anxious, sad, or weighed down.",
+    "keywords": "anxiety worry grief sorrow stress debt fear"
+  },
+  {
+    "id": "plib_23",
+    "name": "Ashhadu an la ilaha illallahu wahdahu la sharika lah, wa ashhadu anna Muhammadan 'abduhu wa rasuluh. Allahummaj'alni minat-tawwabina waj'alni minal-mutatahhirin",
+    "meaning": "I bear witness that there is no god but Allah alone, without partner, and that Muhammad is His servant and messenger. O Allah, make me among those who repent often and those who stay purified.",
+    "context": "From Umar (r.a.): the Prophet would say this after wudu. Say it when you finish ablution.",
+    "keywords": "wudu ablution purification repentance shahada taharah"
+  },
+  {
+    "id": "plib_24",
+    "name": "Dhahabaz-zama' wabtallatil-'uruqu wa thabatal-ajru in sha'Allah",
+    "meaning": "Thirst is gone, the veins are moist, and the reward is secured—in sha Allah.",
+    "context": "From Mu'adh ibn Zurayh al-Juhani (r.a.): the Prophet would say this when breaking his fast. Say it at iftar.",
+    "keywords": "iftar fasting ramadan breaking fast thirst reward"
+  },
+  {
+    "id": "plib_25",
+    "name": "Allahumma inni as'aluka khayraha wa khayra ma fiha wa khayra ma ursilat bih, wa a'udhu bika min sharriha wa sharri ma fiha wa sharri ma ursilat bih",
+    "meaning": "O Allah, I ask You for the good of this wind, the good within it, and the good it was sent with; I seek refuge in You from its harm, the harm within it, and the harm it was sent with.",
+    "context": "From Jabir ibn Abdullah (r.a.): when the wind rose, the Prophet would say this. Say it during strong wind or storms.",
+    "keywords": "wind storm gust weather fear protection"
+  },
+  {
+    "id": "plib_26",
+    "name": "Asbahna wa asbahal-mulku lillahi walhamdulillah, la ilaha illallahu wahdahu la sharika lah",
+    "meaning": "We have entered the morning; to Allah belongs all dominion. All praise is for Allah. There is no god but Allah alone, without partner.",
+    "context": "From Abdullah ibn Mas'ud (r.a.): the Prophet would say this in the morning. Say it after waking or before Fajr.",
+    "keywords": "morning waking dawn praise tawhid dominion"
+  },
+  {
+    "id": "plib_27",
+    "name": "Amsayna wa amsal-mulku lillahi walhamdulillah, la ilaha illallahu wahdahu la sharika lah",
+    "meaning": "We have entered the evening; to Allah belongs all dominion. All praise is for Allah. There is no god but Allah alone, without partner.",
+    "context": "From Abdullah ibn Mas'ud (r.a.): the Prophet would say this in the evening. Say it before Maghrib or at sunset.",
+    "keywords": "evening sunset night praise tawhid dominion dusk"
+  },
+  {
+    "id": "plib_28",
+    "name": "Bismillahi awwalahu wa akhirahu",
+    "meaning": "In the name of Allah at the beginning and the end.",
+    "context": "From Aisha (r.a.): if you forget bismillah before eating, say this when you remember—even after you have started or finished the meal.",
+    "keywords": "food meal bismillah forgot remembrance eating"
+  },
+  {
+    "id": "plib_29",
+    "name": "Allahumma barik lana fihi wa at'imna khayran minhu",
+    "meaning": "O Allah, bless this food for us and grant us something better than it.",
+    "context": "From Abdullah ibn Abbas (r.a.): the Prophet would say this when he ate. Say it when food is served or as you begin eating.",
+    "keywords": "food meal before eating blessing start bismillah"
+  },
+  {
+    "id": "plib_30",
+    "name": "Allahumma ajirni minan-nar",
+    "meaning": "O Allah, grant me protection from the Fire.",
+    "context": "From Anas ibn Malik (r.a.): whoever asks three times to be saved from the Fire, Hell says: 'O Allah, protect him from the Fire.' Say it three times any time during the day.",
+    "keywords": "fire hell protection refuge seeking safety sin"
+  },
+  {
+    "id": "plib_31",
+    "name": "Alhamdulillahil-ladhi at'amani hadha wa razaqanihi min ghayri hawlin minni wa la quwwah",
+    "meaning": "All praise is for Allah who fed me this and provided it without any strength or power of my own.",
+    "context": "From Mu'adh ibn Anas al-Juhani (r.a.): whoever eats and says this will have past sins forgiven. Say it after you finish eating.",
+    "keywords": "food meal after eating gratitude praise forgiveness sin"
+  },
+  {
+    "id": "plib_32",
+    "name": "Bismillahi tawakkaltu 'alallahi la hawla wa la quwwata illa billah. Allahumma inni a'udhu bika an adilla aw udalla aw azilla aw uzalla aw azlima aw uzlama aw ajhala aw yujhala 'alayya",
+    "meaning": "In the name of Allah; I place my trust in Allah. There is no power or strength except with Allah. O Allah, I seek refuge in You from straying or being led astray, from slipping or being made to slip, from wronging others or being wronged, and from acting foolishly or being treated foolishly.",
+    "context": "From Anas ibn Malik (r.a.): the Prophet would say this when leaving home. Say it as you step out the door.",
+    "keywords": "home leaving door work travel tawakkul bismillah daily"
+  },
+  {
+    "id": "plib_33",
+    "name": "Subhanalladhi sakhkhara lana hadha wa ma kunna lahu muqrinin. Wa inna ila rabbina la munqalibun",
+    "meaning": "Glory be to Allah who has made this serve us, though we could never have tamed it ourselves. To our Lord we shall return.",
+    "context": "From Abdullah ibn Umar (r.a.): the Prophet would say this when mounting a ride. Say it when you board a car, horse, camel, or any transport.",
+    "keywords": "vehicle car bus travel journey mount ride airplane"
+  },
+  {
+    "id": "plib_34",
+    "name": "Allahumma inna nas'aluka fi safarina hadha al-birra wat-taqwa wa minal-'amali ma tarda. Allahumma hawwin 'alayna safarana hadha watwi 'anna bu'dah. Allahumma antas-sahibu fis-safari wal-khalifatu fil-ahli",
+    "meaning": "O Allah, on this journey we ask You for righteousness, piety, and deeds You approve of. O Allah, make this travel easy for us and shorten its distance. O Allah, You are our Companion on the road and the Guardian of our family at home.",
+    "context": "From Abdullah ibn Umar (r.a.): the Prophet would say this when setting out. Say it as a journey begins.",
+    "keywords": "travel journey trip vehicle road safety family"
+  },
+  {
+    "id": "plib_35",
+    "name": "Subhanalladhi yusabbihur-ra'du bi hamdihi wal-mala'ikatu min khifatih",
+    "meaning": "Glory be to Allah—whom the thunder praises with His praise, and the angels praise out of awe of Him.",
+    "context": "From Abdullah ibn Umar (r.a.): the Prophet would say this when he heard thunder. Say it during thunder, lightning, or heavy rain.",
+    "keywords": "thunder lightning rain storm weather"
+  },
+  {
+    "id": "plib_36",
+    "name": "Allahumma inni as'alukal-'afwa wal-'afiyata fid-dunya wal-akhirah. Allahumma inni as'alukal-'afwa wal-'afiyata fi dini wa dunyaya wa ahli wa mali",
+    "meaning": "O Allah, I ask You for forgiveness and well-being in this world and the next. O Allah, I ask You for forgiveness and well-being in my religion, my worldly affairs, my family, and my wealth.",
+    "context": "From Abdullah ibn Umar (r.a.): the Prophet would say this morning and evening. Say it at those times—or anytime you ask for health, safety, and steadfastness in faith.",
+    "keywords": "wellness health forgiveness morning evening family wealth religion"
+  },
+  {
+    "id": "plib_37",
+    "name": "Allahumma inni as'aluka khayra hadhihis-suq wa khayra ma fiha wa as'aluka min sharri hadhihis-suq wa sharri ma fiha",
+    "meaning": "O Allah, I ask You for the good of this market and what is in it, and I seek refuge in You from its evil and the evil of what is in it.",
+    "context": "From Salman al-Farisi (r.a.): the Prophet said this when entering a market. Say it when you enter a bazaar, market, or shopping area.",
+    "keywords": "market bazaar shop shopping enter mall store"
+  },
+  {
+    "id": "plib_39",
+    "name": "Alhamdulillahil-ladhi 'afani mimma ibtalaka bihi wa faddalani 'ala kathirin mimman khalaqa tafdila",
+    "meaning": "All praise is for Allah who kept me safe from what afflicted you and favored me over much of what He created.",
+    "context": "From Abu'd-Darda (r.a.): whoever says this when seeing someone afflicted will not be struck by it. Say it quietly when you see paralysis, blindness, or similar trial in someone else.",
+    "keywords": "affliction trial gratitude safety illness disability"
+  },
+  {
+    "id": "plib_40",
+    "name": "Mutirna bi fadlillahi wa rahmatih",
+    "meaning": "We have been given rain by the bounty and mercy of Allah.",
+    "context": "From Abdullah ibn al-Zubayr (r.a.): the Prophet would say this when rain fell. Say it when rain begins.",
+    "keywords": "rain rainfall mercy bounty gratitude"
+  },
+  {
+    "id": "plib_42",
+    "name": "A'udhu billahi minash-shaytanir-rajim",
+    "meaning": "I seek refuge in Allah from the accursed Satan.",
+    "context": "Core Sunna ta'awwudh before Qur'an recitation (Quran 16:98) and when angry (Bukhari 6114). Recite when seeking refuge from whispers and Shaytan.",
+    "keywords": "refuge satan whispers anger quran recitation taawwudh protection"
+  },
+  {
+    "id": "plib_43",
+    "name": "Rabbighfir li, Rabbighfir li",
+    "meaning": "My Lord, forgive me. My Lord, forgive me.",
+    "context": "From Hudhayfah ibn al-Yaman (r.a.): the Prophet said this between the two prostrations in prayer. Say it between the two sajdahs in salah.",
+    "keywords": "prayer salah sajdah prostration forgiveness between"
+  },
+  {
+    "id": "plib_44",
+    "name": "Allahu la ilaha illa huwal-Hayyul-Qayyum, la ta'khudhuhu sinatun wa la nawm, lahu ma fis-samawati wa ma fil-ard...",
+    "meaning": "Ayat al-Kursi (Quran 2:255): Allah—there is no god but He, the Ever-Living, the Sustainer…",
+    "context": "From Abu Hurayrah (r.a.): the Prophet recited Ayat al-Kursi at bedtime; a guardian from Allah remains with the reciter until morning. Recite it before sleep.",
+    "keywords": "sleep bed night ayat al-kursi protection quran 255"
+  },
+  {
+    "id": "plib_45",
+    "name": "La ba'sa tahurun in sha Allah",
+    "meaning": "No harm; it is a purification, if Allah wills (you will recover).",
+    "context": "From Usamah ibn Zayd (r.a.): the Prophet would say this when visiting the sick. Say it to comfort someone who is ill.",
+    "keywords": "sick visit illness comfort recovery hope"
+  },
+  {
+    "id": "plib_46",
+    "name": "As'alullahal-'Azim Rabbal-'Arshil-'Azimi an yashfiyak",
+    "meaning": "I ask Allah the Magnificent, Lord of the Magnificent Throne, to cure you.",
+    "context": "From Sa'd ibn Abi Waqqas (r.a.): the Prophet would say this when visiting the sick. Say it as a prayer for healing when visiting someone ill.",
+    "keywords": "sick visit healing cure prayer throne"
+  },
+  {
+    "id": "plib_48",
+    "name": "Astaghfirullah, astaghfirullah, astaghfirullah",
+    "meaning": "I seek Allah's forgiveness (three times).",
+    "context": "Recite three times immediately after the salam of the obligatory prayer. The Prophet would seek forgiveness after finishing prayer.",
+    "keywords": "after prayer salam forgiveness istighfar"
+  },
+  {
+    "id": "plib_51",
+    "name": "Allahumma a'inni 'ala dhikrika wa shukrika wa husni 'ibadatik",
+    "meaning": "O Allah, help me to remember You, thank You, and worship You well.",
+    "context": "After the obligatory prayer or during remembrance; the Prophet taught this to Mu'adh ibn Jabal.",
+    "keywords": "after prayer remembrance gratitude worship"
+  },
+  {
+    "id": "plib_52",
+    "name": "Allahummakfini bihalalika 'an haramik, wa aghnini bifadlika 'amman siwak",
+    "meaning": "O Allah, suffice me with what is lawful over what is forbidden, and enrich me by Your bounty so I need no one besides You.",
+    "context": "For lawful provision, financial hardship, or debt; from the narration of Ali ibn Abi Talib.",
+    "keywords": "lawful provision debt poverty rizq halal"
+  },
+  {
+    "id": "plib_53",
+    "name": "Barakallahu laka wa baraka alayka wa jama a baynakuma fi khayr",
+    "meaning": "May Allah bless you, shower blessings upon you, and unite you both in good.",
+    "context": "Congratulate the groom at a wedding or marriage contract; the Prophet said this to a companion on his wedding night.",
+    "keywords": "wedding marriage nikah groom blessing"
+  },
+  {
+    "id": "plib_54",
+    "name": "Allahummaghfir lahu warhamhu wa 'afihi wa'fu 'anhu",
+    "meaning": "O Allah, forgive him, have mercy on him, grant him well-being, and pardon him.",
+    "context": "For a deceased Muslim during the funeral prayer and burial.",
+    "keywords": "funeral deceased burial forgiveness mercy janazah"
+  },
+  {
+    "id": "plib_55",
+    "name": "Allahumma inni a'udhu bika minal-kufri wal-faqr",
+    "meaning": "O Allah, I seek refuge in You from disbelief and poverty.",
+    "context": "From Anas ibn Malik: the Prophet frequently recited this supplication. Recite it to seek protection for faith and livelihood.",
+    "keywords": "disbelief poverty refuge faith provision taawwudh"
+  },
+  {
+    "id": "plib_56",
+    "name": "Yahdikumullahu wa yuslihu balakum",
+    "meaning": "May Allah guide you and set your affairs right.",
+    "context": "After you say “Alhamdulillah” and someone says “Yarhamukallah,” recite this asking guidance and wellbeing for them.",
+    "keywords": "sneeze yarhamukallah alhamdulillah etiquette daily"
+  },
+  {
+    "id": "plib_57",
+    "name": "Rabbirhamhuma kama rabbayani saghira",
+    "meaning": "My Lord, have mercy on them both as they raised me when I was small.",
+    "context": "Quranic supplication for parents; recite when making dua for your mother and father.",
+    "keywords": "parents mother father mercy family dua"
+  },
+  {
+    "id": "plib_58",
+    "name": "Ma sha'Allahu la quwwata illa billah",
+    "meaning": "What Allah wills; there is no power except with Allah.",
+    "context": "Say when you see something you admire or are pleased with; for gratitude and protection from the evil eye.",
+    "keywords": "admiration mashallah gratitude evil eye wonder"
+  },
+  {
+    "id": "plib_60",
+    "name": "Barakallahu laka fil-mawhubi lak",
+    "meaning": "May Allah bless you in what was granted to you (your newborn).",
+    "context": "Congratulate parents on the birth of a child; said when hearing news of a newborn.",
+    "keywords": "newborn baby birth congratulations blessing child"
+  },
+  {
+    "id": "plib_61",
+    "name": "Bismillah. Allahumma jannibna-sh-shaytana wa jannibi-sh-shaytana ma razaqtana",
+    "meaning": "In the name of Allah. O Allah, keep us away from Satan and keep Satan away from what You grant us.",
+    "context": "For married couples before intimacy, seeking protection from Satan.",
+    "keywords": "marriage spouses intimacy protection satan bismillah"
+  },
+  {
+    "id": "plib_62",
+    "name": "Bismillahilladhi la yadurru ma'asmihi shay'un fil-ardi wa la fis-sama wa huwas-Sami'ul-'Alim",
+    "meaning": "In the name of Allah with whose name nothing on earth or in heaven can cause harm; He is the All-Hearing, All-Knowing.",
+    "context": "Recite three times morning and evening for protection through the day and night.",
+    "keywords": "morning evening protection bismillah harm daily three times"
+  },
+  {
+    "id": "plib_63",
+    "name": "Yahdina wa yahdikumullah",
+    "meaning": "May Allah guide us and guide you.",
+    "context": "After “Yarhamukallah,” ask Allah to guide both yourself and those who prayed for you.",
+    "keywords": "sneeze yarhamukallah guidance alhamdulillah daily"
+  }
+]

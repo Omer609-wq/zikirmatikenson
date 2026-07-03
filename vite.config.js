@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SEARCH_SRC = path.join(__dirname, 'data', 'quran', 'search');
 const QURAN_QUOTES_SRC = path.join(__dirname, 'data', 'quotes-quran.json');
+const LIBRARY_DRAFT_SRC = path.join(__dirname, 'data', 'library', 'premium-tr.draft.json');
 
 function quranSearchAssets() {
     return {
@@ -24,6 +25,19 @@ function quranSearchAssets() {
 
                 res.setHeader('Content-Type', 'application/json; charset=utf-8');
                 fs.createReadStream(filePath).pipe(res);
+            });
+
+            // Premium kütüphane taslağı (geliştirme önizlemesi; prod build'e gitmez).
+            server.middlewares.use((req, res, next) => {
+                const url = req.url?.split('?')[0] || '';
+                if (url !== '/draft/premium-tr.draft.json') return next();
+                if (!fs.existsSync(LIBRARY_DRAFT_SRC) || !fs.statSync(LIBRARY_DRAFT_SRC).isFile()) {
+                    res.statusCode = 404;
+                    res.end('[]');
+                    return;
+                }
+                res.setHeader('Content-Type', 'application/json; charset=utf-8');
+                fs.createReadStream(LIBRARY_DRAFT_SRC).pipe(res);
             });
 
             // Serve footer Quran quotes JSON in dev (plain fetch only; Vite handles ?import).

@@ -1,0 +1,71 @@
+---
+description: Kütüphane içeriği — her 10 dua/zikir sonrası çeviriler bitmeden yeni adıma geçme
+alwaysApply: true
+---
+
+# Kütüphane batch çeviri kapısı
+
+Yeni **dua veya zikir** eklerken içerik **10’luk partiler** halinde ilerler. **Sıradaki adıma** (yeni batch, merge, `plib_37+`, yayın) geçmeden önce o partideki **tüm maddelerin çevirileri tamamlanmış** olmalı.
+
+## Ne sayılır?
+
+- Premium: `plib_*` (`premium-tr.draft.json` → merge sonrası `premium-tr.json`)
+- Ücretsiz kütüphane: `lib_*`, `lib_d_*` (`data/library/tr.json`)
+
+Parti dolunca (10 madde) veya kullanıcı “batch bitti” dediğinde çeviri kapısı devreye girer.
+
+## Parti başına zorunlu dosyalar
+
+| Dil / katman | Dosya | Alanlar |
+|--------------|-------|---------|
+| TR (kanon) | `premium-tr.draft.json` veya `tr.json` | `name`, `arabic`, `meaning`; dua ise `context`, `source`, `keywords` |
+| EN / ID / MS / FR | `premium-id.json` veya `en.json` | `name` (Latin), `meaning`; dua ise `context` |
+| BN | `bn.json` | `name` (Bengalce okunuş) |
+| UR | `ur.json` | `name` (Urduca okunuş) |
+| AR | `ar.json` | `name` (Arapça, tashkeel’li) |
+
+Politika detayı: `i18n-religious-content.mdc` (meal/bağlam non-TR’de EN; fazilet yalnız TR).
+
+## Sıra (aynı partide)
+
+1. TR metinleri ekle/doğrula (`arabic` dahil).
+2. `premium-id.json` / `en.json` overlay.
+3. `bn.json`, `ur.json`, `ar.json` okunuş (`name`).
+4. Native his kontrolü (mekanik çeviri değil; mevcut ücretsiz satırlarla tutarlı yazım).
+5. **Bağlam doğrulama:** `context` / `keywords` için ilk bulunan rivayet bağlamını körü körüne yazma; asıl kullanım ve güvenilir kaynak seçilir. Okunduğu **yer/bağlam aynı** diye ikinci dua veya zikir eklenmez — aynı durumda birden fazla **farklı metin** olabilir. `context`’te gereksiz dipnot yazma.
+6. **Ancak ondan sonra** merge / sonraki `plib_*` / yeni batch.
+
+## Mükerrer (okunuş tekrarı)
+
+Premium’a veya ücretsize madde eklerken **yalnızca okunuş / `name` metni** (Arapça dahil, özdeş cümle) zaten listedeyse mükerrer sayılır ve tekrar eklenmez.
+
+**Mükerrer sayılmaz:** Aynı bağlam, benzer meal, fazilet veya `context` — bunlar çakışabilir. Örnek: iki farklı *Bismillâh* bağlamı olmaz (okunuş aynı); hapşırma cevabında `plib_56` ve `plib_63` gibi **farklı cümleler** bir arada durur.
+
+| Mükerrer **değil** | Mükerrer **evet** |
+|--------------------|-------------------|
+| Aynı durumda farklı okunuş (`plib_56` + `plib_63` hapşırma) | `plib_41` = `lib_d_cami_cikis` (aynı cümle) |
+| Benzer meal, farklı metin | İki kez aynı *Bismillâh* satırı |
+| Kısa vs tam form (farklı `name`) | `plib_08` = `lib_d_uyku` (aynı cümle) |
+
+Kontrol: yeni maddenin `name` / `arabic` okunuşu; **bağlam veya meal eşleşmesi silme nedeni değildir**.
+
+## Merge (premium)
+
+`premium-tr.draft.json` → `premium-tr.json` **yalnızca** o partinin 10 maddesi için yukarıdaki dosyalar tamamsa.
+
+`PREMIUM_DRAFT.md`: sıradaki `id`, parti notu, mükerrer uyarıları güncelle.
+
+## Doğrulama (parti sonu)
+
+Tüm yeni `id`’ler şu dosyalarda var mı ve `name`/`meaning` boş değil mi?
+
+- Premium: `premium-tr` (draft veya shipped), `premium-id.json`, `bn.json`, `ur.json`, `ar.json`
+- Ücretsiz: `tr.json`, `en.json`, `bn.json`, `ur.json`, `ar.json`
+
+Örnek kontrol: partideki `id` listesi ile her dosyada kesişim = 10 (veya partideki madde sayısı).
+
+## Yapma
+
+- 10 TR maddesi ekleyip çevirisiz `plib_37+` veya yeni konuya geçme.
+- Sadece `premium-tr` güncelleyip BN/UR/AR’yi “sonra” bırakma.
+- Çeviri partisini atlayıp merge / shipped işaretleme.

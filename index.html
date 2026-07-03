@@ -67,6 +67,7 @@
                 <button class="primary-btn" id="newFolderBtn" style="margin-top: 1rem;">
                     <span class="material-icons-outlined">add</span> <span data-i18n="home.newFolder">Yeni Klasör Oluştur</span>
                 </button>
+                <div class="limit-warning" id="folderLimitWarning" data-i18n="home.folderLimitWarning">Klasör sınırına ulaşıldı. Premium ile sınırsız klasör oluşturabilirsin.</div>
                 <div id="updateBannerSlot" class="update-banner-slot" hidden></div>
             </section>
 
@@ -146,6 +147,7 @@
                     <p id="quranZikirMeaning" class="quran-zikir-scroll__sub"></p>
                 </div>
                 <div class="counter-dock">
+                    <div class="counter-tap-scale-wrap" id="counterTapScaleWrap">
                     <div class="progress-ring-container" id="mainCounterBtn">
                         <button id="enterStealthBtn" class="stealth-badge" data-i18n="counter.stealth" data-i18n-attr="aria-label" data-i18n-title="counter.stealth" aria-label="Gizli Mod" title="Gizli Mod"><span class="material-icons-outlined" style="font-size: 1.1rem;">visibility_off</span></button>
                         <div class="round-badge" id="roundDisplay"></div>
@@ -158,6 +160,7 @@
                             <div class="target-display"><span data-i18n="counter.target">Hedef:</span> <span id="targetDisplay">33</span></div>
                             <div class="total-number-display" id="totalDisplay">0</div>
                         </div>
+                    </div>
                     </div>
                     <div class="counter-actions">
                         <button id="decrementBtn" class="icon-btn" data-i18n="counter.undo" data-i18n-attr="aria-label" aria-label="Geri Al (-1)">
@@ -186,8 +189,10 @@
                     <button class="tab-btn" data-tab="weekly" data-i18n="stats.weekly">Haftalık</button>
                     <button class="tab-btn" data-tab="monthly" data-i18n="stats.monthly">Aylık</button>
                     <button class="tab-btn" data-tab="yearly" data-i18n="stats.yearly">Yıllık</button>
+                    <button class="tab-btn" data-tab="allTime" data-i18n="stats.allTime">Tüm zamanlar</button>
                 </div>
 
+                <div id="statsPeriodPanel">
                 <div class="stat-card">
                     <h3 data-i18n="stats.mostClicked">En Çok Çekilen Zikir</h3>
                     <div class="stat-value" id="statMostClicked">-</div>
@@ -219,6 +224,21 @@
                         </div>
                     </div>
                 </div>
+                </div>
+
+                <div id="statsAllTimePanel" class="hidden">
+                    <div class="stat-card stat-card--all-time">
+                        <div class="all-time-total" id="allTimeTotal">0</div>
+                        <div class="all-time-since" id="allTimeSince"></div>
+                        <div class="all-time-days" id="allTimeDays"></div>
+                        <div class="all-time-avg" id="allTimeAvg"></div>
+                    </div>
+                    <div class="all-time-donut-card">
+                        <div class="all-time-donut" id="allTimeDonut"></div>
+                        <div class="all-time-donut-focus" id="allTimeDonutFocus" hidden></div>
+                    </div>
+                    <div class="all-time-list" id="allTimeList"></div>
+                </div>
             </section>
         </div>
 
@@ -227,7 +247,9 @@
             <header class="glass-header">
                 <button type="button" class="icon-btn backBtn" data-target="homeView" aria-label="Geri"><span class="material-icons-outlined">arrow_back</span></button>
                 <h1 data-i18n="nav.settings">Ayarlar</h1>
-                <div style="width: 36px;" aria-hidden="true"></div>
+                <button type="button" class="icon-btn" id="openTrashBtn" data-i18n="premium.trashBtnLocked" data-i18n-attr="aria-label,title" aria-label="Çöp Kutusu (Premium)" title="Çöp Kutusu (Premium)">
+                    <span class="material-icons-outlined">delete</span>
+                </button>
             </header>
 
             <section class="main-content scrollable">
@@ -371,6 +393,33 @@
                         <input type="checkbox" id="settingSound">
                         <span class="slider round"></span>
                     </label>
+                </div>
+                <div class="tick-sound-setting" id="tickSoundSetting" hidden>
+                    <button
+                        type="button"
+                        class="tick-sound-setting__toggle"
+                        id="tickSoundPickerToggle"
+                        aria-expanded="false"
+                        aria-controls="tickSoundOptionsPanel">
+                        <span class="tick-sound-setting__toggle-main">
+                            <span class="material-icons-outlined" aria-hidden="true">tune</span>
+                            <span data-i18n="settings.tickSoundChange">Sesi değiştir</span>
+                        </span>
+                        <span class="material-icons-outlined tick-sound-setting__chevron" aria-hidden="true">expand_more</span>
+                    </button>
+                    <div class="tick-sound-setting__panel" id="tickSoundOptionsPanel" aria-hidden="true">
+                        <div class="tick-sound-setting__panel-inner">
+                            <p class="tick-sound-hint" data-i18n="settings.tickSoundHint">Seçeneğe dokunarak önizleyebilirsin.</p>
+                            <div class="tick-sound-grid" role="radiogroup" data-i18n="settings.tickSoundChange" data-i18n-attr="aria-label">
+                                <button type="button" class="tick-sound-btn active" data-tick-sound-choice="classic" data-i18n="settings.tickSoundClassic" aria-pressed="true">Klasik</button>
+                                <button type="button" class="tick-sound-btn" data-tick-sound-choice="soft" data-i18n="settings.tickSoundSoft" aria-pressed="false">Yumuşak</button>
+                                <button type="button" class="tick-sound-btn" data-tick-sound-choice="wood" data-i18n="settings.tickSoundWood" aria-pressed="false">Ahşap</button>
+                                <button type="button" class="tick-sound-btn" data-tick-sound-choice="bead" data-i18n="settings.tickSoundBead" aria-pressed="false">Boncuk</button>
+                                <button type="button" class="tick-sound-btn" data-tick-sound-choice="tasbih" data-i18n="settings.tickSoundTasbih" aria-pressed="false">Tespih</button>
+                                <button type="button" class="tick-sound-btn" data-tick-sound-choice="digital" data-i18n="settings.tickSoundDigital" aria-pressed="false">Dijital</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="setting-item">
                     <span><span class="material-icons-outlined">light_mode</span> <span data-i18n="settings.wakeLock">Ekranı Uyanık Tut</span></span>
@@ -712,7 +761,7 @@
             </section>
         </div>
 
-        <!-- =================== PREMIUM VIEW (COMING SOON) =================== -->
+        <!-- =================== PREMIUM VIEW (feature hub) =================== -->
         <div id="premiumView" class="view hidden">
             <header class="glass-header">
                 <button class="icon-btn backBtn" data-target="homeView"><span class="material-icons-outlined">arrow_back</span></button>
@@ -721,7 +770,8 @@
             </header>
 
             <section class="main-content scrollable premium-view">
-                <div class="premium-hero">
+                <!-- Tanıtım (PREMIUM_LIVE=false, lansman öncesi) -->
+                <div class="premium-hero" id="premiumTeaserPanel">
                     <div class="premium-hero__top">
                         <span class="premium-pill">
                             <span class="material-icons-outlined">auto_awesome</span>
@@ -802,6 +852,499 @@
                         <span data-i18n="premium.note">Premium özellikleri aktif olduğunda otomatik açılacak.</span>
                     </div>
                 </div>
+
+                <!-- Özellik merkezi (PREMIUM_LIVE=true, lansman sonrası) -->
+                <div class="premium-hero hidden" id="premiumHubPanel">
+                    <div class="premium-hero__top">
+                        <span class="premium-pill" id="premiumStatusPill">
+                            <span class="material-icons-outlined">auto_awesome</span>
+                            <span id="premiumStatusPillText" data-i18n="premium.statusUpgrade">Yükselt</span>
+                        </span>
+                        <span class="premium-spark" aria-hidden="true"></span>
+                    </div>
+
+                    <h2 class="premium-title" data-i18n="premium.heroTitle">Daha akıcı, daha güçlü bir Zikirmatik.</h2>
+                    <p class="premium-subtitle" id="premiumHubLead" data-i18n="premium.hubLeadLocked">
+                        Premium özelliklerini buradan yönet; abone olunca hepsi açılır.
+                    </p>
+
+                    <button type="button" class="premium-subscribe-btn hidden" id="premiumHubSubscribeBtn" data-i18n="premium.hubSubscribeBtn">
+                        Premium'a geç
+                    </button>
+
+                    <div class="premium-section">
+                        <h3 class="premium-section__title">
+                            <span class="material-icons-outlined">tune</span>
+                            <span data-i18n="premium.hubSectionTitle">Özellikler</span>
+                        </h3>
+                        <p class="premium-section__desc" data-i18n="premium.hubSectionDesc">Bir özelliğe dokunarak düzenleme ekranını aç.</p>
+
+                        <div class="premium-feature-list" id="premiumFeatureList">
+                            <button type="button" class="premium-feature-btn" data-premium-feature="theme" data-premium-locked="1">
+                                <span class="premium-feature-btn__icon material-icons-outlined">palette</span>
+                                <span class="premium-feature-btn__body">
+                                    <span class="premium-feature-btn__title" data-i18n="premium.cardThemeTitle">Tema & kişiselleştirme</span>
+                                    <span class="premium-feature-btn__text" data-i18n="premium.cardThemeText">Daha “senin” gibi hissettiren bir arayüz.</span>
+                                </span>
+                                <span class="material-icons-outlined premium-feature-btn__chevron">chevron_right</span>
+                            </button>
+                            <button type="button" class="premium-feature-btn" data-premium-feature="reminders" data-premium-locked="1">
+                                <span class="premium-feature-btn__icon material-icons-outlined">notifications_active</span>
+                                <span class="premium-feature-btn__body">
+                                    <span class="premium-feature-btn__title" data-i18n="premium.cardRemindersTitle">Akıllı hatırlatıcılar</span>
+                                    <span class="premium-feature-btn__text" data-i18n="premium.cardRemindersText">Ritmine göre nazikçe hatırlatsın.</span>
+                                </span>
+                                <span class="material-icons-outlined premium-feature-btn__chevron">chevron_right</span>
+                            </button>
+                            <button type="button" class="premium-feature-btn" data-premium-feature="weekly" data-premium-locked="1">
+                                <span class="premium-feature-btn__icon material-icons-outlined">summarize</span>
+                                <span class="premium-feature-btn__body">
+                                    <span class="premium-feature-btn__title" data-i18n="premium.cardWeeklyTitle">Haftalık Rapor</span>
+                                    <span class="premium-feature-btn__text" data-i18n="premium.cardWeeklyText">Her Pazartesi kısa bir özet: süre, hedef ve trend.</span>
+                                </span>
+                                <span class="material-icons-outlined premium-feature-btn__chevron">chevron_right</span>
+                            </button>
+                            <button type="button" class="premium-feature-btn" data-premium-feature="stats" data-premium-locked="0">
+                                <span class="premium-feature-btn__icon material-icons-outlined">insights</span>
+                                <span class="premium-feature-btn__body">
+                                    <span class="premium-feature-btn__title" data-i18n="premium.cardStatsTitle">Daha derin istatistik</span>
+                                    <span class="premium-feature-btn__text" data-i18n="premium.cardStatsText">Hedeflere gidişini net gör, motivasyonun artsın.</span>
+                                </span>
+                                <span class="material-icons-outlined premium-feature-btn__chevron">chevron_right</span>
+                            </button>
+                            <button type="button" class="premium-feature-btn" data-premium-feature="library" data-premium-locked="0">
+                                <span class="premium-feature-btn__icon material-icons-outlined">library_add</span>
+                                <span class="premium-feature-btn__body">
+                                    <span class="premium-feature-btn__title" data-i18n="premium.cardLibraryTitle">Daha geniş kütüphane</span>
+                                    <span class="premium-feature-btn__text" data-i18n="premium.cardLibraryText">Premium ile kütüphanede daha fazla zikir ve dua.</span>
+                                </span>
+                                <span class="material-icons-outlined premium-feature-btn__chevron">chevron_right</span>
+                            </button>
+                            <button type="button" class="premium-feature-btn" data-premium-feature="trash" data-premium-locked="1">
+                                <span class="premium-feature-btn__icon material-icons-outlined">delete</span>
+                                <span class="premium-feature-btn__body">
+                                    <span class="premium-feature-btn__title" data-i18n="premium.cardTrashTitle">Çöp Kutusu (geri al)</span>
+                                    <span class="premium-feature-btn__text" data-i18n="premium.cardTrashText">Yanlışlıkla silinen zikirleri Premium ile geri yükle.</span>
+                                </span>
+                                <span class="material-icons-outlined premium-feature-btn__chevron">chevron_right</span>
+                            </button>
+                            <button type="button" class="premium-feature-btn" data-premium-feature="backup" data-premium-locked="1">
+                                <span class="premium-feature-btn__icon material-icons-outlined">cloud_sync</span>
+                                <span class="premium-feature-btn__body">
+                                    <span class="premium-feature-btn__title" data-i18n="premium.cardBackupTitle">Yedek & Senkron</span>
+                                    <span class="premium-feature-btn__text" data-i18n="premium.cardBackupText">Cihaz değiştirince her şeyin seninle gelsin.</span>
+                                </span>
+                                <span class="material-icons-outlined premium-feature-btn__chevron">chevron_right</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div id="premiumFeatureThemeView" class="view hidden premium-feature-view">
+            <header class="glass-header">
+                <button type="button" class="icon-btn backBtn" data-target="premiumView" aria-label="Geri"><span class="material-icons-outlined">arrow_back</span></button>
+                <h1 data-i18n="premium.cardThemeTitle">Tema & kişiselleştirme</h1>
+                <div style="width: 36px;"></div>
+            </header>
+            <section class="main-content scrollable">
+                <p class="premium-editor-lead" data-i18n="premium.cardThemeText">Daha “senin” gibi hissettiren bir arayüz.</p>
+                <div class="premium-editor-mount" id="premiumThemeEditorMount">
+                    <div class="premium-theme-section">
+                        <div class="accent-setting" role="radiogroup" data-i18n="premium.themeAccent" data-i18n-attr="aria-label">
+                            <div class="theme-setting__label">
+                                <span class="material-icons-outlined" aria-hidden="true">palette</span>
+                                <span data-i18n="premium.themeAccent">Renk</span>
+                            </div>
+                            <div class="accent-segment">
+                                <button type="button" class="accent-segment__btn" data-accent-choice="emerald" aria-pressed="false" title="Emerald">
+                                    <span class="accent-dot" style="background:#059669" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="accent-segment__btn" data-accent-choice="teal" aria-pressed="false" title="Teal">
+                                    <span class="accent-dot" style="background:#0d9488" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="accent-segment__btn" data-accent-choice="cyan" aria-pressed="false" title="Cyan">
+                                    <span class="accent-dot" style="background:#0891b2" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="accent-segment__btn" data-accent-choice="blue" aria-pressed="false" title="Blue">
+                                    <span class="accent-dot" style="background:#2563eb" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="accent-segment__btn" data-accent-choice="indigo" aria-pressed="false" title="Indigo">
+                                    <span class="accent-dot" style="background:#4f46e5" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="accent-segment__btn" data-accent-choice="violet" aria-pressed="false" title="Violet">
+                                    <span class="accent-dot" style="background:#7c3aed" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="accent-segment__btn" data-accent-choice="pink" aria-pressed="false" title="Pink">
+                                    <span class="accent-dot" style="background:#db2777" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="accent-segment__btn" data-accent-choice="red" aria-pressed="false" title="Red">
+                                    <span class="accent-dot" style="background:#dc2626" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="accent-segment__btn" data-accent-choice="orange" aria-pressed="false" title="Orange">
+                                    <span class="accent-dot" style="background:#ea580c" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="accent-segment__btn" data-accent-choice="amber" aria-pressed="false" title="Amber">
+                                    <span class="accent-dot" style="background:#d97706" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="accent-segment__btn" data-accent-choice="lime" aria-pressed="false" title="Lime">
+                                    <span class="accent-dot" style="background:#65a30d" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="accent-segment__btn" data-accent-choice="sky" aria-pressed="false" title="Sky">
+                                    <span class="accent-dot" style="background:#0284c7" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="premium-theme-section">
+                        <button type="button" class="premium-theme-nav-btn" id="openCounterCustomizeBtn">
+                            <span class="premium-theme-nav-btn__main">
+                                <span class="material-icons-outlined" aria-hidden="true">tune</span>
+                                <span class="premium-theme-nav-btn__text">
+                                    <span class="premium-theme-nav-btn__title" data-i18n="premium.counterCustomizeTitle">Sayaç görünümü</span>
+                                    <span class="premium-theme-nav-btn__desc" data-i18n="premium.counterCustomizeNavDesc">Halka, rakam, görünürlük ve dokunma alanı</span>
+                                </span>
+                            </span>
+                            <span class="material-icons-outlined premium-theme-nav-btn__chevron" aria-hidden="true">chevron_right</span>
+                        </button>
+                    </div>
+
+                    <div class="premium-theme-section">
+                        <button type="button" class="premium-theme-nav-btn" id="openCounterBackgroundBtn">
+                            <span class="premium-theme-nav-btn__main">
+                                <span class="material-icons-outlined" aria-hidden="true">image</span>
+                                <span class="premium-theme-nav-btn__text">
+                                    <span class="premium-theme-nav-btn__title" data-i18n="premium.counterBgTitle">Sayaç arka planı</span>
+                                    <span class="premium-theme-nav-btn__desc" data-i18n="premium.counterBgNavDesc">Varsayılan görsel veya galeriden seç</span>
+                                </span>
+                            </span>
+                            <span class="material-icons-outlined premium-theme-nav-btn__chevron" aria-hidden="true">chevron_right</span>
+                        </button>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <div id="premiumFeatureCounterBackgroundView" class="view hidden premium-feature-view">
+            <header class="glass-header">
+                <button type="button" class="icon-btn backBtn" data-target="premiumFeatureThemeView" aria-label="Geri"><span class="material-icons-outlined">arrow_back</span></button>
+                <h1 data-i18n="premium.counterBgTitle">Sayaç arka planı</h1>
+                <div style="width: 36px;"></div>
+            </header>
+            <section class="main-content scrollable counter-bg-editor">
+                <p class="premium-editor-lead" data-i18n="premium.counterBgLead">Sayaç kartının arkasında görünecek görseli seç.</p>
+
+                <div class="counter-bg-editor__section">
+                    <div class="counter-bg-editor__label" data-i18n="premium.counterBgNone">Yok</div>
+                    <button type="button" class="counter-bg-none-btn" id="counterBgNoneBtn" data-counter-bg-choice="none">
+                        <span class="material-icons-outlined" aria-hidden="true">block</span>
+                        <span data-i18n="premium.counterBgNone">Yok</span>
+                    </button>
+                </div>
+
+                <div class="counter-bg-editor__section">
+                    <div class="counter-bg-editor__label" data-i18n="premium.counterBgPresets">Varsayılan görseller</div>
+                    <p class="counter-bg-editor__empty" id="counterBgPresetsEmpty" data-i18n="premium.counterBgPresetsEmpty" hidden>Görseller yakında eklenecek.</p>
+                    <div class="counter-bg-preset-grid" id="counterBgPresetGrid" role="radiogroup" data-i18n="premium.counterBgPresets" data-i18n-attr="aria-label" aria-label="Varsayılan görseller"></div>
+                </div>
+
+                <div class="counter-bg-editor__section">
+                    <button type="button" class="counter-bg-gallery-btn" id="counterBgGalleryBtn">
+                        <span class="material-icons-outlined" aria-hidden="true">photo_library</span>
+                        <span class="counter-bg-gallery-btn__text">
+                            <span class="counter-bg-gallery-btn__title" data-i18n="premium.counterBgGallery">Galeriden seç</span>
+                            <span class="counter-bg-gallery-btn__hint" data-i18n="premium.counterBgGalleryHint">Kendi fotoğrafını kullan</span>
+                        </span>
+                    </button>
+                    <input type="file" id="counterBgGalleryInput" class="counter-bg-gallery-input" accept="image/*" hidden>
+                </div>
+            </section>
+        </div>
+
+        <div id="premiumFeatureCounterCustomizeView" class="view hidden premium-feature-view counter-customize-view">
+            <div class="counter-customize-viewport" id="counterCustomizeViewport">
+                <button type="button" class="icon-btn counter-customize-back backBtn" data-target="premiumFeatureThemeView" aria-label="Geri"><span class="material-icons-outlined">arrow_back</span></button>
+                <section class="counter-container counter-customize-viewport__stage">
+                    <div class="counter-dock">
+                        <div class="counter-tap-scale-wrap" id="ccvTapScaleWrap">
+                            <div class="progress-ring-container counter-customize-tap" id="ccvMainCounterBtn" aria-hidden="true">
+                                <div class="round-badge visible" id="ccvRoundDisplay">1</div>
+                                <svg class="progress-ring" width="280" height="280" aria-hidden="true">
+                                    <circle class="progress-ring__background" stroke-width="8" fill="transparent" r="130" cx="140" cy="140"/>
+                                    <circle class="progress-ring__circle" id="ccvProgressCircle" stroke-width="12" fill="transparent" r="130" cx="140" cy="140"/>
+                                </svg>
+                                <div class="counter-content">
+                                    <div class="count-display" id="ccvCountDisplay">12</div>
+                                    <div class="target-display"><span data-i18n="counter.target">Hedef:</span> <span id="ccvTargetDisplay">33</span></div>
+                                    <div class="total-number-display" id="ccvTotalDisplay">45</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="counter-actions">
+                            <button type="button" class="icon-btn" tabindex="-1" aria-hidden="true" disabled>
+                                <span class="material-icons-outlined">remove</span>
+                            </button>
+                            <p class="instruction-text" data-i18n="counter.tapToCount">Dokunarak Say</p>
+                            <button type="button" class="icon-btn counter-actions__reset" tabindex="-1" aria-hidden="true" disabled>
+                                <span class="material-icons-outlined">refresh</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="counter-customize-sheet" id="counterCustomizeSheet">
+                <div
+                    class="counter-customize-sheet__drag"
+                    id="counterCustomizeSheetDrag"
+                    role="separator"
+                    aria-orientation="vertical"
+                    data-i18n="premium.counterCustomizeSheetDrag"
+                    data-i18n-attr="aria-label"
+                    aria-label="Ayar panelini yukarı çek"
+                    tabindex="0">
+                    <div class="counter-customize-sheet__handle" aria-hidden="true"></div>
+                </div>
+                <div class="counter-customize-sheet__body" id="counterCustomizeSheetBody">
+                <p class="counter-customize-sheet__lead" data-i18n="premium.counterCustomizeLead">Üstteki sayaç ekranı canlı önizlemedir; alttan düzenle.</p>
+
+                <div class="counter-customize-sheet__section">
+                    <div class="counter-customize-sheet__label" data-i18n="premium.counterShowSection">Sayaçta ne görünsün</div>
+                    <div class="counter-customize-toggles">
+                        <label class="counter-customize-toggle">
+                            <span data-i18n="premium.counterShowTarget">Hedef</span>
+                            <span class="switch">
+                                <input type="checkbox" id="counterShowTargetToggle" data-counter-show-toggle="target" checked>
+                                <span class="slider round"></span>
+                            </span>
+                        </label>
+                        <label class="counter-customize-toggle">
+                            <span data-i18n="premium.counterShowTotal">Toplam</span>
+                            <span class="switch">
+                                <input type="checkbox" id="counterShowTotalToggle" data-counter-show-toggle="total" checked>
+                                <span class="slider round"></span>
+                            </span>
+                        </label>
+                        <label class="counter-customize-toggle">
+                            <span data-i18n="premium.counterShowRound">Tur sayısı</span>
+                            <span class="switch">
+                                <input type="checkbox" id="counterShowRoundToggle" data-counter-show-toggle="round" checked>
+                                <span class="slider round"></span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="counter-customize-sheet__section">
+                    <div class="premium-counter-control">
+                        <div class="premium-counter-control__label" data-i18n="premium.counterTapArea">Dokunma alanı</div>
+                        <div class="premium-segment" role="radiogroup" data-i18n="premium.counterTapArea" data-i18n-attr="aria-label">
+                            <button type="button" class="premium-segment__btn" data-counter-tap-scale="s" data-i18n="premium.sizeSmall" aria-pressed="false">Küçük</button>
+                            <button type="button" class="premium-segment__btn active" data-counter-tap-scale="m" data-i18n="premium.sizeMedium" aria-pressed="true">Orta</button>
+                            <button type="button" class="premium-segment__btn" data-counter-tap-scale="l" data-i18n="premium.sizeLarge" aria-pressed="false">Büyük</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="counter-customize-sheet__section">
+                    <div class="premium-counter-control">
+                        <div class="premium-counter-control__label" data-i18n="premium.counterRingThickness">Halka kalınlığı</div>
+                        <input id="counterCustomizeRingRange" class="premium-range" type="range" min="8" max="18" step="1" value="12">
+                    </div>
+                    <div class="premium-counter-control">
+                        <div class="premium-counter-control__label" data-i18n="premium.counterNumberSize">Rakam boyutu</div>
+                        <div class="premium-segment" role="radiogroup" data-i18n="premium.counterNumberSize" data-i18n-attr="aria-label">
+                            <button type="button" class="premium-segment__btn" data-counter-customize-num-size="s" data-i18n="premium.sizeSmall" aria-pressed="false">Küçük</button>
+                            <button type="button" class="premium-segment__btn active" data-counter-customize-num-size="m" data-i18n="premium.sizeMedium" aria-pressed="true">Orta</button>
+                            <button type="button" class="premium-segment__btn" data-counter-customize-num-size="l" data-i18n="premium.sizeLarge" aria-pressed="false">Büyük</button>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="premiumFeatureRemindersView" class="view hidden premium-feature-view">
+            <header class="glass-header">
+                <button type="button" class="icon-btn backBtn" data-target="premiumView" aria-label="Geri"><span class="material-icons-outlined">arrow_back</span></button>
+                <h1 data-i18n="premium.cardRemindersTitle">Akıllı hatırlatıcılar</h1>
+                <button type="button" class="icon-btn" id="smartReminderAddBtn" data-i18n="smartReminders.addBtn" data-i18n-attr="aria-label,title" aria-label="Hatırlatıcı ekle" title="Hatırlatıcı ekle">
+                    <span class="material-icons-outlined">add</span>
+                </button>
+            </header>
+            <section class="main-content scrollable smart-reminders-view">
+                <p class="premium-editor-lead smart-reminders-lead" data-i18n="smartReminders.lead">Alarm gibi hatırlatıcılar oluştur; metni ve zamanı sen belirle.</p>
+                <p class="smart-reminders-premium-note hidden" id="smartRemindersPremiumNote" hidden></p>
+                <div class="smart-reminder-list" id="smartReminderList"></div>
+                <p class="smart-reminders-empty hidden" id="smartRemindersEmpty" data-i18n="smartReminders.empty">Henüz hatırlatıcı yok. Sağ üstten ekle.</p>
+            </section>
+        </div>
+
+        <div id="premiumFeatureWeeklyView" class="view hidden premium-feature-view">
+            <header class="glass-header">
+                <button type="button" class="icon-btn backBtn" data-target="premiumView" aria-label="Geri"><span class="material-icons-outlined">arrow_back</span></button>
+                <h1 data-i18n="premium.cardWeeklyTitle">Haftalık Rapor</h1>
+                <div style="width: 36px;"></div>
+            </header>
+            <section class="main-content scrollable weekly-report-view">
+                <p class="weekly-report-premium-note hidden" id="weeklyReportPremiumNote" hidden></p>
+
+                <div class="setting-item wr-notify-setting">
+                    <span>
+                        <span class="material-icons-outlined" aria-hidden="true">notifications</span>
+                        <span data-i18n="weeklyReport.enabledLabel">Haftalık bildirim</span>
+                    </span>
+                    <label class="switch">
+                        <input type="checkbox" id="weeklyReportEnabledToggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="wr-hero-grid">
+                    <div class="wr-tile wr-tile--goal">
+                        <span class="wr-tile__label" data-i18n="weeklyReport.goalLabel">Günlük zikir hedefi</span>
+                        <input type="number" id="dailyZikirGoalInput" class="wr-tile__goal-input" min="0" step="1" inputmode="numeric" value="0" aria-label="Günlük zikir hedefi">
+                        <span class="wr-tile__unit" data-i18n="weeklyReport.goalUnit">zikir</span>
+                    </div>
+                    <div class="wr-tile wr-tile--streak wr-tile--flame-none" id="weeklyReportStreakTile">
+                        <div class="wr-tile__head">
+                            <span class="wr-tile__label" data-i18n="weeklyReport.streakTitle">Seri</span>
+                            <span id="weeklyReportFlameEmoji" class="material-icons-outlined wr-tile__flame wr-tile__flame--none" aria-hidden="true">local_fire_department</span>
+                        </div>
+                        <div class="wr-tile__streak-body">
+                            <span id="weeklyReportStreakCount" class="wr-tile__streak-num">0</span>
+                        </div>
+                        <span id="weeklyReportStreakSub" class="wr-tile__sub" data-i18n="weeklyReport.streakDaysShort">gün</span>
+                    </div>
+                </div>
+
+                <article class="wr-panel wr-panel--today">
+                    <h2 class="wr-panel__title" data-i18n="weeklyReport.todayScreenTime">Bugün ekran süresi</h2>
+                    <div class="wr-today-time" id="weeklyReportTodayTime">0 dk</div>
+                    <h3 class="wr-panel__subtitle" data-i18n="weeklyReport.topAreasTitle">En çok vakit geçirilen</h3>
+                    <ul class="wr-top-areas" id="weeklyReportTopAreas"></ul>
+                </article>
+
+                <article class="wr-panel wr-panel--chart">
+                    <div class="wr-week-nav">
+                        <button type="button" class="wr-week-nav__btn" id="weeklyReportWeekPrev" aria-label="Önceki hafta">
+                            <span class="material-icons-outlined">chevron_left</span>
+                        </button>
+                        <div class="wr-week-nav__center">
+                            <span class="wr-week-nav__label" id="weeklyReportWeekLabel"></span>
+                            <span class="wr-chart-metric" id="weeklyReportChartMetric"></span>
+                        </div>
+                        <button type="button" class="wr-week-nav__btn" id="weeklyReportWeekNext" aria-label="Sonraki hafta">
+                            <span class="material-icons-outlined">chevron_right</span>
+                        </button>
+                    </div>
+                    <div class="wr-chart" id="weeklyReportChart" role="img" aria-hidden="true"></div>
+                    <div class="wr-four-week-avg" id="weeklyReportFourWeekAvg"></div>
+                </article>
+            </section>
+        </div>
+
+        <div id="premiumFeatureBackupView" class="view hidden premium-feature-view">
+            <header class="glass-header">
+                <button type="button" class="icon-btn backBtn" data-target="premiumView" aria-label="Geri"><span class="material-icons-outlined">arrow_back</span></button>
+                <h1 data-i18n="premium.cardBackupTitle">Yedek & Senkron</h1>
+                <div style="width: 36px;"></div>
+            </header>
+            <section class="main-content scrollable premium-backup-view">
+                <p class="premium-editor-lead" data-i18n="cloudBackup.lead">Google hesabınla zikirlerini, ayarlarını ve geçmişini güvenle yedekle.</p>
+                <p class="cloud-backup-note hidden" id="cloudBackupPremiumNote" hidden></p>
+                <p class="cloud-backup-note cloud-backup-note--warn hidden" id="cloudBackupUnavailableNote" hidden></p>
+
+                <div class="cloud-backup-panel hidden" id="cloudBackupPanel" hidden>
+                    <div id="cloudBackupDisconnected">
+                        <p class="cloud-backup-hint" data-i18n="cloudBackup.connectHint">Google hesabınla giriş yapınca verilerin güvenli yedeklenir. İlk bağlantıda otomatik yedek alınır; sonrasında haftada bir güncellenir.</p>
+                        <button type="button" class="primary-btn cloud-backup-connect-btn" id="cloudBackupConnectBtn">
+                            <span class="material-icons-outlined" aria-hidden="true">account_circle</span>
+                            <span data-i18n="cloudBackup.connectBtn">Google ile bağlan</span>
+                        </button>
+                    </div>
+
+                    <div class="hidden" id="cloudBackupConnected" hidden>
+                        <article class="cloud-backup-card">
+                            <div class="cloud-backup-card__row">
+                                <span class="material-icons-outlined cloud-backup-card__icon" aria-hidden="true">verified_user</span>
+                                <div class="cloud-backup-card__body">
+                                    <span class="cloud-backup-card__label" data-i18n="cloudBackup.connectedAs">Bağlı hesap</span>
+                                    <span class="cloud-backup-card__value" id="cloudBackupEmail">—</span>
+                                </div>
+                            </div>
+                            <div class="cloud-backup-card__meta">
+                                <span class="cloud-backup-card__label" data-i18n="cloudBackup.lastBackup">Son yedek</span>
+                                <span class="cloud-backup-card__value" id="cloudBackupLastAt" data-i18n="cloudBackup.neverBackedUp">Henüz yedek alınmadı</span>
+                            </div>
+                            <p class="cloud-backup-auto-note" data-i18n="cloudBackup.autoBackupNote">Haftada bir otomatik yedek alınır (uygulama açıkken).</p>
+                        </article>
+
+                        <button type="button" class="primary-btn cloud-backup-action-btn" id="cloudBackupBackupNowBtn">
+                            <span class="material-icons-outlined" aria-hidden="true">cloud_upload</span>
+                            <span data-i18n="cloudBackup.backupNow">Şimdi yedekle</span>
+                        </button>
+                        <button type="button" class="secondary-btn cloud-backup-action-btn" id="cloudBackupRestoreBtn">
+                            <span class="material-icons-outlined" aria-hidden="true">cloud_download</span>
+                            <span data-i18n="cloudBackup.restoreBtn">Geri yükle</span>
+                        </button>
+                        <button type="button" class="text-btn cloud-backup-disconnect-btn" id="cloudBackupDisconnectBtn" data-i18n="cloudBackup.disconnectBtn">Bağlantıyı kes</button>
+                    </div>
+
+                    <p class="cloud-backup-status hidden" id="cloudBackupStatus" hidden aria-live="polite"></p>
+                </div>
+            </section>
+        </div>
+
+        <!-- =================== PREMIUM PURCHASE (stub — Play Billing) =================== -->
+        <div id="premiumPurchaseView" class="view hidden">
+            <header class="glass-header">
+                <button type="button" class="icon-btn backBtn" data-target="homeView"><span class="material-icons-outlined">arrow_back</span></button>
+                <h1 data-i18n="premiumPurchase.title">Premium Abonelik</h1>
+                <div style="width: 36px;" aria-hidden="true"></div>
+            </header>
+            <section class="main-content scrollable premium-purchase-view">
+                <div class="premium-purchase-hero">
+                    <span class="material-icons-outlined premium-purchase-hero__icon" aria-hidden="true">workspace_premium</span>
+                    <h2 id="premiumPurchaseHeading" class="premium-purchase-hero__title" data-i18n="premiumPurchase.title">Premium Abonelik</h2>
+                    <p id="premiumPurchaseLead" class="premium-purchase-hero__lead" data-i18n="premiumPurchase.lead">
+                        Sınırsız klasör ve zikir, çöp kutusu, geniş kütüphane ve daha fazlası.
+                    </p>
+
+                    <div class="premium-purchase-plans" id="premiumPurchasePlans" role="radiogroup" aria-label="Abonelik planı">
+                        <label class="premium-purchase-plan">
+                            <input type="radio" name="premiumPlan" value="monthly" checked>
+                            <span class="premium-purchase-plan__inner">
+                                <span class="premium-purchase-plan__term" data-i18n="premiumPurchase.planMonthly">Aylık</span>
+                                <span class="premium-purchase-plan__price-row">
+                                    <span id="premiumPurchasePriceMonthly" class="premium-purchase-plan__price">₺34,99</span>
+                                    <span class="premium-purchase-plan__period" data-i18n="premiumPurchase.perMonth">/ ay</span>
+                                </span>
+                            </span>
+                        </label>
+                        <label class="premium-purchase-plan premium-purchase-plan--yearly">
+                            <input type="radio" name="premiumPlan" value="yearly">
+                            <span class="premium-purchase-plan__inner">
+                                <span class="premium-purchase-plan__term" data-i18n="premiumPurchase.planYearly">Yıllık</span>
+                                <span class="premium-purchase-plan__price-row">
+                                    <span id="premiumPurchasePriceYearly" class="premium-purchase-plan__price">₺279,99</span>
+                                    <span class="premium-purchase-plan__period" data-i18n="premiumPurchase.perYear">/ yıl</span>
+                                </span>
+                                <span id="premiumPurchaseYearlyBadge" class="premium-purchase-plan__badge"></span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <button type="button" class="primary-btn premium-purchase-hero__btn" id="premiumPurchaseSubscribeBtn" data-i18n="premiumPurchase.subscribeBtn">
+                        Abone ol
+                    </button>
+
+                    <p id="premiumPurchaseStubNote" class="premium-purchase-hero__note" data-i18n="premiumPurchase.stubNote">
+                        Play Store faturalandırması bağlanınca bu ekran aktifleşecek.
+                    </p>
+                </div>
             </section>
         </div>
 
@@ -824,6 +1367,10 @@
         <button type="button" class="bottom-nav__btn" data-view="settingsView" data-i18n-attr="aria-label" data-i18n="nav.settingsAria">
             <span class="material-icons-outlined">settings</span>
             <span class="bottom-nav__label" data-i18n="nav.settings">Ayarlar</span>
+        </button>
+        <button type="button" class="bottom-nav__btn bottom-nav__btn--premium" data-view="premiumView" data-i18n-attr="aria-label,title" data-i18n="nav.premiumAria" data-i18n-title="nav.premiumTitle">
+            <span class="material-icons-outlined">workspace_premium</span>
+            <span class="bottom-nav__label" data-i18n="nav.premium">Premium</span>
         </button>
     </nav>
 
@@ -1028,6 +1575,147 @@
             <div class="modal-footer update-banner-detail__footer">
                 <button type="button" class="update-banner__btn update-banner__btn--ghost" id="updateBannerDismissBtn">Bir daha gösterme</button>
                 <button type="button" class="primary-btn update-banner__update-btn" id="updateBannerUpdateBtn">Güncelle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Akıllı hatırlatıcı düzenleme -->
+    <div class="modal-overlay" id="smartReminderEditOverlay">
+        <div class="modal glass-modal smart-reminder-edit-modal">
+            <div class="modal-header smart-reminder-edit-header">
+                <h2
+                    id="smartReminderEditTitle"
+                    class="smart-reminder-name-title"
+                    contenteditable="plaintext-only"
+                    spellcheck="false"
+                    role="textbox"
+                    aria-label="Hatırlatıcı adı"
+                    data-i18n="smartReminders.namePlaceholder"
+                    data-i18n-attr="aria-label"
+                ></h2>
+                <button type="button" class="icon-btn closeModalBtn" data-modal="smartReminderEditOverlay" aria-label="Kapat"><span class="material-icons-outlined">close</span></button>
+            </div>
+            <div class="modal-body smart-reminder-edit-body">
+                <section class="sre-section">
+                    <h3 class="sre-section__title" data-i18n="smartReminders.messagesLabel">Bildirim metinleri</h3>
+                    <p class="sre-section__hint" data-i18n="smartReminders.messagesHint">Birden fazla metin eklersen her bildirimde rastgele biri gönderilir.</p>
+                    <div class="smart-reminder-messages" id="smartReminderMessagesList"></div>
+                    <button type="button" class="premium-ghost-btn sre-add-message-btn" id="smartReminderAddMessageBtn">
+                        <span class="material-icons-outlined">add</span>
+                        <span data-i18n="smartReminders.addMessage">Metin ekle</span>
+                    </button>
+                </section>
+
+                <section class="sre-section">
+                    <h3 class="sre-section__title" data-i18n="smartReminders.weekdaysLabel">Günler</h3>
+                    <div class="smart-reminder-weekdays" id="smartReminderWeekdays" role="group"></div>
+                </section>
+
+                <section class="sre-section">
+                    <h3 class="sre-section__title" data-i18n="smartReminders.scheduleLabel">Zamanlama</h3>
+                    <div class="smart-reminder-schedule-modes" role="radiogroup">
+                        <label class="smart-reminder-radio">
+                            <input type="radio" name="smartReminderScheduleMode" value="fixed" checked>
+                            <span data-i18n="smartReminders.modeFixed">Belirli saat</span>
+                        </label>
+                        <label class="smart-reminder-radio">
+                            <input type="radio" name="smartReminderScheduleMode" value="count">
+                            <span data-i18n="smartReminders.modeCount">Günde birkaç kez</span>
+                        </label>
+                    </div>
+
+                    <div class="sre-subsection" id="smartReminderFixedTimeGroup">
+                        <label class="sre-field-label" for="smartReminderFixedTime" data-i18n="smartReminders.timeLabel">Saat</label>
+                        <input type="time" id="smartReminderFixedTime" value="09:00">
+                    </div>
+
+                    <div class="sre-subsection" id="smartReminderCountGroup" hidden>
+                        <div class="sre-field">
+                            <label class="sre-field-label" for="smartReminderTimesPerDay" data-i18n="smartReminders.timesPerDayLabel">Günde kaç kez</label>
+                            <select id="smartReminderTimesPerDay">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+                        <div class="smart-reminder-window-row sre-field">
+                            <div>
+                                <label class="sre-field-label" for="smartReminderWindowStart" data-i18n="smartReminders.windowStart">Başlangıç</label>
+                                <input type="time" id="smartReminderWindowStart" value="08:00">
+                            </div>
+                            <div>
+                                <label class="sre-field-label" for="smartReminderWindowEnd" data-i18n="smartReminders.windowEnd">Bitiş</label>
+                                <input type="time" id="smartReminderWindowEnd" value="22:00">
+                            </div>
+                        </div>
+                        <p class="sre-section__hint sre-section__hint--tight" data-i18n="smartReminders.countHint">Seçilen aralıkta eşit aralıklarla bildirim gönderilir (en fazla 3).</p>
+                    </div>
+                </section>
+
+                <section class="sre-section sre-section--flat">
+                    <div class="setting-item smart-reminder-vibrate-row">
+                        <span class="sre-field-label sre-field-label--inline"><span class="material-icons-outlined">vibration</span> <span data-i18n="smartReminders.vibrate">Titreşim</span></span>
+                        <label class="switch">
+                            <input type="checkbox" id="smartReminderVibrate" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="sre-section sre-section--flat">
+                    <label class="sre-field-label" for="smartReminderOpenZikir" data-i18n="smartReminders.openZikirLabel">Bildirime basınca</label>
+                    <select id="smartReminderOpenZikir"></select>
+                </section>
+            </div>
+            <div class="modal-footer smart-reminder-edit-footer">
+                <button type="button" class="danger-btn hidden" id="smartReminderDeleteBtn" data-i18n="smartReminders.delete">Sil</button>
+                <button type="button" class="primary-btn full-width" id="smartReminderSaveBtn" data-i18n="smartReminders.save">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Çöp Kutusu (Premium) -->
+    <div class="modal-overlay" id="trashOverlay">
+        <div class="modal glass-modal">
+            <div class="modal-header">
+                <h2 data-i18n="trash.title">Çöp Kutusu</h2>
+                <button class="icon-btn closeModalBtn" data-modal="trashOverlay"><span class="material-icons-outlined">close</span></button>
+            </div>
+            <div class="modal-body">
+                <p class="settings-footnote" style="margin-top: 0;" data-i18n="trash.hint">
+                    Yanlışlıkla silinen zikirleri geri alabilirsin. Kalıcı silme için boşalt.
+                </p>
+                <div class="setting-actions" style="margin-top: 0.5rem;">
+                    <button type="button" class="primary-btn" id="trashClearBtn" style="background: transparent; border: 1px solid var(--surface-border);">
+                        <span class="material-icons-outlined">delete_sweep</span> <span data-i18n="trash.clearBtn">Çöp kutusunu boşalt</span>
+                    </button>
+                </div>
+                <div id="trashEmpty" class="premium-empty" hidden>
+                    <div class="premium-empty__icon material-icons-outlined">inventory_2</div>
+                    <div class="premium-empty__title" data-i18n="trash.emptyTitle">Şimdilik boş</div>
+                    <div class="premium-empty__text" data-i18n="trash.emptyText">Silinen zikirler burada görünecek.</div>
+                </div>
+                <div id="trashList" class="premium-trash-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Premium limit upsell -->
+    <div class="modal-overlay premium-upsell-overlay" id="premiumUpsellOverlay" role="dialog" aria-modal="true" aria-labelledby="premiumUpsellTitle">
+        <div class="modal glass-modal premium-upsell-modal">
+            <div class="modal-header premium-upsell-modal__header">
+                <h2 id="premiumUpsellTitle" data-i18n="premiumUpsell.title">Premium</h2>
+                <button type="button" class="icon-btn" id="premiumUpsellCloseBtn" data-i18n="premiumUpsell.closeBtn" data-i18n-attr="aria-label" aria-label="Kapat">
+                    <span class="material-icons-outlined">close</span>
+                </button>
+            </div>
+            <div class="modal-body premium-upsell-modal__body">
+                <p id="premiumUpsellBody" class="premium-upsell-modal__message" data-i18n="premiumUpsell.zikirMessage">
+                    Daha fazlası için lütfen premium abonelik satın alın.
+                </p>
+                <button type="button" class="primary-btn full-width premium-upsell-modal__cta" id="premiumUpsellPurchaseBtn" data-i18n="premiumUpsell.purchaseBtn">
+                    Premium abonelik satın al
+                </button>
             </div>
         </div>
     </div>

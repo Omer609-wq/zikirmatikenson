@@ -44,6 +44,7 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
     const data = (event.notification && event.notification.data) || {};
+    if (data.openApp === false) return;
     const openUrl = data.url || './';
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
