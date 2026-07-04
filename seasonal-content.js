@@ -4,17 +4,15 @@
  * korur; içeriği git push ile güncellersin. Acil güncellemede cache purge:
  * https://purge.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/seasonal-content.json
  * Tarih aralığı: start ≤ now < end (ISO 8601, örn. Europe/Istanbul +03:00)
- * Test: SEASONAL_CONTENT_PREVIEW = true
+ * Test: `debug-flags.json` içinden `seasonalContentPreview: true`
  */
 import { Capacitor } from '@capacitor/core';
+import { getRuntimeFlags, loadRuntimeFlags } from './lib/runtime-flags.js';
 
 export const SEASONAL_CONTENT_URL =
     'https://cdn.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/seasonal-content.json';
 
 export const SEASONAL_CONTENT_DISABLED = false;
-
-/** TEST — örnek etkinliği her zaman göster */
-export const SEASONAL_CONTENT_PREVIEW = false;
 
 export const SEASONAL_FOLDER_PREFIX = 'f_seasonal_';
 export const SEASONAL_ZIKIR_PREFIX = 'z_seasonal_';
@@ -249,8 +247,9 @@ export async function refreshSeasonalContent(locale = 'tr') {
         setCachedEvents([]);
         return [];
     }
+    await loadRuntimeFlags();
 
-    if (SEASONAL_CONTENT_PREVIEW) {
+    if (getRuntimeFlags().seasonalContentPreview) {
         const events = normalizeEvents(PREVIEW_PAYLOAD, locale);
         setCachedEvents(events);
         purgeSeasonalCountsExcept(events.map((e) => e.id));

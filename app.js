@@ -56,6 +56,7 @@ import {
     folderIdFromUsageArea
 } from './lib/usage-areas.js';
 import { syncNativeWeeklyReport } from './lib/weekly-report-notify.js';
+import { getRuntimeFlags, loadRuntimeFlags } from './lib/runtime-flags.js';
 import { buildWeeklyReportPreviewPatch } from './lib/weekly-report-preview.js';
 import {
     buildWeekReport,
@@ -759,12 +760,6 @@ const PREMIUM_LIVE = true;
 /** Premium sekmesi + ayarlardaki çöp kutusu. */
 const PREMIUM_UI_VISIBLE = true;
 
-/** Geliştirme: sayaç arka planını premium olmadan dene (lansman öncesi false). */
-const COUNTER_BG_PREVIEW_UNLOCK = true;
-
-/** Geliştirme: haftalık rapor örnek verisi. Test bitince false. */
-const WEEKLY_REPORT_PREVIEW_SAMPLE = false;
-
 /** Premium sekmesinden açılan özellikler → düzenleme ekranı / yönlendirme (PREMIUM_LIVE iken) */
 const PREMIUM_FEATURE_VIEW_IDS = new Set([
     'premiumFeatureThemeView',
@@ -1163,7 +1158,8 @@ const saveMoveBtn = document.getElementById('saveMoveBtn');
 let copyingZikirId = null;
 
 // ===================== INIT =====================
-function init() {
+async function init() {
+    await loadRuntimeFlags();
     if (progressCircle) {
         progressCircle.style.strokeDasharray = `${CIRCLE_CIRCUMFERENCE} ${CIRCLE_CIRCUMFERENCE}`;
         progressCircle.style.strokeDashoffset = CIRCLE_CIRCUMFERENCE;
@@ -2109,7 +2105,7 @@ function loadData() {
 }
 
 function applyWeeklyReportPreviewSample() {
-    if (!WEEKLY_REPORT_PREVIEW_SAMPLE) return;
+    if (!getRuntimeFlags().weeklyReportPreviewSample) return;
     const patch = buildWeeklyReportPreviewPatch(getTodayString());
     Object.keys(patch.history).forEach((day) => {
         history[day] = patch.history[day];
@@ -2294,6 +2290,7 @@ function donutSlicePath(cx, cy, rOuter, rInner, startAngle, endAngle) {
 }
 
 function isPremium() {
+    if (getRuntimeFlags().premiumDevUnlock) return true;
     return !!(entitlements && entitlements.premium);
 }
 
@@ -2304,7 +2301,7 @@ function isPremiumOnlyFeatureLocked() {
 }
 
 function isCounterBackgroundLocked() {
-    if (COUNTER_BG_PREVIEW_UNLOCK) return false;
+    if (getRuntimeFlags().counterBgPreviewUnlock) return false;
     return isPremiumOnlyFeatureLocked();
 }
 
@@ -3114,6 +3111,12 @@ function cloudBackupActiveForUser() {
     return PREMIUM_LIVE && !isPremiumOnlyFeatureLocked();
 }
 
+function setHiddenState(el, hidden) {
+    if (!el) return;
+    el.hidden = !!hidden;
+    el.classList.toggle('hidden', !!hidden);
+}
+
 function getCloudBackupMetaFromApp() {
     return normalizeCloudBackupMeta(appMeta?.cloudBackup);
 }
@@ -3159,10 +3162,10 @@ function setCloudBackupBusy(busy, statusText = '') {
     if (panel) panel.classList.toggle('is-busy', busy);
     if (statusEl) {
         if (busy && statusText) {
-            statusEl.hidden = false;
+            setHiddenState(statusEl, false);
             statusEl.textContent = statusText;
         } else {
-            statusEl.hidden = true;
+            setHiddenState(statusEl, true);
             statusEl.textContent = '';
         }
     }
@@ -3179,7 +3182,7 @@ async function renderBackupView() {
 
     if (premiumNote) {
         const showPremium = PREMIUM_LIVE && isPremiumOnlyFeatureLocked();
-        premiumNote.hidden = !showPremium;
+        setHiddenState(premiumNote, !showPremium);
         if (showPremium) premiumNote.textContent = t('cloudBackup.premiumRequired');
     }
 
@@ -3188,21 +3191,21 @@ async function renderBackupView() {
 
     if (unavailableNote) {
         const showUnavailable = cloudBackupActiveForUser() && availability !== 'ready';
-        unavailableNote.hidden = !showUnavailable;
+        setHiddenState(unavailableNote, !showUnavailable);
         if (showUnavailable) {
             unavailableNote.textContent =
                 availability === 'unsupported' ? t('cloudBackup.unavailable') : t('cloudBackup.notConfigured');
         }
     }
 
-    if (panel) panel.hidden = !canUse;
+    setHiddenState(panel, !canUse);
     if (!canUse) return;
 
     const meta = getCloudBackupMetaFromApp();
     const isLinked = !!meta?.uid;
 
-    if (disconnected) disconnected.hidden = isLinked;
-    if (connected) connected.hidden = !isLinked;
+    setHiddenState(disconnected, isLinked);
+    setHiddenState(connected, !isLinked);
 
     if (isLinked) {
         if (emailEl) emailEl.textContent = meta.email || meta.uid;
@@ -3223,7 +3226,7 @@ function setupBackupUI() {
     const backupBtn = document.getElementById('cloudBackupBackupNowBtn');
     if (backupBtn && backupBtn.dataset.bound !== '1') {
         backupBtn.dataset.bound = '1';
-        backupBtn.addEventListener('click', () => void handleCloudBackupNow(false));
+        backupBtn.addEventListener('click', () => void handleCloudBackupNow(true));
     }
 
     const restoreBtn = document.getElementById('cloudBackupRestoreBtn');
