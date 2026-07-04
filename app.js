@@ -752,10 +752,10 @@ const MAX_ZIKIRS_PER_FOLDER = 5;
 const LIBRARY_PREMIUM_PREVIEW_COUNT = 3;
 
 /** false = limit yok + Premium sekmesinde tanıtım ekranı. true = limitler + özellik merkezi (lansman). */
-const PREMIUM_LIVE = true;
+const PREMIUM_LIVE = false;
 
 /** Premium sekmesi + ayarlardaki çöp kutusu. */
-const PREMIUM_UI_VISIBLE = true;
+const PREMIUM_UI_VISIBLE = false;
 
 /** Premium sekmesinden açılan özellikler → düzenleme ekranı / yönlendirme (PREMIUM_LIVE iken) */
 const PREMIUM_FEATURE_VIEW_IDS = new Set([
