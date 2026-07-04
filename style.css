@@ -1010,6 +1010,19 @@ html.counter-customize-open .bottom-nav {
     padding-top: 0.55rem;
     border-top: 1px solid var(--alpha-08);
 }
+/* Premium sekmesi üstündeki hesap bloku: kart içinde yan yana eylem düğmeleri */
+.premium-account {
+    margin: 0.35rem 0 0.9rem;
+}
+.cloud-backup-card__actions {
+    display: flex;
+    gap: 0.55rem;
+    padding-top: 0.25rem;
+}
+.cloud-backup-card__actions .cloud-backup-action-btn {
+    flex: 1;
+    margin-bottom: 0;
+}
 .cloud-backup-card__label {
     font-size: 0.78rem;
     color: var(--text-gray);

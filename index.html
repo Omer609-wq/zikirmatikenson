@@ -872,6 +872,50 @@
                         Premium'a geç
                     </button>
 
+                    <!-- Hesap & yedekleme (premium aktifken sekmenin en üstünde) -->
+                    <div class="premium-account" id="premiumAccountSection">
+                        <p class="cloud-backup-note cloud-backup-note--warn hidden" id="cloudBackupUnavailableNote" hidden></p>
+                        <div class="cloud-backup-panel hidden" id="cloudBackupPanel" hidden>
+                            <div id="cloudBackupDisconnected">
+                                <button type="button" class="primary-btn cloud-backup-connect-btn" id="cloudBackupConnectBtn">
+                                    <span class="material-icons-outlined" aria-hidden="true">account_circle</span>
+                                    <span data-i18n="cloudBackup.connectBtn">Google ile bağlan</span>
+                                </button>
+                                <p class="cloud-backup-hint" data-i18n="cloudBackup.connectHint">Google hesabınla giriş yapınca verilerin güvenli yedeklenir. İlk bağlantıda otomatik yedek alınır; sonrasında haftada bir güncellenir.</p>
+                            </div>
+
+                            <div class="hidden" id="cloudBackupConnected" hidden>
+                                <article class="cloud-backup-card">
+                                    <div class="cloud-backup-card__row">
+                                        <span class="material-icons-outlined cloud-backup-card__icon" aria-hidden="true">verified_user</span>
+                                        <div class="cloud-backup-card__body">
+                                            <span class="cloud-backup-card__label" data-i18n="cloudBackup.connectedAs">Bağlı hesap</span>
+                                            <span class="cloud-backup-card__value" id="cloudBackupEmail">—</span>
+                                        </div>
+                                    </div>
+                                    <div class="cloud-backup-card__meta">
+                                        <span class="cloud-backup-card__label" data-i18n="cloudBackup.lastBackup">Son yedek</span>
+                                        <span class="cloud-backup-card__value" id="cloudBackupLastAt" data-i18n="cloudBackup.neverBackedUp">Henüz yedek alınmadı</span>
+                                    </div>
+                                    <div class="cloud-backup-card__actions">
+                                        <button type="button" class="primary-btn cloud-backup-action-btn" id="cloudBackupBackupNowBtn">
+                                            <span class="material-icons-outlined" aria-hidden="true">cloud_upload</span>
+                                            <span data-i18n="cloudBackup.backupNow">Şimdi yedekle</span>
+                                        </button>
+                                        <button type="button" class="secondary-btn cloud-backup-action-btn" id="cloudBackupRestoreBtn">
+                                            <span class="material-icons-outlined" aria-hidden="true">cloud_download</span>
+                                            <span data-i18n="cloudBackup.restoreBtn">Geri yükle</span>
+                                        </button>
+                                    </div>
+                                    <p class="cloud-backup-auto-note" data-i18n="cloudBackup.autoBackupNote">Haftada bir otomatik yedek alınır (uygulama açıkken).</p>
+                                    <button type="button" class="text-btn cloud-backup-disconnect-btn" id="cloudBackupDisconnectBtn" data-i18n="cloudBackup.disconnectBtn">Bağlantıyı kes</button>
+                                </article>
+                            </div>
+
+                            <p class="cloud-backup-status hidden" id="cloudBackupStatus" hidden aria-live="polite"></p>
+                        </div>
+                    </div>
+
                     <div class="premium-section">
                         <h3 class="premium-section__title">
                             <span class="material-icons-outlined">tune</span>
@@ -925,14 +969,6 @@
                                 <span class="premium-feature-btn__body">
                                     <span class="premium-feature-btn__title" data-i18n="premium.cardTrashTitle">Çöp Kutusu (geri al)</span>
                                     <span class="premium-feature-btn__text" data-i18n="premium.cardTrashText">Yanlışlıkla silinen zikirleri Premium ile geri yükle.</span>
-                                </span>
-                                <span class="material-icons-outlined premium-feature-btn__chevron">chevron_right</span>
-                            </button>
-                            <button type="button" class="premium-feature-btn" data-premium-feature="backup" data-premium-locked="1">
-                                <span class="premium-feature-btn__icon material-icons-outlined">cloud_sync</span>
-                                <span class="premium-feature-btn__body">
-                                    <span class="premium-feature-btn__title" data-i18n="premium.cardBackupTitle">Yedek & Senkron</span>
-                                    <span class="premium-feature-btn__text" data-i18n="premium.cardBackupText">Cihaz değiştirince her şeyin seninle gelsin.</span>
                                 </span>
                                 <span class="material-icons-outlined premium-feature-btn__chevron">chevron_right</span>
                             </button>
@@ -1243,58 +1279,6 @@
                     <div class="wr-chart" id="weeklyReportChart" role="img" aria-hidden="true"></div>
                     <div class="wr-four-week-avg" id="weeklyReportFourWeekAvg"></div>
                 </article>
-            </section>
-        </div>
-
-        <div id="premiumFeatureBackupView" class="view hidden premium-feature-view">
-            <header class="glass-header">
-                <button type="button" class="icon-btn backBtn" data-target="premiumView" aria-label="Geri"><span class="material-icons-outlined">arrow_back</span></button>
-                <h1 data-i18n="premium.cardBackupTitle">Yedek & Senkron</h1>
-                <div class="header-spacer"></div>
-            </header>
-            <section class="main-content scrollable premium-backup-view">
-                <p class="premium-editor-lead" data-i18n="cloudBackup.lead">Google hesabınla zikirlerini, ayarlarını ve geçmişini güvenle yedekle.</p>
-                <p class="cloud-backup-note hidden" id="cloudBackupPremiumNote" hidden></p>
-                <p class="cloud-backup-note cloud-backup-note--warn hidden" id="cloudBackupUnavailableNote" hidden></p>
-
-                <div class="cloud-backup-panel hidden" id="cloudBackupPanel" hidden>
-                    <div id="cloudBackupDisconnected">
-                        <p class="cloud-backup-hint" data-i18n="cloudBackup.connectHint">Google hesabınla giriş yapınca verilerin güvenli yedeklenir. İlk bağlantıda otomatik yedek alınır; sonrasında haftada bir güncellenir.</p>
-                        <button type="button" class="primary-btn cloud-backup-connect-btn" id="cloudBackupConnectBtn">
-                            <span class="material-icons-outlined" aria-hidden="true">account_circle</span>
-                            <span data-i18n="cloudBackup.connectBtn">Google ile bağlan</span>
-                        </button>
-                    </div>
-
-                    <div class="hidden" id="cloudBackupConnected" hidden>
-                        <article class="cloud-backup-card">
-                            <div class="cloud-backup-card__row">
-                                <span class="material-icons-outlined cloud-backup-card__icon" aria-hidden="true">verified_user</span>
-                                <div class="cloud-backup-card__body">
-                                    <span class="cloud-backup-card__label" data-i18n="cloudBackup.connectedAs">Bağlı hesap</span>
-                                    <span class="cloud-backup-card__value" id="cloudBackupEmail">—</span>
-                                </div>
-                            </div>
-                            <div class="cloud-backup-card__meta">
-                                <span class="cloud-backup-card__label" data-i18n="cloudBackup.lastBackup">Son yedek</span>
-                                <span class="cloud-backup-card__value" id="cloudBackupLastAt" data-i18n="cloudBackup.neverBackedUp">Henüz yedek alınmadı</span>
-                            </div>
-                            <p class="cloud-backup-auto-note" data-i18n="cloudBackup.autoBackupNote">Haftada bir otomatik yedek alınır (uygulama açıkken).</p>
-                        </article>
-
-                        <button type="button" class="primary-btn cloud-backup-action-btn" id="cloudBackupBackupNowBtn">
-                            <span class="material-icons-outlined" aria-hidden="true">cloud_upload</span>
-                            <span data-i18n="cloudBackup.backupNow">Şimdi yedekle</span>
-                        </button>
-                        <button type="button" class="secondary-btn cloud-backup-action-btn" id="cloudBackupRestoreBtn">
-                            <span class="material-icons-outlined" aria-hidden="true">cloud_download</span>
-                            <span data-i18n="cloudBackup.restoreBtn">Geri yükle</span>
-                        </button>
-                        <button type="button" class="text-btn cloud-backup-disconnect-btn" id="cloudBackupDisconnectBtn" data-i18n="cloudBackup.disconnectBtn">Bağlantıyı kes</button>
-                    </div>
-
-                    <p class="cloud-backup-status hidden" id="cloudBackupStatus" hidden aria-live="polite"></p>
-                </div>
             </section>
         </div>
 

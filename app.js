@@ -767,15 +767,15 @@ const PREMIUM_FEATURE_VIEW_IDS = new Set([
     'premiumFeatureCounterCustomizeView',
     'premiumFeatureCounterBackgroundView',
     'premiumFeatureRemindersView',
-    'premiumFeatureWeeklyView',
-    'premiumFeatureBackupView'
+    'premiumFeatureWeeklyView'
 ]);
 
+/* Yedekleme artık ayrı bir görünüm değil; premium sekmesinin üstündeki
+   hesap kartında yaşıyor (premiumAccountSection). */
 const PREMIUM_HUB_FEATURES = {
     theme: { viewId: 'premiumFeatureThemeView', locked: true },
     reminders: { viewId: 'premiumFeatureRemindersView', locked: true },
     weekly: { viewId: 'premiumFeatureWeeklyView', locked: true },
-    backup: { viewId: 'premiumFeatureBackupView', locked: true },
     trash: { overlayId: 'trashOverlay', locked: true },
     stats: { viewId: 'statsView', locked: false },
     library: { viewId: 'libraryView', locked: false }
@@ -2955,7 +2955,6 @@ const USAGE_PREMIUM_VIEWS = new Set([
     'premiumFeatureCounterBackgroundView',
     'premiumFeatureRemindersView',
     'premiumFeatureWeeklyView',
-    'premiumFeatureBackupView',
     'statsView'
 ]);
 
@@ -3288,19 +3287,12 @@ function setCloudBackupBusy(busy, statusText = '') {
 }
 
 async function renderBackupView() {
-    const premiumNote = document.getElementById('cloudBackupPremiumNote');
     const unavailableNote = document.getElementById('cloudBackupUnavailableNote');
     const panel = document.getElementById('cloudBackupPanel');
     const disconnected = document.getElementById('cloudBackupDisconnected');
     const connected = document.getElementById('cloudBackupConnected');
     const emailEl = document.getElementById('cloudBackupEmail');
     const lastAtEl = document.getElementById('cloudBackupLastAt');
-
-    if (premiumNote) {
-        const showPremium = PREMIUM_LIVE && isPremiumOnlyFeatureLocked();
-        setHiddenState(premiumNote, !showPremium);
-        if (showPremium) premiumNote.textContent = t('cloudBackup.premiumRequired');
-    }
 
     const availability = await getCloudBackupAvailability();
     const canUse = cloudBackupActiveForUser() && availability === 'ready';
@@ -4890,13 +4882,12 @@ function showView(viewId, param = null, options = {}) {
         );
     } else if (viewId === 'premiumView') {
         renderPremium();
+        void renderBackupView(); // üstteki hesap/yedekleme bloku
     } else if (viewId === 'premiumFeatureRemindersView') {
         renderSmartReminderList();
     } else if (viewId === 'premiumFeatureWeeklyView') {
         weeklyReportWeekIndex = getSelectableWeekRanges(4).length - 1;
         renderWeeklyReportView();
-    } else if (viewId === 'premiumFeatureBackupView') {
-        void renderBackupView();
     } else if (viewId === 'premiumFeatureCounterCustomizeView') {
         renderCounterCustomizeEditor();
     } else if (viewId === 'premiumFeatureCounterBackgroundView') {
