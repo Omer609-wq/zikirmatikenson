@@ -56,19 +56,65 @@ Firestore kullanımı için projede **Blaze (kullandıkça öde)** planı gereki
 Firebase Console → **Project settings** → **Your apps** → Android (`com.omerzikirmatik.app`):
 
 - **Debug** keystore SHA-1 ve SHA-256 (geliştirme cihazı)
-- **Play App Signing** SHA-1 ve SHA-256 (yayın)
+- **Upload / release key** SHA-1 ve SHA-256 (senin imzaladığın sürüm)
+- **Play App Signing** SHA-1 ve SHA-256 (Play'in kullanıcıya dağıttığı sürüm)
 
-Debug SHA almak (Windows, JDK gerekir):
+En güvenli yol: bu üç sertifika setinin de SHA-1 ve SHA-256 değerlerini Firebase'e ekle.
+
+### Hangisi hangisi?
+
+- `debug.keystore`: Android Studio / `installDebug` ile kullandığın geliştirme imzası
+- `upload key` veya `release key`: senin `.aab` / release APK imzalamak için kullandığın anahtar
+- `app signing key`: Play Console'un son kullanıcıya dağıtırken kullandığı anahtar
+
+`storePassword` ile `keyPassword` aynı şey değildir:
+
+- `storePassword`: `.jks` / keystore dosyasını açan şifre
+- `keyAlias`: keystore içindeki anahtar adı
+- `keyPassword`: o alias altındaki anahtarın şifresi
+
+Bu iki şifre aynı da olabilir, farklı da olabilir.
+
+### SHA'ları nasıl alırım?
+
+Debug ve yerel release/upload key için en kolay yol:
+
+```powershell
+cd android
+.\gradlew.bat signingReport
+```
+
+Bu çıktı içinde:
+
+- `Variant: debug` → debug SHA'lar
+- `Variant: release` → `android/keystore.properties` doluysa upload/release SHA'lar
+
+Eğer `Variant: release` kısmında `Store: null` görüyorsan, release keystore henüz bağlı değildir.
+
+Alternatif olarak sadece debug SHA almak istersen:
 
 ```powershell
 keytool -list -v -keystore "$env:USERPROFILE\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
 ```
+
+Release/upload key için örnek dosya: `android/keystore.properties.example`
+
+### Play App Signing SHA
+
+Play Console → **App integrity** ekranında:
+
+- **App signing key certificate**
+- **Upload key certificate**
+
+alanlarını açıp SHA-1 ve SHA-256 değerlerini kopyala. Bunları da Firebase Android uygulamasına ekle.
 
 ### google-services.json
 
 1. Firebase’den **`google-services.json`** indir
 2. `android/app/google-services.json` konumuna koy (git’e **commit etme**; `.gitignore`’da)
 3. Örnek: `android/app/google-services.json.example`
+
+Önemli: Firebase'e yeni SHA eklediğinde `google-services.json` dosyasını tekrar indirip bu klasöre yeniden koy.
 
 ---
 
@@ -86,6 +132,12 @@ copy public\firebase-config.json.example public\firebase-config.json
 5. Bu dosya da git’e **commit edilmez** (`.gitignore`)
 
 Build sırasında `public/` → `www/` kopyalanır.
+
+Notlar:
+
+- Aynı bilgisayarda branch değiştirirken bu dosya yerelde kalır.
+- Ama başka makinede, temiz clone'da veya silinmiş çalışma dizininde bu dosya **yeniden oluşturulmalıdır**.
+- Bu yüzden `public/firebase-config.json.example` güncel tutulur; gerçek dosyayı hiçbir zaman repoya koyma.
 
 ---
 
@@ -131,7 +183,7 @@ Bu komut `@capacitor-firebase/authentication` eklentisini Android projesine ekle
 
 | Belirti | Olası neden |
 |---------|-------------|
-| Google giriş hatası | SHA-1/256 Firebase’e eklenmemiş veya yanlış keystore |
+| Google giriş hatası | SHA-1/256 Firebase’e eklenmemiş, yanlış keystore, ya da SHA ekledikten sonra `google-services.json` yenilenmemiş |
 | `notConfigured` mesajı | `public/firebase-config.json` eksik veya hatalı |
 | Firestore permission denied | Kurallar / Auth etkin değil |
 | Crashlytics çalışıyor ama Auth yok | Authentication’da Google kapalı |
@@ -144,5 +196,5 @@ Bu komut `@capacitor-firebase/authentication` eklentisini Android projesine ekle
 - [ ] `public/firebase-config.json` (yerel, git dışı)
 - [ ] Firebase Auth → Google açık
 - [ ] Firestore + kurallar
-- [ ] SHA-1/256 (debug + release)
+- [ ] SHA-1/256 (debug + upload/release + Play App Signing)
 - [ ] `npm run cap:sync` + cihazda test

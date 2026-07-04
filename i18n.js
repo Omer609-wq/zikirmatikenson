@@ -12,8 +12,6 @@ import libraryEn from './data/library/en.json';
 import libraryBn from './data/library/bn.json';
 import libraryUr from './data/library/ur.json';
 import libraryAr from './data/library/ar.json';
-import libraryPremiumTr from './data/library/premium-tr.json';
-import libraryPremiumId from './data/library/premium-id.json';
 
 import {
     DEFAULT_APP_LOCALE,
@@ -110,22 +108,59 @@ const libraryContextEnById = new Map((libraryEn || []).map((item) => [item.id, i
 const libraryBnById = new Map((libraryBn || []).map((item) => [item.id, item]));
 const libraryUrById = new Map((libraryUr || []).map((item) => [item.id, item]));
 const libraryArById = new Map((libraryAr || []).map((item) => [item.id, item]));
-const libraryTrById = new Map([
-    ...(libraryTr || []).map((item) => [item.id, item]),
-    ...(libraryPremiumTr || []).map((item) => [item.id, item])
-]);
-const libraryPremiumEnById = new Map((libraryPremiumId || []).map((item) => [item.id, item]));
+const libraryTrById = new Map((libraryTr || []).map((item) => [item.id, item]));
+const libraryPremiumEnById = new Map();
 
-const LIBRARY_BY_LOCALE = {
-    tr: { base: libraryTr, premium: libraryPremiumTr },
-    en: { base: libraryEn, premium: libraryPremiumId },
-    id: { base: libraryEn, premium: libraryPremiumId },
-    ms: { base: libraryEn, premium: libraryPremiumId },
-    fr: { base: libraryEn, premium: libraryPremiumId },
-    bn: { base: libraryEn, premium: libraryPremiumId },
-    ar: { base: libraryAr, premium: [] },
-    ur: { base: libraryEn, premium: libraryPremiumId }
-};
+/** @type {typeof libraryTr | null} */
+let libraryPremiumTr = null;
+/** @type {typeof libraryEn | null} */
+let libraryPremiumId = null;
+let premiumLibraryLoadPromise = null;
+
+function mergePremiumLibraryIntoMaps() {
+    if (!libraryPremiumTr) return;
+    for (const item of libraryPremiumTr) {
+        libraryTrById.set(item.id, item);
+    }
+    for (const item of libraryPremiumId || []) {
+        libraryPremiumEnById.set(item.id, item);
+    }
+}
+
+/** Premium kütüphane JSON (~65KB); ilk ihtiyaçta veya arka planda yüklenir. */
+export function ensurePremiumLibraryLoaded() {
+    if (libraryPremiumTr) return Promise.resolve();
+    if (!premiumLibraryLoadPromise) {
+        premiumLibraryLoadPromise = Promise.all([
+            import('./data/library/premium-tr.json'),
+            import('./data/library/premium-id.json')
+        ]).then(([trMod, idMod]) => {
+            libraryPremiumTr = trMod.default || trMod;
+            libraryPremiumId = idMod.default || idMod;
+            mergePremiumLibraryIntoMaps();
+        });
+    }
+    return premiumLibraryLoadPromise;
+}
+
+function getLibraryPackForLocale(code) {
+    const baseByLocale = {
+        tr: libraryTr,
+        en: libraryEn,
+        id: libraryEn,
+        ms: libraryEn,
+        fr: libraryEn,
+        bn: libraryEn,
+        ar: libraryAr,
+        ur: libraryEn
+    };
+    const base = baseByLocale[code] || libraryTr;
+    let premium = [];
+    if (libraryPremiumTr) {
+        premium = code === 'tr' ? libraryPremiumTr : (libraryPremiumId || []);
+    }
+    return { base, premium };
+}
 
 let currentLocale = DEFAULT_APP_LOCALE;
 let uiStrings = enUi;
@@ -245,13 +280,13 @@ function applyLibraryLocalePolicy(item, locale) {
 
 function buildLibrary(locale, includePremium) {
     const code = normalizeAppLocale(locale);
-    const pack = LIBRARY_BY_LOCALE[code] || LIBRARY_BY_LOCALE.tr;
+    const pack = getLibraryPackForLocale(code);
     const overlayById = new Map((pack.base || []).map((item) => [item.id, item]));
     let list = libraryTr.map((item) => {
         const merged = mergeLibraryItem(item, overlayById.get(item.id));
         return applyLibraryLocalePolicy(merged, code);
     });
-    if (includePremium) {
+    if (includePremium && libraryPremiumTr) {
         const premOverlay = new Map((pack.premium || []).map((item) => [item.id, item]));
         list = list.concat(
             libraryPremiumTr.map((item) => {
@@ -269,8 +304,9 @@ export function getZikirLibrary(includePremium = false) {
 
 /** Yalnızca premium paket (locale overlay ile). */
 export function getZikirLibraryPremiumOnly() {
+    if (!libraryPremiumTr) return [];
     const code = normalizeAppLocale(currentLocale);
-    const pack = LIBRARY_BY_LOCALE[code] || LIBRARY_BY_LOCALE.tr;
+    const pack = getLibraryPackForLocale(code);
     const premOverlay = new Map((pack.premium || []).map((item) => [item.id, item]));
     return libraryPremiumTr.map((item) => {
         const merged = mergeLibraryItem(item, premOverlay.get(item.id));
@@ -348,7 +384,11 @@ export function applyLocaleToDocument(locale) {
             el.title = t(el.getAttribute('data-i18n-title'));
         }
         if (el.hasAttribute('data-i18n-attr')) {
-            el.setAttribute(el.getAttribute('data-i18n-attr'), val);
+            el.getAttribute('data-i18n-attr')
+                .split(',')
+                .map((attr) => attr.trim())
+                .filter(Boolean)
+                .forEach((attr) => el.setAttribute(attr, val));
         } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             if (el.hasAttribute('data-i18n-placeholder') || el.getAttribute('type') === 'text' || el.getAttribute('type') === 'search') {
                 el.placeholder = val;
@@ -368,4 +408,7 @@ export function applyLocaleToDocument(locale) {
 
 export function initI18n(locale) {
     applyLocaleToDocument(locale);
+    if (typeof window !== 'undefined') {
+        void ensurePremiumLibraryLoaded();
+    }
 }

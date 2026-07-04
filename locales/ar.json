@@ -328,6 +328,7 @@
     "counterBgGallery": "اختيار من المعرض",
     "counterBgGalleryHint": "استخدم صورتك الخاصة",
     "counterBgGallerySoon": "الاختيار من المعرض سيُضاف قريبًا.",
+    "counterBgGalleryError": "تعذر فتح هذه الصورة. جرّب صورة أخرى.",
     "counterBgPresetNasirAlMulk": "المسجد الوردي (نصير الملك)",
     "counterCustomizePreviewName": "سُبْحَانَ اللَّهِ",
     "counterCustomizePreviewNote": "سبحان الله.",
@@ -361,6 +362,10 @@
     "perYear": "/ year",
     "yearlyBadge": "Save {percent}% · {count} months free",
     "subscribeBtn": "اشترك",
+    "restoreBtn": "استعادة المشتريات",
+    "restoreSuccess": "تمت استعادة اشتراك Premium.",
+    "restoreNothing": "لم يُعثر على اشتراك نشط لهذا الحساب.",
+    "restoreUnavailable": "الاستعادة غير متاحة بعد. ستعمل عند ربط فوترة Play Store.",
     "stubNote": "سيتم تفعيل هذه الشاشة عند ربط فوترة Play Store."
   },
   "weeklyReport": {

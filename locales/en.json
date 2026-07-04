@@ -327,6 +327,7 @@
     "counterBgGallery": "Choose from gallery",
     "counterBgGalleryHint": "Use your own photo",
     "counterBgGallerySoon": "Gallery pick will be available soon.",
+    "counterBgGalleryError": "Couldn't open that photo. Try another image.",
     "counterBgPresetNasirAlMulk": "Pink mosque (Nasir al-Mulk)",
     "counterCustomizePreviewName": "Subhanallah",
     "counterCustomizePreviewNote": "Glory be to Allah.",
@@ -360,6 +361,10 @@
     "perYear": "/ year",
     "yearlyBadge": "Save {percent}% · {count} months free",
     "subscribeBtn": "Subscribe",
+    "restoreBtn": "Restore purchases",
+    "restoreSuccess": "Your Premium subscription has been restored.",
+    "restoreNothing": "No active subscription was found for this account.",
+    "restoreUnavailable": "Restore is not available yet. It will work when Play Store billing is connected.",
     "stubNote": "This screen will activate when Play Store billing is connected."
   },
   "weeklyReport": {

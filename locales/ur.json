@@ -327,6 +327,7 @@
     "counterBgGallery": "گیلری سے منتخب کریں",
     "counterBgGalleryHint": "اپنی تصویر استعمال کریں",
     "counterBgGallerySoon": "گیلری سے انتخاب جلد آئے گا۔",
+    "counterBgGalleryError": "یہ تصویر نہیں کھل سکی۔ کوئی اور تصویر آزمائیں۔",
     "counterBgPresetNasirAlMulk": "گلابی مسجد (نصیر الملک)",
     "counterCustomizePreviewName": "سُبْحَانَ اللّٰه",
     "counterCustomizePreviewNote": "اللہ پاک ہے۔",
@@ -360,6 +361,10 @@
     "perYear": "/ year",
     "yearlyBadge": "Save {percent}% · {count} months free",
     "subscribeBtn": "سبسکرائب",
+    "restoreBtn": "خریداری بحال کریں",
+    "restoreSuccess": "آپ کی Premium سبسکرپشن بحال ہو گئی۔",
+    "restoreNothing": "اس اکاؤنٹ کے لیے کوئی فعال سبسکرپشن نہیں ملی۔",
+    "restoreUnavailable": "بحالی ابھی دستیاب نہیں۔ Play Store بلنگ منسلک ہونے پر کام کرے گی۔",
     "stubNote": "Play Store بلنگ منسلک ہونے پر یہ اسکرین فعال ہوگی۔"
   },
   "weeklyReport": {

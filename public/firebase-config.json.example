@@ -2,7 +2,8 @@
   "apiKey": "AIzaSy_REPLACE_WITH_WEB_API_KEY",
   "authDomain": "your-firebase-project-id.firebaseapp.com",
   "projectId": "your-firebase-project-id",
-  "storageBucket": "your-firebase-project-id.appspot.com",
+  "storageBucket": "your-firebase-project-id.firebasestorage.app",
   "messagingSenderId": "FIREBASE_PROJECT_NUMBER",
-  "appId": "1:FIREBASE_PROJECT_NUMBER:web:WEB_APP_HASH"
+  "appId": "1:FIREBASE_PROJECT_NUMBER:web:WEB_APP_HASH",
+  "measurementId": "G-OPTIONAL_MEASUREMENT_ID"
 }

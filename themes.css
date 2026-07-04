@@ -65,6 +65,13 @@ html[data-theme="light"] {
     --premium-nav-bg-active: rgba(234, 179, 8, 0.2);
     --premium-nav-border-active: rgba(180, 83, 9, 0.32);
     --premium-subtitle-color: var(--text-gray);
+    --premium-gold: rgba(180, 130, 20, 0.95);
+    --premium-gold-light: rgba(202, 154, 46, 0.98);
+    --premium-gold-border: rgba(180, 130, 20, 0.45);
+    --premium-gold-border-light: rgba(180, 130, 20, 0.45);
+    --premium-gold-bg: rgba(234, 179, 8, 0.1);
+    --premium-gold-ring: rgba(180, 130, 20, 0.12);
+    --premium-gold-dim: rgba(184, 134, 11, 0.65);
     --grip-line-color: rgba(28, 25, 23, 0.42);
     --grip-line-color-dim: rgba(28, 25, 23, 0.24);
     --grip-handle-color: rgba(28, 25, 23, 0.48);
@@ -84,6 +91,7 @@ html[data-theme="light"] {
     --update-banner-btn-fg: color-mix(in srgb, var(--update-banner-accent) 70%, #292524);
     --update-banner-btn-highlight: rgba(255, 248, 225, 0.35);
     --update-banner-btn-border: color-mix(in srgb, var(--update-banner-accent) 62%, var(--surface-border));
+    --premium-sheet-shadow: 0 -8px 28px rgba(28, 25, 23, 0.12);
 }
 
 html[data-theme="light"] .quran-surah-section__frame {
@@ -235,6 +243,13 @@ html[data-theme="dark"] {
     --premium-nav-bg-active: rgba(234, 179, 8, 0.12);
     --premium-nav-border-active: rgba(234, 179, 8, 0.2);
     --premium-subtitle-color: rgba(255, 255, 255, 0.75);
+    --premium-gold: rgba(234, 179, 8, 0.95);
+    --premium-gold-light: rgba(251, 191, 36, 0.98);
+    --premium-gold-border: rgba(234, 179, 8, 0.55);
+    --premium-gold-border-light: rgba(180, 130, 20, 0.45);
+    --premium-gold-bg: rgba(234, 179, 8, 0.08);
+    --premium-gold-ring: rgba(234, 179, 8, 0.12);
+    --premium-gold-dim: rgba(212, 175, 55, 0.65);
     --grip-line-color: rgba(255, 255, 255, 0.42);
     --grip-line-color-dim: rgba(255, 255, 255, 0.22);
     --grip-handle-color: rgba(255, 255, 255, 0.38);
@@ -253,6 +268,7 @@ html[data-theme="dark"] {
     --update-banner-btn-tint-pulse: rgba(250, 225, 160, 0.22);
     --update-banner-btn-fg: #f5ecd4;
     --update-banner-btn-highlight: rgba(255, 250, 235, 0.09);
+    --premium-sheet-shadow: 0 -8px 28px rgba(0, 0, 0, 0.28);
 }
 
 /* Karanlık (siyah / AMOLED) — lacivertten ayrı, nötr gri-siyah palet */
@@ -322,6 +338,13 @@ html[data-theme="black"] {
     --premium-nav-bg-active: rgba(234, 179, 8, 0.14);
     --premium-nav-border-active: rgba(234, 179, 8, 0.22);
     --premium-subtitle-color: rgba(255, 255, 255, 0.72);
+    --premium-gold: rgba(234, 179, 8, 0.95);
+    --premium-gold-light: rgba(251, 191, 36, 0.98);
+    --premium-gold-border: rgba(234, 179, 8, 0.55);
+    --premium-gold-border-light: rgba(180, 130, 20, 0.45);
+    --premium-gold-bg: rgba(234, 179, 8, 0.08);
+    --premium-gold-ring: rgba(234, 179, 8, 0.12);
+    --premium-gold-dim: rgba(212, 175, 55, 0.65);
     --grip-line-color: rgba(255, 255, 255, 0.4);
     --grip-line-color-dim: rgba(255, 255, 255, 0.2);
     --grip-handle-color: rgba(255, 255, 255, 0.36);
@@ -340,6 +363,7 @@ html[data-theme="black"] {
     --update-banner-btn-tint-pulse: rgba(248, 220, 150, 0.24);
     --update-banner-btn-fg: #faf3dc;
     --update-banner-btn-highlight: rgba(255, 252, 240, 0.1);
+    --premium-sheet-shadow: 0 -8px 28px rgba(0, 0, 0, 0.28);
 }
 
 html[data-theme="black"] .premium-hero {
@@ -636,7 +660,7 @@ html[data-accent="lime"] { --primary-green: #65a30d; --primary-green-hover: #4d7
     width: 14px;
     height: 14px;
     border-radius: 999px;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.04);
+    box-shadow: 0 0 0 3px var(--alpha-04);
 }
 
 /* ================== PREMIUM THEME EDITOR (STACKED SECTIONS) ================== */
@@ -896,7 +920,7 @@ html[data-accent="lime"] { --primary-green: #65a30d; --primary-green-hover: #4d7
     background: var(--surface-card);
     border-top: 1px solid var(--surface-border);
     border-radius: 18px 18px 0 0;
-    box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.28);
+    box-shadow: var(--premium-sheet-shadow, 0 -8px 28px rgba(0, 0, 0, 0.28));
     transition: height 0.32s var(--counter-sheet-ease);
 }
 .counter-customize-sheet.is-dragging {
@@ -1292,9 +1316,9 @@ html[data-theme="light"] .premium-purchase-plan__inner {
     background: var(--elevated-panel);
     border-color: rgba(15, 23, 42, 0.1);
 }
-html[data-theme="light"] .premium-purchase-plan:has(input:checked) .premium-purchase-plan__inner {
-    border-color: rgba(180, 130, 20, 0.45);
-    background: rgba(234, 179, 8, 0.1);
+html[data-theme="light"] .premium-purchase-plan input:checked + .premium-purchase-plan__inner {
+    border-color: var(--premium-gold-border-light, rgba(180, 130, 20, 0.45));
+    background: var(--premium-gold-bg, rgba(234, 179, 8, 0.1));
 }
 html[data-theme="light"] .premium-purchase-plan__term {
     color: rgba(15, 23, 42, 0.62);

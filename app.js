@@ -116,6 +116,7 @@ import {
     getLibraryMeaningForLocale,
     getLibraryNameForLocale,
     inferLibraryIdForZikir,
+    ensurePremiumLibraryLoaded,
     initI18n,
     localeUsesEnglishMeals,
     localeUsesArabicScript,
@@ -594,6 +595,7 @@ function createDefaultAppSettings() {
         counterTapScale: 'm',
         counterTickSound: 'classic',
         counterBackground: 'none',
+        counterBackgroundCustomDataUrl: '',
         locale: resolveLocaleFromSystem(),
         quranMeal: 'diyanet',
         quranReadMode: 'meal-ar',
@@ -632,7 +634,7 @@ let currentFolderId = null;
 let currentZikirId = null;
 let currentQuranSurahId = null;
 let quranAyahFavorites = [];
-const QURAN_COUNTER_LAYOUTS = ['classic', 'compact', 'text-only'];
+import { QURAN_COUNTER_LAYOUTS, normalizeQuranCounterLayout } from './lib/quran-counter-layout.js';
 
 function isQuranZikir(z) {
     return !!(z?.quranRef && Number.isFinite(Number(z.quranRef.s)));
@@ -720,11 +722,6 @@ function refreshViewsAfterLocalizedZikirSync() {
     if (zikirStatsOverlay && zikirStatsOverlay.classList.contains('active')) renderZikirStats();
     const statsView = document.getElementById('statsView');
     if (statsView && !statsView.classList.contains('hidden')) renderStats();
-}
-
-function normalizeQuranCounterLayout(layout) {
-    const v = String(layout || '').trim();
-    return QURAN_COUNTER_LAYOUTS.includes(v) ? v : 'classic';
 }
 let activeStatTab = 'daily';
 let activeZikirStatTab = 'daily';
@@ -1205,6 +1202,20 @@ async function init() {
             if (!result?.ok) {
                 void showAppAlert(t('premiumPurchase.stubNote'), { title: t('premiumPurchase.title') });
             }
+        },
+        onRestore: (result) => {
+            if (result?.ok) {
+                entitlements.premium = true;
+                saveData();
+                syncPremiumLockedControls();
+                void showAppAlert(t('premiumPurchase.restoreSuccess'), { title: t('premiumPurchase.title') });
+                return;
+            }
+            if (result?.reason === 'nothing_to_restore') {
+                void showAppAlert(t('premiumPurchase.restoreNothing'), { title: t('premiumPurchase.title') });
+                return;
+            }
+            void showAppAlert(t('premiumPurchase.restoreUnavailable'), { title: t('premiumPurchase.title') });
         }
     });
     setMultiSelectBarShown(folderMultiSelectBar, false);
@@ -1658,6 +1669,17 @@ function applyCounterBackgroundFromSettings() {
         return;
     }
     const bg = normalizeCounterBackground(appSettings.counterBackground);
+    const customDataUrl = String(appSettings.counterBackgroundCustomDataUrl || '').trim();
+    if (bg === 'custom') {
+        if (!customDataUrl) {
+            document.documentElement.setAttribute('data-counter-background', 'none');
+            document.documentElement.style.removeProperty('--counter-bg-image');
+            return;
+        }
+        document.documentElement.setAttribute('data-counter-background', 'on');
+        document.documentElement.style.setProperty('--counter-bg-image', `url("${customDataUrl}")`);
+        return;
+    }
     document.documentElement.setAttribute('data-counter-background', bg === 'none' ? 'none' : 'on');
     const preset = findCounterBgPreset(bg);
     if (preset) {
@@ -1674,6 +1696,52 @@ const counterBgPresetGrid = document.getElementById('counterBgPresetGrid');
 const counterBgPresetsEmpty = document.getElementById('counterBgPresetsEmpty');
 const counterBgGalleryBtn = document.getElementById('counterBgGalleryBtn');
 const counterBgGalleryInput = document.getElementById('counterBgGalleryInput');
+const COUNTER_BG_CUSTOM_MAX_EDGE_STEPS = [1440, 1200, 960, 768];
+const COUNTER_BG_CUSTOM_JPEG_QUALITY = 0.8;
+const COUNTER_BG_CUSTOM_DATA_URL_SOFT_LIMIT = 450000;
+
+function loadImageFromUrl(url) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('counter background image load failed'));
+        img.src = url;
+    });
+}
+
+function drawCounterBackgroundToCanvas(img, maxEdge) {
+    const longestEdge = Math.max(img.naturalWidth || img.width || 1, img.naturalHeight || img.height || 1);
+    const scale = longestEdge > maxEdge ? maxEdge / longestEdge : 1;
+    const width = Math.max(1, Math.round((img.naturalWidth || img.width || 1) * scale));
+    const height = Math.max(1, Math.round((img.naturalHeight || img.height || 1) * scale));
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d', { alpha: false });
+    if (!ctx) throw new Error('counter background canvas unavailable');
+    ctx.drawImage(img, 0, 0, width, height);
+    return canvas;
+}
+
+async function buildCounterBackgroundCustomDataUrl(file) {
+    if (!file || !String(file.type || '').startsWith('image/')) {
+        throw new Error('counter background file is not an image');
+    }
+    const objectUrl = URL.createObjectURL(file);
+    try {
+        const img = await loadImageFromUrl(objectUrl);
+        let fallbackDataUrl = '';
+        for (const maxEdge of COUNTER_BG_CUSTOM_MAX_EDGE_STEPS) {
+            const canvas = drawCounterBackgroundToCanvas(img, maxEdge);
+            const nextDataUrl = canvas.toDataURL('image/jpeg', COUNTER_BG_CUSTOM_JPEG_QUALITY);
+            fallbackDataUrl = nextDataUrl;
+            if (nextDataUrl.length <= COUNTER_BG_CUSTOM_DATA_URL_SOFT_LIMIT) return nextDataUrl;
+        }
+        return fallbackDataUrl;
+    } finally {
+        URL.revokeObjectURL(objectUrl);
+    }
+}
 
 function renderCounterBackgroundPresetGrid() {
     if (!counterBgPresetGrid) return;
@@ -1721,6 +1789,20 @@ function setCounterBackground(next) {
     const normalized = normalizeCounterBackground(next);
     if (appSettings.counterBackground === normalized) return;
     appSettings.counterBackground = normalized;
+    applyCounterBackgroundFromSettings();
+    syncCounterBackgroundEditorUI();
+    saveData();
+}
+
+function setCustomCounterBackgroundDataUrl(dataUrl) {
+    const normalized = String(dataUrl || '').trim();
+    if (!normalized) return;
+    const changed =
+        appSettings.counterBackground !== 'custom' ||
+        appSettings.counterBackgroundCustomDataUrl !== normalized;
+    if (!changed) return;
+    appSettings.counterBackground = 'custom';
+    appSettings.counterBackgroundCustomDataUrl = normalized;
     applyCounterBackgroundFromSettings();
     syncCounterBackgroundEditorUI();
     saveData();
@@ -5939,10 +6021,14 @@ function isLibraryCardLocked(z, premiumUser) {
     if (premiumUser) return false;
     if (!PREMIUM_LIVE) return false;
     if (String(z.id).startsWith('plib_')) return true;
-    return isBaseLibraryItemPremiumLocked(z.id, { premiumLive: PREMIUM_LIVE, isPremium: false });
+    return isBaseLibraryItemPremiumLocked(z.id, { premiumLive: PREMIUM_LIVE, isPremium: premiumUser });
 }
 
 function renderLibrary() {
+    void ensurePremiumLibraryLoaded().then(() => renderLibraryContent());
+}
+
+function renderLibraryContent() {
     libraryGrid.innerHTML = '';
     const q = (librarySearchQuery || '').trim();
     const searchActive = q.length > 0;
@@ -6985,13 +7071,38 @@ function setupEventListeners() {
     }
 
     if (counterBgGalleryBtn) {
-        counterBgGalleryBtn.addEventListener('click', async (e) => {
+        counterBgGalleryBtn.addEventListener('click', (e) => {
             if (e.target.closest('.premium-lock-star')) return;
             if (isCounterBackgroundLocked()) {
                 showPremiumFeatureUpsell();
                 return;
             }
-            await showAppAlert(t('premium.counterBgGallerySoon'), t('dialog.info'));
+            if (!counterBgGalleryInput) return;
+            counterBgGalleryInput.value = '';
+            if (typeof counterBgGalleryInput.showPicker === 'function') {
+                try {
+                    counterBgGalleryInput.showPicker();
+                    return;
+                } catch (err) {
+                    console.warn('counter background showPicker failed, falling back to click()', err);
+                }
+            }
+            counterBgGalleryInput.click();
+        });
+    }
+
+    if (counterBgGalleryInput) {
+        counterBgGalleryInput.addEventListener('change', async () => {
+            const file = counterBgGalleryInput.files?.[0];
+            counterBgGalleryInput.value = '';
+            if (!file) return;
+            try {
+                const dataUrl = await buildCounterBackgroundCustomDataUrl(file);
+                setCustomCounterBackgroundDataUrl(dataUrl);
+            } catch (err) {
+                console.error('counter background gallery pick failed', err);
+                await showAppAlert(t('premium.counterBgGalleryError'), { title: t('dialog.info') });
+            }
         });
     }
 

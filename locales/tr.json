@@ -327,6 +327,7 @@
     "counterBgGallery": "Galeriden seç",
     "counterBgGalleryHint": "Kendi fotoğrafını kullan",
     "counterBgGallerySoon": "Galeriden seçme yakında eklenecek.",
+    "counterBgGalleryError": "Fotoğraf açılamadı. Başka bir görsel deneyin.",
     "counterBgPresetNasirAlMulk": "Pembe camii (Nasir al-Mulk)",
     "counterCustomizePreviewName": "Subhanallah",
     "counterCustomizePreviewNote": "Allah eksikliklerden uzaktır.",
@@ -360,6 +361,10 @@
     "perYear": "/ yıl",
     "yearlyBadge": "%{percent} tasarruf · {count} ay bedava",
     "subscribeBtn": "Abone ol",
+    "restoreBtn": "Satın alımı geri yükle",
+    "restoreSuccess": "Premium aboneliğiniz geri yüklendi.",
+    "restoreNothing": "Bu hesapta aktif abonelik bulunamadı.",
+    "restoreUnavailable": "Geri yükleme şu an kullanılamıyor. Play Store faturalandırması bağlanınca aktif olacak.",
     "stubNote": "Play Store faturalandırması bağlanınca bu ekran aktifleşecek."
   },
   "weeklyReport": {

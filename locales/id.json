@@ -327,6 +327,7 @@
     "counterBgGallery": "Pilih dari galeri",
     "counterBgGalleryHint": "Gunakan foto Anda sendiri",
     "counterBgGallerySoon": "Pilihan dari galeri akan segera hadir.",
+    "counterBgGalleryError": "Foto itu tidak bisa dibuka. Coba gambar lain.",
     "counterBgPresetNasirAlMulk": "Masjid merah muda (Nasir al-Mulk)",
     "counterCustomizePreviewName": "Subhanallah",
     "counterCustomizePreviewNote": "Mahasuci Allah.",
@@ -360,6 +361,10 @@
     "perYear": "/ year",
     "yearlyBadge": "Save {percent}% · {count} months free",
     "subscribeBtn": "Berlangganan",
+    "restoreBtn": "Pulihkan pembelian",
+    "restoreSuccess": "Langganan Premium Anda telah dipulihkan.",
+    "restoreNothing": "Tidak ada langganan aktif untuk akun ini.",
+    "restoreUnavailable": "Pemulihan belum tersedia. Akan aktif setelah penagihan Play Store terhubung.",
     "stubNote": "Layar ini aktif setelah penagihan Play Store terhubung."
   },
   "weeklyReport": {

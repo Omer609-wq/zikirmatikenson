@@ -327,6 +327,7 @@
     "counterBgGallery": "গ্যালারি থেকে বেছে নিন",
     "counterBgGalleryHint": "নিজের ছবি ব্যবহার করুন",
     "counterBgGallerySoon": "গ্যালারি থেকে বাছাই শীঘ্রই আসছে।",
+    "counterBgGalleryError": "ছবিটি খোলা গেল না। অন্য একটি ছবি চেষ্টা করুন।",
     "counterBgPresetNasirAlMulk": "গোলাপি মসজিদ (নাসির আল-মুল্ক)",
     "counterCustomizePreviewName": "সুবহানাল্লাহ",
     "counterCustomizePreviewNote": "আল্লাহ পবিত্র।",
@@ -360,6 +361,10 @@
     "perYear": "/ year",
     "yearlyBadge": "Save {percent}% · {count} months free",
     "subscribeBtn": "সাবস্ক্রাইব",
+    "restoreBtn": "ক্রয় পুনরুদ্ধার",
+    "restoreSuccess": "আপনার Premium সাবস্ক্রিপশন পুনরুদ্ধার হয়েছে।",
+    "restoreNothing": "এই অ্যাকাউন্টে সক্রিয় সাবস্ক্রিপশন পাওয়া যায়নি।",
+    "restoreUnavailable": "পুনরুদ্ধার এখনো উপলব্ধ নয়। Play Store বিলিং সংযুক্ত হলে কাজ করবে।",
     "stubNote": "Play Store বিলিং সংযুক্ত হলে এই স্ক্রিন সক্রিয় হবে।"
   },
   "weeklyReport": {
