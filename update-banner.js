@@ -4,17 +4,15 @@
  * İçerik: public/update-banner.json (latestVersionCode, title, message).
  * jsDelivr CDN üzerinden sunulur (kaynak: GitHub @main); git push ile güncellenir.
  * Acil purge: https://purge.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/update-banner.json
- * Test: UPDATE_BANNER_PREVIEW = true. Yayında: false (kapalı).
+ * Test: `debug-flags.json` içinden `updateBannerPreview: true`.
  */
 import { Capacitor } from '@capacitor/core';
+import { getRuntimeFlags, loadRuntimeFlags } from './lib/runtime-flags.js';
 
 export const UPDATE_BANNER_CONFIG_URL =
     'https://cdn.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/update-banner.json';
 
 export const UPDATE_BANNER_DISABLED = false;
-
-/** TEST — Android Studio’da kutuyu görmek için true; bitince false yap. */
-export const UPDATE_BANNER_PREVIEW = false;
 
 const DISMISS_STORAGE_KEY = 'zikirmatik_dismissed_update_banners';
 const REMOTE_CONFIG_CACHE_KEY = 'zikirmatik_update_banner_config_cache';
@@ -136,17 +134,18 @@ export function getInstalledAppVersionCode() {
 export function shouldShowUpdateBanner() {
     const p = cachedPayload;
     if (!p) return false;
-    if (UPDATE_BANNER_PREVIEW) return true;
+    if (getRuntimeFlags().updateBannerPreview) return true;
     return !readDismissedIds().includes(p.id);
 }
 
 export async function refreshUpdateBannerConfig() {
     cachedPayload = null;
     if (UPDATE_BANNER_DISABLED) return null;
+    await loadRuntimeFlags();
 
     installedVersionCode = await readInstalledVersionCode();
 
-    if (UPDATE_BANNER_PREVIEW) {
+    if (getRuntimeFlags().updateBannerPreview) {
         cachedPayload = { ...PREVIEW_PAYLOAD };
         return cachedPayload;
     }

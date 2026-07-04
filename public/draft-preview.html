@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Premium taslak — önizleme</title>
+    <style>
+        :root {
+            --bg: #0f1419;
+            --card: #1a222d;
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #e8edf4;
+            --muted: #8b9aab;
+            --green: #2ecc71;
+            --gold: #fbbf24;
+            --dua: #3498db;
+            --zikir: #9b59b6;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding: 1rem 1rem 2rem;
+        }
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: rgba(15, 20, 25, 0.92);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 0 1rem;
+            margin: -1rem -1rem 1rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        h1 { font-size: 1.1rem; margin: 0 0 0.35rem; font-weight: 600; }
+        .meta { font-size: 0.8rem; color: var(--muted); }
+        .meta strong { color: var(--gold); }
+        .empty {
+            text-align: center;
+            color: var(--muted);
+            padding: 3rem 1rem;
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+        }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.1rem;
+            margin-bottom: 0.85rem;
+        }
+        .card__head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .card__title { font-size: 1rem; font-weight: 600; margin: 0; }
+        .badge {
+            flex-shrink: 0;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 0.2rem 0.45rem;
+            border-radius: 6px;
+        }
+        .badge--dua { background: rgba(52, 152, 219, 0.18); color: var(--dua); }
+        .badge--zikir { background: rgba(155, 89, 182, 0.18); color: var(--zikir); }
+        .id { font-size: 0.72rem; color: var(--muted); margin-bottom: 0.65rem; }
+        .arabic {
+            font-size: 1.15rem;
+            line-height: 1.85;
+            text-align: right;
+            direction: rtl;
+            color: var(--green);
+            margin: 0.5rem 0 0.75rem;
+        }
+        .label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 0.65rem 0 0.2rem; }
+        .value { font-size: 0.9rem; margin: 0; }
+        .keywords { font-size: 0.8rem; color: var(--muted); font-style: italic; }
+        .err { color: #e74c3c; padding: 1rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Premium taslak önizleme</h1>
+        <p class="meta">
+            Kaynak: <strong>data/library/premium-tr.draft.json</strong>
+            · <span id="counts">yükleniyor…</span>
+            · <span id="updated">—</span>
+        </p>
+    </header>
+    <div id="root"></div>
+    <script>
+        const DRAFT_URL = '/draft/premium-tr.draft.json';
+        const root = document.getElementById('root');
+        const countsEl = document.getElementById('counts');
+        const updatedEl = document.getElementById('updated');
+        let lastJson = '';
+
+        function esc(s) {
+            return String(s ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function render(items) {
+            if (!Array.isArray(items) || !items.length) {
+                root.innerHTML = '<div class="empty">Taslak boş — <code>premium-tr.draft.json</code> dosyasına madde ekleyin.</div>';
+                countsEl.textContent = '0 madde';
+                return;
+            }
+            const duas = items.filter((i) => i.category === 'dua').length;
+            const zikirs = items.filter((i) => i.category === 'zikir').length;
+            countsEl.textContent = `${items.length} madde (${duas} dua, ${zikirs} zikir)`;
+            root.innerHTML = items
+                .map((item, idx) => {
+                    const cat = item.category === 'zikir' ? 'zikir' : 'dua';
+                    return `
+                    <article class="card">
+                        <div class="card__head">
+                            <h2 class="card__title">${idx + 1}. ${esc(item.name)}</h2>
+                            <span class="badge badge--${cat}">${cat}</span>
+                        </div>
+                        <div class="id">${esc(item.id)} · hedef: ${esc(item.target ?? 1)}</div>
+                        ${item.arabic ? `<p class="arabic">${esc(item.arabic)}</p>` : ''}
+                        <div class="label">Meal</div>
+                        <p class="value">${esc(item.meaning)}</p>
+                        ${item.context ? `<div class="label">Ne zaman / fazilet</div><p class="value">${esc(item.context)}</p>` : ''}
+                        ${item.source ? `<div class="label">Kaynak</div><p class="value">${esc(item.source)}</p>` : ''}
+                        ${item.keywords ? `<div class="label">Anahtar kelimeler</div><p class="keywords">${esc(item.keywords)}</p>` : ''}
+                    </article>`;
+                })
+                .join('');
+        }
+
+        async function refresh() {
+            try {
+                const res = await fetch(`${DRAFT_URL}?t=${Date.now()}`, { cache: 'no-store' });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const text = await res.text();
+                if (text === lastJson) return;
+                lastJson = text;
+                const data = JSON.parse(text);
+                render(data);
+                updatedEl.textContent = `güncellendi ${new Date().toLocaleTimeString('tr-TR')}`;
+            } catch (e) {
+                root.innerHTML = `<p class="err">Yüklenemedi: ${esc(e.message)}<br><small>npm run dev çalışıyor olmalı.</small></p>`;
+                countsEl.textContent = 'hata';
+            }
+        }
+
+        refresh();
+        setInterval(refresh, 2000);
+    </script>
+</body>
+</html>

@@ -5,6 +5,7 @@ import {
     isCapacitorNative,
     refreshNativeBottomInsetVar,
     syncNativeDailyReminder,
+    syncNativeSmartReminders,
     openExactAlarmSettings
 } from './native-reminders.js';
 import {
@@ -21,11 +22,80 @@ import {
     refreshSeasonalContent
 } from './seasonal-content.js';
 import { escapeHtml, escapeAttr } from './lib/html.js';
+import { isBaseLibraryItemPremiumLocked } from './lib/library-access.js';
+import { playCounterTickSound, normalizeCounterTickSound } from './lib/counter-tick-sounds.js';
+import {
+    COUNTER_BG_PRESETS,
+    counterBgPresetUrl,
+    findCounterBgPreset,
+    normalizeCounterBackground
+} from './lib/counter-backgrounds.js';
 import { sanitizeLoadedData, mintId } from './lib/sanitize.js';
+import {
+    MAX_SMART_REMINDERS,
+    MAX_MESSAGES_PER_RULE,
+    SMART_REMINDER_MESSAGE_MAX_LEN,
+    buildSmartReminderSlots,
+    createDefaultSmartReminder,
+    INTRO_SAMPLE_REMINDER_ID,
+    INTRO_SAMPLE_SURAH,
+    INTRO_SAMPLE_AYAH
+} from './lib/smart-reminders.js';
+import { createUsageTracker } from './lib/usage-tracker.js';
+import {
+    USAGE_AREA_HOME,
+    USAGE_AREA_LIB_DUA,
+    USAGE_AREA_LIB_ZIKIR,
+    USAGE_AREA_PREMIUM,
+    USAGE_AREA_QURAN,
+    USAGE_AREA_SETTINGS,
+    USAGE_AREA_OTHER,
+    folderUsageAreaId,
+    getTopUsageAreasForDay,
+    isFolderUsageArea,
+    folderIdFromUsageArea
+} from './lib/usage-areas.js';
+import { syncNativeWeeklyReport } from './lib/weekly-report-notify.js';
+import { getRuntimeFlags, loadRuntimeFlags } from './lib/runtime-flags.js';
+import { buildWeeklyReportPreviewPatch } from './lib/weekly-report-preview.js';
+import {
+    buildWeekReport,
+    computeFourWeekDailyAverage,
+    computeGoalStreak,
+    computeWeekUsageStats,
+    formatUsageDuration,
+    getDailyUsageSeries,
+    getFlameTier,
+    FLAME_TIER_IDS,
+    getNextMondayAt,
+    getReportWeekForMonday,
+    getSelectableWeekRanges,
+    normalizeDailyZikirGoal,
+    parseDateKey,
+    percentChange
+} from './lib/weekly-report.js';
 import { showAppAlert, showAppConfirm, showAppPrompt, setupAppDialog } from './lib/app-dialog.js';
+import {
+    closePremiumUpsell,
+    setPremiumPurchaseNavigator,
+    setupPremiumUpsell,
+    showPremiumLimitUpsell,
+    showPremiumFeatureUpsell,
+    showPremiumLibraryUpsell
+} from './lib/premium-upsell.js';
+import { renderPremiumPurchase, setupPremiumPurchase } from './lib/premium-purchase.js';
 import { applyNativeStatusBarTheme } from './status-bar-theme.js';
 import { runCounterVibration, runDragReorderNudge } from './haptics.js';
 import { setupCrashReporting } from './lib/crash-reporting.js';
+import {
+    downloadBackupPayload,
+    getCloudBackupAvailability,
+    maybeUploadCloudBackup,
+    normalizeCloudBackupMeta,
+    signInWithGoogleForBackup,
+    signOutCloudBackup,
+    uploadBackupPayload
+} from './lib/cloud-backup.js';
 import { App } from '@capacitor/app';
 import { pickRandomQuoteEntry, getReminderQuoteNotificationPayload } from './quotes.js';
 import { ESMA_DEFAULT_FAZILET } from './esma-fazilet.js';
@@ -38,6 +108,7 @@ import {
     getLocale,
     getLocaleTag,
     getZikirLibrary,
+    getZikirLibraryPremiumOnly,
     getKnownLibraryFaziletTexts,
     getKnownLibraryMeaningTexts,
     getKnownLibraryNameTexts,
@@ -45,6 +116,7 @@ import {
     getLibraryMeaningForLocale,
     getLibraryNameForLocale,
     inferLibraryIdForZikir,
+    ensurePremiumLibraryLoaded,
     initI18n,
     localeUsesEnglishMeals,
     localeUsesArabicScript,
@@ -514,12 +586,24 @@ function createDefaultAppSettings() {
         counterNativeNumerals: false,
         arabicSublineFontStep: 0,
         theme: 'navy',
+        accent: 'emerald',
+        counterRingWidth: 12,
+        counterNumberSize: 'm',
+        counterShowTarget: true,
+        counterShowTotal: true,
+        counterShowRound: true,
+        counterTapScale: 'm',
+        counterTickSound: 'classic',
+        counterBackground: 'none',
+        counterBackgroundCustomDataUrl: '',
         locale: resolveLocaleFromSystem(),
         quranMeal: 'diyanet',
         quranReadMode: 'meal-ar',
         quranReaderLayout: 'scroll',
         quranMushafRememberPage: false,
-        quranMushafSavedPage: 1
+        quranMushafSavedPage: 1,
+        dailyZikirGoal: 0,
+        weeklyReportEnabled: true
     };
     syncQuranSettingsForLocale(settings);
     return settings;
@@ -529,16 +613,28 @@ function createDefaultAppSettings() {
 let folders = [];
 let zikirs = [];
 let history = {};
+let usageByDay = {};
+let usageAreasByDay = {};
 let appSettings = createDefaultAppSettings();
 let reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
+/** @type {import('./lib/smart-reminders.js').SmartReminderRule[]} */
+let smartReminders = [];
+let smartReminderEditId = null;
 let entitlements = { premium: false };
 let trash = { v: 1, entries: [] }; // soft-deleted items
+let appMeta = { installedAt: null };
+let lifetimeTotal = 0;
+let lifetimeByZikir = {};
+let allTimeSelectedZid = null;
+/** @type {ReturnType<typeof createUsageTracker> | null} */
+let usageTracker = null;
+let weeklyReportWeekIndex = 3;
 
 let currentFolderId = null;
 let currentZikirId = null;
 let currentQuranSurahId = null;
 let quranAyahFavorites = [];
-const QURAN_COUNTER_LAYOUTS = ['classic', 'compact', 'text-only'];
+import { QURAN_COUNTER_LAYOUTS, normalizeQuranCounterLayout } from './lib/quran-counter-layout.js';
 
 function isQuranZikir(z) {
     return !!(z?.quranRef && Number.isFinite(Number(z.quranRef.s)));
@@ -627,11 +723,6 @@ function refreshViewsAfterLocalizedZikirSync() {
     const statsView = document.getElementById('statsView');
     if (statsView && !statsView.classList.contains('hidden')) renderStats();
 }
-
-function normalizeQuranCounterLayout(layout) {
-    const v = String(layout || '').trim();
-    return QURAN_COUNTER_LAYOUTS.includes(v) ? v : 'classic';
-}
 let activeStatTab = 'daily';
 let activeZikirStatTab = 'daily';
 let folderSearchQuery = '';
@@ -653,17 +744,53 @@ let selectedZikirIds = new Set();
 const GRIP_3LINES_HTML =
     '<span class="grip-lines" aria-hidden="true"><span></span><span></span><span></span></span>';
 
-// Limits
-const MAX_FOLDERS = Infinity;
-/** Klasör başına zikir üst sınırı (tek cihaz uygulaması; ileride ayrı limit istenirse değişir) */
-const MAX_ZIKIRS_PER_FOLDER = 40;
+// Limits (ücretsiz: 3 klasör toplam — varsayılan 2 + 1 ekleme; klasör başına 5 zikir)
+const MAX_FOLDERS = 3;
+const MAX_ZIKIRS_PER_FOLDER = 5;
 
-// Premium daha yayınlanmadan önce: sadece klasör/zikir limitleri sınırsız kalsın.
-// Premium yayınlandığında bunu true yapacağız.
+/** Ücretsiz kütüphanede gösterilecek kilitli premium önizleme kartı sayısı. */
+const LIBRARY_PREMIUM_PREVIEW_COUNT = 3;
+
+/** false = limit yok + Premium sekmesinde tanıtım ekranı. true = limitler + özellik merkezi (lansman). */
 const PREMIUM_LIVE = false;
 
-/** Premium sekmesi + ayarlardaki çöp kutusu. Yayın zamanı: true + index.html’de nav/çöp UI geri ekleyin. */
+/** Premium sekmesi + ayarlardaki çöp kutusu. */
 const PREMIUM_UI_VISIBLE = false;
+
+/** Premium sekmesinden açılan özellikler → düzenleme ekranı / yönlendirme (PREMIUM_LIVE iken) */
+const PREMIUM_FEATURE_VIEW_IDS = new Set([
+    'premiumFeatureThemeView',
+    'premiumFeatureCounterCustomizeView',
+    'premiumFeatureCounterBackgroundView',
+    'premiumFeatureRemindersView',
+    'premiumFeatureWeeklyView',
+    'premiumFeatureBackupView'
+]);
+
+const PREMIUM_HUB_FEATURES = {
+    theme: { viewId: 'premiumFeatureThemeView', locked: true },
+    reminders: { viewId: 'premiumFeatureRemindersView', locked: true },
+    weekly: { viewId: 'premiumFeatureWeeklyView', locked: true },
+    backup: { viewId: 'premiumFeatureBackupView', locked: true },
+    trash: { overlayId: 'trashOverlay', locked: true },
+    stats: { viewId: 'statsView', locked: false },
+    library: { viewId: 'libraryView', locked: false }
+};
+
+const PREMIUM_STAT_TABS = new Set(['monthly', 'yearly', 'allTime']);
+
+const ALL_TIME_SLICE_COLORS = [
+    '#2ecc71',
+    '#3498db',
+    '#9b59b6',
+    '#e67e22',
+    '#1abc9c',
+    '#e74c3c',
+    '#f1c40f',
+    '#95a5a6',
+    '#16a085',
+    '#636e72'
+];
 
 function getMaxFolders() {
     if (!PREMIUM_LIVE) return Infinity;
@@ -673,6 +800,48 @@ function getMaxFolders() {
 function getMaxZikirsPerFolder() {
     if (!PREMIUM_LIVE) return Infinity;
     return isPremium() ? Infinity : MAX_ZIKIRS_PER_FOLDER;
+}
+
+/** Limitler yalnızca yeni eklemeyi engeller; mevcut fazla klasör/zikir silinmez (grandfather). */
+function countZikirsInFolder(folderId) {
+    return zikirs.filter((z) => z.folderId === folderId).length;
+}
+
+function canAddFolder() {
+    const max = getMaxFolders();
+    return !Number.isFinite(max) || folders.length < max;
+}
+
+function canAddZikirToFolder(folderId) {
+    const max = getMaxZikirsPerFolder();
+    return !Number.isFinite(max) || countZikirsInFolder(folderId) < max;
+}
+
+function handleFolderLimitBlocked() {
+    if (!canAddFolder()) {
+        if (isPremiumOnlyFeatureLocked()) showPremiumLimitUpsell('folder');
+        return true;
+    }
+    return false;
+}
+
+async function handleZikirLimitBlocked(folderId) {
+    if (canAddZikirToFolder(folderId)) return false;
+    if (isPremiumOnlyFeatureLocked()) {
+        showPremiumLimitUpsell('zikir');
+    } else {
+        const maxPerFolder = getMaxZikirsPerFolder();
+        await showAppAlert(t('confirm.destFolderFullMsg', { max: maxPerFolder }), {
+            title: t('confirm.destFolderFullTitle')
+        });
+    }
+    return true;
+}
+
+function navigateToPremiumPurchase() {
+    closePremiumUpsell();
+    closeAllOverlays();
+    showView('premiumPurchaseView');
 }
 
 /** Bu klasörler silinemez (varsayılan içerik). */
@@ -688,6 +857,7 @@ const views = document.querySelectorAll('.view');
 const folderGrid = document.getElementById('folderGrid');
 const updateBannerSlot = document.getElementById('updateBannerSlot');
 const newFolderBtn = document.getElementById('newFolderBtn');
+const folderLimitWarning = document.getElementById('folderLimitWarning');
 const homeQuoteFooter = document.getElementById('homeQuoteFooter');
 let currentDailyQuoteEntry = null;
 let dailyQuoteExpanded = false;
@@ -739,6 +909,15 @@ const statLastClicked = document.getElementById('statLastClicked');
 const statBestDayDate = document.getElementById('statBestDayDate');
 const statBestDayCount = document.getElementById('statBestDayCount');
 const activityChart = document.getElementById('activityChart');
+const statsPeriodPanel = document.getElementById('statsPeriodPanel');
+const statsAllTimePanel = document.getElementById('statsAllTimePanel');
+const allTimeTotalEl = document.getElementById('allTimeTotal');
+const allTimeSinceEl = document.getElementById('allTimeSince');
+const allTimeDaysEl = document.getElementById('allTimeDays');
+const allTimeAvgEl = document.getElementById('allTimeAvg');
+const allTimeDonutEl = document.getElementById('allTimeDonut');
+const allTimeDonutFocusEl = document.getElementById('allTimeDonutFocus');
+const allTimeListEl = document.getElementById('allTimeList');
 
 // Stealth View
 const enterStealthBtn = document.getElementById('enterStealthBtn');
@@ -773,6 +952,9 @@ const trashOverlay = document.getElementById('trashOverlay');
 const cbVibrationTap = document.getElementById('settingVibrationTap');
 const cbVibrationTarget = document.getElementById('settingVibrationTarget');
 const cbSound = document.getElementById('settingSound');
+const tickSoundSetting = document.getElementById('tickSoundSetting');
+const tickSoundPickerToggle = document.getElementById('tickSoundPickerToggle');
+const tickSoundOptionsPanel = document.getElementById('tickSoundOptionsPanel');
 const cbWakeLock = document.getElementById('settingWakeLock');
 const cbCounterNativeNumerals = document.getElementById('settingCounterNativeNumerals');
 const nativeNumeralsSetting = document.getElementById('nativeNumeralsSetting');
@@ -827,6 +1009,133 @@ function normalizeAppTheme(theme) {
     return 'navy';
 }
 
+/** @returns {'emerald'|'teal'|'cyan'|'blue'|'indigo'|'violet'|'pink'|'red'|'orange'|'amber'|'lime'|'sky'} */
+function normalizeAppAccent(accent) {
+    const v = String(accent || '').trim();
+    if (v === 'teal') return 'teal';
+    if (v === 'cyan') return 'cyan';
+    if (v === 'blue') return 'blue';
+    if (v === 'indigo') return 'indigo';
+    if (v === 'violet') return 'violet';
+    if (v === 'pink') return 'pink';
+    if (v === 'red') return 'red';
+    if (v === 'orange') return 'orange';
+    if (v === 'amber') return 'amber';
+    if (v === 'lime') return 'lime';
+    if (v === 'sky') return 'sky';
+    return 'emerald';
+}
+
+function normalizeCounterRingWidth(v) {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return 12;
+    return Math.min(18, Math.max(8, Math.round(n)));
+}
+
+/** @returns {'s'|'m'|'l'} */
+function normalizeCounterNumberSize(v) {
+    const s = String(v || '').trim();
+    if (s === 's') return 's';
+    if (s === 'l') return 'l';
+    return 'm';
+}
+
+/** @returns {'s'|'m'|'l'} */
+function normalizeCounterTapScale(v) {
+    const s = String(v || '').trim();
+    if (s === 's') return 's';
+    if (s === 'l') return 'l';
+    return 'm';
+}
+
+const COUNTER_TAP_SCALE_VALUES = { s: 0.88, m: 1, l: 1.14 };
+
+const COUNTER_CUSTOMIZE_PREVIEW = {
+    roundCount: 12,
+    target: 33,
+    total: 45,
+    completedRounds: 1
+};
+
+const counterCustomizeView = document.getElementById('premiumFeatureCounterCustomizeView');
+const counterCustomizeSheet = document.getElementById('counterCustomizeSheet');
+const counterCustomizeSheetDrag = document.getElementById('counterCustomizeSheetDrag');
+
+function getCounterCustomizeSheetBounds() {
+    const vh = window.innerHeight || 640;
+    const peek = Math.min(Math.round(vh * 0.42), 320);
+    const expanded = Math.max(peek + 80, Math.round(vh * 0.88));
+    return { peek, expanded };
+}
+
+function setCounterCustomizeSheetHeight(px, { animate = true } = {}) {
+    if (!counterCustomizeView) return;
+    if (counterCustomizeSheet) {
+        counterCustomizeSheet.classList.toggle('is-dragging', !animate);
+    }
+    counterCustomizeView.style.setProperty('--counter-sheet-height', `${Math.round(px)}px`);
+}
+
+function resetCounterCustomizeSheet({ expanded = false } = {}) {
+    const { peek, expanded: maxH } = getCounterCustomizeSheetBounds();
+    setCounterCustomizeSheetHeight(expanded ? maxH : peek, { animate: false });
+    if (counterCustomizeView) {
+        counterCustomizeView.dataset.sheetExpanded = expanded ? 'true' : 'false';
+    }
+    if (counterCustomizeSheet) counterCustomizeSheet.classList.remove('is-dragging');
+}
+
+function snapCounterCustomizeSheet(height) {
+    const { peek, expanded } = getCounterCustomizeSheetBounds();
+    const open = height > (peek + expanded) / 2;
+    setCounterCustomizeSheetHeight(open ? expanded : peek, { animate: true });
+    if (counterCustomizeView) {
+        counterCustomizeView.dataset.sheetExpanded = open ? 'true' : 'false';
+    }
+    if (counterCustomizeSheet) counterCustomizeSheet.classList.remove('is-dragging');
+}
+
+let counterSheetDragState = null;
+
+function initCounterCustomizeSheetDrag() {
+    if (!counterCustomizeSheet || !counterCustomizeSheetDrag) return;
+
+    const onPointerDown = (e) => {
+        if (e.button != null && e.button !== 0) return;
+        counterSheetDragState = {
+            pointerId: e.pointerId,
+            startY: e.clientY,
+            startH: counterCustomizeSheet.offsetHeight
+        };
+        counterCustomizeSheet.classList.add('is-dragging');
+        counterCustomizeSheetDrag.setPointerCapture(e.pointerId);
+    };
+
+    const onPointerMove = (e) => {
+        if (!counterSheetDragState || e.pointerId !== counterSheetDragState.pointerId) return;
+        const dy = counterSheetDragState.startY - e.clientY;
+        const { peek, expanded } = getCounterCustomizeSheetBounds();
+        const next = Math.min(expanded, Math.max(peek, counterSheetDragState.startH + dy));
+        setCounterCustomizeSheetHeight(next, { animate: false });
+    };
+
+    const endDrag = (e) => {
+        if (!counterSheetDragState || e.pointerId !== counterSheetDragState.pointerId) return;
+        try {
+            counterCustomizeSheetDrag.releasePointerCapture(e.pointerId);
+        } catch {
+            // ignore
+        }
+        snapCounterCustomizeSheet(counterCustomizeSheet.offsetHeight);
+        counterSheetDragState = null;
+    };
+
+    counterCustomizeSheetDrag.addEventListener('pointerdown', onPointerDown);
+    counterCustomizeSheetDrag.addEventListener('pointermove', onPointerMove);
+    counterCustomizeSheetDrag.addEventListener('pointerup', endDrag);
+    counterCustomizeSheetDrag.addEventListener('pointercancel', endDrag);
+}
+
 // Modals
 const addModalOverlay = document.getElementById('addModalOverlay');
 const saveZikirBtn = document.getElementById('saveZikirBtn');
@@ -846,10 +1155,15 @@ const saveMoveBtn = document.getElementById('saveMoveBtn');
 let copyingZikirId = null;
 
 // ===================== INIT =====================
-function init() {
+async function init() {
+    await loadRuntimeFlags();
     if (progressCircle) {
         progressCircle.style.strokeDasharray = `${CIRCLE_CIRCUMFERENCE} ${CIRCLE_CIRCUMFERENCE}`;
         progressCircle.style.strokeDashoffset = CIRCLE_CIRCUMFERENCE;
+    }
+    if (ccvProgressCircle) {
+        ccvProgressCircle.style.strokeDasharray = `${CIRCLE_CIRCUMFERENCE} ${CIRCLE_CIRCUMFERENCE}`;
+        ccvProgressCircle.style.strokeDashoffset = CIRCLE_CIRCUMFERENCE;
     }
 
     applyNativeBottomInsetVar();
@@ -857,8 +1171,15 @@ function init() {
         void setupCrashReporting();
         setTimeout(() => void refreshNativeBottomInsetVar(), 200);
         App.addListener('appStateChange', ({ isActive }) => {
-            if (isActive) void refreshNativeBottomInsetVar();
-            else flushSave(); // arka plana atılırken bekleyen sayaç yazmasını kaybetme
+            if (isActive) {
+                void refreshNativeBottomInsetVar();
+                usageTracker?.resume();
+                ensureWeeklyReportSchedule().catch(console.error);
+                void maybeRunAutoCloudBackup();
+            } else {
+                usageTracker?.pause();
+                flushSave(); // arka plana atılırken bekleyen sayaç yazmasını kaybetme
+            }
         });
         App.addListener('backButton', () => {
             if (canNavigateBackInApp()) goBackInApp();
@@ -866,15 +1187,44 @@ function init() {
         });
     }
     loadData();
+    applyWeeklyReportPreviewSample();
+    initUsageTracker();
     bindNativeReminderNotificationLaunch(openAppFromReminderNotification);
     setDailyQuote();
     setupEventListeners();
+    setupSmartRemindersUI();
+    setupWeeklyReportUI();
+    setupBackupUI();
+    setPremiumPurchaseNavigator(navigateToPremiumPurchase);
+    setupPremiumUpsell();
+    setupPremiumPurchase({
+        onSubscribe: (result) => {
+            if (!result?.ok) {
+                void showAppAlert(t('premiumPurchase.stubNote'), { title: t('premiumPurchase.title') });
+            }
+        },
+        onRestore: (result) => {
+            if (result?.ok) {
+                entitlements.premium = true;
+                saveData();
+                syncPremiumLockedControls();
+                void showAppAlert(t('premiumPurchase.restoreSuccess'), { title: t('premiumPurchase.title') });
+                return;
+            }
+            if (result?.reason === 'nothing_to_restore') {
+                void showAppAlert(t('premiumPurchase.restoreNothing'), { title: t('premiumPurchase.title') });
+                return;
+            }
+            void showAppAlert(t('premiumPurchase.restoreUnavailable'), { title: t('premiumPurchase.title') });
+        }
+    });
     setMultiSelectBarShown(folderMultiSelectBar, false);
     setMultiSelectBarShown(zikirMultiSelectBar, false);
     // Do not push on first paint; set the baseline history state.
     showView('homeView', null, { push: false });
     ensureInitialHistoryState();
     setInAppStackTo(getViewState('homeView', null));
+    syncPremiumLockedControls();
     if (!isCapacitorNative() && 'serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch(console.error);
     }
@@ -882,15 +1232,25 @@ function init() {
         if (!isCapacitorNative()) maybeRequestNotificationPermission();
         ensureReminderSchedule().catch(console.error);
     }
+    ensureSmartReminderSchedule().catch(console.error);
+    ensureWeeklyReportSchedule().catch(console.error);
+    void maybeRunAutoCloudBackup();
     document.addEventListener('visibilitychange', onAppBecameVisibleForReminders);
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState !== 'visible') {
+            usageTracker?.pause();
             flushSave(); // sekme gizlenince bekleyen sayaç yazmasını diske işle
             return;
         }
+        usageTracker?.resume();
+        ensureWeeklyReportSchedule().catch(console.error);
+        void maybeRunAutoCloudBackup();
         refreshRemoteHomeContent();
     });
-    window.addEventListener('pagehide', flushSave);
+    window.addEventListener('pagehide', () => {
+        usageTracker?.pause();
+        flushSave();
+    });
     window.addEventListener('pageshow', onPageShowForReminders);
     // Make Android/iOS/WebView back follow in-app navigation.
     window.addEventListener('popstate', (e) => {
@@ -1173,10 +1533,8 @@ async function saveQuranDrawerFolderAdd() {
     const resolvedDestId = document.getElementById('quranDrawerFolderDestSelect')?.value;
     if (!resolvedDestId) return false;
 
-    const destCount = zikirs.filter((x) => x.folderId === resolvedDestId).length;
-    const maxPerFolder = getMaxZikirsPerFolder();
-    if (Number.isFinite(maxPerFolder) && destCount >= maxPerFolder) {
-        await showAppAlert(`Hedef klasör dolu (en fazla ${maxPerFolder} zikir).`, { title: 'Klasör dolu' });
+    if (!canAddZikirToFolder(resolvedDestId)) {
+        await handleZikirLimitBlocked(resolvedDestId);
         return false;
     }
 
@@ -1218,6 +1576,22 @@ function pruneHistory() {
             changed = true;
         }
     });
+    if (usageByDay && typeof usageByDay === 'object') {
+        Object.keys(usageByDay).forEach((day) => {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || day < cutoffStr) {
+                delete usageByDay[day];
+                changed = true;
+            }
+        });
+    }
+    if (usageAreasByDay && typeof usageAreasByDay === 'object') {
+        Object.keys(usageAreasByDay).forEach((day) => {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || day < cutoffStr) {
+                delete usageAreasByDay[day];
+                changed = true;
+            }
+        });
+    }
     return changed;
 }
 
@@ -1261,6 +1635,237 @@ function applyAppTheme(theme) {
     void applyNativeStatusBarTheme(t);
 }
 
+function applyAppAccent(accent) {
+    const a = normalizeAppAccent(accent);
+    document.documentElement.setAttribute('data-accent', a);
+}
+
+function applyCounterAppearanceFromSettings() {
+    const ring = normalizeCounterRingWidth(appSettings.counterRingWidth);
+    const bg = Math.max(6, ring - 4);
+    document.documentElement.style.setProperty('--counter-ring-width', String(ring));
+    document.documentElement.style.setProperty('--counter-ring-bg-width', String(bg));
+    const size = normalizeCounterNumberSize(appSettings.counterNumberSize);
+    document.documentElement.setAttribute('data-counter-number-size', size);
+    const tap = normalizeCounterTapScale(appSettings.counterTapScale);
+    document.documentElement.setAttribute('data-counter-tap-scale', tap);
+    document.documentElement.style.setProperty('--counter-tap-scale', String(COUNTER_TAP_SCALE_VALUES[tap]));
+    document.documentElement.setAttribute(
+        'data-counter-show-target',
+        appSettings.counterShowTarget ? 'true' : 'false'
+    );
+    document.documentElement.setAttribute(
+        'data-counter-show-total',
+        appSettings.counterShowTotal ? 'true' : 'false'
+    );
+    document.documentElement.setAttribute(
+        'data-counter-show-round',
+        appSettings.counterShowRound ? 'true' : 'false'
+    );
+}
+
+function applyCounterBackgroundFromSettings() {
+    if (isCounterBackgroundLocked()) {
+        document.documentElement.setAttribute('data-counter-background', 'none');
+        document.documentElement.style.removeProperty('--counter-bg-image');
+        return;
+    }
+    const bg = normalizeCounterBackground(appSettings.counterBackground);
+    const customDataUrl = String(appSettings.counterBackgroundCustomDataUrl || '').trim();
+    if (bg === 'custom') {
+        if (!customDataUrl) {
+            document.documentElement.setAttribute('data-counter-background', 'none');
+            document.documentElement.style.removeProperty('--counter-bg-image');
+            return;
+        }
+        document.documentElement.setAttribute('data-counter-background', 'on');
+        document.documentElement.style.setProperty('--counter-bg-image', `url("${customDataUrl}")`);
+        return;
+    }
+    document.documentElement.setAttribute('data-counter-background', bg === 'none' ? 'none' : 'on');
+    const preset = findCounterBgPreset(bg);
+    if (preset) {
+        document.documentElement.style.setProperty('--counter-bg-image', `url("${counterBgPresetUrl(preset)}")`);
+        return;
+    }
+    document.documentElement.style.removeProperty('--counter-bg-image');
+}
+
+const openCounterCustomizeBtn = document.getElementById('openCounterCustomizeBtn');
+const openCounterBackgroundBtn = document.getElementById('openCounterBackgroundBtn');
+const counterBgNoneBtn = document.getElementById('counterBgNoneBtn');
+const counterBgPresetGrid = document.getElementById('counterBgPresetGrid');
+const counterBgPresetsEmpty = document.getElementById('counterBgPresetsEmpty');
+const counterBgGalleryBtn = document.getElementById('counterBgGalleryBtn');
+const counterBgGalleryInput = document.getElementById('counterBgGalleryInput');
+const COUNTER_BG_CUSTOM_MAX_EDGE_STEPS = [1440, 1200, 960, 768];
+const COUNTER_BG_CUSTOM_JPEG_QUALITY = 0.8;
+const COUNTER_BG_CUSTOM_DATA_URL_SOFT_LIMIT = 450000;
+
+function loadImageFromUrl(url) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('counter background image load failed'));
+        img.src = url;
+    });
+}
+
+function drawCounterBackgroundToCanvas(img, maxEdge) {
+    const longestEdge = Math.max(img.naturalWidth || img.width || 1, img.naturalHeight || img.height || 1);
+    const scale = longestEdge > maxEdge ? maxEdge / longestEdge : 1;
+    const width = Math.max(1, Math.round((img.naturalWidth || img.width || 1) * scale));
+    const height = Math.max(1, Math.round((img.naturalHeight || img.height || 1) * scale));
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d', { alpha: false });
+    if (!ctx) throw new Error('counter background canvas unavailable');
+    ctx.drawImage(img, 0, 0, width, height);
+    return canvas;
+}
+
+async function buildCounterBackgroundCustomDataUrl(file) {
+    if (!file || !String(file.type || '').startsWith('image/')) {
+        throw new Error('counter background file is not an image');
+    }
+    const objectUrl = URL.createObjectURL(file);
+    try {
+        const img = await loadImageFromUrl(objectUrl);
+        let fallbackDataUrl = '';
+        for (const maxEdge of COUNTER_BG_CUSTOM_MAX_EDGE_STEPS) {
+            const canvas = drawCounterBackgroundToCanvas(img, maxEdge);
+            const nextDataUrl = canvas.toDataURL('image/jpeg', COUNTER_BG_CUSTOM_JPEG_QUALITY);
+            fallbackDataUrl = nextDataUrl;
+            if (nextDataUrl.length <= COUNTER_BG_CUSTOM_DATA_URL_SOFT_LIMIT) return nextDataUrl;
+        }
+        return fallbackDataUrl;
+    } finally {
+        URL.revokeObjectURL(objectUrl);
+    }
+}
+
+function renderCounterBackgroundPresetGrid() {
+    if (!counterBgPresetGrid) return;
+    counterBgPresetGrid.replaceChildren();
+    const active = normalizeCounterBackground(appSettings.counterBackground);
+    COUNTER_BG_PRESETS.forEach((preset) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'counter-bg-preset-btn';
+        btn.setAttribute('data-counter-bg-choice', `preset:${preset.id}`);
+        btn.setAttribute('role', 'radio');
+        const on = active === `preset:${preset.id}`;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        btn.setAttribute('aria-label', preset.labelKey ? t(preset.labelKey) : preset.id);
+        const thumb = document.createElement('span');
+        thumb.className = 'counter-bg-preset-btn__thumb';
+        thumb.style.backgroundImage = `url("${counterBgPresetUrl(preset)}")`;
+        btn.appendChild(thumb);
+        counterBgPresetGrid.appendChild(btn);
+    });
+    if (counterBgPresetsEmpty) {
+        counterBgPresetsEmpty.hidden = COUNTER_BG_PRESETS.length > 0;
+    }
+}
+
+function syncCounterBackgroundEditorUI() {
+    const active = normalizeCounterBackground(appSettings.counterBackground);
+    if (counterBgNoneBtn) {
+        const on = active === 'none';
+        counterBgNoneBtn.classList.toggle('active', on);
+        counterBgNoneBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+    renderCounterBackgroundPresetGrid();
+    if (counterBgGalleryBtn) {
+        const onCustom = active === 'custom';
+        counterBgGalleryBtn.classList.toggle('active', onCustom);
+    }
+    if (openCounterBackgroundBtn) {
+        syncPremiumLockStar(openCounterBackgroundBtn, isCounterBackgroundLocked());
+    }
+}
+
+function setCounterBackground(next) {
+    const normalized = normalizeCounterBackground(next);
+    if (appSettings.counterBackground === normalized) return;
+    appSettings.counterBackground = normalized;
+    applyCounterBackgroundFromSettings();
+    syncCounterBackgroundEditorUI();
+    saveData();
+}
+
+function setCustomCounterBackgroundDataUrl(dataUrl) {
+    const normalized = String(dataUrl || '').trim();
+    if (!normalized) return;
+    const changed =
+        appSettings.counterBackground !== 'custom' ||
+        appSettings.counterBackgroundCustomDataUrl !== normalized;
+    if (!changed) return;
+    appSettings.counterBackground = 'custom';
+    appSettings.counterBackgroundCustomDataUrl = normalized;
+    applyCounterBackgroundFromSettings();
+    syncCounterBackgroundEditorUI();
+    saveData();
+}
+
+const ccvProgressCircle = document.getElementById('ccvProgressCircle');
+const counterCustomizeRingRange = document.getElementById('counterCustomizeRingRange');
+const counterShowTargetToggle = document.getElementById('counterShowTargetToggle');
+const counterShowTotalToggle = document.getElementById('counterShowTotalToggle');
+const counterShowRoundToggle = document.getElementById('counterShowRoundToggle');
+const counterCustomizeNumSizeBtns = document.querySelectorAll('[data-counter-customize-num-size]');
+const counterTapScaleBtns = document.querySelectorAll('[data-counter-tap-scale]');
+
+function syncCounterCustomizeEditorUI() {
+    if (counterCustomizeRingRange) {
+        counterCustomizeRingRange.value = String(normalizeCounterRingWidth(appSettings.counterRingWidth));
+    }
+    const activeSize = normalizeCounterNumberSize(appSettings.counterNumberSize);
+    counterCustomizeNumSizeBtns.forEach((btn) => {
+        const on = (btn.getAttribute('data-counter-customize-num-size') || '') === activeSize;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    const activeTap = normalizeCounterTapScale(appSettings.counterTapScale);
+    counterTapScaleBtns.forEach((btn) => {
+        const on = (btn.getAttribute('data-counter-tap-scale') || '') === activeTap;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    if (counterShowTargetToggle) counterShowTargetToggle.checked = !!appSettings.counterShowTarget;
+    if (counterShowTotalToggle) counterShowTotalToggle.checked = !!appSettings.counterShowTotal;
+    if (counterShowRoundToggle) counterShowRoundToggle.checked = !!appSettings.counterShowRound;
+}
+
+function renderCounterCustomizeEditor() {
+    syncCounterCustomizeEditorUI();
+    applyCounterAppearanceFromSettings();
+    resetCounterCustomizeSheet({ expanded: counterCustomizeView?.dataset.sheetExpanded === 'true' });
+
+    const preview = COUNTER_CUSTOMIZE_PREVIEW;
+    const ccvCountDisplay = document.getElementById('ccvCountDisplay');
+    const ccvTargetDisplay = document.getElementById('ccvTargetDisplay');
+    const ccvTotalDisplay = document.getElementById('ccvTotalDisplay');
+    const ccvRoundDisplay = document.getElementById('ccvRoundDisplay');
+
+    if (ccvCountDisplay) ccvCountDisplay.textContent = formatCounterDisplay(preview.roundCount);
+    if (ccvTargetDisplay) ccvTargetDisplay.textContent = formatCounterDisplay(preview.target);
+    if (ccvTotalDisplay) ccvTotalDisplay.textContent = formatCounterDisplay(preview.total);
+    if (ccvRoundDisplay) {
+        ccvRoundDisplay.textContent = formatCounterDisplay(preview.completedRounds);
+        ccvRoundDisplay.classList.add('visible');
+    }
+
+    if (ccvProgressCircle) {
+        const circleProgress = preview.roundCount / preview.target;
+        const offset = CIRCLE_CIRCUMFERENCE - circleProgress * CIRCLE_CIRCUMFERENCE;
+        ccvProgressCircle.style.strokeDasharray = `${CIRCLE_CIRCUMFERENCE} ${CIRCLE_CIRCUMFERENCE}`;
+        ccvProgressCircle.style.strokeDashoffset = String(offset);
+    }
+}
+
 function syncThemeUI() {
     const theme = normalizeAppTheme(appSettings.theme);
     themeChoiceBtns.forEach((btn) => {
@@ -1268,6 +1873,47 @@ function syncThemeUI() {
         btn.classList.toggle('active', on);
         btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
+}
+
+const accentChoiceBtns = document.querySelectorAll('[data-accent-choice]');
+const tickSoundChoiceBtns = document.querySelectorAll('[data-tick-sound-choice]');
+function syncAccentUI() {
+    const a = normalizeAppAccent(appSettings.accent);
+    accentChoiceBtns.forEach((btn) => {
+        const on = btn.getAttribute('data-accent-choice') === a;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+}
+
+function syncTickSoundUI() {
+    const active = normalizeCounterTickSound(appSettings.counterTickSound);
+    const locked = isPremiumOnlyFeatureLocked();
+    tickSoundChoiceBtns.forEach((btn) => {
+        const id = normalizeCounterTickSound(btn.getAttribute('data-tick-sound-choice'));
+        const isClassic = id === 'classic';
+        const isLocked = locked && !isClassic;
+        const on = id === active;
+        btn.classList.toggle('active', on);
+        btn.classList.toggle('is-premium-locked', isLocked);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        syncPremiumLockStar(btn, isLocked);
+    });
+}
+
+function setTickSoundPickerOpen(open) {
+    if (!tickSoundSetting || !tickSoundPickerToggle || !tickSoundOptionsPanel) return;
+    const isOpen = !!open;
+    tickSoundSetting.classList.toggle('is-open', isOpen);
+    tickSoundPickerToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    tickSoundOptionsPanel.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+}
+
+function syncTickSoundSettingVisibility() {
+    if (!tickSoundSetting) return;
+    const show = PREMIUM_LIVE && !!appSettings.sound;
+    setSettingsBlockHidden(tickSoundSetting, !show);
+    if (!show) setTickSoundPickerOpen(false);
 }
 
 function applyAppLocale(locale) {
@@ -1302,6 +1948,9 @@ function applyAppLocale(locale) {
     const statsView = document.getElementById('statsView');
     if (statsView && !statsView.classList.contains('hidden')) renderStats();
     if (zikirStatsOverlay && zikirStatsOverlay.classList.contains('active')) renderZikirStats();
+    syncPremiumLockedControls();
+    const purchaseView = document.getElementById('premiumPurchaseView');
+    if (purchaseView && !purchaseView.classList.contains('hidden')) renderPremiumPurchase();
     updateFolderSelectChrome();
     updateZikirSelectChrome();
     void refreshSeasonalContent(appSettings.locale).then(() => {
@@ -1394,8 +2043,15 @@ function syncSettingsUI() {
     if (cbReminderEnabled) cbReminderEnabled.checked = !!reminderSettings.enabled;
     if (reminderTimeInput) reminderTimeInput.value = reminderSettings.time || '21:00';
     applyAppTheme(appSettings.theme);
+    applyAppAccent(appSettings.accent);
+    applyCounterAppearanceFromSettings();
+    applyCounterBackgroundFromSettings();
     applyAppLocale(appSettings.locale);
     syncThemeUI();
+    syncAccentUI();
+    syncTickSoundUI();
+    syncTickSoundSettingVisibility();
+    syncCounterBackgroundEditorUI();
     syncLocaleUI();
 }
 
@@ -1410,10 +2066,15 @@ function loadData() {
             folders = [...getDefaultFolders()];
             zikirs = [...DEFAULT_ZIKIRS];
             history = {};
+            usageByDay = {};
+            usageAreasByDay = {};
             appSettings = createDefaultAppSettings();
             reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
             entitlements = { premium: false };
             trash = { v: 1, entries: [] };
+            appMeta = { installedAt: getTodayString() };
+            lifetimeTotal = 0;
+            lifetimeByZikir = {};
             syncSettingsUI();
             return;
         }
@@ -1425,6 +2086,8 @@ function loadData() {
             if (inferred) z.libraryId = inferred;
         });
         history = sanitized.history || {};
+        usageByDay = sanitized.usageByDay || {};
+        usageAreasByDay = sanitized.usageAreasByDay || {};
         appSettings = sanitized.settings || appSettings;
         syncQuranSettingsForLocale(appSettings);
         reminderSettings = {
@@ -1433,12 +2096,17 @@ function loadData() {
             lastFiredYmd: null,
             ...(sanitized.reminders || {})
         };
+        smartReminders = Array.isArray(sanitized.smartReminders) ? sanitized.smartReminders : [];
         entitlements = sanitized.entitlements || { premium: false };
         trash = sanitized.trash || { v: 1, entries: [] };
         quranAyahFavorites = sanitized.quranAyahFavorites || [];
+        appMeta = sanitized.appMeta || { installedAt: null };
+        lifetimeTotal = sanitized.lifetimeTotal || 0;
+        lifetimeByZikir = sanitized.lifetimeByZikir || {};
 
         // Ordering (folders + zikirs)
         let touched = false;
+        if (ensureInstalledAt()) touched = true;
         folders.forEach((f, idx) => {
             if (typeof f.order !== 'number') { f.order = idx; touched = true; }
         });
@@ -1508,11 +2176,35 @@ function loadData() {
         folders = [...getDefaultFolders()];
         zikirs = [...DEFAULT_ZIKIRS];
         history = {};
+        usageByDay = {};
+        usageAreasByDay = {};
         trash = { v: 1, entries: [] };
         appSettings = createDefaultAppSettings();
+        appMeta = { installedAt: getTodayString() };
+        lifetimeTotal = 0;
+        lifetimeByZikir = {};
     }
 
     syncSettingsUI();
+}
+
+function applyWeeklyReportPreviewSample() {
+    if (!getRuntimeFlags().weeklyReportPreviewSample) return;
+    const patch = buildWeeklyReportPreviewPatch(getTodayString());
+    Object.keys(patch.history).forEach((day) => {
+        history[day] = patch.history[day];
+    });
+    Object.keys(patch.usageByDay).forEach((day) => {
+        usageByDay[day] = patch.usageByDay[day];
+    });
+    Object.keys(patch.usageAreasByDay).forEach((day) => {
+        usageAreasByDay[day] = patch.usageAreasByDay[day];
+    });
+    appSettings.dailyZikirGoal = patch.settingsPatch.dailyZikirGoal;
+    appSettings.weeklyReportEnabled = patch.settingsPatch.weeklyReportEnabled;
+    entitlements.premium = patch.entitlementsPatch.premium;
+    saveData();
+    console.info('[weekly-report] Önizleme örnek verisi yüklendi (29 gün seri — usta alev).');
 }
 // Sayaç gibi sık tetiklenen işlemlerde diske yazmayı ertelemek için debounce.
 // Tık anında sadece RAM'deki state güncellenir; yazma SAVE_DEBOUNCE_MS sonra olur.
@@ -1541,17 +2233,7 @@ function saveData() {
         clearTimeout(_saveTimer);
         _saveTimer = null;
     }
-    persistSeasonalCountsFromZikirs(zikirs);
-    const payload = {
-        folders: folders.filter((f) => !isSeasonalFolderId(f.id)),
-        zikirs: zikirs.filter((z) => !isSeasonalZikirId(z.id)),
-        history,
-        settings: appSettings,
-        reminders: reminderSettings,
-        entitlements,
-        trash,
-        quranAyahFavorites
-    };
+    const payload = buildBackupPayload();
     try {
         localStorage.setItem('zikirmatik_data_v2', JSON.stringify(payload));
     } catch (e) {
@@ -1562,7 +2244,7 @@ function saveData() {
                 e.code === 1014);
         if (isQuota && (pruneHistory() || sanitizeHistory())) {
             try {
-                localStorage.setItem('zikirmatik_data_v2', JSON.stringify(payload));
+                localStorage.setItem('zikirmatik_data_v2', JSON.stringify(buildBackupPayload()));
             } catch (e2) {
                 console.error('saveData: kota dolu, eski geçmiş budandıktan sonra da yazılamadı.', e2);
             }
@@ -1572,8 +2254,273 @@ function saveData() {
     }
 }
 
+function buildBackupPayload() {
+    persistSeasonalCountsFromZikirs(zikirs);
+    return {
+        folders: folders.filter((f) => !isSeasonalFolderId(f.id)),
+        zikirs: zikirs.filter((z) => !isSeasonalZikirId(z.id)),
+        history,
+        usageByDay,
+        usageAreasByDay,
+        settings: appSettings,
+        reminders: reminderSettings,
+        smartReminders,
+        entitlements,
+        trash,
+        quranAyahFavorites,
+        appMeta,
+        lifetimeTotal,
+        lifetimeByZikir
+    };
+}
+
+function ensureInstalledAt() {
+    if (!appMeta || typeof appMeta !== 'object') appMeta = { installedAt: null };
+    if (appMeta.installedAt && /^\d{4}-\d{2}-\d{2}$/.test(appMeta.installedAt)) return false;
+    appMeta.installedAt = getTodayString();
+    return true;
+}
+
+function daysSinceInstalled() {
+    const installed = appMeta && appMeta.installedAt;
+    if (!installed || !/^\d{4}-\d{2}-\d{2}$/.test(installed)) return 1;
+    const start = new Date(`${installed}T12:00:00`);
+    const end = new Date(`${getTodayString()}T12:00:00`);
+    const diff = Math.floor((end.getTime() - start.getTime()) / 86400000) + 1;
+    return Math.max(1, diff);
+}
+
+function formatStatsDateKey(ymd) {
+    const d = new Date(`${ymd}T12:00:00`);
+    return d.toLocaleDateString(getLocaleTag(), { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function bumpLifetimeClick(zId) {
+    lifetimeTotal = (lifetimeTotal || 0) + 1;
+    if (!lifetimeByZikir || typeof lifetimeByZikir !== 'object') lifetimeByZikir = {};
+    lifetimeByZikir[zId] = (lifetimeByZikir[zId] || 0) + 1;
+}
+
+function bumpLifetimeDecrement(zId) {
+    if (!lifetimeByZikir || !lifetimeByZikir[zId]) return;
+    lifetimeByZikir[zId]--;
+    if (lifetimeByZikir[zId] <= 0) delete lifetimeByZikir[zId];
+    lifetimeTotal = Math.max(0, (lifetimeTotal || 0) - 1);
+}
+
+function resolveLifetimeZikirLabel(zid) {
+    if (zid === '__other__') return t('stats.allTimeOther');
+    const z = zikirs.find((x) => x.id === zid);
+    if (z) return getZikirDisplayName(z);
+    return t('stats.unknown');
+}
+
+function getAllTimeRenderContext() {
+    return {
+        total: lifetimeTotal || 0,
+        byZikir: lifetimeByZikir || {},
+        installedAt: appMeta && appMeta.installedAt,
+        days: daysSinceInstalled()
+    };
+}
+
+function buildLifetimeSlices(byZikirSource) {
+    const entries = Object.entries(byZikirSource || lifetimeByZikir || {})
+        .filter(([, n]) => (Number(n) || 0) > 0)
+        .sort((a, b) => b[1] - a[1]);
+    const top = entries.slice(0, 9);
+    const rest = entries.slice(9);
+    const otherSum = rest.reduce((sum, [, n]) => sum + (Number(n) || 0), 0);
+    const slices = top.map(([zid, count], idx) => ({
+        zid,
+        count: Number(count) || 0,
+        label: resolveLifetimeZikirLabel(zid),
+        color: ALL_TIME_SLICE_COLORS[idx % ALL_TIME_SLICE_COLORS.length]
+    }));
+    if (otherSum > 0) {
+        slices.push({
+            zid: '__other__',
+            count: otherSum,
+            label: t('stats.allTimeOther'),
+            color: ALL_TIME_SLICE_COLORS[9]
+        });
+    }
+    return slices;
+}
+
+function polarToXY(cx, cy, r, angleRad) {
+    return {
+        x: cx + r * Math.cos(angleRad),
+        y: cy + r * Math.sin(angleRad)
+    };
+}
+
+function donutSlicePath(cx, cy, rOuter, rInner, startAngle, endAngle) {
+    let sweep = endAngle - startAngle;
+    if (sweep >= 2 * Math.PI - 1e-6) sweep = 2 * Math.PI - 1e-6;
+    const end = startAngle + sweep;
+    const large = sweep > Math.PI ? 1 : 0;
+    const p1 = polarToXY(cx, cy, rOuter, startAngle);
+    const p2 = polarToXY(cx, cy, rOuter, end);
+    const p3 = polarToXY(cx, cy, rInner, end);
+    const p4 = polarToXY(cx, cy, rInner, startAngle);
+    return [
+        `M ${p1.x.toFixed(3)} ${p1.y.toFixed(3)}`,
+        `A ${rOuter} ${rOuter} 0 ${large} 1 ${p2.x.toFixed(3)} ${p2.y.toFixed(3)}`,
+        `L ${p3.x.toFixed(3)} ${p3.y.toFixed(3)}`,
+        `A ${rInner} ${rInner} 0 ${large} 0 ${p4.x.toFixed(3)} ${p4.y.toFixed(3)}`,
+        'Z'
+    ].join(' ');
+}
+
 function isPremium() {
+    if (getRuntimeFlags().premiumDevUnlock) return true;
     return !!(entitlements && entitlements.premium);
+}
+
+/** Premium satışı aktifken ücretsiz kullanıcıya kilitli özellikler (çöp, aylık/yıllık istatistik). */
+function isPremiumOnlyFeatureLocked() {
+    if (!PREMIUM_LIVE) return false;
+    return !isPremium();
+}
+
+function isCounterBackgroundLocked() {
+    if (getRuntimeFlags().counterBgPreviewUnlock) return false;
+    return isPremiumOnlyFeatureLocked();
+}
+
+function isPremiumStatTab(tab) {
+    return PREMIUM_STAT_TABS.has(tab);
+}
+
+function ensureUnlockedStatTab(tab) {
+    if (isPremiumOnlyFeatureLocked() && isPremiumStatTab(tab)) return 'daily';
+    return tab;
+}
+
+function closeAllPremiumLockHints() {
+    document.querySelectorAll('.premium-lock-hint').forEach((h) => {
+        h.hidden = true;
+    });
+}
+
+function togglePremiumLockHint(starEl) {
+    const hint = starEl && starEl.querySelector('.premium-lock-hint');
+    if (!hint) return;
+    const willOpen = hint.hidden;
+    closeAllPremiumLockHints();
+    hint.hidden = !willOpen;
+}
+
+function ensurePremiumLockStar(hostEl) {
+    if (!hostEl) return null;
+    let star = hostEl.querySelector(':scope > .premium-lock-star');
+    if (!star) {
+        hostEl.classList.add('premium-lock-host');
+        star = document.createElement('button');
+        star.type = 'button';
+        star.className = 'premium-lock-star';
+        star.setAttribute('aria-label', t('premium.exclusiveAria'));
+        star.innerHTML =
+            '<span class="premium-lock-star__glyph" aria-hidden="true">*</span>' +
+            '<span class="premium-lock-hint" hidden></span>';
+        const hint = star.querySelector('.premium-lock-hint');
+        if (hint) hint.textContent = t('premium.exclusiveLabel');
+        star.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            togglePremiumLockHint(star);
+        });
+        hostEl.appendChild(star);
+    } else {
+        const hint = star.querySelector('.premium-lock-hint');
+        if (hint) hint.textContent = t('premium.exclusiveLabel');
+        star.setAttribute('aria-label', t('premium.exclusiveAria'));
+    }
+    return star;
+}
+
+function syncPremiumLockStar(hostEl, locked) {
+    if (!hostEl) return;
+    hostEl.classList.toggle('is-premium-locked', locked);
+    if (locked) {
+        ensurePremiumLockStar(hostEl);
+        return;
+    }
+    hostEl.querySelector(':scope > .premium-lock-star')?.remove();
+    hostEl.classList.remove('premium-lock-host');
+    closeAllPremiumLockHints();
+}
+
+function syncTrashButtonUI() {
+    const btn = document.getElementById('openTrashBtn');
+    if (!btn) return;
+    const locked = isPremiumOnlyFeatureLocked();
+    btn.classList.toggle('is-locked', locked);
+    btn.setAttribute('aria-disabled', locked ? 'true' : 'false');
+    btn.title = locked ? t('premium.trashBtnLocked') : t('premium.trashBtn');
+    btn.setAttribute('aria-label', btn.title);
+    syncPremiumLockStar(btn, locked);
+}
+
+function syncPremiumStatTabsUI() {
+    const locked = isPremiumOnlyFeatureLocked();
+    const syncBtn = (btn, tabAttr) => {
+        if (!btn) return;
+        const tab = btn.getAttribute(tabAttr) || '';
+        const tabLocked = locked && isPremiumStatTab(tab);
+        btn.classList.toggle('is-premium-locked', tabLocked);
+        btn.setAttribute('aria-disabled', tabLocked ? 'true' : 'false');
+        syncPremiumLockStar(btn, tabLocked);
+    };
+    statTabBtns.forEach((btn) => syncBtn(btn, 'data-tab'));
+    zikirStatTabBtns.forEach((btn) => syncBtn(btn, 'data-zikir-stat-tab'));
+}
+
+function syncPremiumHubUI() {
+    if (!PREMIUM_LIVE) return;
+    const locked = isPremiumOnlyFeatureLocked();
+    const pillText = document.getElementById('premiumStatusPillText');
+    if (pillText) pillText.textContent = locked ? t('premium.statusUpgrade') : t('premium.statusActive');
+    const lead = document.getElementById('premiumHubLead');
+    if (lead) lead.textContent = locked ? t('premium.hubLeadLocked') : t('premium.hubLeadActive');
+    const subscribeBtn = document.getElementById('premiumHubSubscribeBtn');
+    if (subscribeBtn) subscribeBtn.classList.toggle('hidden', !locked);
+    document.querySelectorAll('[data-premium-feature]').forEach((btn) => {
+        const featureLocked = locked && btn.getAttribute('data-premium-locked') === '1';
+        btn.classList.toggle('is-premium-locked', featureLocked);
+        btn.setAttribute('aria-disabled', featureLocked ? 'true' : 'false');
+        syncPremiumLockStar(btn, featureLocked);
+    });
+}
+
+function openPremiumHubFeature(featureId) {
+    if (!PREMIUM_LIVE) return;
+    const def = PREMIUM_HUB_FEATURES[featureId];
+    if (!def) return;
+    const isEditorView = def.viewId && PREMIUM_FEATURE_VIEW_IDS.has(def.viewId);
+    if (def.locked && isPremiumOnlyFeatureLocked() && !isEditorView) {
+        showPremiumFeatureUpsell();
+        return;
+    }
+    if (def.overlayId) {
+        if (def.locked && isPremiumOnlyFeatureLocked()) {
+            showPremiumFeatureUpsell();
+            return;
+        }
+        openOverlay(def.overlayId, { onOpen: renderTrashOverlay });
+        return;
+    }
+    showView(def.viewId);
+}
+
+function syncPremiumLockedControls() {
+    syncTrashButtonUI();
+    syncPremiumStatTabsUI();
+    syncPremiumHubUI();
+    syncTickSoundUI();
+    syncCounterBackgroundEditorUI();
+    ensureWeeklyReportSchedule().catch(console.error);
 }
 
 function deepClone(obj) {
@@ -1788,9 +2735,20 @@ function maybeRequestNotificationPermission() {
     }
 }
 
-function openAppFromReminderNotification() {
+function openAppFromReminderNotification(extra) {
+    if (extra && extra.openApp === false) return;
     closeAllOverlays();
-    showView('homeView', null, { push: false });
+    if (extra && extra.view === 'premiumFeatureWeeklyView') {
+        showView('premiumFeatureWeeklyView', null, { push: false });
+        return;
+    }
+    const view = extra && extra.view === 'counterView' && extra.zikirId ? 'counterView' : 'homeView';
+    const param = view === 'counterView' ? extra.zikirId : null;
+    if (view === 'counterView' && param && !zikirs.some((z) => z.id === param)) {
+        showView('homeView', null, { push: false });
+        return;
+    }
+    showView(view, param, { push: false });
 }
 
 function reminderNotificationPayload() {
@@ -1926,14 +2884,1353 @@ async function ensureReminderSchedule() {
 
 function onAppBecameVisibleForReminders() {
     if (document.visibilityState !== 'visible') return;
-    if (!reminderSettings.enabled) return;
-    /* Native: çoklu günlük alarmlar tükendikçe uygulama açılınca yeniden planlanır */
-    ensureReminderSchedule().catch(console.error);
+    if (reminderSettings.enabled) {
+        ensureReminderSchedule().catch(console.error);
+    }
+    ensureSmartReminderSchedule().catch(console.error);
+    ensureWeeklyReportSchedule().catch(console.error);
 }
 
 function onPageShowForReminders() {
-    if (!reminderSettings.enabled) return;
+    if (reminderSettings.enabled) {
+        ensureReminderSchedule().catch(console.error);
+    }
+    ensureSmartReminderSchedule().catch(console.error);
+    ensureWeeklyReportSchedule().catch(console.error);
+}
+
+function initUsageTracker() {
+    usageTracker = createUsageTracker({
+        getTodayKey: getTodayString,
+        getContext: resolveUsageAreaFromAppState,
+        onFlush: (dayKey, deltaSec, areaId) => {
+            if (!deltaSec) return;
+            usageByDay[dayKey] = (usageByDay[dayKey] || 0) + deltaSec;
+            if (!usageAreasByDay[dayKey]) usageAreasByDay[dayKey] = Object.create(null);
+            const area = areaId || USAGE_AREA_OTHER;
+            usageAreasByDay[dayKey][area] = (usageAreasByDay[dayKey][area] || 0) + deltaSec;
+            scheduleSave();
+        }
+    });
+    if (document.visibilityState === 'visible') usageTracker.resume();
+}
+
+const USAGE_PREMIUM_VIEWS = new Set([
+    'premiumView',
+    'premiumPurchaseView',
+    'premiumFeatureThemeView',
+    'premiumFeatureCounterCustomizeView',
+    'premiumFeatureCounterBackgroundView',
+    'premiumFeatureRemindersView',
+    'premiumFeatureWeeklyView',
+    'premiumFeatureBackupView',
+    'statsView'
+]);
+
+function resolveUsageAreaFromAppState() {
+    const viewId = currentViewId || 'homeView';
+    if (viewId === 'homeView') return USAGE_AREA_HOME;
+    if (viewId === 'folderDetailView' && currentFolderId) return folderUsageAreaId(currentFolderId);
+    if (viewId === 'counterView' || viewId === 'stealthView') {
+        const zid = currentZikirId;
+        const z = zid ? zikirs.find((x) => x.id === zid) : null;
+        return z ? folderUsageAreaId(z.folderId) : USAGE_AREA_HOME;
+    }
+    if (viewId === 'libraryView') {
+        return activeLibraryCat === 'zikir' ? USAGE_AREA_LIB_ZIKIR : USAGE_AREA_LIB_DUA;
+    }
+    if (viewId === 'quranView' || viewId === 'quranSurahView') return USAGE_AREA_QURAN;
+    if (USAGE_PREMIUM_VIEWS.has(viewId)) return USAGE_AREA_PREMIUM;
+    if (viewId === 'settingsView' || viewId === 'privacyView') return USAGE_AREA_SETTINGS;
+    return USAGE_AREA_OTHER;
+}
+
+function getUsageAreaDisplayName(areaId) {
+    if (isFolderUsageArea(areaId)) {
+        const folderId = folderIdFromUsageArea(areaId);
+        const folder = folders.find((f) => f.id === folderId);
+        if (folder) return folder.name;
+        if (folderId === 'f_esma') return t('defaults.folderEsma');
+        if (folderId === 'f_default') return t('defaults.folderDefault');
+        return folderId || '—';
+    }
+    if (areaId === USAGE_AREA_LIB_DUA) return t('library.tabDua');
+    if (areaId === USAGE_AREA_LIB_ZIKIR) return t('library.tabZikir');
+    if (areaId === USAGE_AREA_QURAN) return t('quran.title');
+    if (areaId === USAGE_AREA_HOME) return t('weeklyReport.areaHome');
+    return areaId;
+}
+
+function weeklyReportActiveForUser() {
+    return PREMIUM_LIVE && !isPremiumOnlyFeatureLocked() && appSettings.weeklyReportEnabled !== false;
+}
+
+function getWeeklyReportDurationUnits() {
+    const loc = getLocale();
+    if (loc === 'tr') return { hourUnit: 'sa', minuteUnit: 'dk' };
+    if (loc === 'fr') return { hourUnit: 'h', minuteUnit: 'min' };
+    return { hourUnit: 'h', minuteUnit: 'm' };
+}
+
+function formatWeekRangeLabel(startKey, endKey) {
+    const s = parseDateKey(startKey);
+    const e = parseDateKey(endKey);
+    const opts = { day: 'numeric', month: 'short' };
+    const tag = getLocaleTag();
+    return `${s.toLocaleDateString(tag, opts)} – ${e.toLocaleDateString(tag, opts)}`;
+}
+
+function getWeekdayShortLabel(dayKey) {
+    const dow = parseDateKey(dayKey).getDay();
+    return t(`smartReminders.weekdayShort${dow}`);
+}
+
+function buildWeeklyReportTrendText(delta) {
+    if (delta.direction === 'up') return t('weeklyReport.trendUp', { percent: delta.percent });
+    if (delta.direction === 'down') return t('weeklyReport.trendDown', { percent: delta.percent });
+    return t('weeklyReport.trendSame');
+}
+
+function buildWeeklyReportNotificationBody() {
+    const nextMon = getNextMondayAt();
+    const reportWeek = getReportWeekForMonday(nextMon);
+    const prevMon = new Date(nextMon);
+    prevMon.setDate(prevMon.getDate() - 7);
+    const prevWeek = getReportWeekForMonday(prevMon);
+    const goal = normalizeDailyZikirGoal(appSettings.dailyZikirGoal);
+    const report = buildWeekReport(history, usageByDay, reportWeek.dayKeys, goal, getTodayString());
+    const prevUsage = computeWeekUsageStats(usageByDay, prevWeek.dayKeys);
+    const delta = percentChange(report.usage.avgSecondsPerDay, prevUsage.avgSecondsPerDay);
+    const trend = buildWeeklyReportTrendText(delta);
+    let goalPart = '';
+    if (goal > 0) {
+        goalPart = t('weeklyReport.notifyGoalPart', {
+            flame: report.flame.emoji,
+            hit: report.goalDays.hit,
+            total: report.goalDays.total
+        });
+    }
+    return t('weeklyReport.notifyBody', {
+        avg: report.usage.avgMinutesPerDay,
+        trend,
+        goal: goalPart
+    }).replace(/\s+/g, ' ').trim();
+}
+
+async function ensureWeeklyReportSchedule() {
+    if (!weeklyReportActiveForUser()) {
+        if (isCapacitorNative()) await syncNativeWeeklyReport({ enabled: false });
+        return;
+    }
+    if (!isCapacitorNative()) {
+        maybeRequestNotificationPermission();
+        return;
+    }
+    const at = getNextMondayAt();
+    const body = buildWeeklyReportNotificationBody();
+    const r = await syncNativeWeeklyReport({
+        enabled: true,
+        at,
+        title: t('weeklyReport.notifyTitle'),
+        body,
+        extra: { openApp: true, view: 'premiumFeatureWeeklyView' }
+    });
+    if (!r.ok && r.reason === 'denied') {
+        await showAppAlert(t('weeklyReport.permDenied'), { title: t('reminderDialog.notificationPermTitle') });
+    } else if (r.warnExactAlarm) {
+        await showAppAlert(t('reminderDialog.exactAlarmBody'), {
+            title: t('reminderDialog.exactAlarmTitle'),
+            okLabel: t('reminderDialog.exactAlarmOk')
+        });
+    }
+}
+
+function syncWeeklyReportEditorControls() {
+    const toggle = document.getElementById('weeklyReportEnabledToggle');
+    const goalInput = document.getElementById('dailyZikirGoalInput');
+    const note = document.getElementById('weeklyReportPremiumNote');
+    const active = weeklyReportActiveForUser();
+    if (toggle) {
+        toggle.checked = appSettings.weeklyReportEnabled !== false;
+        toggle.disabled = !active;
+    }
+    if (goalInput) {
+        goalInput.value = String(normalizeDailyZikirGoal(appSettings.dailyZikirGoal));
+        goalInput.disabled = !active;
+    }
+    if (note) {
+        const show = PREMIUM_LIVE && isPremiumOnlyFeatureLocked();
+        note.hidden = !show;
+        note.classList.toggle('hidden', !show);
+        if (show) note.textContent = t('weeklyReport.premiumNote');
+    }
+}
+
+function renderWeeklyReportTopAreas(todayKey, units) {
+    const list = document.getElementById('weeklyReportTopAreas');
+    if (!list) return;
+    const top = getTopUsageAreasForDay(usageAreasByDay, todayKey, 3);
+    if (!top.length) {
+        list.innerHTML = `<li class="wr-top-area wr-top-area--empty">${escapeHtml(t('weeklyReport.noAreaUsage'))}</li>`;
+        return;
+    }
+    list.innerHTML = top
+        .map(
+            (row) => `<li class="wr-top-area">
+                <span class="wr-top-area__name">${escapeHtml(getUsageAreaDisplayName(row.areaId))}</span>
+                <span class="wr-top-area__time">${escapeHtml(formatUsageDuration(row.seconds, units))}</span>
+            </li>`
+        )
+        .join('');
+}
+
+function renderWeeklyReportChart(weekRange, units) {
+    const chart = document.getElementById('weeklyReportChart');
+    const metric = document.getElementById('weeklyReportChartMetric');
+    if (!chart || !metric || !weekRange) return;
+
+    const stats = computeWeekUsageStats(usageByDay, weekRange.dayKeys);
+    const todayKey = getTodayString();
+
+    if (weekRange.isCurrent) {
+        metric.textContent = t('weeklyReport.dailyAvgMetric', {
+            value: formatUsageDuration(stats.avgSecondsPerDay, units)
+        });
+        const series = getDailyUsageSeries(usageByDay, weekRange.dayKeys);
+        const maxSec = Math.max(...series.map((d) => d.seconds), 1);
+        chart.classList.remove('wr-chart--past');
+        chart.innerHTML = series
+            .map((row) => {
+                const h = Math.max(4, Math.round((row.seconds / maxSec) * 100));
+                const val = row.seconds > 0 ? formatUsageDuration(row.seconds, units) : '';
+                const isFuture = row.day > todayKey;
+                const barStyle = isFuture ? 'opacity:0.22' : '';
+                return `<div class="wr-chart-bar-wrap">
+                    <span class="wr-chart-bar-value">${escapeHtml(val)}</span>
+                    <div class="wr-chart-bar" style="height:${h}%;${barStyle}"></div>
+                    <span class="wr-chart-bar-label">${escapeHtml(getWeekdayShortLabel(row.day))}</span>
+                </div>`;
+            })
+            .join('');
+        return;
+    }
+
+    metric.textContent = t('weeklyReport.weeklyAvgMetric', {
+        value: formatUsageDuration(stats.avgSecondsPerDay, units)
+    });
+    chart.classList.add('wr-chart--past');
+    chart.innerHTML = `<div class="wr-chart-past">
+        <div class="wr-chart-past__value">${escapeHtml(formatUsageDuration(stats.totalSeconds, units))}</div>
+        <div class="wr-chart-past__label">${escapeHtml(t('weeklyReport.weekTotalLabel'))}</div>
+    </div>`;
+}
+
+function renderWeeklyReportView() {
+    syncWeeklyReportEditorControls();
+    const units = getWeeklyReportDurationUnits();
+    const goal = normalizeDailyZikirGoal(appSettings.dailyZikirGoal);
+    const todayKey = getTodayString();
+    const weekRanges = getSelectableWeekRanges(4);
+    if (weeklyReportWeekIndex < 0 || weeklyReportWeekIndex >= weekRanges.length) {
+        weeklyReportWeekIndex = weekRanges.length - 1;
+    }
+    const selectedWeek = weekRanges[weeklyReportWeekIndex];
+
+    const streak = computeGoalStreak(history, goal, todayKey);
+    const flame = getFlameTier(streak);
+    const streakTile = document.getElementById('weeklyReportStreakTile');
+    const streakCount = document.getElementById('weeklyReportStreakCount');
+    const flameEmoji = document.getElementById('weeklyReportFlameEmoji');
+    const streakSub = document.getElementById('weeklyReportStreakSub');
+    const flameTierClasses = FLAME_TIER_IDS.map((id) => `wr-tile--flame-${id}`);
+    const flameColorClasses = FLAME_TIER_IDS.map((id) => `wr-tile__flame--${id}`);
+    if (streakTile) {
+        streakTile.classList.remove(...flameTierClasses);
+        const activeTier = goal > 0 && streak > 0 ? flame.tier : 'none';
+        streakTile.classList.add(`wr-tile--flame-${activeTier}`);
+    }
+    if (streakCount) streakCount.textContent = String(streak);
+    if (flameEmoji) {
+        flameEmoji.classList.remove(...flameColorClasses);
+        const activeTier = goal > 0 && streak > 0 ? flame.tier : 'none';
+        flameEmoji.classList.add(`wr-tile__flame--${activeTier}`);
+    }
+    if (streakSub) {
+        streakSub.textContent = goal > 0 ? t('weeklyReport.streakDaysShort') : t('weeklyReport.goalOff');
+    }
+
+    const todayTime = document.getElementById('weeklyReportTodayTime');
+    if (todayTime) {
+        const sec = Number(usageByDay[todayKey]) || 0;
+        todayTime.textContent = formatUsageDuration(sec, units);
+    }
+    renderWeeklyReportTopAreas(todayKey, units);
+
+    const weekLabel = document.getElementById('weeklyReportWeekLabel');
+    if (weekLabel && selectedWeek) {
+        weekLabel.textContent = selectedWeek.isCurrent
+            ? t('weeklyReport.thisWeek')
+            : formatWeekRangeLabel(selectedWeek.startKey, selectedWeek.endKey);
+    }
+
+    const prevBtn = document.getElementById('weeklyReportWeekPrev');
+    const nextBtn = document.getElementById('weeklyReportWeekNext');
+    if (prevBtn) prevBtn.disabled = weeklyReportWeekIndex <= 0;
+    if (nextBtn) nextBtn.disabled = weeklyReportWeekIndex >= weekRanges.length - 1;
+
+    renderWeeklyReportChart(selectedWeek, units);
+
+    const fourAvg = document.getElementById('weeklyReportFourWeekAvg');
+    if (fourAvg) {
+        const avgSec = computeFourWeekDailyAverage(usageByDay, weekRanges);
+        fourAvg.innerHTML = t('weeklyReport.fourWeekAvg', {
+            value: formatUsageDuration(avgSec, units)
+        });
+    }
+}
+
+let cloudBackupBusy = false;
+
+function cloudBackupActiveForUser() {
+    return PREMIUM_LIVE && !isPremiumOnlyFeatureLocked();
+}
+
+function setHiddenState(el, hidden) {
+    if (!el) return;
+    el.hidden = !!hidden;
+    el.classList.toggle('hidden', !!hidden);
+}
+
+function getCloudBackupMetaFromApp() {
+    return normalizeCloudBackupMeta(appMeta?.cloudBackup);
+}
+
+function patchCloudBackupMeta(patch) {
+    if (!appMeta || typeof appMeta !== 'object') appMeta = { installedAt: null };
+    const prev = getCloudBackupMetaFromApp();
+    if (!prev && !patch?.uid) return;
+    appMeta.cloudBackup = {
+        uid: patch.uid ?? prev?.uid ?? '',
+        email: patch.email ?? prev?.email ?? '',
+        lastBackupAt: patch.lastBackupAt ?? prev?.lastBackupAt ?? 0,
+        linkedAt: patch.linkedAt ?? prev?.linkedAt ?? 0
+    };
+    saveData();
+}
+
+function clearCloudBackupMeta() {
+    if (!appMeta || typeof appMeta !== 'object') return;
+    delete appMeta.cloudBackup;
+    saveData();
+}
+
+function formatCloudBackupTimestamp(ms) {
+    if (!ms || ms <= 0) return '';
+    try {
+        return new Date(ms).toLocaleString(getLocaleTag(), {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    } catch {
+        return '';
+    }
+}
+
+function setCloudBackupBusy(busy, statusText = '') {
+    cloudBackupBusy = busy;
+    const panel = document.getElementById('cloudBackupPanel');
+    const statusEl = document.getElementById('cloudBackupStatus');
+    if (panel) panel.classList.toggle('is-busy', busy);
+    if (statusEl) {
+        if (busy && statusText) {
+            setHiddenState(statusEl, false);
+            statusEl.textContent = statusText;
+        } else {
+            setHiddenState(statusEl, true);
+            statusEl.textContent = '';
+        }
+    }
+}
+
+async function renderBackupView() {
+    const premiumNote = document.getElementById('cloudBackupPremiumNote');
+    const unavailableNote = document.getElementById('cloudBackupUnavailableNote');
+    const panel = document.getElementById('cloudBackupPanel');
+    const disconnected = document.getElementById('cloudBackupDisconnected');
+    const connected = document.getElementById('cloudBackupConnected');
+    const emailEl = document.getElementById('cloudBackupEmail');
+    const lastAtEl = document.getElementById('cloudBackupLastAt');
+
+    if (premiumNote) {
+        const showPremium = PREMIUM_LIVE && isPremiumOnlyFeatureLocked();
+        setHiddenState(premiumNote, !showPremium);
+        if (showPremium) premiumNote.textContent = t('cloudBackup.premiumRequired');
+    }
+
+    const availability = await getCloudBackupAvailability();
+    const canUse = cloudBackupActiveForUser() && availability === 'ready';
+
+    if (unavailableNote) {
+        const showUnavailable = cloudBackupActiveForUser() && availability !== 'ready';
+        setHiddenState(unavailableNote, !showUnavailable);
+        if (showUnavailable) {
+            unavailableNote.textContent =
+                availability === 'unsupported' ? t('cloudBackup.unavailable') : t('cloudBackup.notConfigured');
+        }
+    }
+
+    setHiddenState(panel, !canUse);
+    if (!canUse) return;
+
+    const meta = getCloudBackupMetaFromApp();
+    const isLinked = !!meta?.uid;
+
+    setHiddenState(disconnected, isLinked);
+    setHiddenState(connected, !isLinked);
+
+    if (isLinked) {
+        if (emailEl) emailEl.textContent = meta.email || meta.uid;
+        if (lastAtEl) {
+            const formatted = formatCloudBackupTimestamp(meta.lastBackupAt);
+            lastAtEl.textContent = formatted || t('cloudBackup.neverBackedUp');
+        }
+    }
+}
+
+function setupBackupUI() {
+    const connectBtn = document.getElementById('cloudBackupConnectBtn');
+    if (connectBtn && connectBtn.dataset.bound !== '1') {
+        connectBtn.dataset.bound = '1';
+        connectBtn.addEventListener('click', () => void handleCloudBackupConnect());
+    }
+
+    const backupBtn = document.getElementById('cloudBackupBackupNowBtn');
+    if (backupBtn && backupBtn.dataset.bound !== '1') {
+        backupBtn.dataset.bound = '1';
+        backupBtn.addEventListener('click', () => void handleCloudBackupNow(true));
+    }
+
+    const restoreBtn = document.getElementById('cloudBackupRestoreBtn');
+    if (restoreBtn && restoreBtn.dataset.bound !== '1') {
+        restoreBtn.dataset.bound = '1';
+        restoreBtn.addEventListener('click', () => void handleCloudBackupRestore());
+    }
+
+    const disconnectBtn = document.getElementById('cloudBackupDisconnectBtn');
+    if (disconnectBtn && disconnectBtn.dataset.bound !== '1') {
+        disconnectBtn.dataset.bound = '1';
+        disconnectBtn.addEventListener('click', () => void handleCloudBackupDisconnect());
+    }
+}
+
+async function handleCloudBackupConnect() {
+    if (!cloudBackupActiveForUser()) {
+        showPremiumFeatureUpsell();
+        return;
+    }
+    if (cloudBackupBusy) return;
+    if ((await getCloudBackupAvailability()) !== 'ready') {
+        await showAppAlert(t('cloudBackup.notConfigured'));
+        return;
+    }
+
+    setCloudBackupBusy(true, t('cloudBackup.signingIn'));
+    try {
+        const account = await signInWithGoogleForBackup();
+        const now = Date.now();
+        patchCloudBackupMeta({
+            uid: account.uid,
+            email: account.email,
+            linkedAt: now,
+            lastBackupAt: 0
+        });
+        setCloudBackupBusy(true, t('cloudBackup.backingUp'));
+        const lastBackupAt = await uploadBackupPayload(account.uid, buildBackupPayload());
+        patchCloudBackupMeta({ lastBackupAt });
+        await showAppAlert(t('cloudBackup.connectSuccess'));
+        await renderBackupView();
+    } catch (e) {
+        console.error('cloudBackup connect', e);
+        await showAppAlert(t('cloudBackup.errorSignIn'));
+    } finally {
+        setCloudBackupBusy(false);
+    }
+}
+
+async function handleCloudBackupNow(showSuccess = true) {
+    if (!cloudBackupActiveForUser()) {
+        showPremiumFeatureUpsell();
+        return;
+    }
+    const meta = getCloudBackupMetaFromApp();
+    if (!meta?.uid) return;
+    if (cloudBackupBusy) return;
+
+    setCloudBackupBusy(true, t('cloudBackup.backingUp'));
+    try {
+        const lastBackupAt = await uploadBackupPayload(meta.uid, buildBackupPayload());
+        patchCloudBackupMeta({ lastBackupAt });
+        await renderBackupView();
+        if (showSuccess) await showAppAlert(t('cloudBackup.backupSuccess'));
+    } catch (e) {
+        console.error('cloudBackup upload', e);
+        if (showSuccess) await showAppAlert(t('cloudBackup.errorBackup'));
+    } finally {
+        setCloudBackupBusy(false);
+    }
+}
+
+async function handleCloudBackupRestore() {
+    if (!cloudBackupActiveForUser()) {
+        showPremiumFeatureUpsell();
+        return;
+    }
+    const meta = getCloudBackupMetaFromApp();
+    if (!meta?.uid) return;
+    if (cloudBackupBusy) return;
+
+    const ok = await showAppConfirm(t('cloudBackup.restoreConfirm'), { title: t('cloudBackup.restoreBtn') });
+    if (!ok) return;
+
+    setCloudBackupBusy(true, t('cloudBackup.restoring'));
+    try {
+        const remote = await downloadBackupPayload(meta.uid);
+        if (!remote?.payload) {
+            await showAppAlert(t('cloudBackup.errorNotFound'));
+            return;
+        }
+        applySanitizedBackupToApp(sanitizeLoadedData(remote.payload));
+        await showAppAlert(t('cloudBackup.restoreSuccess'));
+        await renderBackupView();
+    } catch (e) {
+        console.error('cloudBackup restore', e);
+        await showAppAlert(t('cloudBackup.errorRestore'));
+    } finally {
+        setCloudBackupBusy(false);
+    }
+}
+
+async function handleCloudBackupDisconnect() {
+    const meta = getCloudBackupMetaFromApp();
+    if (!meta?.uid || cloudBackupBusy) return;
+
+    const ok = await showAppConfirm(t('cloudBackup.disconnectConfirm'));
+    if (!ok) return;
+
+    setCloudBackupBusy(true);
+    try {
+        await signOutCloudBackup();
+        clearCloudBackupMeta();
+        await renderBackupView();
+    } catch (e) {
+        console.error('cloudBackup disconnect', e);
+        clearCloudBackupMeta();
+        await renderBackupView();
+    } finally {
+        setCloudBackupBusy(false);
+    }
+}
+
+function applySanitizedBackupToApp(sanitized) {
+    const localEntitlements = entitlements;
+    const localCloudBackup = getCloudBackupMetaFromApp();
+
+    folders = sanitized.folders.length ? sanitized.folders : [...getDefaultFolders()];
+    zikirs = sanitized.zikirs.length ? sanitized.zikirs : [...DEFAULT_ZIKIRS];
+    zikirs.forEach((z) => {
+        const inferred = inferLibraryIdForZikir(z);
+        if (inferred) z.libraryId = inferred;
+    });
+    history = sanitized.history || {};
+    usageByDay = sanitized.usageByDay || {};
+    usageAreasByDay = sanitized.usageAreasByDay || {};
+    appSettings = sanitized.settings || appSettings;
+    syncQuranSettingsForLocale(appSettings);
+    reminderSettings = {
+        enabled: false,
+        time: '21:00',
+        lastFiredYmd: null,
+        ...(sanitized.reminders || {})
+    };
+    smartReminders = Array.isArray(sanitized.smartReminders) ? sanitized.smartReminders : [];
+    trash = sanitized.trash || { v: 1, entries: [] };
+    quranAyahFavorites = sanitized.quranAyahFavorites || [];
+    appMeta = sanitized.appMeta || { installedAt: null };
+    lifetimeTotal = sanitized.lifetimeTotal || 0;
+    lifetimeByZikir = sanitized.lifetimeByZikir || {};
+    entitlements = localEntitlements;
+    if (localCloudBackup) patchCloudBackupMeta(localCloudBackup);
+
+    saveData();
+    syncSettingsUI();
+    syncPremiumLockedControls();
+    setDailyQuote();
     ensureReminderSchedule().catch(console.error);
+    ensureSmartReminderSchedule().catch(console.error);
+    ensureWeeklyReportSchedule().catch(console.error);
+
+    const viewId = currentViewId || 'homeView';
+    showView(viewId, null, { push: false });
+}
+
+async function maybeRunAutoCloudBackup() {
+    if (!cloudBackupActiveForUser()) return;
+    if ((await getCloudBackupAvailability()) !== 'ready') return;
+    const meta = getCloudBackupMetaFromApp();
+    if (!meta?.uid || cloudBackupBusy) return;
+
+    try {
+        await maybeUploadCloudBackup({
+            getPayload: buildBackupPayload,
+            cloudMeta: meta,
+            force: false,
+            onMetaPatch: (patch) => patchCloudBackupMeta(patch)
+        });
+    } catch (e) {
+        console.warn('auto cloud backup failed', e);
+    }
+}
+
+function setupWeeklyReportUI() {
+    const toggle = document.getElementById('weeklyReportEnabledToggle');
+    if (toggle && toggle.dataset.bound !== '1') {
+        toggle.dataset.bound = '1';
+        toggle.addEventListener('change', () => {
+            if (!weeklyReportActiveForUser()) {
+                toggle.checked = false;
+                showPremiumFeatureUpsell();
+                return;
+            }
+            appSettings.weeklyReportEnabled = !!toggle.checked;
+            saveData();
+            ensureWeeklyReportSchedule().catch(console.error);
+        });
+    }
+
+    const goalInput = document.getElementById('dailyZikirGoalInput');
+    if (goalInput && goalInput.dataset.bound !== '1') {
+        goalInput.dataset.bound = '1';
+        const commitGoal = () => {
+            if (!weeklyReportActiveForUser()) {
+                goalInput.value = String(normalizeDailyZikirGoal(appSettings.dailyZikirGoal));
+                showPremiumFeatureUpsell();
+                return;
+            }
+            appSettings.dailyZikirGoal = normalizeDailyZikirGoal(goalInput.value);
+            goalInput.value = String(appSettings.dailyZikirGoal);
+            saveData();
+            renderWeeklyReportView();
+            ensureWeeklyReportSchedule().catch(console.error);
+        };
+        goalInput.addEventListener('change', commitGoal);
+        goalInput.addEventListener('blur', commitGoal);
+    }
+
+    const prevBtn = document.getElementById('weeklyReportWeekPrev');
+    if (prevBtn && prevBtn.dataset.bound !== '1') {
+        prevBtn.dataset.bound = '1';
+        prevBtn.addEventListener('click', () => {
+            if (weeklyReportWeekIndex <= 0) return;
+            weeklyReportWeekIndex -= 1;
+            renderWeeklyReportView();
+        });
+    }
+
+    const nextBtn = document.getElementById('weeklyReportWeekNext');
+    if (nextBtn && nextBtn.dataset.bound !== '1') {
+        nextBtn.dataset.bound = '1';
+        nextBtn.addEventListener('click', () => {
+            const ranges = getSelectableWeekRanges(4);
+            if (weeklyReportWeekIndex >= ranges.length - 1) return;
+            weeklyReportWeekIndex += 1;
+            renderWeeklyReportView();
+        });
+    }
+}
+
+function smartRemindersActiveForUser() {
+    return PREMIUM_LIVE && !isPremiumOnlyFeatureLocked();
+}
+
+const INTRO_SAMPLE_MSG_VERSION = 3;
+
+function formatIntroSampleMealForLocale(text, locale) {
+    let out = String(text || '').trim();
+    if (!out) return out;
+    if (normalizeAppLocale(locale) === 'tr') {
+        out = out.replace(/sabah akşam an\b/gi, 'sabah akşam zikret');
+    }
+    return out;
+}
+
+function stripIntroSampleAyahRefSuffix(text) {
+    return String(text || '')
+        .trim()
+        .replace(/\s*\([^)]*205[^)]*\)\s*$/u, '')
+        .trim();
+}
+
+function getIntroSampleAyahRefLabel() {
+    return t('smartReminders.sampleAyahRef');
+}
+
+function appendIntroSampleAyahRef(mealText, locale = getLocale()) {
+    const meal = stripIntroSampleAyahRefSuffix(formatIntroSampleMealForLocale(mealText, locale));
+    const ref = getIntroSampleAyahRefLabel();
+    if (!meal) return ref;
+    return `${meal} ${ref}`;
+}
+
+function buildIntroSampleMessageHtml(storedText) {
+    const ref = getIntroSampleAyahRefLabel();
+    const meal = stripIntroSampleAyahRefSuffix(storedText);
+    if (!meal) return `<em class="smart-reminder-inline-ref">${escapeHtml(ref)}</em>`;
+    return `${escapeHtml(meal)} <em class="smart-reminder-inline-ref">${escapeHtml(ref)}</em>`;
+}
+
+function readSmartReminderMessageValue(el) {
+    if (!el) return '';
+    if (el instanceof HTMLTextAreaElement) return String(el.value || '').trim();
+    return String(el.textContent || '').trim();
+}
+
+async function loadIntroSampleMealText() {
+    const locale = getLocale();
+    const mealId = normalizeQuranMeal(appSettings.quranMeal, locale);
+    try {
+        const surah = await fetchSurahAyahs(INTRO_SAMPLE_SURAH, mealId, locale);
+        const ayah = (surah?.ayahs || []).find((a) => a.n === INTRO_SAMPLE_AYAH);
+        const meal = formatIntroSampleMealForLocale(ayah?.tr, locale);
+        if (meal) return appendIntroSampleAyahRef(meal, locale).slice(0, SMART_REMINDER_MESSAGE_MAX_LEN);
+    } catch {
+        /* locale fallback */
+    }
+    return appendIntroSampleAyahRef(t('smartReminders.sampleMessage'), locale).slice(0, SMART_REMINDER_MESSAGE_MAX_LEN);
+}
+
+function isIntroSampleRule(ruleOrId) {
+    const id = typeof ruleOrId === 'string' ? ruleOrId : ruleOrId?.id;
+    return id === INTRO_SAMPLE_REMINDER_ID;
+}
+
+function isLikelyLegacyIntroSampleRule(rule) {
+    if (!rule || rule.id === INTRO_SAMPLE_REMINDER_ID) return false;
+    if (rule.enabled) return false;
+    if (rule.scheduleMode !== 'count' || rule.timesPerDay !== 3) return false;
+    const msg = String(rule.messages?.[0] || '').trim();
+    const name = String(rule.name || '').trim();
+    const sampleName = t('smartReminders.sampleName');
+    const sampleNameTr = tForLocale('tr', 'smartReminders.sampleName') || 'Hatırlatıcı 1';
+    if ((name === sampleName || name === sampleNameTr) && !msg) return true;
+    if (!msg) return false;
+    return /a['\u2019]?raf|al-?a['\u2019]?raf|205|verse 205|ayat 205|سورة الأعراف|سورۃ الأعراف/i.test(msg)
+        || msg === t('smartReminders.sampleMessage')
+        || msg === tForLocale('tr', 'smartReminders.sampleMessage')
+        || msg === "A'raf suresi 205. ayet";
+}
+
+function bindIntroSampleReminderId(rule) {
+    if (!rule || rule.id === INTRO_SAMPLE_REMINDER_ID) return rule;
+    rule.id = INTRO_SAMPLE_REMINDER_ID;
+    return rule;
+}
+
+async function refreshIntroSampleSmartReminder() {
+    if (!appMeta.smartRemindersIntroSeeded) return false;
+
+    const mealText = await loadIntroSampleMealText();
+    const sampleName = t('smartReminders.sampleName');
+    let rule = smartReminders.find((r) => r.id === INTRO_SAMPLE_REMINDER_ID);
+    if (!rule) {
+        rule = smartReminders.find((r) => isLikelyLegacyIntroSampleRule(r));
+        if (rule) bindIntroSampleReminderId(rule);
+    }
+
+    if (!rule) return false;
+
+    const version = appMeta.smartRemindersIntroMsgVersion || 0;
+    const needsUpdate =
+        version < INTRO_SAMPLE_MSG_VERSION
+        || rule.messages[0] !== mealText
+        || String(rule.name || '').trim() !== sampleName;
+
+    if (!needsUpdate) return false;
+
+    rule.name = sampleName;
+    rule.messages = [mealText];
+    rule.enabled = false;
+    rule.scheduleMode = 'count';
+    rule.timesPerDay = 3;
+    rule.tapAction = rule.tapAction || 'app';
+    appMeta.smartRemindersIntroMsgVersion = INTRO_SAMPLE_MSG_VERSION;
+    saveData();
+    return true;
+}
+
+function createSampleSmartReminderRule() {
+    const rule = createDefaultSmartReminder();
+    return {
+        ...rule,
+        id: INTRO_SAMPLE_REMINDER_ID,
+        enabled: false,
+        name: t('smartReminders.sampleName'),
+        messages: [appendIntroSampleAyahRef(t('smartReminders.sampleMessage'), getLocale())],
+        scheduleMode: 'count',
+        timesPerDay: 3,
+        tapAction: 'app',
+        openZikirId: null
+    };
+}
+
+/** İlk hatırlatıcı ekranı ziyaretinde örnek kural ekler (bir kez). @returns {Promise<boolean>} */
+async function ensureSmartReminderSampleIfNeeded() {
+    if (appMeta.smartRemindersIntroSeeded) {
+        await refreshIntroSampleSmartReminder();
+        return false;
+    }
+    appMeta.smartRemindersIntroSeeded = true;
+    if (smartReminders.length > 0) {
+        saveData();
+        return false;
+    }
+    const rule = createSampleSmartReminderRule();
+    rule.messages = [await loadIntroSampleMealText()];
+    smartReminders.push(rule);
+    appMeta.smartRemindersIntroMsgVersion = INTRO_SAMPLE_MSG_VERSION;
+    saveData();
+    return true;
+}
+
+function getSmartReminderById(id) {
+    return smartReminders.find((r) => r.id === id) || null;
+}
+
+function getSmartReminderWeekdayDisplayOrder() {
+    if (getLocale() === 'tr') return [1, 2, 3, 4, 5, 6, 0];
+    return [0, 1, 2, 3, 4, 5, 6];
+}
+
+function getSmartReminderDisplayName(rule) {
+    const name = String(rule.name || '').trim();
+    if (name) return name;
+    return t('smartReminders.untitled');
+}
+
+function formatSmartReminderWeekdays(rule) {
+    const days = rule.weekdays && rule.weekdays.length ? rule.weekdays : [0, 1, 2, 3, 4, 5, 6];
+    if (days.length === 7) return t('smartReminders.everyDay');
+    const order = getSmartReminderWeekdayDisplayOrder();
+    return days
+        .slice()
+        .sort((a, b) => order.indexOf(a) - order.indexOf(b))
+        .map((d) => t(`smartReminders.weekdayShort${d}`))
+        .join(' · ');
+}
+
+function formatSmartReminderListLabel(rule) {
+    return getSmartReminderDisplayName(rule);
+}
+
+function formatSmartReminderTimeColumn(rule) {
+    if (rule.scheduleMode === 'count') {
+        const n = rule.timesPerDay || 1;
+        return {
+            html: escapeHtml(t('smartReminders.timesPerDayShort', { count: n })),
+            countMode: true
+        };
+    }
+    return { html: escapeHtml(rule.time || '09:00'), countMode: false };
+}
+
+function syncSmartReminderEditTitleUI(rule, isNew) {
+    const titleEl = document.getElementById('smartReminderEditTitle');
+    if (!titleEl) return;
+
+    const name = String(rule.name || '').trim();
+    if (isNew && !name) {
+        titleEl.textContent = t('smartReminders.newTitle');
+        titleEl.classList.add('is-placeholder');
+    } else {
+        titleEl.textContent = name || getSmartReminderDisplayName(rule);
+        titleEl.classList.toggle('is-placeholder', !name);
+    }
+}
+
+function readSmartReminderNameFromEditor() {
+    const titleEl = document.getElementById('smartReminderEditTitle');
+    if (!titleEl || titleEl.classList.contains('is-placeholder')) return '';
+    return String(titleEl.textContent || '').trim().slice(0, 60);
+}
+
+function normalizeSmartReminderTitleOnBlur() {
+    const titleEl = document.getElementById('smartReminderEditTitle');
+    if (!titleEl) return;
+    const name = String(titleEl.textContent || '').trim();
+    if (name) {
+        titleEl.textContent = name;
+        titleEl.classList.remove('is-placeholder');
+        return;
+    }
+    titleEl.textContent = smartReminderEditId ? t('smartReminders.untitled') : t('smartReminders.newTitle');
+    titleEl.classList.add('is-placeholder');
+}
+
+function getSmartReminderPrimaryMessage(rule) {
+    const msgs = Array.isArray(rule?.messages) ? rule.messages : [];
+    return msgs.map((m) => String(m || '').trim()).find(Boolean) || '';
+}
+
+function formatSmartReminderRowMetaHtml(rule) {
+    const preview = getSmartReminderPrimaryMessage(rule);
+    const days = formatSmartReminderWeekdays(rule);
+    const daysPart = `<span class="smart-reminder-row__days">${escapeHtml(days)}</span>`;
+    const previewPart = preview
+        ? `<span class="smart-reminder-row__preview">${escapeHtml(preview)}</span>`
+        : '';
+    return `<span class="smart-reminder-row__meta-line">${daysPart}${previewPart}</span>`;
+}
+function formatSmartReminderCharCountLabel(length) {
+    return t('smartReminders.charCount', {
+        current: Math.min(length, SMART_REMINDER_MESSAGE_MAX_LEN),
+        max: SMART_REMINDER_MESSAGE_MAX_LEN
+    });
+}
+
+function syncSmartReminderCharCounts() {
+    document.querySelectorAll('#smartReminderMessagesList [data-smart-message-idx]').forEach((el) => {
+        const row = el.closest('.smart-reminder-message-row');
+        const counter = row ? row.querySelector('[data-smart-char-count]') : null;
+        if (!counter) return;
+        const len = readSmartReminderMessageValue(el).length;
+        counter.textContent = formatSmartReminderCharCountLabel(len);
+        counter.classList.toggle('is-near-limit', len >= SMART_REMINDER_MESSAGE_MAX_LEN - 24);
+        counter.classList.toggle('is-at-limit', len >= SMART_REMINDER_MESSAGE_MAX_LEN);
+    });
+}
+
+async function renderSmartReminderList() {
+    await ensureSmartReminderSampleIfNeeded();
+    const list = document.getElementById('smartReminderList');
+    const empty = document.getElementById('smartRemindersEmpty');
+    const note = document.getElementById('smartRemindersPremiumNote');
+    if (!list) return;
+    list.innerHTML = '';
+
+    if (note) {
+        note.hidden = smartRemindersActiveForUser();
+        if (!note.hidden) note.textContent = t('smartReminders.previewNote');
+    }
+
+    if (empty) empty.classList.toggle('hidden', smartReminders.length > 0);
+
+    smartReminders.forEach((rule) => {
+        const timeCol = formatSmartReminderTimeColumn(rule);
+        const row = document.createElement('div');
+        row.className = 'smart-reminder-row' + (rule.enabled ? '' : ' is-disabled');
+        row.dataset.smartReminderId = rule.id;
+        row.setAttribute('role', 'button');
+        row.tabIndex = 0;
+
+        row.innerHTML = `
+            <div class="smart-reminder-row__time${timeCol.countMode ? ' smart-reminder-row__time--count' : ''}">${timeCol.html}</div>
+            <div class="smart-reminder-row__body">
+                <div class="smart-reminder-row__label">${escapeHtml(formatSmartReminderListLabel(rule))}</div>
+                <div class="smart-reminder-row__meta">${formatSmartReminderRowMetaHtml(rule)}</div>
+            </div>
+            <div class="smart-reminder-row__toggle" data-smart-reminder-toggle-wrap="${escapeAttr(rule.id)}">
+                <label class="switch">
+                    <input type="checkbox" class="smart-reminder-toggle-input" data-reminder-id="${escapeAttr(rule.id)}" ${rule.enabled ? 'checked' : ''} aria-label="${escapeAttr(formatSmartReminderListLabel(rule))}">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        `;
+        list.appendChild(row);
+    });
+}
+
+function populateSmartReminderZikirSelect(rule) {
+    const sel = document.getElementById('smartReminderOpenZikir');
+    if (!sel) return;
+    const tapAction = rule.tapAction || (rule.openZikirId ? 'zikir' : 'app');
+    sel.innerHTML = `
+        <option value="_none">${escapeHtml(t('smartReminders.openNothing'))}</option>
+        <option value="_app">${escapeHtml(t('smartReminders.openAppOnly'))}</option>
+    `;
+    zikirs
+        .slice()
+        .sort((a, b) => getZikirDisplayName(a).localeCompare(getZikirDisplayName(b), getLocale()))
+        .forEach((z) => {
+            const opt = document.createElement('option');
+            opt.value = z.id;
+            opt.textContent = t('smartReminders.openZikirOption', { name: getZikirDisplayName(z) });
+            sel.appendChild(opt);
+        });
+    if (tapAction === 'none') sel.value = '_none';
+    else if (tapAction === 'zikir' && rule.openZikirId && zikirs.some((z) => z.id === rule.openZikirId)) {
+        sel.value = rule.openZikirId;
+    } else {
+        sel.value = '_app';
+    }
+}
+
+function renderSmartReminderWeekdayChips(selected) {
+    const host = document.getElementById('smartReminderWeekdays');
+    if (!host) return;
+    const set = new Set(Array.isArray(selected) ? selected : [0, 1, 2, 3, 4, 5, 6]);
+    host.innerHTML = '';
+    getSmartReminderWeekdayDisplayOrder().forEach((d) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'smart-reminder-weekday' + (set.has(d) ? ' is-active' : '');
+        btn.dataset.weekday = String(d);
+        btn.textContent = t(`smartReminders.weekdayShort${d}`);
+        btn.setAttribute('aria-pressed', set.has(d) ? 'true' : 'false');
+        host.appendChild(btn);
+    });
+}
+
+function renderSmartReminderMessageInputs(messages, { introSample = false } = {}) {
+    const host = document.getElementById('smartReminderMessagesList');
+    if (!host) return;
+    const list = messages.length ? messages : [''];
+    const maxLen = SMART_REMINDER_MESSAGE_MAX_LEN;
+    host.innerHTML = '';
+    list.forEach((text, idx) => {
+        const row = document.createElement('div');
+        row.className = 'form-group smart-reminder-message-row';
+        const len = String(text || '').length;
+        const counterLabel = formatSmartReminderCharCountLabel(len);
+        const field =
+            introSample && idx === 0
+                ? `<div class="smart-reminder-message-rich" data-smart-message-idx="${idx}" role="textbox" aria-multiline="true" contenteditable="true" spellcheck="false">${buildIntroSampleMessageHtml(text || '')}</div>`
+                : `<textarea rows="2" data-smart-message-idx="${idx}" maxlength="${maxLen}" placeholder="${escapeAttr(t('smartReminders.messagePlaceholder'))}">${escapeHtml(text || '')}</textarea>`;
+        row.innerHTML = `
+            <div class="smart-reminder-message-field">
+                ${field}
+                <span class="smart-reminder-char-count${len >= maxLen - 24 ? ' is-near-limit' : ''}${len >= maxLen ? ' is-at-limit' : ''}" data-smart-char-count aria-live="polite">${counterLabel}</span>
+            </div>
+            <button type="button" class="icon-btn smart-reminder-remove-message" data-smart-message-remove="${idx}" aria-label="Sil" ${list.length <= 1 ? 'hidden' : ''}>
+                <span class="material-icons-outlined">close</span>
+            </button>
+        `;
+        host.appendChild(row);
+    });
+    syncSmartReminderCharCounts();
+}
+
+function syncSmartReminderScheduleModeUI(mode) {
+    const fixedGroup = document.getElementById('smartReminderFixedTimeGroup');
+    const countGroup = document.getElementById('smartReminderCountGroup');
+    const isCount = mode === 'count';
+    if (fixedGroup) fixedGroup.hidden = isCount;
+    if (countGroup) countGroup.hidden = !isCount;
+}
+
+function openSmartReminderEditor(ruleId) {
+    const isNew = !ruleId;
+    const rule = isNew ? createDefaultSmartReminder() : getSmartReminderById(ruleId);
+    if (!rule) return;
+    smartReminderEditId = isNew ? null : rule.id;
+
+    syncSmartReminderEditTitleUI(rule, isNew);
+
+    const delBtn = document.getElementById('smartReminderDeleteBtn');
+    if (delBtn) delBtn.classList.toggle('hidden', isNew);
+
+    renderSmartReminderMessageInputs(rule.messages, { introSample: isIntroSampleRule(rule) });
+    renderSmartReminderWeekdayChips(rule.weekdays);
+    populateSmartReminderZikirSelect(rule);
+
+    document.querySelectorAll('input[name="smartReminderScheduleMode"]').forEach((input) => {
+        input.checked = input.value === rule.scheduleMode;
+    });
+    syncSmartReminderScheduleModeUI(rule.scheduleMode);
+
+    const fixedTime = document.getElementById('smartReminderFixedTime');
+    if (fixedTime) fixedTime.value = rule.time || '09:00';
+    const timesPerDay = document.getElementById('smartReminderTimesPerDay');
+    if (timesPerDay) timesPerDay.value = String(rule.timesPerDay || 1);
+    const winStart = document.getElementById('smartReminderWindowStart');
+    if (winStart) winStart.value = rule.windowStart || '08:00';
+    const winEnd = document.getElementById('smartReminderWindowEnd');
+    if (winEnd) winEnd.value = rule.windowEnd || '22:00';
+    const vibrate = document.getElementById('smartReminderVibrate');
+    if (vibrate) vibrate.checked = !!rule.vibrate;
+
+    openOverlay('smartReminderEditOverlay');
+}
+
+function readSmartReminderEditorForm(baseRule) {
+    const messages = [];
+    document.querySelectorAll('#smartReminderMessagesList [data-smart-message-idx]').forEach((el) => {
+        const v = readSmartReminderMessageValue(el);
+        if (v) messages.push(v.slice(0, SMART_REMINDER_MESSAGE_MAX_LEN));
+    });
+
+    const weekdays = [];
+    document.querySelectorAll('#smartReminderWeekdays .smart-reminder-weekday.is-active').forEach((btn) => {
+        const d = parseInt(btn.getAttribute('data-weekday') || '', 10);
+        if (Number.isFinite(d) && d >= 0 && d <= 6) weekdays.push(d);
+    });
+
+    const modeInput = document.querySelector('input[name="smartReminderScheduleMode"]:checked');
+    const scheduleMode = modeInput && modeInput.value === 'count' ? 'count' : 'fixed';
+
+    const openSel = document.getElementById('smartReminderOpenZikir');
+    const openVal = openSel ? openSel.value : '_app';
+    let tapAction = 'app';
+    let openZikirId = null;
+    if (openVal === '_none') tapAction = 'none';
+    else if (openVal === '_app') tapAction = 'app';
+    else if (openVal && zikirs.some((z) => z.id === openVal)) {
+        tapAction = 'zikir';
+        openZikirId = openVal;
+    }
+
+    return {
+        ...baseRule,
+        name: readSmartReminderNameFromEditor(),
+        messages,
+        weekdays: weekdays.length ? weekdays.sort((a, b) => a - b) : [0, 1, 2, 3, 4, 5, 6],
+        scheduleMode,
+        time: document.getElementById('smartReminderFixedTime')?.value || '09:00',
+        timesPerDay: parseInt(document.getElementById('smartReminderTimesPerDay')?.value || '1', 10) || 1,
+        windowStart: document.getElementById('smartReminderWindowStart')?.value || '08:00',
+        windowEnd: document.getElementById('smartReminderWindowEnd')?.value || '22:00',
+        vibrate: !!document.getElementById('smartReminderVibrate')?.checked,
+        tapAction,
+        openZikirId
+    };
+}
+
+async function saveSmartReminderFromEditor() {
+    normalizeSmartReminderTitleOnBlur();
+    const isNew = !smartReminderEditId;
+    if (isNew && smartReminders.length >= MAX_SMART_REMINDERS) {
+        await showAppAlert(t('smartReminders.maxReached', { max: MAX_SMART_REMINDERS }), { title: t('premium.cardRemindersTitle') });
+        return;
+    }
+
+    const base = isNew ? createDefaultSmartReminder() : { ...getSmartReminderById(smartReminderEditId) };
+    if (!base) return;
+
+    const next = readSmartReminderEditorForm(base);
+    if (isIntroSampleRule(next.id) && next.messages[0]) {
+        next.messages[0] = appendIntroSampleAyahRef(next.messages[0]).slice(0, SMART_REMINDER_MESSAGE_MAX_LEN);
+    }
+    if (!next.messages.length) {
+        await showAppAlert(t('smartReminders.needMessage'), { title: t('premium.cardRemindersTitle') });
+        return;
+    }
+    if (!next.weekdays.length) {
+        await showAppAlert(t('smartReminders.needWeekday'), { title: t('premium.cardRemindersTitle') });
+        return;
+    }
+
+    if (isNew) {
+        smartReminders.push(next);
+    } else {
+        const idx = smartReminders.findIndex((r) => r.id === smartReminderEditId);
+        if (idx >= 0) smartReminders[idx] = next;
+    }
+
+    saveData();
+    renderSmartReminderList();
+    closeOverlayPreferHistory('smartReminderEditOverlay');
+    smartReminderEditId = null;
+    await ensureSmartReminderSchedule();
+}
+
+async function deleteSmartReminderFromEditor() {
+    if (!smartReminderEditId) return;
+    if (!(await showAppConfirm(t('smartReminders.deleteConfirm'), {
+        title: t('smartReminders.delete'),
+        confirmLabel: t('confirm.deleteLabel')
+    }))) return;
+    smartReminders = smartReminders.filter((r) => r.id !== smartReminderEditId);
+    smartReminderEditId = null;
+    saveData();
+    renderSmartReminderList();
+    closeOverlayPreferHistory('smartReminderEditOverlay');
+    await ensureSmartReminderSchedule();
+}
+
+function setSmartReminderEnabled(ruleId, enabled) {
+    const rule = getSmartReminderById(ruleId);
+    if (!rule) return;
+    rule.enabled = !!enabled;
+    saveData();
+    renderSmartReminderList();
+    ensureSmartReminderSchedule().catch(console.error);
+}
+
+async function ensureSmartReminderSchedule() {
+    if (!smartRemindersActiveForUser()) {
+        if (isCapacitorNative()) await syncNativeSmartReminders([]);
+        return;
+    }
+
+    const hasActive = smartReminders.some((r) => r.enabled && r.messages.some((m) => String(m || '').trim()));
+    if (!hasActive) {
+        if (isCapacitorNative()) await syncNativeSmartReminders([]);
+        return;
+    }
+
+    if (!isCapacitorNative()) {
+        maybeRequestNotificationPermission();
+        return;
+    }
+
+    const slots = buildSmartReminderSlots(smartReminders);
+    const r = await syncNativeSmartReminders(slots);
+    if (!r.ok && r.reason === 'denied') {
+        await showAppAlert(t('smartReminders.permDenied'), { title: t('reminderDialog.notificationPermTitle') });
+    } else if (r.warnExactAlarm) {
+        await showAppAlert(t('reminderDialog.exactAlarmBody'), {
+            title: t('reminderDialog.exactAlarmTitle'),
+            okLabel: t('reminderDialog.exactAlarmOk')
+        });
+        await openExactAlarmSettings();
+    } else if (!r.ok && r.reason === 'schedule') {
+        await showAppAlert(t('reminderDialog.scheduleFailedBody'), {
+            title: t('reminderDialog.scheduleFailedTitle')
+        });
+    }
+}
+
+function setupSmartRemindersUI() {
+    const titleEl = document.getElementById('smartReminderEditTitle');
+    if (titleEl && titleEl.dataset.bound !== '1') {
+        titleEl.dataset.bound = '1';
+        titleEl.addEventListener('focus', () => {
+            if (titleEl.classList.contains('is-placeholder')) {
+                titleEl.textContent = '';
+                titleEl.classList.remove('is-placeholder');
+            }
+        });
+        titleEl.addEventListener('blur', () => normalizeSmartReminderTitleOnBlur());
+        titleEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                titleEl.blur();
+            }
+        });
+        titleEl.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData)?.getData('text') || '';
+            document.execCommand('insertText', false, text.replace(/\n/g, ' ').slice(0, 60));
+        });
+    }
+
+    const list = document.getElementById('smartReminderList');
+    if (list && list.dataset.bound !== '1') {
+        list.dataset.bound = '1';
+        list.addEventListener('change', (e) => {
+            const input = e.target;
+            if (!(input instanceof HTMLInputElement) || !input.classList.contains('smart-reminder-toggle-input')) return;
+            e.stopPropagation();
+            const id = input.getAttribute('data-reminder-id');
+            if (id) setSmartReminderEnabled(id, input.checked);
+        });
+        list.addEventListener('click', (e) => {
+            if (e.target.closest('.smart-reminder-row__toggle')) {
+                e.stopPropagation();
+                return;
+            }
+            const row = e.target && e.target.closest ? e.target.closest('[data-smart-reminder-id]') : null;
+            if (!row) return;
+            openSmartReminderEditor(row.getAttribute('data-smart-reminder-id'));
+        });
+        list.addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            const row = e.target && e.target.closest ? e.target.closest('[data-smart-reminder-id]') : null;
+            if (!row || e.target.closest('.smart-reminder-row__toggle')) return;
+            e.preventDefault();
+            openSmartReminderEditor(row.getAttribute('data-smart-reminder-id'));
+        });
+    }
+
+    const addBtn = document.getElementById('smartReminderAddBtn');
+    if (addBtn && addBtn.dataset.bound !== '1') {
+        addBtn.dataset.bound = '1';
+        addBtn.addEventListener('click', () => {
+            if (smartReminders.length >= MAX_SMART_REMINDERS) {
+                void showAppAlert(t('smartReminders.maxReached', { max: MAX_SMART_REMINDERS }), { title: t('premium.cardRemindersTitle') });
+                return;
+            }
+            openSmartReminderEditor(null);
+        });
+    }
+
+    const saveBtn = document.getElementById('smartReminderSaveBtn');
+    if (saveBtn && saveBtn.dataset.bound !== '1') {
+        saveBtn.dataset.bound = '1';
+        saveBtn.addEventListener('click', () => { void saveSmartReminderFromEditor(); });
+    }
+
+    const delBtn = document.getElementById('smartReminderDeleteBtn');
+    if (delBtn && delBtn.dataset.bound !== '1') {
+        delBtn.dataset.bound = '1';
+        delBtn.addEventListener('click', () => { void deleteSmartReminderFromEditor(); });
+    }
+
+    const addMsgBtn = document.getElementById('smartReminderAddMessageBtn');
+    if (addMsgBtn && addMsgBtn.dataset.bound !== '1') {
+        addMsgBtn.dataset.bound = '1';
+        addMsgBtn.addEventListener('click', () => {
+            const current = [];
+            document.querySelectorAll('#smartReminderMessagesList [data-smart-message-idx]').forEach((el) => {
+                current.push(readSmartReminderMessageValue(el));
+            });
+            if (current.length >= MAX_MESSAGES_PER_RULE) return;
+            current.push('');
+            renderSmartReminderMessageInputs(current, { introSample: isIntroSampleRule(smartReminderEditId) });
+        });
+    }
+
+    const msgList = document.getElementById('smartReminderMessagesList');
+    if (msgList && msgList.dataset.bound !== '1') {
+        msgList.dataset.bound = '1';
+        msgList.addEventListener('input', (e) => {
+            const el = e.target && e.target.closest ? e.target.closest('[data-smart-message-idx]') : null;
+            if (!el) return;
+            syncSmartReminderCharCounts();
+        });
+        msgList.addEventListener('click', (e) => {
+            const btn = e.target && e.target.closest ? e.target.closest('[data-smart-message-remove]') : null;
+            if (!btn) return;
+            const idx = parseInt(btn.getAttribute('data-smart-message-remove') || '', 10);
+            const current = [];
+            document.querySelectorAll('#smartReminderMessagesList [data-smart-message-idx]').forEach((el) => {
+                current.push(readSmartReminderMessageValue(el));
+            });
+            if (current.length <= 1) return;
+            current.splice(idx, 1);
+            renderSmartReminderMessageInputs(current, { introSample: isIntroSampleRule(smartReminderEditId) });
+        });
+    }
+
+    const weekdays = document.getElementById('smartReminderWeekdays');
+    if (weekdays && weekdays.dataset.bound !== '1') {
+        weekdays.dataset.bound = '1';
+        weekdays.addEventListener('click', (e) => {
+            const btn = e.target && e.target.closest ? e.target.closest('.smart-reminder-weekday') : null;
+            if (!btn) return;
+            btn.classList.toggle('is-active');
+            btn.setAttribute('aria-pressed', btn.classList.contains('is-active') ? 'true' : 'false');
+        });
+    }
+
+    document.querySelectorAll('input[name="smartReminderScheduleMode"]').forEach((input) => {
+        if (input.dataset.bound === '1') return;
+        input.dataset.bound = '1';
+        input.addEventListener('change', () => {
+            syncSmartReminderScheduleModeUI(input.value);
+        });
+    });
 }
 
 function logClick(zId) {
@@ -1941,7 +4238,8 @@ function logClick(zId) {
     if (!history[today]) history[today] = {};
     if (!history[today][zId]) history[today][zId] = 0;
     history[today][zId]++;
-    
+    bumpLifetimeClick(zId);
+
     // Update lastClicked
     const z = zikirs.find(x => x.id === zId);
     if (z) z.lastClicked = Date.now();
@@ -1953,6 +4251,7 @@ function logDecrement(zId) {
     const today = getTodayString();
     if (history[today] && history[today][zId] > 0) {
         history[today][zId]--;
+        bumpLifetimeDecrement(zId);
         if (history[today][zId] <= 0) delete history[today][zId];
         if (Object.keys(history[today]).length === 0) delete history[today];
     }
@@ -2237,15 +4536,17 @@ function closeAllOverlays() {
         editModalOverlay,
         addModalOverlay,
         trashOverlay,
+        document.getElementById('premiumUpsellOverlay'),
         libraryFolderSelectOverlay,
         libraryDetailOverlay,
-        zikirStatsOverlay
+        zikirStatsOverlay,
+        document.getElementById('smartReminderEditOverlay')
     ].forEach((el) => {
         if (el) el.classList.remove('active');
     });
 }
 
-const SCROLLABLE_OVERLAY_IDS = new Set(['trashOverlay']);
+const SCROLLABLE_OVERLAY_IDS = new Set(['trashOverlay', 'smartReminderEditOverlay']);
 
 function openOverlay(overlayId, { onOpen } = {}) {
     const el = document.getElementById(overlayId);
@@ -2407,8 +4708,13 @@ function goBackInApp({ fallbackViewId = 'homeView' } = {}) {
 
 function showView(viewId, param = null, options = {}) {
     const { push = true } = options || {};
+    usageTracker?.forceFlush();
     if (viewId === 'premiumView' && !PREMIUM_UI_VISIBLE) {
         viewId = 'homeView';
+        param = null;
+    }
+    if (PREMIUM_FEATURE_VIEW_IDS.has(viewId) && !PREMIUM_LIVE) {
+        viewId = 'premiumView';
         param = null;
     }
     const nextState = getViewState(viewId, param);
@@ -2432,7 +4738,10 @@ function showView(viewId, param = null, options = {}) {
         pushInAppStack(nextState);
     }
 
-    if (viewId !== 'settingsView') setLocalePickerOpen(false);
+    if (viewId !== 'settingsView') {
+        setLocalePickerOpen(false);
+        setTickSoundPickerOpen(false);
+    }
 
     if (viewId !== 'counterView' && zikirStatsOverlay) zikirStatsOverlay.classList.remove('active');
 
@@ -2468,10 +4777,12 @@ function showView(viewId, param = null, options = {}) {
 
     if (bottomNav) {
         const stealth = viewId === 'stealthView';
-        if (stealth) {
+        const counterCustomize = viewId === 'premiumFeatureCounterCustomizeView';
+        document.documentElement.classList.toggle('counter-customize-open', counterCustomize);
+        if (stealth || counterCustomize) {
             bottomNav.hidden = true;
             bottomNav.setAttribute('hidden', '');
-            bottomNav.classList.add('bottom-nav--stealth');
+            bottomNav.classList.toggle('bottom-nav--stealth', stealth);
             bottomNav.setAttribute('aria-hidden', 'true');
         } else {
             bottomNav.hidden = false;
@@ -2504,6 +4815,11 @@ function showView(viewId, param = null, options = {}) {
         updateCounterUI();
         if (appSettings.wakeLock) void requestWakeLock();
     } else if (viewId === 'statsView') {
+        activeStatTab = ensureUnlockedStatTab(activeStatTab);
+        statTabBtns.forEach((b) => {
+            b.classList.toggle('active', (b.getAttribute('data-tab') || 'daily') === activeStatTab);
+        });
+        syncPremiumStatTabsUI();
         renderStats();
     } else if (viewId === 'libraryView') {
         resetLibraryCategoryTab();
@@ -2542,25 +4858,49 @@ function showView(viewId, param = null, options = {}) {
         );
     } else if (viewId === 'premiumView') {
         renderPremium();
+    } else if (viewId === 'premiumFeatureRemindersView') {
+        renderSmartReminderList();
+    } else if (viewId === 'premiumFeatureWeeklyView') {
+        weeklyReportWeekIndex = getSelectableWeekRanges(4).length - 1;
+        renderWeeklyReportView();
+    } else if (viewId === 'premiumFeatureBackupView') {
+        void renderBackupView();
+    } else if (viewId === 'premiumFeatureCounterCustomizeView') {
+        renderCounterCustomizeEditor();
+    } else if (viewId === 'premiumFeatureCounterBackgroundView') {
+        syncCounterBackgroundEditorUI();
+    } else if (viewId === 'premiumPurchaseView') {
+        renderPremiumPurchase();
     } else if (viewId === 'settingsView') {
         setLocalePickerOpen(false);
         syncSettingsUI();
+        syncPremiumLockedControls();
     }
 
     currentViewId = viewId;
 }
 
 function renderPremium() {
-    const el = document.getElementById('premiumTeaserLine');
-    if (!el) return;
-    const teaserKeys = [
-        'premium.teaser0',
-        'premium.teaser1',
-        'premium.teaser2',
-        'premium.teaser3'
-    ];
-    const pick = teaserKeys[Math.floor(Math.random() * teaserKeys.length)];
-    el.textContent = t(pick);
+    const teaserPanel = document.getElementById('premiumTeaserPanel');
+    const hubPanel = document.getElementById('premiumHubPanel');
+    if (teaserPanel) teaserPanel.classList.toggle('hidden', PREMIUM_LIVE);
+    if (hubPanel) hubPanel.classList.toggle('hidden', !PREMIUM_LIVE);
+
+    if (!PREMIUM_LIVE) {
+        const el = document.getElementById('premiumTeaserLine');
+        if (el) {
+            const teaserKeys = [
+                'premium.teaser0',
+                'premium.teaser1',
+                'premium.teaser2',
+                'premium.teaser3'
+            ];
+            const pick = teaserKeys[Math.floor(Math.random() * teaserKeys.length)];
+            el.textContent = t(pick);
+        }
+        return;
+    }
+    syncPremiumHubUI();
 }
 
 // ===================== VIEWS =====================
@@ -3094,8 +5434,13 @@ function renderFolders() {
         folderGrid.appendChild(card);
     });
 
+    const atFolderLimit = !canAddFolder();
     if (newFolderBtn) {
         newFolderBtn.style.display = folderSelectMode ? 'none' : 'flex';
+        newFolderBtn.classList.toggle('is-premium-locked', atFolderLimit && isPremiumOnlyFeatureLocked());
+    }
+    if (folderLimitWarning) {
+        folderLimitWarning.classList.toggle('visible', !folderSelectMode && atFolderLimit);
     }
 
     if (folderSelectMode) {
@@ -3315,18 +5660,24 @@ function renderFolderDetail() {
     });
 
     const maxPerFolder = getMaxZikirsPerFolder();
+    const atZikirLimit =
+        Number.isFinite(maxPerFolder) && fZikirsAll.length >= maxPerFolder;
     if (isSeasonalFolderId(currentFolderId)) {
         openAddZikirModalBtn.style.display = 'none';
         zikirLimitWarning.classList.remove('visible');
     } else if (currentFolderId === 'f_esma') {
         openAddZikirModalBtn.style.display = 'none';
         zikirLimitWarning.classList.remove('visible');
-    } else if (Number.isFinite(maxPerFolder) && fZikirsAll.length >= maxPerFolder) {
-        openAddZikirModalBtn.style.display = 'none';
-        zikirLimitWarning.classList.add('visible');
     } else {
         openAddZikirModalBtn.style.display = zikirSelectMode ? 'none' : 'flex';
-        zikirLimitWarning.classList.remove('visible');
+        openAddZikirModalBtn.classList.toggle(
+            'is-premium-locked',
+            atZikirLimit && isPremiumOnlyFeatureLocked()
+        );
+        zikirLimitWarning.classList.toggle(
+            'visible',
+            atZikirLimit && !isPremiumOnlyFeatureLocked()
+        );
     }
 }
 
@@ -3509,30 +5860,15 @@ document.addEventListener('visibilitychange', () => {
     if (counterView && counterView.classList.contains('active')) void requestWakeLock();
 });
 
-let audioCtx = null;
-function playTickSound(isTarget, { force = false } = {}) {
+function getEffectiveCounterTickSound() {
+    if (!PREMIUM_LIVE || !isPremium()) return 'classic';
+    return normalizeCounterTickSound(appSettings.counterTickSound);
+}
+
+function playTickSound(isTarget, { force = false, profile } = {}) {
     if (!force && !appSettings.sound) return;
-    try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if(audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        
-        if (isTarget) {
-            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-        } else {
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-        }
-    } catch(e) {}
+    const sound = profile || getEffectiveCounterTickSound();
+    playCounterTickSound(sound, isTarget);
 }
 
 function handleVibration(isTarget) {
@@ -3601,34 +5937,119 @@ function libraryMatchesSearch(z, rawQuery) {
     return tokens.every(t => hay.includes(t));
 }
 
-function renderLibrary() {
-    libraryGrid.innerHTML = '';
-    const q = (librarySearchQuery || '').trim();
-    const searchActive = q.length > 0;
-    const baseLib = getZikirLibrary(isPremium());
-    const filteredBase = searchActive
-        ? baseLib
-        : baseLib.filter(z => z.category === activeLibraryCat);
-    const filtered = filteredBase.filter(z => libraryMatchesSearch(z, q));
-    
-    filtered.forEach(z => {
-        const card = document.createElement('div');
-        card.className = 'library-card';
+function appendLibraryCard(parent, z, { locked = false } = {}) {
+    const card = document.createElement(locked ? 'button' : 'div');
+    if (locked) card.type = 'button';
+    card.className = 'library-card' + (locked ? ' library-card--premium-locked' : '');
+
+    const body = document.createElement('div');
+    body.className = locked ? 'library-card__blur' : 'library-card__body';
+
+    if (!locked) {
         const badge = document.createElement('span');
         badge.className = 'material-icons-outlined lib-badge';
         badge.title = t('library.verifiedTitle');
         badge.textContent = 'verified';
-        const h3 = document.createElement('h3');
-        h3.textContent = z.name;
-        applyArabicTextAttrs(h3, localeUsesRtlUiScript(appSettings.locale));
-        const p = document.createElement('p');
-        p.textContent = libraryCardSubtitle(z);
         card.appendChild(badge);
-        card.appendChild(h3);
-        card.appendChild(p);
+    } else {
+        const star = document.createElement('span');
+        star.className = 'library-card__premium-star';
+        star.setAttribute('aria-hidden', 'true');
+        star.textContent = '*';
+        card.appendChild(star);
+    }
+
+    const h3 = document.createElement('h3');
+    h3.textContent = z.name;
+    applyArabicTextAttrs(h3, localeUsesRtlUiScript(appSettings.locale));
+    const p = document.createElement('p');
+    p.textContent = libraryCardSubtitle(z);
+    body.appendChild(h3);
+    body.appendChild(p);
+    card.appendChild(body);
+
+    if (locked) {
+        card.setAttribute('aria-label', t('library.premiumLockedAria'));
+        card.addEventListener('click', () => showPremiumLibraryUpsell());
+    } else {
         card.addEventListener('click', () => openLibraryDetail(z));
-        libraryGrid.appendChild(card);
+    }
+
+    parent.appendChild(card);
+}
+
+function getLockedLibraryItemsForCategory(category) {
+    const locked = [];
+    getZikirLibrary(false)
+        .filter((z) => z.category === category)
+        .forEach((z) => {
+            if (isBaseLibraryItemPremiumLocked(z.id, { premiumLive: PREMIUM_LIVE, isPremium: false })) {
+                locked.push(z);
+            }
+        });
+    locked.push(...getZikirLibraryPremiumOnly().filter((z) => z.category === category));
+    return locked;
+}
+
+function appendLibraryPremiumTeaser(parent, category) {
+    const lockedLib = getLockedLibraryItemsForCategory(category);
+    if (!lockedLib.length) return;
+
+    const preview = lockedLib.slice(0, LIBRARY_PREMIUM_PREVIEW_COUNT);
+    const remaining = Math.max(0, lockedLib.length - preview.length);
+
+    preview.forEach((z) => appendLibraryCard(parent, z, { locked: true }));
+
+    if (remaining > 0) {
+        const dots = document.createElement('div');
+        dots.className = 'library-premium-continued';
+        dots.setAttribute('aria-hidden', 'true');
+        for (let i = 0; i < 3; i++) {
+            const dot = document.createElement('span');
+            dots.appendChild(dot);
+        }
+        parent.appendChild(dots);
+
+        const more = document.createElement('p');
+        more.className = 'library-premium-more';
+        more.textContent = t('library.premiumMore', {
+            count: remaining.toLocaleString(getLocaleTag())
+        });
+        parent.appendChild(more);
+    }
+}
+
+function isLibraryCardLocked(z, premiumUser) {
+    if (premiumUser) return false;
+    if (!PREMIUM_LIVE) return false;
+    if (String(z.id).startsWith('plib_')) return true;
+    return isBaseLibraryItemPremiumLocked(z.id, { premiumLive: PREMIUM_LIVE, isPremium: premiumUser });
+}
+
+function renderLibrary() {
+    void ensurePremiumLibraryLoaded().then(() => renderLibraryContent());
+}
+
+function renderLibraryContent() {
+    libraryGrid.innerHTML = '';
+    const q = (librarySearchQuery || '').trim();
+    const searchActive = q.length > 0;
+    const premiumUser = isPremium();
+    const sourceLib = getZikirLibrary(premiumUser);
+    const filteredBase = searchActive
+        ? sourceLib
+        : sourceLib.filter((z) => z.category === activeLibraryCat);
+    const filtered = filteredBase.filter((z) => libraryMatchesSearch(z, q));
+
+    filtered.forEach((z) => {
+        const locked = isLibraryCardLocked(z, premiumUser);
+        if (!premiumUser && !searchActive && isPremiumOnlyFeatureLocked() && locked) return;
+        appendLibraryCard(libraryGrid, z, { locked });
     });
+
+    if (!premiumUser && !searchActive && isPremiumOnlyFeatureLocked()) {
+        appendLibraryPremiumTeaser(libraryGrid, activeLibraryCat);
+    }
 }
 
 function openLibraryDetail(z) {
@@ -3868,6 +6289,20 @@ function renderBarChart(chartEl, yAxisEl, buckets, density) {
 }
 
 function renderStats() {
+    activeStatTab = ensureUnlockedStatTab(activeStatTab);
+    statTabBtns.forEach((b) => {
+        b.classList.toggle('active', (b.getAttribute('data-tab') || 'daily') === activeStatTab);
+    });
+    syncPremiumStatTabsUI();
+
+    const isAllTime = activeStatTab === 'allTime';
+    if (statsPeriodPanel) statsPeriodPanel.classList.toggle('hidden', isAllTime);
+    if (statsAllTimePanel) statsAllTimePanel.classList.toggle('hidden', !isAllTime);
+    if (isAllTime) {
+        renderAllTimeStats();
+        return;
+    }
+
     if (!statMostClicked || !statMostClickedCount || !statLastClicked || !activityChart) return;
     const targetDays = getStatPeriodDayKeys(activeStatTab);
 
@@ -3942,9 +6377,136 @@ function renderStats() {
     renderBarChart(activityChart, document.getElementById('chartYAxis'), chartPack.buckets, chartPack.density);
 }
 
+function renderAllTimeStats() {
+    const locale = getLocaleTag();
+    const ctx = getAllTimeRenderContext();
+    const total = ctx.total || 0;
+    const days = ctx.days;
+    const avg = days > 0 ? Math.round(total / days) : 0;
+    const installed = ctx.installedAt;
+
+    if (allTimeTotalEl) {
+        allTimeTotalEl.textContent = total.toLocaleString(locale);
+    }
+    if (allTimeSinceEl) {
+        allTimeSinceEl.textContent =
+            installed && /^\d{4}-\d{2}-\d{2}$/.test(installed)
+                ? t('stats.allTimeSince', { date: formatStatsDateKey(installed) })
+                : '';
+    }
+    if (allTimeDaysEl) {
+        allTimeDaysEl.textContent = t('stats.allTimeDays', { count: days.toLocaleString(locale) });
+    }
+    if (allTimeAvgEl) {
+        allTimeAvgEl.textContent = t('stats.allTimeAvg', { count: avg.toLocaleString(locale) });
+    }
+
+    const slices = buildLifetimeSlices(ctx.byZikir);
+    const sliceIds = new Set(slices.map((s) => s.zid));
+    if (!allTimeSelectedZid || !sliceIds.has(allTimeSelectedZid)) {
+        allTimeSelectedZid = slices.length ? slices[0].zid : null;
+    }
+    const selectedSlice = slices.find((s) => s.zid === allTimeSelectedZid) || null;
+
+    if (allTimeDonutEl) {
+        allTimeDonutEl.replaceChildren();
+        if (total <= 0 || !slices.length) {
+            allTimeDonutEl.classList.add('all-time-donut--empty');
+            const empty = document.createElement('div');
+            empty.className = 'all-time-donut__empty';
+            empty.textContent = t('stats.allTimeEmpty');
+            allTimeDonutEl.appendChild(empty);
+        } else {
+            allTimeDonutEl.classList.remove('all-time-donut--empty');
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('viewBox', '0 0 100 100');
+            svg.setAttribute('class', 'all-time-donut__svg');
+            svg.setAttribute('role', 'img');
+            svg.setAttribute('aria-label', t('stats.allTimeDonutAria', { count: total.toLocaleString(locale) }));
+
+            const cx = 50;
+            const cy = 50;
+            const rOuter = 42;
+            const rInner = 28;
+            let angle = -Math.PI / 2;
+
+            slices.forEach((slice) => {
+                const sweep = (slice.count / total) * 2 * Math.PI;
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', donutSlicePath(cx, cy, rOuter, rInner, angle, angle + sweep));
+                path.setAttribute('fill', slice.color);
+                path.setAttribute('class', 'all-time-donut__slice');
+                if (slice.zid === allTimeSelectedZid) path.classList.add('is-selected');
+                path.dataset.zid = slice.zid;
+                path.addEventListener('click', () => {
+                    allTimeSelectedZid = slice.zid;
+                    renderAllTimeStats();
+                });
+                svg.appendChild(path);
+                angle += sweep;
+            });
+            allTimeDonutEl.appendChild(svg);
+        }
+    }
+
+    if (allTimeDonutFocusEl) {
+        if (selectedSlice && total > 0) {
+            const pct = (selectedSlice.count / total) * 100;
+            const pctStr = pct.toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+            allTimeDonutFocusEl.hidden = false;
+            allTimeDonutFocusEl.innerHTML =
+                `<span class="all-time-donut-focus__name">${escapeHtml(selectedSlice.label)}</span>` +
+                `<span class="all-time-donut-focus__meta">${escapeHtml(
+                    t('stats.allTimeSliceMeta', {
+                        count: selectedSlice.count.toLocaleString(locale),
+                        pct: pctStr
+                    })
+                )}</span>`;
+        } else {
+            allTimeDonutFocusEl.hidden = true;
+            allTimeDonutFocusEl.textContent = '';
+        }
+    }
+
+    if (allTimeListEl) {
+        allTimeListEl.replaceChildren();
+        if (!slices.length) {
+            const empty = document.createElement('p');
+            empty.className = 'all-time-list__empty';
+            empty.textContent = t('stats.allTimeEmpty');
+            allTimeListEl.appendChild(empty);
+        } else {
+            slices.forEach((slice) => {
+                const pct = total > 0 ? (slice.count / total) * 100 : 0;
+                const pctStr = pct.toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+                const row = document.createElement('button');
+                row.type = 'button';
+                row.className = 'all-time-list__row';
+                if (slice.zid === allTimeSelectedZid) row.classList.add('is-selected');
+                row.dataset.zid = slice.zid;
+                row.innerHTML =
+                    `<span class="all-time-list__dot" style="background:${escapeAttr(slice.color)}"></span>` +
+                    `<span class="all-time-list__name">${escapeHtml(slice.label)}</span>` +
+                    `<span class="all-time-list__count">${escapeHtml(slice.count.toLocaleString(locale))}</span>` +
+                    `<span class="all-time-list__pct">${escapeHtml(pctStr)}%</span>`;
+                row.addEventListener('click', () => {
+                    allTimeSelectedZid = slice.zid;
+                    renderAllTimeStats();
+                });
+                allTimeListEl.appendChild(row);
+            });
+        }
+    }
+}
+
 function renderZikirStats() {
     const zid = currentZikirId;
     if (!zid || !zikirActivityChart) return;
+    activeZikirStatTab = ensureUnlockedStatTab(activeZikirStatTab);
+    zikirStatTabBtns.forEach((b) => {
+        b.classList.toggle('active', (b.getAttribute('data-zikir-stat-tab') || 'daily') === activeZikirStatTab);
+    });
+    syncPremiumStatTabsUI();
     const z = zikirs.find((x) => x.id === zid);
     if (zikirStatsTitle) {
         zikirStatsTitle.textContent = z ? getZikirDisplayName(z) : t('stats.titleFallback');
@@ -3978,6 +6540,14 @@ function renderZikirStats() {
 // ===================== EVENT LISTENERS & MODALS =====================
 function setupEventListeners() {
     setupAppDialog();
+
+    if (document.documentElement.dataset.premiumLockDismissBound !== '1') {
+        document.documentElement.dataset.premiumLockDismissBound = '1';
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.premium-lock-star')) return;
+            closeAllPremiumLockHints();
+        });
+    }
 
     if (homeQuoteFooter && homeQuoteFooter.dataset.bound !== '1') {
         homeQuoteFooter.dataset.bound = '1';
@@ -4025,7 +6595,8 @@ function setupEventListeners() {
 
     const weeklyReportStarBtn = document.getElementById('weeklyReportStarBtn');
     const weeklyReportDetails = document.getElementById('weeklyReportDetails');
-    if (weeklyReportStarBtn && weeklyReportDetails) {
+    if (weeklyReportStarBtn && weeklyReportDetails && weeklyReportStarBtn.dataset.bound !== '1') {
+        weeklyReportStarBtn.dataset.bound = '1';
         weeklyReportStarBtn.addEventListener('click', () => {
             const expanded = weeklyReportStarBtn.getAttribute('aria-expanded') === 'true';
             const next = !expanded;
@@ -4033,9 +6604,76 @@ function setupEventListeners() {
             weeklyReportDetails.hidden = !next;
         });
     }
-    
+
+    const premiumFeatureList = document.getElementById('premiumFeatureList');
+    if (premiumFeatureList && premiumFeatureList.dataset.bound !== '1') {
+        premiumFeatureList.dataset.bound = '1';
+        premiumFeatureList.addEventListener('click', (e) => {
+            const btn = e.target && e.target.closest ? e.target.closest('[data-premium-feature]') : null;
+            if (!btn) return;
+            const star = e.target && e.target.closest ? e.target.closest('.premium-lock-star') : null;
+            if (star) return;
+            openPremiumHubFeature(btn.getAttribute('data-premium-feature'));
+        });
+    }
+
+    const premiumHubSubscribeBtn = document.getElementById('premiumHubSubscribeBtn');
+    if (premiumHubSubscribeBtn && premiumHubSubscribeBtn.dataset.bound !== '1') {
+        premiumHubSubscribeBtn.dataset.bound = '1';
+        premiumHubSubscribeBtn.addEventListener('click', () => showView('premiumPurchaseView'));
+    }
+
+    const openTrashBtn = document.getElementById('openTrashBtn');
+    if (openTrashBtn && openTrashBtn.dataset.bound !== '1') {
+        openTrashBtn.dataset.bound = '1';
+        openTrashBtn.addEventListener('click', async () => {
+            if (isPremiumOnlyFeatureLocked()) {
+                await showAppAlert(t('premium.trashLockedAlert'), { title: t('premium.title') });
+                if (PREMIUM_UI_VISIBLE) showView('premiumView');
+                return;
+            }
+            openOverlay('trashOverlay', { onOpen: renderTrashOverlay });
+        });
+    }
+
+    const trashClearBtn = document.getElementById('trashClearBtn');
+    if (trashClearBtn && trashClearBtn.dataset.bound !== '1') {
+        trashClearBtn.dataset.bound = '1';
+        trashClearBtn.addEventListener('click', () => {
+            if (!isPremium()) return;
+            void clearTrashAll().then(() => renderTrashOverlay());
+        });
+    }
+
+    const trashListEl = document.getElementById('trashList');
+    if (trashListEl && trashListEl.dataset.bound !== '1') {
+        trashListEl.dataset.bound = '1';
+        trashListEl.addEventListener('click', async (e) => {
+            if (!isPremium()) return;
+            const btn = e.target && e.target.closest ? e.target.closest('[data-trash-action]') : null;
+            if (!btn) return;
+            const action = btn.getAttribute('data-trash-action');
+            const idx = parseInt(btn.getAttribute('data-trash-index') || '', 10);
+            if (!Number.isFinite(idx)) return;
+            if (action === 'restore') {
+                restoreTrashEntry(idx);
+                renderTrashOverlay();
+                return;
+            }
+            if (action === 'delete') {
+                if (!(await showAppConfirm(t('trash.deletePermanentConfirm'), {
+                    title: t('trash.deletePermanentTitle'),
+                    confirmLabel: t('confirm.deleteLabel')
+                }))) return;
+                deleteTrashEntry(idx);
+                renderTrashOverlay();
+            }
+        });
+    }
+
     libraryCategoryTabs.forEach(btn => {
         btn.addEventListener('click', () => {
+            usageTracker?.forceFlush();
             const cat = btn.getAttribute('data-cat');
             if (cat === 'quran') {
                 libraryCategoryTabs.forEach((b) => b.classList.remove('active'));
@@ -4232,10 +6870,8 @@ function setupEventListeners() {
     if(confirmLibraryAddBtn) confirmLibraryAddBtn.addEventListener('click', async () => {
         const destId = libDestFolder.value;
         if(!destId) return;
-        const destCount = zikirs.filter(x => x.folderId === destId).length;
-        const maxPerFolder = getMaxZikirsPerFolder();
-        if (Number.isFinite(maxPerFolder) && destCount >= maxPerFolder) {
-            await showAppAlert(`Hedef klasör dolu (en fazla ${maxPerFolder} zikir).`, { title: 'Klasör dolu' });
+        if (!canAddZikirToFolder(destId)) {
+            await handleZikirLimitBlocked(destId);
             return;
         }
 
@@ -4285,6 +6921,7 @@ function setupEventListeners() {
     // Custom Folders
     newFolderBtn.addEventListener('click', async () => {
         if (folderSelectMode) return;
+        if (handleFolderLimitBlocked()) return;
         const name = await showAppPrompt('Yeni klasör için bir ad yazın.', '', {
             title: 'Yeni klasör',
             inputLabel: 'Klasör adı'
@@ -4314,9 +6951,11 @@ function setupEventListeners() {
     }
     zikirStatTabBtns.forEach((btn) => {
         btn.addEventListener('click', () => {
+            const tab = btn.getAttribute('data-zikir-stat-tab') || 'daily';
+            if (isPremiumOnlyFeatureLocked() && isPremiumStatTab(tab)) return;
             zikirStatTabBtns.forEach((b) => b.classList.remove('active'));
             btn.classList.add('active');
-            activeZikirStatTab = btn.getAttribute('data-zikir-stat-tab') || 'daily';
+            activeZikirStatTab = tab;
             renderZikirStats();
         });
     });
@@ -4356,6 +6995,7 @@ function setupEventListeners() {
             appSettings.counterNativeNumerals = cbCounterNativeNumerals.checked;
             updateCounterUI();
         }
+        syncTickSoundSettingVisibility();
         saveData();
     };
     if(cbVibrationTap) cbVibrationTap.addEventListener('change', updateSettings);
@@ -4390,10 +7030,169 @@ function setupEventListeners() {
         });
     });
 
+    accentChoiceBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const choice = btn.getAttribute('data-accent-choice');
+            const normalized = normalizeAppAccent(choice);
+            if (appSettings.accent === normalized) return;
+            appSettings.accent = normalized;
+            applyAppAccent(normalized);
+            syncAccentUI();
+            saveData();
+        });
+    });
+
+    // Premium → Sayaç görünümü düzenleyici
+    if (openCounterCustomizeBtn) {
+        openCounterCustomizeBtn.addEventListener('click', () => {
+            showView('premiumFeatureCounterCustomizeView');
+        });
+    }
+
+    if (openCounterBackgroundBtn) {
+        openCounterBackgroundBtn.addEventListener('click', (e) => {
+            if (e.target.closest('.premium-lock-star')) return;
+            if (isCounterBackgroundLocked()) {
+                showPremiumFeatureUpsell();
+                return;
+            }
+            showView('premiumFeatureCounterBackgroundView');
+        });
+    }
+
+    if (counterBgNoneBtn) {
+        counterBgNoneBtn.addEventListener('click', () => setCounterBackground('none'));
+    }
+
+    if (counterBgPresetGrid) {
+        counterBgPresetGrid.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-counter-bg-choice]');
+            if (!btn) return;
+            setCounterBackground(btn.getAttribute('data-counter-bg-choice'));
+        });
+    }
+
+    if (counterBgGalleryBtn) {
+        counterBgGalleryBtn.addEventListener('click', (e) => {
+            if (e.target.closest('.premium-lock-star')) return;
+            if (isCounterBackgroundLocked()) {
+                showPremiumFeatureUpsell();
+                return;
+            }
+            if (!counterBgGalleryInput) return;
+            counterBgGalleryInput.value = '';
+            if (typeof counterBgGalleryInput.showPicker === 'function') {
+                try {
+                    counterBgGalleryInput.showPicker();
+                    return;
+                } catch (err) {
+                    console.warn('counter background showPicker failed, falling back to click()', err);
+                }
+            }
+            counterBgGalleryInput.click();
+        });
+    }
+
+    if (counterBgGalleryInput) {
+        counterBgGalleryInput.addEventListener('change', async () => {
+            const file = counterBgGalleryInput.files?.[0];
+            counterBgGalleryInput.value = '';
+            if (!file) return;
+            try {
+                const dataUrl = await buildCounterBackgroundCustomDataUrl(file);
+                setCustomCounterBackgroundDataUrl(dataUrl);
+            } catch (err) {
+                console.error('counter background gallery pick failed', err);
+                await showAppAlert(t('premium.counterBgGalleryError'), { title: t('dialog.info') });
+            }
+        });
+    }
+
+    initCounterCustomizeSheetDrag();
+    window.addEventListener('resize', () => {
+        if (currentViewId !== 'premiumFeatureCounterCustomizeView') return;
+        const expanded = counterCustomizeView?.dataset.sheetExpanded === 'true';
+        resetCounterCustomizeSheet({ expanded });
+    });
+
+    if (counterCustomizeRingRange) {
+        counterCustomizeRingRange.addEventListener('input', () => {
+            appSettings.counterRingWidth = normalizeCounterRingWidth(counterCustomizeRingRange.value);
+            applyCounterAppearanceFromSettings();
+        });
+        counterCustomizeRingRange.addEventListener('change', () => {
+            saveData();
+        });
+    }
+
+    counterCustomizeNumSizeBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const next = normalizeCounterNumberSize(btn.getAttribute('data-counter-customize-num-size'));
+            if (appSettings.counterNumberSize === next) return;
+            appSettings.counterNumberSize = next;
+            applyCounterAppearanceFromSettings();
+            syncCounterCustomizeEditorUI();
+            saveData();
+        });
+    });
+
+    counterTapScaleBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const next = normalizeCounterTapScale(btn.getAttribute('data-counter-tap-scale'));
+            if (appSettings.counterTapScale === next) return;
+            appSettings.counterTapScale = next;
+            applyCounterAppearanceFromSettings();
+            syncCounterCustomizeEditorUI();
+            saveData();
+        });
+    });
+
+    const syncCounterShowToggle = (key, checked) => {
+        if (key === 'target') appSettings.counterShowTarget = checked;
+        else if (key === 'total') appSettings.counterShowTotal = checked;
+        else if (key === 'round') appSettings.counterShowRound = checked;
+        applyCounterAppearanceFromSettings();
+        saveData();
+    };
+
+    [counterShowTargetToggle, counterShowTotalToggle, counterShowRoundToggle].forEach((el) => {
+        if (!el) return;
+        el.addEventListener('change', () => {
+            const key = el.getAttribute('data-counter-show-toggle') || '';
+            syncCounterShowToggle(key, el.checked);
+        });
+    });
+
+    tickSoundChoiceBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const next = normalizeCounterTickSound(btn.getAttribute('data-tick-sound-choice'));
+            const isClassic = next === 'classic';
+            if (!isClassic && isPremiumOnlyFeatureLocked()) {
+                showPremiumFeatureUpsell();
+                return;
+            }
+            if (appSettings.counterTickSound === next) {
+                playTickSound(false, { force: true, profile: next });
+                return;
+            }
+            appSettings.counterTickSound = next;
+            syncTickSoundUI();
+            playTickSound(false, { force: true, profile: next });
+            saveData();
+        });
+    });
+
     if (localeToggleBtn) {
         localeToggleBtn.addEventListener('click', () => {
             const isOpen = localeSetting && localeSetting.classList.contains('is-open');
             setLocalePickerOpen(!isOpen);
+        });
+    }
+
+    if (tickSoundPickerToggle) {
+        tickSoundPickerToggle.addEventListener('click', () => {
+            const isOpen = tickSoundSetting && tickSoundSetting.classList.contains('is-open');
+            setTickSoundPickerOpen(!isOpen);
         });
     }
 
@@ -4474,7 +7273,8 @@ function setupEventListeners() {
         });
     });
 
-    openAddZikirModalBtn.addEventListener('click', () => {
+    openAddZikirModalBtn.addEventListener('click', async () => {
+        if (await handleZikirLimitBlocked(currentFolderId)) return;
         openOverlay('addModalOverlay');
     });
 
@@ -4492,6 +7292,8 @@ function setupEventListeners() {
             await showAppAlert(t('confirm.invalidTarget'), { title: t('confirm.invalidTargetTitle') });
             return;
         }
+
+        if (await handleZikirLimitBlocked(currentFolderId)) return;
 
         const maxOrder = zikirs
             .filter(x => x.folderId === currentFolderId)
@@ -4559,9 +7361,18 @@ function setupEventListeners() {
 
     statTabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
+            const tab = btn.getAttribute('data-tab') || 'daily';
+            if (
+                isPremiumOnlyFeatureLocked() &&
+                isPremiumStatTab(tab) &&
+                tab !== 'daily' &&
+                tab !== 'weekly'
+            ) {
+                return;
+            }
             statTabBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            activeStatTab = btn.getAttribute('data-tab') || 'daily';
+            activeStatTab = tab;
             renderStats();
         });
     });
@@ -4619,13 +7430,7 @@ async function processCopyMove(actionType) {
     const destFolderId = copyDestFolder.value;
     if(!destFolderId) return;
 
-    // Limit check in destination
-    const destCount = zikirs.filter(z => z.folderId === destFolderId).length;
-    const maxPerFolder = getMaxZikirsPerFolder();
-    if (Number.isFinite(maxPerFolder) && destCount >= maxPerFolder) {
-        await showAppAlert(`Hedef klasör dolu (en fazla ${maxPerFolder} zikir).`, { title: 'Klasör dolu' });
-        return;
-    }
+    if (await handleZikirLimitBlocked(destFolderId)) return;
 
     const z = zikirs.find(x => x.id === copyingZikirId);
     if(z) {

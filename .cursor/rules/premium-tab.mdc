@@ -1,21 +1,37 @@
 ---
-description: Premium sekmesi ve çöp kutusu UI geçici kaldırıldı; yayın zamanı geri eklenecek
+description: Premium branch — sekmesi ve çöp kutusu aktif; main’de PREMIUM_LIVE=false kalır
 alwaysApply: true
 ---
 
-# Premium UI (geçici kapalı)
+# Premium UI (premium branch)
 
-Alt menüdeki **Premium** sekmesi ve ayarlardaki **çöp kutusu** butonu kullanıcıya gösterilmiyor. `premiumView`, çöp kutusu mantığı (`trash` verisi, soft-delete) ve çeviriler kodda duruyor.
+Bu branch’te **Premium sekmesi**, **ayarlardaki çöp kutusu** ve **limitler** (`PREMIUM_LIVE = true`) geliştirme için açık.
 
-## Yeniden açmak için
+## Main’e merge / yayın
 
-1. `app.js`: `const PREMIUM_UI_VISIBLE = false` → `true`
-2. `index.html` geri ekle:
-   - Alt menü: `bottom-nav__btn--premium` butonu (`data-view="premiumView"`)
-   - Ayarlar başlığı: `#openTrashBtn` çöp kutusu ikonu
-   - `#trashOverlay` modalı
-3. `app.js` içinde çöp kutusu dinleyicilerini ve `syncTrashButtonUI` çağrılarını geri bağla (git geçmişine bakılabilir).
+- **Premium gelene kadar (main):** `PREMIUM_LIVE = false`, `PREMIUM_UI_VISIBLE = true` — limit yok; Premium sekmesinde **tanıtım** ekranı (kartlar, “çok yakında”).
+- **Premium lansmanı:** `PREMIUM_LIVE = true` — limitler, Play Billing, Premium sekmesinde **özellik merkezi** (düzenleme ekranlarına giden butonlar).
 
-İsteğe bağlı limitler: `PREMIUM_LIVE = true`
+## Limitler (ücretsiz, PREMIUM_LIVE=true iken)
 
-Kullanıcı yayın zamanı geldiğinde bunları tekrar aktifleştirmek isteyecek.
+- En fazla **3 klasör** (varsayılan 2 + 1 ekleme)
+- Klasör başına **5 zikir**
+- Mevcut fazla klasör/zikir **silinmez**; yalnızca yeni ekleme engellenir (grandfather).
+
+## Kütüphane (ücretsiz / premium)
+
+`PREMIUM_LIVE=true` ve kullanıcı premium değilken:
+
+| Tür | Ücretsiz | Kilitli (premium) |
+|-----|----------|-------------------|
+| Dua (`tr.json` sırası) | İlk **10** | Son **10** |
+| Zikir (`tr.json` sırası) | İlk **10** | Son **11** |
+| `plib_*` paketi | — | Tamamı (+ altta önizleme) |
+
+Kod: `lib/library-access.js` (`FREE_BASE_DUA_COUNT=10`, `FREE_BASE_ZIKIR_COUNT=10`).
+
+Klasörde zaten eklenmiş kilitli `libraryId` **çalışmaya devam eder** (grandfather); kilit yalnızca kütüphane listesinde yeni ekleme için.
+
+## Test
+
+Premium’u simüle etmek: `localStorage` → `zikirmatik_data_v2` → `entitlements.premium: true`

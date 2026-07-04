@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "FIREBASE_PROJECT_NUMBER",
     "project_id": "your-firebase-project-id",
-    "storage_bucket": "your-firebase-project-id.appspot.com"
+    "storage_bucket": "your-firebase-project-id.firebasestorage.app"
   },
   "client": [
     {
