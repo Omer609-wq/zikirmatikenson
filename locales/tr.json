@@ -365,7 +365,10 @@
     "restoreSuccess": "Premium aboneliğiniz geri yüklendi.",
     "restoreNothing": "Bu hesapta aktif abonelik bulunamadı.",
     "restoreUnavailable": "Geri yükleme şu an kullanılamıyor. Play Store faturalandırması bağlanınca aktif olacak.",
-    "stubNote": "Play Store faturalandırması bağlanınca bu ekran aktifleşecek."
+    "stubNote": "Play Store faturalandırması bağlanınca bu ekran aktifleşecek.",
+    "purchaseSuccess": "Premium aboneliğiniz aktif. Teşekkürler!",
+    "purchasePending": "Ödemeniz onay bekliyor. Onaylanınca premium otomatik açılacak.",
+    "purchaseError": "Satın alma tamamlanamadı. Lütfen tekrar deneyin."
   },
   "weeklyReport": {
     "enabledLabel": "Haftalık bildirim",

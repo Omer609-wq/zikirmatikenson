@@ -365,7 +365,10 @@
     "restoreSuccess": "Langganan Premium Anda telah dipulihkan.",
     "restoreNothing": "Tidak ada langganan aktif untuk akun ini.",
     "restoreUnavailable": "Pemulihan belum tersedia. Akan aktif setelah penagihan Play Store terhubung.",
-    "stubNote": "Layar ini aktif setelah penagihan Play Store terhubung."
+    "stubNote": "Layar ini aktif setelah penagihan Play Store terhubung.",
+    "purchaseSuccess": "Langganan premium Anda aktif. Terima kasih!",
+    "purchasePending": "Pembayaran Anda menunggu konfirmasi. Premium akan aktif otomatis setelah dikonfirmasi.",
+    "purchaseError": "Pembelian tidak dapat diselesaikan. Silakan coba lagi."
   },
   "weeklyReport": {
     "enabledLabel": "Notifikasi mingguan",
@@ -396,7 +399,6 @@
     "trendUp": "{percent}% lebih dari minggu sebelumnya",
     "trendDown": "{percent}% kurang dari minggu sebelumnya",
     "trendSame": "Sama dengan minggu sebelumnya",
-    "streakDays": "{count} hari berturut-turut",
     "flameNone": "Belum ada streak",
     "flameOrange": "Api pemula",
     "flameRed": "Api merah",

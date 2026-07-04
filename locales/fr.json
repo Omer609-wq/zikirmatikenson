@@ -365,7 +365,10 @@
     "restoreSuccess": "Votre abonnement Premium a été restauré.",
     "restoreNothing": "Aucun abonnement actif trouvé pour ce compte.",
     "restoreUnavailable": "La restauration n'est pas encore disponible. Elle fonctionnera lorsque la facturation Play Store sera connectée.",
-    "stubNote": "Cet écran s'activera lorsque la facturation Play Store sera connectée."
+    "stubNote": "Cet écran s'activera lorsque la facturation Play Store sera connectée.",
+    "purchaseSuccess": "Votre abonnement Premium est actif. Merci !",
+    "purchasePending": "Votre paiement est en attente de confirmation. Premium s'activera automatiquement.",
+    "purchaseError": "L'achat n'a pas pu être finalisé. Veuillez réessayer."
   },
   "weeklyReport": {
     "enabledLabel": "Notification hebdomadaire",
@@ -396,7 +399,6 @@
     "trendUp": "{percent} % de plus que la semaine précédente",
     "trendDown": "{percent} % de moins que la semaine précédente",
     "trendSame": "Comme la semaine précédente",
-    "streakDays": "{count} jours d'affilée",
     "flameNone": "Pas de série",
     "flameOrange": "Flamme débutant",
     "flameRed": "Flamme rouge",

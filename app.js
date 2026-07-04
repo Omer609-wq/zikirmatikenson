@@ -83,7 +83,11 @@ import {
     showPremiumFeatureUpsell,
     showPremiumLibraryUpsell
 } from './lib/premium-upsell.js';
-import { renderPremiumPurchase, setupPremiumPurchase } from './lib/premium-purchase.js';
+import {
+    initPremiumPurchases,
+    renderPremiumPurchase,
+    setupPremiumPurchase
+} from './lib/premium-purchase.js';
 import { applyNativeStatusBarTheme } from './status-bar-theme.js';
 import { runCounterVibration, runDragReorderNudge } from './haptics.js';
 import { setupCrashReporting } from './lib/crash-reporting.js';
@@ -1197,11 +1201,39 @@ async function init() {
     setupBackupUI();
     setPremiumPurchaseNavigator(navigateToPremiumPurchase);
     setupPremiumUpsell();
+    // RevenueCat: abonelik durumu değişince entitlement'ı güncelle (satın alma,
+    // yenileme, iptal/süre dolumu — hepsi bu tek dinleyiciden akar).
+    void initPremiumPurchases({
+        onEntitlementChange: (active) => {
+            if (entitlements.premium === active) return;
+            entitlements.premium = active;
+            saveData();
+            syncPremiumLockedControls();
+        }
+    });
     setupPremiumPurchase({
         onSubscribe: (result) => {
-            if (!result?.ok) {
-                void showAppAlert(t('premiumPurchase.stubNote'), { title: t('premiumPurchase.title') });
+            if (result?.ok) {
+                syncPremiumLockedControls();
+                void showAppAlert(t('premiumPurchase.purchaseSuccess'), {
+                    title: t('premiumPurchase.title')
+                });
+                return;
             }
+            if (result?.reason === 'cancelled') return; // kullanıcı vazgeçti; sessiz
+            if (result?.reason === 'pending') {
+                void showAppAlert(t('premiumPurchase.purchasePending'), {
+                    title: t('premiumPurchase.title')
+                });
+                return;
+            }
+            if (result?.reason === 'unavailable') {
+                void showAppAlert(t('premiumPurchase.stubNote'), { title: t('premiumPurchase.title') });
+                return;
+            }
+            void showAppAlert(t('premiumPurchase.purchaseError'), {
+                title: t('premiumPurchase.title')
+            });
         },
         onRestore: (result) => {
             if (result?.ok) {

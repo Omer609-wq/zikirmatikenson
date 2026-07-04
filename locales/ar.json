@@ -366,7 +366,10 @@
     "restoreSuccess": "تمت استعادة اشتراك Premium.",
     "restoreNothing": "لم يُعثر على اشتراك نشط لهذا الحساب.",
     "restoreUnavailable": "الاستعادة غير متاحة بعد. ستعمل عند ربط فوترة Play Store.",
-    "stubNote": "سيتم تفعيل هذه الشاشة عند ربط فوترة Play Store."
+    "stubNote": "سيتم تفعيل هذه الشاشة عند ربط فوترة Play Store.",
+    "purchaseSuccess": "اشتراكك المميز مفعّل الآن. شكرًا لك!",
+    "purchasePending": "دفعتك في انتظار التأكيد. سيتم تفعيل بريميوم تلقائيًا بعد التأكيد.",
+    "purchaseError": "تعذّر إتمام عملية الشراء. حاول مرة أخرى."
   },
   "weeklyReport": {
     "enabledLabel": "إشعار أسبوعي",
@@ -397,7 +400,6 @@
     "trendUp": "أكثر بـ %{percent} من الأسبوع السابق",
     "trendDown": "أقل بـ %{percent} من الأسبوع السابق",
     "trendSame": "مثل الأسبوع السابق",
-    "streakDays": "{count} أيام متتالية",
     "flameNone": "لا سلسلة أهداف",
     "flameOrange": "لهب مبتدئ",
     "flameRed": "لهب أحمر",

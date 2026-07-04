@@ -365,7 +365,10 @@
     "restoreSuccess": "Your Premium subscription has been restored.",
     "restoreNothing": "No active subscription was found for this account.",
     "restoreUnavailable": "Restore is not available yet. It will work when Play Store billing is connected.",
-    "stubNote": "This screen will activate when Play Store billing is connected."
+    "stubNote": "This screen will activate when Play Store billing is connected.",
+    "purchaseSuccess": "Your premium subscription is active. Thank you!",
+    "purchasePending": "Your payment is awaiting confirmation. Premium will unlock automatically once confirmed.",
+    "purchaseError": "The purchase could not be completed. Please try again."
   },
   "weeklyReport": {
     "enabledLabel": "Weekly notification",

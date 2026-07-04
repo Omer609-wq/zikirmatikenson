@@ -365,7 +365,10 @@
     "restoreSuccess": "آپ کی Premium سبسکرپشن بحال ہو گئی۔",
     "restoreNothing": "اس اکاؤنٹ کے لیے کوئی فعال سبسکرپشن نہیں ملی۔",
     "restoreUnavailable": "بحالی ابھی دستیاب نہیں۔ Play Store بلنگ منسلک ہونے پر کام کرے گی۔",
-    "stubNote": "Play Store بلنگ منسلک ہونے پر یہ اسکرین فعال ہوگی۔"
+    "stubNote": "Play Store بلنگ منسلک ہونے پر یہ اسکرین فعال ہوگی۔",
+    "purchaseSuccess": "آپ کی پریمیم رکنیت فعال ہے۔ شکریہ!",
+    "purchasePending": "آپ کی ادائیگی تصدیق کی منتظر ہے۔ تصدیق کے بعد پریمیم خود بخود فعال ہو جائے گا۔",
+    "purchaseError": "خریداری مکمل نہیں ہو سکی۔ دوبارہ کوشش کریں۔"
   },
   "weeklyReport": {
     "enabledLabel": "ہفتہ وار اطلاع",
@@ -396,7 +399,6 @@
     "trendUp": "پچھلے ہفتے سے {percent}% زیادہ",
     "trendDown": "پچھلے ہفتے سے {percent}% کم",
     "trendSame": "پچھلے ہفتے جیسا",
-    "streakDays": "لگاتار {count} دن",
     "flameNone": "کوئی سلسلہ نہیں",
     "flameOrange": "شروعاتی شعلہ",
     "flameRed": "سرخ شعلہ",
