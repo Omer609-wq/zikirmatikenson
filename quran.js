@@ -2199,6 +2199,7 @@ function setQuranReaderDrawerOpen(open) {
     document.documentElement.classList.toggle('quran-drawer-open', isOpen);
     if (!isOpen) {
         setQuranReaderHelpPanelOpen(false);
+        resetQuranAyahGotoForm();
         const panel = document.getElementById('quranReaderDrawerPanel');
         const active = document.activeElement;
         if (active && panel?.contains(active) && typeof active.blur === 'function') {
@@ -2219,6 +2220,14 @@ function setQuranGotoError(message) {
         el.textContent = '';
         el.hidden = true;
     }
+}
+
+function resetQuranAyahGotoForm() {
+    const surahInput = document.getElementById('quranGotoSurahInput');
+    const ayahInput = document.getElementById('quranGotoAyahInput');
+    if (surahInput) surahInput.value = '';
+    if (ayahInput) ayahInput.value = '';
+    setQuranGotoError('');
 }
 
 function resolveSurahFromGotoInput(raw) {

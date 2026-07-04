@@ -1057,7 +1057,9 @@ function populateQuranDrawerFolderSelect() {
 }
 
 function resetQuranDrawerFolderForm() {
+    const surahInp = document.getElementById('quranDrawerFolderSurahInput');
     const ayahsInp = document.getElementById('quranDrawerFolderAyahsInput');
+    if (surahInp) surahInp.value = '';
     if (ayahsInp) ayahsInp.value = '';
     setQuranDrawerFolderError('');
     syncQuranDrawerFolderModeUI(getDefaultQuranReadModeForLocale(appSettings.locale));
