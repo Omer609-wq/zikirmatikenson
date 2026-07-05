@@ -9,7 +9,7 @@ const ROOT = path.join(__dirname, '..', 'node_modules');
 const OLD = "getDefaultProguardFile('proguard-android.txt')";
 const NEW = "getDefaultProguardFile('proguard-android-optimize.txt')";
 
-const SCOPES = ['@capacitor', '@capacitor-firebase', '@capacitor-community'];
+const SCOPES = ['@capacitor', '@capacitor-firebase', '@capacitor-community', '@revenuecat'];
 
 function patchFile(filePath) {
     if (!fs.existsSync(filePath)) return false;
