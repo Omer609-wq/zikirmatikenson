@@ -32,6 +32,15 @@ function mainIndexChunk(html, baseDir) {
 
 let failed = false;
 
+// Güvenlik ağı: .env.local'daki premium önizleme bayrağı açıkken YAYIN build'i alınmamalı.
+// (Bayrak yalnızca yerel/telefon test build'leri içindir; store'a premium sızmasın.)
+const envLocal = read(path.join(ROOT, '.env.local'));
+if (/^\s*VITE_PREMIUM_PREVIEW\s*=\s*1\s*$/m.test(envLocal)) {
+    console.error('FAIL: .env.local içinde VITE_PREMIUM_PREVIEW=1 açık — yayın build\'i premium görünür olurdu.');
+    console.error('Yayından önce .env.local dosyasını silin, sonra: npm run cap:release:android');
+    failed = true;
+}
+
 for (const [label, indexPath, baseDir] of [
     ['www', wwwIndex, path.join(ROOT, 'www')],
     ['android assets', androidIndex, path.join(ROOT, 'android', 'app', 'src', 'main', 'assets', 'public')]

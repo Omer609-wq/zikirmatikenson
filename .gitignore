@@ -12,3 +12,4 @@ public/firebase-config.json
 android/*.jks
 android/*.pem
 android/keystore.properties
+.env.local

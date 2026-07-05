@@ -755,11 +755,19 @@ const MAX_ZIKIRS_PER_FOLDER = 5;
 /** Ücretsiz kütüphanede gösterilecek kilitli premium önizleme kartı sayısı. */
 const LIBRARY_PREMIUM_PREVIEW_COUNT = 3;
 
+/**
+ * Premium test build'i: proje kökünde .env.local dosyasına VITE_PREMIUM_PREVIEW=1
+ * yazınca (dosya commit'lenmez) yerel/telefon build'lerinde premium açılır.
+ * Yayın build'i almadan önce bu dosyayı sil; cap:release:android zaten
+ * verify adımında kontrol edip açıksa build'i durdurur.
+ */
+const PREMIUM_PREVIEW_BUILD = import.meta.env.VITE_PREMIUM_PREVIEW === '1';
+
 /** false = limit yok + Premium sekmesinde tanıtım ekranı. true = limitler + özellik merkezi (lansman). */
-const PREMIUM_LIVE = false;
+const PREMIUM_LIVE = false || PREMIUM_PREVIEW_BUILD;
 
 /** Premium sekmesi + ayarlardaki çöp kutusu. */
-const PREMIUM_UI_VISIBLE = false;
+const PREMIUM_UI_VISIBLE = false || PREMIUM_PREVIEW_BUILD;
 
 /** Premium sekmesinden açılan özellikler → düzenleme ekranı / yönlendirme (PREMIUM_LIVE iken) */
 const PREMIUM_FEATURE_VIEW_IDS = new Set([
