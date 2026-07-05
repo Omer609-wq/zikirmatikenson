@@ -268,7 +268,9 @@
     "backupTitle": "Cadangan dan akun",
     "backupText": "Data saat ini hanya ada di perangkat ini. Menghapus data browser/aplikasi, mengganti perangkat, atau mencopot aplikasi dapat menghapus semua catatan; kami menyarankan mencadangkan data penting.",
     "permissionsTitle": "Izin",
-    "permissionsText": "Opsi getar, suara, dan layar tetap menyala hanya untuk pengalaman aplikasi dan bersifat opsional."
+    "permissionsText": "Opsi getar, suara, dan layar tetap menyala hanya untuk pengalaman aplikasi dan bersifat opsional.",
+    "billingTitle": "Pembelian & langganan",
+    "billingText": "Pembayaran sepenuhnya diproses oleh Google Play; aplikasi tidak pernah mengakses data kartu atau pembayaranmu. Untuk memverifikasi status langganan, info pembelian (ID produk, status transaksi, ID pengguna anonim) dibagikan dengan layanan langganan RevenueCat."
   },
   "premium": {
     "title": "Premium",
@@ -368,7 +370,8 @@
     "stubNote": "Layar ini aktif setelah penagihan Play Store terhubung.",
     "purchaseSuccess": "Langganan premium Anda aktif. Terima kasih!",
     "purchasePending": "Pembayaran Anda menunggu konfirmasi. Premium akan aktif otomatis setelah dikonfirmasi.",
-    "purchaseError": "Pembelian tidak dapat diselesaikan. Silakan coba lagi."
+    "purchaseError": "Pembelian tidak dapat diselesaikan. Silakan coba lagi.",
+    "autoRenewNote": "Langganan diperpanjang otomatis di akhir setiap periode. Kamu dapat membatalkannya kapan saja di Google Play → Langganan; akses tetap aktif hingga akhir periode berjalan."
   },
   "weeklyReport": {
     "enabledLabel": "Notifikasi mingguan",

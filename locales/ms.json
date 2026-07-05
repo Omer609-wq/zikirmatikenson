@@ -268,7 +268,9 @@
     "backupTitle": "Sandaran dan akaun",
     "backupText": "Data pada masa ini hanya ada pada peranti ini. Memadam data pelayar/apl, menukar peranti, atau menyahpasang aplikasi boleh memadam semua rekod; kami cadangkan sandarkan data penting.",
     "permissionsTitle": "Kebenaran",
-    "permissionsText": "Pilihan seperti getaran, bunyi, dan skrin sentiasa hidup hanya untuk pengalaman aplikasi dan adalah pilihan."
+    "permissionsText": "Pilihan seperti getaran, bunyi, dan skrin sentiasa hidup hanya untuk pengalaman aplikasi dan adalah pilihan.",
+    "billingTitle": "Pembelian & langganan",
+    "billingText": "Pembayaran diproses sepenuhnya oleh Google Play; aplikasi tidak mengakses maklumat kad atau pembayaran anda. Untuk mengesahkan status langganan, maklumat pembelian (ID produk, status transaksi, ID pengguna tanpa nama) dikongsi dengan perkhidmatan langganan RevenueCat."
   },
   "premium": {
     "title": "Premium",
@@ -368,7 +370,8 @@
     "stubNote": "Skrin ini aktif apabila pengebilan Play Store disambungkan.",
     "purchaseSuccess": "Langganan premium anda aktif. Terima kasih!",
     "purchasePending": "Pembayaran anda menunggu pengesahan. Premium akan aktif secara automatik selepas disahkan.",
-    "purchaseError": "Pembelian tidak dapat diselesaikan. Sila cuba lagi."
+    "purchaseError": "Pembelian tidak dapat diselesaikan. Sila cuba lagi.",
+    "autoRenewNote": "Langganan diperbaharui secara automatik pada akhir setiap tempoh. Anda boleh membatalkannya bila-bila masa di Google Play → Langganan; akses kekal sehingga akhir tempoh semasa."
   },
   "weeklyReport": {
     "enabledLabel": "Pemberitahuan mingguan",

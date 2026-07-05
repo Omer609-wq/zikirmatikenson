@@ -268,7 +268,9 @@
     "backupTitle": "Yedekleme ve hesap",
     "backupText": "Veriler şu an yalnızca bu cihazda tutulur. Tarayıcı veya uygulama verilerinizi silmek, cihaz değiştirmek ya da uygulamayı kaldırmak tüm kaydı silebilir; bu yüzden önemli verilerinizi yedeklemenizi öneririz.",
     "permissionsTitle": "İzinler",
-    "permissionsText": "Titreşim, ses ve ekranı uyanık tutma gibi seçenekler yalnızca uygulama deneyimi içindir ve isteğe bağlıdır."
+    "permissionsText": "Titreşim, ses ve ekranı uyanık tutma gibi seçenekler yalnızca uygulama deneyimi içindir ve isteğe bağlıdır.",
+    "billingTitle": "Satın almalar ve abonelik",
+    "billingText": "Ödemeler tamamen Google Play üzerinden işlenir; uygulama kart veya ödeme bilgilerinize hiçbir şekilde erişmez. Abonelik durumunu doğrulamak için satın alma bilgileri (ürün kimliği, işlem durumu, anonim kullanıcı kimliği) abonelik yönetim servisi RevenueCat ile paylaşılır."
   },
   "premium": {
     "title": "Premium",
@@ -368,7 +370,8 @@
     "stubNote": "Play Store faturalandırması bağlanınca bu ekran aktifleşecek.",
     "purchaseSuccess": "Premium aboneliğiniz aktif. Teşekkürler!",
     "purchasePending": "Ödemeniz onay bekliyor. Onaylanınca premium otomatik açılacak.",
-    "purchaseError": "Satın alma tamamlanamadı. Lütfen tekrar deneyin."
+    "purchaseError": "Satın alma tamamlanamadı. Lütfen tekrar deneyin.",
+    "autoRenewNote": "Abonelik, dönem sonunda otomatik yenilenir. İstediğin zaman Google Play → Abonelikler bölümünden iptal edebilirsin; erişimin mevcut dönemin sonuna kadar sürer."
   },
   "weeklyReport": {
     "enabledLabel": "Haftalık bildirim",

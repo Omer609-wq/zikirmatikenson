@@ -268,7 +268,9 @@
     "backupTitle": "Sauvegarde et compte",
     "backupText": "Les données ne vivent actuellement que sur cet appareil. Effacer les données du navigateur ou de l'app, changer d'appareil ou désinstaller peut tout supprimer ; nous recommandons de sauvegarder les données importantes.",
     "permissionsTitle": "Autorisations",
-    "permissionsText": "Les options comme vibration, son et garder l'écran allumé servent uniquement à l'expérience dans l'app et sont facultatives."
+    "permissionsText": "Les options comme vibration, son et garder l'écran allumé servent uniquement à l'expérience dans l'app et sont facultatives.",
+    "billingTitle": "Achats et abonnement",
+    "billingText": "Les paiements sont traités entièrement par Google Play ; l'application n'accède jamais à vos informations de paiement. Pour vérifier l'état de l'abonnement, les informations d'achat (identifiant du produit, état de la transaction, identifiant utilisateur anonyme) sont partagées avec le service d'abonnement RevenueCat."
   },
   "premium": {
     "title": "Premium",
@@ -368,7 +370,8 @@
     "stubNote": "Cet écran s'activera lorsque la facturation Play Store sera connectée.",
     "purchaseSuccess": "Votre abonnement Premium est actif. Merci !",
     "purchasePending": "Votre paiement est en attente de confirmation. Premium s'activera automatiquement.",
-    "purchaseError": "L'achat n'a pas pu être finalisé. Veuillez réessayer."
+    "purchaseError": "L'achat n'a pas pu être finalisé. Veuillez réessayer.",
+    "autoRenewNote": "L'abonnement se renouvelle automatiquement à la fin de chaque période. Vous pouvez l'annuler à tout moment dans Google Play → Abonnements ; l'accès reste actif jusqu'à la fin de la période en cours."
   },
   "weeklyReport": {
     "enabledLabel": "Notification hebdomadaire",
