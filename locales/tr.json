@@ -475,6 +475,11 @@
     "cancel": "İptal",
     "inputLabelName": "Ad"
   },
+  "localeWelcome": {
+    "title": "Zikirmatik’i kullandığınız için teşekkürler",
+    "body": "Uygulamamızı indirdiğiniz için teşekkür ederiz. Deneyimi iyileştirmek için çalışıyoruz.\n\nDil çevirilerine özen gösteriyoruz; gözden kaçan bir ifade olursa özür dileriz.\n\nEksik veya hatalı gördüğünüz yerleri aşağıdaki e-posta adresinden bildirebilirsiniz.",
+    "ok": "Tamam"
+  },
   "zikir": {
     "addTitle": "Yeni Zikir Ekle",
     "editTitle": "Zikiri düzenle",

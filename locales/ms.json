@@ -476,6 +476,11 @@
     "cancel": "Batal",
     "inputLabelName": "Nama"
   },
+  "localeWelcome": {
+    "title": "Terima kasih kerana guna Zikirmatik",
+    "body": "Alhamdulillah, terima kasih kerana muat turun aplikasi ini. Kami masih sentiasa baiki dan tambah baik setiap hari.\n\nUntuk terjemahan bahasa Melayu, kami cuba yang terbaik — tapi mungkin ada yang kurang kena. Jika nampak ayat yang pelik atau salah, harap maafkan ya.\n\nKalau sudi bantu, hantar sahaja maklum balas ke e-mel di bawah. Setiap pesanan sangat bermakna bagi kami.",
+    "ok": "Baik"
+  },
   "zikir": {
     "addTitle": "Tambah zikir baharu",
     "editTitle": "Edit zikir",
