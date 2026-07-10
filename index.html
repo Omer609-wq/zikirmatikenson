@@ -1746,6 +1746,23 @@
         </div>
     </div>
 
+    <div class="modal-overlay app-dialog-overlay" id="localeWelcomeOverlay" role="dialog" aria-modal="true" aria-labelledby="localeWelcomeTitle" aria-describedby="localeWelcomeBody">
+        <div class="modal glass-modal app-dialog locale-welcome">
+            <div class="modal-header app-dialog__header">
+                <h2 id="localeWelcomeTitle"></h2>
+            </div>
+            <div class="modal-body">
+                <p id="localeWelcomeBody" class="app-dialog__body locale-welcome__body"></p>
+                <a id="localeWelcomeEmail" class="locale-welcome__email" href="mailto:zikirmatik.help@gmail.com"></a>
+            </div>
+            <div class="modal-footer app-dialog__footer">
+                <div class="app-dialog__actions">
+                    <button type="button" class="primary-btn" id="localeWelcomeOkBtn">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JS (Vite: ES modül; Capacitor köprüsü native-reminders.js) -->
     <script type="module" src="/app.js"></script>
 </body>

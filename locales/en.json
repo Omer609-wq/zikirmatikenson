@@ -475,6 +475,11 @@
     "cancel": "Cancel",
     "inputLabelName": "Name"
   },
+  "localeWelcome": {
+    "title": "Thanks for using Zikirmatik",
+    "body": "Thanks for downloading our app. We're still improving it every day.\n\nWe care a lot about translations — if something looks off, we're sorry.\n\nPlease email us below if you spot anything that needs fixing. Every message helps.",
+    "ok": "OK"
+  },
   "zikir": {
     "addTitle": "Add new dhikr",
     "editTitle": "Edit dhikr",
