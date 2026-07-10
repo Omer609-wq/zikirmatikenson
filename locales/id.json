@@ -106,7 +106,7 @@
   "quran": {
     "title": "Al-Qur'an",
     "search": "Cari",
-    "searchPlaceholder": "Nama sure, Al-Baqarah 12, terjemahan atau transliterasi…",
+    "searchPlaceholder": "Nama surah, Al-Baqarah 12, terjemahan atau transliterasi…",
     "searchMealHit": "{meal} — {surah}, ayat {ayah}",
     "searchTranslitHit": "Transliterasi — {surah}, ayat {ayah}",
     "searchRefHit": "{surah} — ayat {ayah}",
