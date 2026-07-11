@@ -3341,6 +3341,33 @@ async function handleCloudBackupConnect() {
     try {
         const account = await signInWithGoogleForBackup();
         const now = Date.now();
+        const remote = await downloadBackupPayload(account.uid);
+        if (remote?.payload) {
+            setCloudBackupBusy(false);
+            const restoreExisting = await showAppConfirm(t('cloudBackup.existingBackupConfirm'), {
+                title: t('cloudBackup.restoreBtn'),
+                confirmLabel: t('cloudBackup.restoreBtn')
+            });
+            if (!restoreExisting) {
+                await signOutCloudBackup();
+                await showAppAlert(t('cloudBackup.existingBackupKept'));
+                await renderBackupView();
+                return;
+            }
+
+            patchCloudBackupMeta({
+                uid: account.uid,
+                email: account.email,
+                linkedAt: now,
+                lastBackupAt: remote.updatedAtMs || 0
+            });
+            setCloudBackupBusy(true, t('cloudBackup.restoring'));
+            applySanitizedBackupToApp(sanitizeLoadedData(remote.payload));
+            await showAppAlert(t('cloudBackup.restoreSuccess'));
+            await renderBackupView();
+            return;
+        }
+
         patchCloudBackupMeta({
             uid: account.uid,
             email: account.email,
