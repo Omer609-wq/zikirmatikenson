@@ -4,6 +4,23 @@ Kod tarafı hazır (`lib/premium-purchase.js`). Faturalandırmayı canlıya alma
 aşağıdaki panel adımları tamamlanmalı. API anahtarı boş kaldığı sürece uygulama
 mevcut "stub" davranışında kalır — hiçbir şey bozulmaz.
 
+## Yerel yapılandırma (.env.local)
+
+Anahtarları repoya yazmayın. Proje kökünde `.env.local` oluşturun (gitignore'da):
+
+```env
+VITE_PREMIUM_PREVIEW=1
+VITE_REVENUECAT_API_KEY_ANDROID=goog_...
+```
+
+Şablon: `.env.local.example` → kopyala, değerleri doldur, `npm run cap:sync`.
+
+Build sonrası Vite bu değerleri bundle'a gömer; `cap:release:android` çalıştırırken
+`.env.local` içinde `VITE_PREMIUM_PREVIEW=1` açıksa verify script build'i durdurur
+(yanlışlıkla premium'lu store build'i önlemek için).
+
+---
+
 ## 1) Google Play Console (önce bu)
 
 1. **Ödeme profili:** Play Console → Setup → Payments profile → banka + vergi
@@ -34,24 +51,58 @@ mevcut "stub" davranışında kalır — hiçbir şey bozulmaz.
    - `$rc_annual` → yıllık ürün
    (Kod, `current` offering'in `monthly`/`annual` paketlerini okur.)
 6. **API anahtarı:** Project → API keys → Google Play public key (`goog_...`)
-   → `lib/premium-purchase.js` içindeki `REVENUECAT_API_KEY_ANDROID` sabitine
-   yapıştır.
+   → `.env.local` içindeki `VITE_REVENUECAT_API_KEY_ANDROID`.
 
 ## 3) Test (Internal testing üzerinden)
 
 USB debug build'de gerçek faturalandırma ÇALIŞMAZ; Play'den kurulmalı.
 
-1. Bayrakları geçici aç (`PREMIUM_LIVE`, `PREMIUM_UI_VISIBLE` → true),
-   AAB üret, Internal testing'e yükle.
-2. Test hesabıyla telefonda: satın al → premium açıldı mı? → Play'den iptal
-   et → süre bitince kapandı mı? → "Satın alımı geri yükle" çalışıyor mu?
-3. Test bitince bayrakları tekrar kapat (yayın 4-5 ay sonra).
+1. `.env.local`: `VITE_PREMIUM_PREVIEW=1` + `VITE_REVENUECAT_API_KEY_ANDROID`
+2. `npm run cap:sync` → AAB → Internal testing'e yükle
+3. Test hesabıyla telefonda:
+   - Satın al → premium açıldı mı?
+   - Play'den iptal et → süre bitince kapandı mı?
+   - "Satın alımı geri yükle" çalışıyor mu?
+   - Stub notu gizlendi mi, fiyatlar mağazadan geliyor mu?
+4. Test bitince `.env.local`'ı sil veya `VITE_PREMIUM_PREVIEW`'ı kapat
 
 ## 4) iOS (App Store'a çıkarken)
 
 1. App Store Connect'te aynı abonelikleri oluştur.
 2. RevenueCat'e App Store uygulaması ekle, ürünleri bağla.
-3. `REVENUECAT_API_KEY_IOS` (`appl_...`) sabitini doldur — kod aynen çalışır.
+3. `.env.local` → `VITE_REVENUECAT_API_KEY_IOS` (`appl_...`)
+
+---
+
+## Lansman checklist (production)
+
+Store'a abonelikli sürüm çıkmadan önce:
+
+### Panel ve hesaplar
+- [ ] Play ödeme profili onaylı
+- [ ] Abonelik `premium` + planlar `monthly` / `yearly` **Active**
+- [ ] RevenueCat ↔ Play servis hesabı bağlı, ürünler senkron
+- [ ] RC entitlement `premium`, offering `default` + `$rc_monthly` / `$rc_annual`
+- [ ] Lisanslı test hesabıyla Internal testing'de uçtan uca test tamam
+
+### Kod ve build
+- [ ] `.env.local` → `VITE_REVENUECAT_API_KEY_ANDROID` dolu (release build'de bundle'a girer)
+- [ ] `app.js`: `PREMIUM_LIVE = true` (lansman commit'i; preview bayrağına güvenme)
+- [ ] `PREMIUM_UI_VISIBLE = true` (Premium sekmesi görünür)
+- [ ] `.env.local` silindi veya `VITE_PREMIUM_PREVIEW` kapalı → `npm run cap:release:android` geçiyor
+- [ ] `npm test` geçiyor
+
+### Play Console inceleme
+- [ ] **App access:** abonelik var → **Evet** + test hesabı / satın alma adımları
+- [ ] Gizlilik politikası URL'si (web) RevenueCat / Play billing'i kapsıyor
+- [ ] Uygulama içi: otomatik yenileme metni (`autoRenewNote`) + gizlilik ekranı billing bölümü
+
+### Lansman sonrası izleme
+- [ ] RevenueCat dashboard: ilk satın almalar görünüyor mu?
+- [ ] İptal / süre dolumu → `entitlements.premium` false oluyor mu?
+- [ ] Destek: "Geri yükle" butonu yeterli mi?
+
+---
 
 ## Notlar
 
@@ -60,3 +111,4 @@ USB debug build'de gerçek faturalandırma ÇALIŞMAZ; Play'den kurulmalı.
 - Satın alma onayı (acknowledge) ve abonelik yaşam döngüsü (yenileme, iptal,
   ödeme bekleme) RevenueCat tarafından yönetilir; uygulama tek dinleyiciden
   (`onEntitlementChange`) beslenir.
+- API anahtarı public key'dir; yine de repoya commit etmeyin — `.env.local` kullanın.

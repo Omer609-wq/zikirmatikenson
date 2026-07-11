@@ -88,12 +88,18 @@ import {
     renderPremiumPurchase,
     setupPremiumPurchase
 } from './lib/premium-purchase.js';
+import {
+    applyPremiumPreviewEntitlement,
+    installPremiumPreviewConsoleHelper,
+    resolvePremiumPreviewFlags
+} from './lib/premium-preview.js';
 import { applyNativeStatusBarTheme } from './status-bar-theme.js';
 import { runCounterVibration, runDragReorderNudge } from './haptics.js';
 import { setupCrashReporting } from './lib/crash-reporting.js';
 import {
     downloadBackupPayload,
     getCloudBackupAvailability,
+    resolveCloudBackupSignInErrorKey,
     maybeUploadCloudBackup,
     normalizeCloudBackupMeta,
     signInWithGoogleForBackup,
@@ -762,12 +768,13 @@ const LIBRARY_PREMIUM_PREVIEW_COUNT = 3;
  * verify adımında kontrol edip açıksa build'i durdurur.
  */
 const PREMIUM_PREVIEW_BUILD = import.meta.env.VITE_PREMIUM_PREVIEW === '1';
+const _premiumPreviewFlags = resolvePremiumPreviewFlags(PREMIUM_PREVIEW_BUILD);
 
-/** false = limit yok + Premium sekmesinde tanıtım ekranı. true = limitler + özellik merkezi (lansman). */
-const PREMIUM_LIVE = false || PREMIUM_PREVIEW_BUILD;
+/** false = limit yok, Premium sekmesi gizli (lansman öncesi yayın). true = limitler + özellik merkezi (lansman). */
+const PREMIUM_LIVE = _premiumPreviewFlags.mode ? _premiumPreviewFlags.live : false;
 
-/** Premium sekmesi + ayarlardaki çöp kutusu. */
-const PREMIUM_UI_VISIBLE = false || PREMIUM_PREVIEW_BUILD;
+/** Premium sekmesi + ayarlardaki çöp kutusu. Preview kapalıyken gizli. */
+const PREMIUM_UI_VISIBLE = _premiumPreviewFlags.mode ? _premiumPreviewFlags.uiVisible : false;
 
 /** Premium sekmesinden açılan özellikler → düzenleme ekranı / yönlendirme (PREMIUM_LIVE iken) */
 const PREMIUM_FEATURE_VIEW_IDS = new Set([
@@ -1199,6 +1206,7 @@ async function init() {
         });
     }
     loadData();
+    installPremiumPreviewConsoleHelper(PREMIUM_PREVIEW_BUILD);
     applyWeeklyReportPreviewSample();
     initUsageTracker();
     bindNativeReminderNotificationLaunch(openAppFromReminderNotification);
@@ -1222,6 +1230,8 @@ async function init() {
     setupPremiumPurchase({
         onSubscribe: (result) => {
             if (result?.ok) {
+                entitlements.premium = true;
+                saveData();
                 syncPremiumLockedControls();
                 void showAppAlert(t('premiumPurchase.purchaseSuccess'), {
                     title: t('premiumPurchase.title')
@@ -2225,6 +2235,7 @@ function loadData() {
         lifetimeByZikir = {};
     }
 
+    applyPremiumPreviewEntitlement(_premiumPreviewFlags.mode, entitlements);
     syncSettingsUI();
 }
 
@@ -2495,6 +2506,13 @@ function syncPremiumLockStar(hostEl, locked) {
 function syncTrashButtonUI() {
     const btn = document.getElementById('openTrashBtn');
     if (!btn) return;
+    if (!PREMIUM_UI_VISIBLE) {
+        btn.hidden = true;
+        btn.classList.add('hidden');
+        return;
+    }
+    btn.hidden = false;
+    btn.classList.remove('hidden');
     const locked = isPremiumOnlyFeatureLocked();
     btn.classList.toggle('is-locked', locked);
     btn.setAttribute('aria-disabled', locked ? 'true' : 'false');
@@ -2520,18 +2538,22 @@ function syncPremiumStatTabsUI() {
 function syncPremiumHubUI() {
     if (!PREMIUM_LIVE) return;
     const locked = isPremiumOnlyFeatureLocked();
+    const lockedPanel = document.getElementById('premiumHubLockedPanel');
+    const managePanel = document.getElementById('premiumHubManagePanel');
+    if (lockedPanel) lockedPanel.classList.toggle('hidden', !locked);
+    if (managePanel) {
+        managePanel.classList.toggle('hidden', locked);
+        managePanel.hidden = locked;
+    }
+
     const pillText = document.getElementById('premiumStatusPillText');
     if (pillText) pillText.textContent = locked ? t('premium.statusUpgrade') : t('premium.statusActive');
-    const lead = document.getElementById('premiumHubLead');
-    if (lead) lead.textContent = locked ? t('premium.hubLeadLocked') : t('premium.hubLeadActive');
+
     const subscribeBtn = document.getElementById('premiumHubSubscribeBtn');
     if (subscribeBtn) subscribeBtn.classList.toggle('hidden', !locked);
-    document.querySelectorAll('[data-premium-feature]').forEach((btn) => {
-        const featureLocked = locked && btn.getAttribute('data-premium-locked') === '1';
-        btn.classList.toggle('is-premium-locked', featureLocked);
-        btn.setAttribute('aria-disabled', featureLocked ? 'true' : 'false');
-        syncPremiumLockStar(btn, featureLocked);
-    });
+
+    const premiumViewTitle = document.getElementById('premiumViewTitle');
+    if (premiumViewTitle) premiumViewTitle.textContent = locked ? t('premium.title') : t('premium.manageTitle');
 }
 
 function openPremiumHubFeature(featureId) {
@@ -2554,7 +2576,16 @@ function openPremiumHubFeature(featureId) {
     showView(def.viewId);
 }
 
+function syncPremiumNavUI() {
+    const premiumNavBtn = document.querySelector('.bottom-nav__btn--premium');
+    if (premiumNavBtn) {
+        premiumNavBtn.hidden = !PREMIUM_UI_VISIBLE;
+        premiumNavBtn.classList.toggle('hidden', !PREMIUM_UI_VISIBLE);
+    }
+}
+
 function syncPremiumLockedControls() {
+    syncPremiumNavUI();
     syncTrashButtonUI();
     syncPremiumStatTabsUI();
     syncPremiumHubUI();
@@ -2730,11 +2761,17 @@ function renderTrashOverlay() {
     const list = document.getElementById('trashList');
     const empty = document.getElementById('trashEmpty');
     const clearBtn = document.getElementById('trashClearBtn');
+    const clearActions = document.getElementById('trashClearActions');
     if (!list || !empty) return;
     const entries = trash && Array.isArray(trash.entries) ? trash.entries : [];
     list.innerHTML = '';
     empty.hidden = entries.length !== 0;
-    if (clearBtn) clearBtn.disabled = entries.length === 0;
+    const hasEntries = entries.length > 0;
+    if (clearActions) clearActions.hidden = !hasEntries;
+    if (clearBtn) {
+        clearBtn.hidden = !hasEntries;
+        clearBtn.disabled = !hasEntries;
+    }
 
     entries.slice(0, 80).forEach((e, i) => {
         const title =
@@ -3000,8 +3037,12 @@ function getUsageAreaDisplayName(areaId) {
     return areaId;
 }
 
+function weeklyReportFeatureUnlocked() {
+    return PREMIUM_LIVE && !isPremiumOnlyFeatureLocked();
+}
+
 function weeklyReportActiveForUser() {
-    return PREMIUM_LIVE && !isPremiumOnlyFeatureLocked() && appSettings.weeklyReportEnabled !== false;
+    return weeklyReportFeatureUnlocked() && appSettings.weeklyReportEnabled !== false;
 }
 
 function getWeeklyReportDurationUnits() {
@@ -3088,14 +3129,14 @@ function syncWeeklyReportEditorControls() {
     const toggle = document.getElementById('weeklyReportEnabledToggle');
     const goalInput = document.getElementById('dailyZikirGoalInput');
     const note = document.getElementById('weeklyReportPremiumNote');
-    const active = weeklyReportActiveForUser();
+    const unlocked = weeklyReportFeatureUnlocked();
     if (toggle) {
         toggle.checked = appSettings.weeklyReportEnabled !== false;
-        toggle.disabled = !active;
+        toggle.disabled = !unlocked;
     }
     if (goalInput) {
         goalInput.value = String(normalizeDailyZikirGoal(appSettings.dailyZikirGoal));
-        goalInput.disabled = !active;
+        goalInput.disabled = !unlocked;
     }
     if (note) {
         const show = PREMIUM_LIVE && isPremiumOnlyFeatureLocked();
@@ -3310,12 +3351,19 @@ async function renderBackupView() {
         setHiddenState(unavailableNote, !showUnavailable);
         if (showUnavailable) {
             unavailableNote.textContent =
-                availability === 'unsupported' ? t('cloudBackup.unavailable') : t('cloudBackup.notConfigured');
+                availability === 'unsupported'
+                    ? t('cloudBackup.unavailable')
+                    : availability === 'needs_web_app'
+                      ? t('cloudBackup.needsWebApp')
+                      : t('cloudBackup.notConfigured');
         }
     }
 
     setHiddenState(panel, !canUse);
-    if (!canUse) return;
+    if (!canUse) {
+        if (panel) panel.classList.remove('premium-manage-account-box--connected');
+        return;
+    }
 
     const meta = getCloudBackupMetaFromApp();
     const isLinked = !!meta?.uid;
@@ -3330,6 +3378,8 @@ async function renderBackupView() {
             lastAtEl.textContent = formatted || t('cloudBackup.neverBackedUp');
         }
     }
+
+    if (panel) panel.classList.toggle('premium-manage-account-box--connected', isLinked);
 }
 
 function setupBackupUI() {
@@ -3386,7 +3436,7 @@ async function handleCloudBackupConnect() {
         await renderBackupView();
     } catch (e) {
         console.error('cloudBackup connect', e);
-        await showAppAlert(t('cloudBackup.errorSignIn'));
+        await showAppAlert(t(resolveCloudBackupSignInErrorKey(e)));
     } finally {
         setCloudBackupBusy(false);
     }
@@ -3531,8 +3581,8 @@ function setupWeeklyReportUI() {
     if (toggle && toggle.dataset.bound !== '1') {
         toggle.dataset.bound = '1';
         toggle.addEventListener('change', () => {
-            if (!weeklyReportActiveForUser()) {
-                toggle.checked = false;
+            if (!weeklyReportFeatureUnlocked()) {
+                toggle.checked = appSettings.weeklyReportEnabled !== false;
                 showPremiumFeatureUpsell();
                 return;
             }
@@ -3546,7 +3596,7 @@ function setupWeeklyReportUI() {
     if (goalInput && goalInput.dataset.bound !== '1') {
         goalInput.dataset.bound = '1';
         const commitGoal = () => {
-            if (!weeklyReportActiveForUser()) {
+            if (!weeklyReportFeatureUnlocked()) {
                 goalInput.value = String(normalizeDailyZikirGoal(appSettings.dailyZikirGoal));
                 showPremiumFeatureUpsell();
                 return;
@@ -3616,17 +3666,9 @@ function appendIntroSampleAyahRef(mealText, locale = getLocale()) {
     return `${meal} ${ref}`;
 }
 
-function buildIntroSampleMessageHtml(storedText) {
-    const ref = getIntroSampleAyahRefLabel();
-    const meal = stripIntroSampleAyahRefSuffix(storedText);
-    if (!meal) return `<em class="smart-reminder-inline-ref">${escapeHtml(ref)}</em>`;
-    return `${escapeHtml(meal)} <em class="smart-reminder-inline-ref">${escapeHtml(ref)}</em>`;
-}
-
 function readSmartReminderMessageValue(el) {
     if (!el) return '';
-    if (el instanceof HTMLTextAreaElement) return String(el.value || '').trim();
-    return String(el.textContent || '').trim();
+    return String(el.value ?? el.textContent ?? '').trim();
 }
 
 async function loadIntroSampleMealText() {
@@ -3673,8 +3715,6 @@ function bindIntroSampleReminderId(rule) {
 async function refreshIntroSampleSmartReminder() {
     if (!appMeta.smartRemindersIntroSeeded) return false;
 
-    const mealText = await loadIntroSampleMealText();
-    const sampleName = t('smartReminders.sampleName');
     let rule = smartReminders.find((r) => r.id === INTRO_SAMPLE_REMINDER_ID);
     if (!rule) {
         rule = smartReminders.find((r) => isLikelyLegacyIntroSampleRule(r));
@@ -3684,12 +3724,10 @@ async function refreshIntroSampleSmartReminder() {
     if (!rule) return false;
 
     const version = appMeta.smartRemindersIntroMsgVersion || 0;
-    const needsUpdate =
-        version < INTRO_SAMPLE_MSG_VERSION
-        || rule.messages[0] !== mealText
-        || String(rule.name || '').trim() !== sampleName;
+    if (version >= INTRO_SAMPLE_MSG_VERSION) return false;
 
-    if (!needsUpdate) return false;
+    const mealText = await loadIntroSampleMealText();
+    const sampleName = t('smartReminders.sampleName');
 
     rule.name = sampleName;
     rule.messages = [mealText];
@@ -3924,7 +3962,7 @@ function renderSmartReminderWeekdayChips(selected) {
     });
 }
 
-function renderSmartReminderMessageInputs(messages, { introSample = false } = {}) {
+function renderSmartReminderMessageInputs(messages) {
     const host = document.getElementById('smartReminderMessagesList');
     if (!host) return;
     const list = messages.length ? messages : [''];
@@ -3935,13 +3973,9 @@ function renderSmartReminderMessageInputs(messages, { introSample = false } = {}
         row.className = 'form-group smart-reminder-message-row';
         const len = String(text || '').length;
         const counterLabel = formatSmartReminderCharCountLabel(len);
-        const field =
-            introSample && idx === 0
-                ? `<div class="smart-reminder-message-rich" data-smart-message-idx="${idx}" role="textbox" aria-multiline="true" contenteditable="true" spellcheck="false">${buildIntroSampleMessageHtml(text || '')}</div>`
-                : `<textarea rows="2" data-smart-message-idx="${idx}" maxlength="${maxLen}" placeholder="${escapeAttr(t('smartReminders.messagePlaceholder'))}">${escapeHtml(text || '')}</textarea>`;
         row.innerHTML = `
             <div class="smart-reminder-message-field">
-                ${field}
+                <textarea rows="2" data-smart-message-idx="${idx}" maxlength="${maxLen}" placeholder="${escapeAttr(t('smartReminders.messagePlaceholder'))}">${escapeHtml(text || '')}</textarea>
                 <span class="smart-reminder-char-count${len >= maxLen - 24 ? ' is-near-limit' : ''}${len >= maxLen ? ' is-at-limit' : ''}" data-smart-char-count aria-live="polite">${counterLabel}</span>
             </div>
             <button type="button" class="icon-btn smart-reminder-remove-message" data-smart-message-remove="${idx}" aria-label="Sil" ${list.length <= 1 ? 'hidden' : ''}>
@@ -3972,7 +4006,7 @@ function openSmartReminderEditor(ruleId) {
     const delBtn = document.getElementById('smartReminderDeleteBtn');
     if (delBtn) delBtn.classList.toggle('hidden', isNew);
 
-    renderSmartReminderMessageInputs(rule.messages, { introSample: isIntroSampleRule(rule) });
+    renderSmartReminderMessageInputs(rule.messages);
     renderSmartReminderWeekdayChips(rule.weekdays);
     populateSmartReminderZikirSelect(rule);
 
@@ -4219,7 +4253,7 @@ function setupSmartRemindersUI() {
             });
             if (current.length >= MAX_MESSAGES_PER_RULE) return;
             current.push('');
-            renderSmartReminderMessageInputs(current, { introSample: isIntroSampleRule(smartReminderEditId) });
+            renderSmartReminderMessageInputs(current);
         });
     }
 
@@ -4241,7 +4275,7 @@ function setupSmartRemindersUI() {
             });
             if (current.length <= 1) return;
             current.splice(idx, 1);
-            renderSmartReminderMessageInputs(current, { introSample: isIntroSampleRule(smartReminderEditId) });
+            renderSmartReminderMessageInputs(current);
         });
     }
 
@@ -4890,7 +4924,7 @@ function showView(viewId, param = null, options = {}) {
         );
     } else if (viewId === 'premiumView') {
         renderPremium();
-        void renderBackupView(); // üstteki hesap/yedekleme bloku
+        void renderBackupView();
     } else if (viewId === 'premiumFeatureRemindersView') {
         renderSmartReminderList();
     } else if (viewId === 'premiumFeatureWeeklyView') {
@@ -4913,9 +4947,14 @@ function showView(viewId, param = null, options = {}) {
 
 function renderPremium() {
     const teaserPanel = document.getElementById('premiumTeaserPanel');
-    const hubPanel = document.getElementById('premiumHubPanel');
+    const lockedPanel = document.getElementById('premiumHubLockedPanel');
+    const managePanel = document.getElementById('premiumHubManagePanel');
     if (teaserPanel) teaserPanel.classList.toggle('hidden', PREMIUM_LIVE);
-    if (hubPanel) hubPanel.classList.toggle('hidden', !PREMIUM_LIVE);
+    if (lockedPanel) lockedPanel.classList.toggle('hidden', !PREMIUM_LIVE);
+    if (managePanel) {
+        managePanel.classList.toggle('hidden', !PREMIUM_LIVE);
+        if (!PREMIUM_LIVE) managePanel.hidden = true;
+    }
 
     if (!PREMIUM_LIVE) {
         const el = document.getElementById('premiumTeaserLine');
@@ -6637,14 +6676,15 @@ function setupEventListeners() {
     }
 
     const premiumFeatureList = document.getElementById('premiumFeatureList');
-    if (premiumFeatureList && premiumFeatureList.dataset.bound !== '1') {
-        premiumFeatureList.dataset.bound = '1';
-        premiumFeatureList.addEventListener('click', (e) => {
-            const btn = e.target && e.target.closest ? e.target.closest('[data-premium-feature]') : null;
-            if (!btn) return;
-            const star = e.target && e.target.closest ? e.target.closest('.premium-lock-star') : null;
-            if (star) return;
-            openPremiumHubFeature(btn.getAttribute('data-premium-feature'));
+    if (premiumFeatureList) premiumFeatureList.dataset.bound = '1';
+
+    const premiumManageFeatureList = document.getElementById('premiumManageFeatureList');
+    if (premiumManageFeatureList && premiumManageFeatureList.dataset.bound !== '1') {
+        premiumManageFeatureList.dataset.bound = '1';
+        premiumManageFeatureList.addEventListener('click', (e) => {
+            const row = e.target && e.target.closest ? e.target.closest('[data-premium-feature]') : null;
+            if (!row) return;
+            openPremiumHubFeature(row.getAttribute('data-premium-feature'));
         });
     }
 

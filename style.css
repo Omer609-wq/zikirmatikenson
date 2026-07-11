@@ -846,6 +846,76 @@ html.counter-customize-open .bottom-nav {
     display: none;
 }
 
+/* —— Premium hub (PREMIUM_LIVE): tanıtım kartlarıyla aynı grid —— */
+.premium-hub {
+    display: grid;
+    gap: 0;
+}
+.premium-hub.premium-hero {
+    padding: 1rem;
+}
+.premium-hub__head--compact {
+    margin-bottom: 0;
+}
+.premium-hub__head--compact .premium-spark {
+    display: none;
+}
+.premium-hub--subscriber .premium-subscribe-btn {
+    display: none;
+}
+
+/* —— Premium ayarları (abone, düz sayfa) —— */
+.premium-manage {
+    display: grid;
+    gap: 0.35rem;
+    padding-bottom: 1rem;
+}
+.premium-manage.hidden {
+    display: none !important;
+}
+.premium-manage-account {
+    margin-bottom: 0.35rem;
+}
+.premium-manage-account-box {
+    padding: 1rem;
+    border-radius: var(--surface-radius);
+    border: 1px solid var(--surface-border);
+    background: var(--surface-card);
+    box-shadow: var(--surface-shadow);
+}
+.premium-manage-account-box--connected {
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+}
+.premium-manage-account-box--connected .cloud-backup-card {
+    padding: 1.1rem 1.05rem;
+    margin-bottom: 0;
+}
+.premium-manage-status {
+    margin-bottom: 0.75rem;
+}
+.premium-manage-grid {
+    margin-top: 0.85rem;
+}
+.premium-pill--active {
+    border-color: rgba(16, 185, 129, 0.35);
+    background: rgba(16, 185, 129, 0.12);
+    color: rgba(167, 243, 208, 0.98);
+}
+button.premium-card.premium-card--action {
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    -webkit-tap-highlight-color: transparent;
+}
+button.premium-card.premium-card--action:active {
+    transform: scale(0.99);
+}
+
 .premium-feature-list {
     display: grid;
     gap: 0.55rem;
@@ -1010,9 +1080,12 @@ html.counter-customize-open .bottom-nav {
     padding-top: 0.55rem;
     border-top: 1px solid var(--alpha-08);
 }
-/* Premium sekmesi üstündeki hesap bloku: kart içinde yan yana eylem düğmeleri */
+/* Premium sekmesi üstündeki hesap bloku */
 .premium-account {
-    margin: 0.35rem 0 0.9rem;
+    margin: 0;
+}
+.premium-account.hidden {
+    display: none !important;
 }
 .cloud-backup-card__actions {
     display: flex;

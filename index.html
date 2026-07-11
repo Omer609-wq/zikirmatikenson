@@ -771,7 +771,7 @@
         <div id="premiumView" class="view hidden">
             <header class="glass-header">
                 <button class="icon-btn backBtn" data-target="homeView"><span class="material-icons-outlined">arrow_back</span></button>
-                <h1 data-i18n="premium.title">Premium</h1>
+                <h1 id="premiumViewTitle">Premium</h1>
                 <div class="header-spacer"></div>
             </header>
 
@@ -859,29 +859,94 @@
                     </div>
                 </div>
 
-                <!-- Özellik merkezi (PREMIUM_LIVE=true, lansman sonrası) -->
-                <div class="premium-hero hidden" id="premiumHubPanel">
-                    <div class="premium-hero__top">
-                        <span class="premium-pill" id="premiumStatusPill">
-                            <span class="material-icons-outlined">auto_awesome</span>
-                            <span id="premiumStatusPillText" data-i18n="premium.statusUpgrade">Yükselt</span>
-                        </span>
-                        <span class="premium-spark" aria-hidden="true"></span>
+                <!-- Kilitli hub (PREMIUM_LIVE, abone değil) -->
+                <div class="premium-hub premium-hero hidden" id="premiumHubLockedPanel">
+                    <div class="premium-hub__head" id="premiumHubHead">
+                        <div class="premium-hero__top">
+                            <span class="premium-pill" id="premiumStatusPill">
+                                <span class="material-icons-outlined">auto_awesome</span>
+                                <span id="premiumStatusPillText" data-i18n="premium.statusUpgrade">Yükselt</span>
+                            </span>
+                            <span class="premium-spark" aria-hidden="true"></span>
+                        </div>
+                        <h2 class="premium-title" id="premiumHubTitle" data-i18n="premium.heroTitle">Daha akıcı, daha güçlü bir Zikirmatik.</h2>
+                        <p class="premium-subtitle" id="premiumHubLead" data-i18n="premium.hubLeadLocked">
+                            Premium özelliklerini buradan yönet; abone olunca hepsi açılır.
+                        </p>
                     </div>
-
-                    <h2 class="premium-title" data-i18n="premium.heroTitle">Daha akıcı, daha güçlü bir Zikirmatik.</h2>
-                    <p class="premium-subtitle" id="premiumHubLead" data-i18n="premium.hubLeadLocked">
-                        Premium özelliklerini buradan yönet; abone olunca hepsi açılır.
-                    </p>
 
                     <button type="button" class="premium-subscribe-btn hidden" id="premiumHubSubscribeBtn" data-i18n="premium.hubSubscribeBtn">
                         Premium'a geç
                     </button>
 
-                    <!-- Hesap & yedekleme (premium aktifken sekmenin en üstünde) -->
-                    <div class="premium-account" id="premiumAccountSection">
+                    <div class="premium-grid" id="premiumFeatureList">
+                        <div class="premium-card" id="premiumHubBackupCard">
+                            <div class="premium-card__icon material-icons-outlined">cloud_sync</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title" data-i18n="premium.cardBackupTitle">Yedek & Senkron</div>
+                                <div class="premium-card__text" data-i18n="premium.cardBackupText">Cihaz değiştirince her şeyin seninle gelsin.</div>
+                            </div>
+                        </div>
+                        <div class="premium-card">
+                            <div class="premium-card__icon material-icons-outlined">insights</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title" data-i18n="premium.cardStatsTitle">Daha derin istatistik</div>
+                                <div class="premium-card__text" data-i18n="premium.cardStatsText">Hedeflere gidişini net gör, motivasyonun artsın.</div>
+                            </div>
+                        </div>
+                        <div class="premium-card">
+                            <div class="premium-card__icon material-icons-outlined">summarize</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title" data-i18n="premium.cardWeeklyTitle">Haftalık Rapor</div>
+                                <div class="premium-card__text" data-i18n="premium.cardWeeklyText">Her Pazartesi kısa bir özet: süre, hedef ve trend.</div>
+                            </div>
+                        </div>
+                        <div class="premium-card">
+                            <div class="premium-card__icon material-icons-outlined">palette</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title" data-i18n="premium.cardThemeTitle">Tema & kişiselleştirme</div>
+                                <div class="premium-card__text" data-i18n="premium.cardThemeText">Daha “senin” gibi hissettiren bir arayüz.</div>
+                            </div>
+                        </div>
+                        <div class="premium-card">
+                            <div class="premium-card__icon material-icons-outlined">notifications_active</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title" data-i18n="premium.cardRemindersTitle">Akıllı hatırlatıcılar</div>
+                                <div class="premium-card__text" data-i18n="premium.cardRemindersText">Ritmine göre nazikçe hatırlatsın.</div>
+                            </div>
+                        </div>
+                        <div class="premium-card">
+                            <div class="premium-card__icon material-icons-outlined">delete</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title" data-i18n="premium.cardTrashTitle">Çöp Kutusu (geri al)</div>
+                                <div class="premium-card__text" data-i18n="premium.cardTrashText">Yanlışlıkla silinen zikirleri Premium ile geri yükle.</div>
+                            </div>
+                        </div>
+                        <div class="premium-card">
+                            <div class="premium-card__icon material-icons-outlined">library_add</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title" data-i18n="premium.cardLibraryTitle">Daha geniş kütüphane</div>
+                                <div class="premium-card__text" data-i18n="premium.cardLibraryText">Premium ile kütüphanede daha fazla zikir ve dua.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Premium ayarları (PREMIUM_LIVE, abone) -->
+                <div class="premium-manage hidden" id="premiumHubManagePanel" hidden>
+                    <div class="premium-manage-status">
+                        <div class="premium-hero__top">
+                            <span class="premium-pill premium-pill--active">
+                                <span class="material-icons-outlined">auto_awesome</span>
+                                <span data-i18n="premium.statusActive">Premium aktif</span>
+                            </span>
+                            <span class="premium-spark" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="premium-manage-account" id="premiumAccountSection">
                         <p class="cloud-backup-note cloud-backup-note--warn hidden" id="cloudBackupUnavailableNote" hidden></p>
-                        <div class="cloud-backup-panel hidden" id="cloudBackupPanel" hidden>
+                        <div class="premium-manage-account-box cloud-backup-panel hidden" id="cloudBackupPanel" hidden>
                             <div id="cloudBackupDisconnected">
                                 <button type="button" class="primary-btn cloud-backup-connect-btn" id="cloudBackupConnectBtn">
                                     <span class="material-icons-outlined" aria-hidden="true">account_circle</span>
@@ -917,68 +982,53 @@
                                     <button type="button" class="text-btn cloud-backup-disconnect-btn" id="cloudBackupDisconnectBtn" data-i18n="cloudBackup.disconnectBtn">Bağlantıyı kes</button>
                                 </article>
                             </div>
-
-                            <p class="cloud-backup-status hidden" id="cloudBackupStatus" hidden aria-live="polite"></p>
                         </div>
+                        <p class="cloud-backup-status hidden" id="cloudBackupStatus" hidden aria-live="polite"></p>
                     </div>
 
-                    <div class="premium-section">
-                        <h3 class="premium-section__title">
-                            <span class="material-icons-outlined">tune</span>
-                            <span data-i18n="premium.hubSectionTitle">Özellikler</span>
-                        </h3>
-                        <p class="premium-section__desc" data-i18n="premium.hubSectionDesc">Bir özelliğe dokunarak düzenleme ekranını aç.</p>
-
-                        <div class="premium-feature-list" id="premiumFeatureList">
-                            <button type="button" class="premium-feature-btn" data-premium-feature="theme" data-premium-locked="1">
-                                <span class="premium-feature-btn__icon material-icons-outlined">palette</span>
-                                <span class="premium-feature-btn__body">
-                                    <span class="premium-feature-btn__title" data-i18n="premium.cardThemeTitle">Tema & kişiselleştirme</span>
-                                    <span class="premium-feature-btn__text" data-i18n="premium.cardThemeText">Daha “senin” gibi hissettiren bir arayüz.</span>
-                                </span>
-                                <span class="material-icons-outlined premium-feature-btn__chevron">chevron_right</span>
-                            </button>
-                            <button type="button" class="premium-feature-btn" data-premium-feature="reminders" data-premium-locked="1">
-                                <span class="premium-feature-btn__icon material-icons-outlined">notifications_active</span>
-                                <span class="premium-feature-btn__body">
-                                    <span class="premium-feature-btn__title" data-i18n="premium.cardRemindersTitle">Akıllı hatırlatıcılar</span>
-                                    <span class="premium-feature-btn__text" data-i18n="premium.cardRemindersText">Ritmine göre nazikçe hatırlatsın.</span>
-                                </span>
-                                <span class="material-icons-outlined premium-feature-btn__chevron">chevron_right</span>
-                            </button>
-                            <button type="button" class="premium-feature-btn" data-premium-feature="weekly" data-premium-locked="1">
-                                <span class="premium-feature-btn__icon material-icons-outlined">summarize</span>
-                                <span class="premium-feature-btn__body">
-                                    <span class="premium-feature-btn__title" data-i18n="premium.cardWeeklyTitle">Haftalık Rapor</span>
-                                    <span class="premium-feature-btn__text" data-i18n="premium.cardWeeklyText">Her Pazartesi kısa bir özet: süre, hedef ve trend.</span>
-                                </span>
-                                <span class="material-icons-outlined premium-feature-btn__chevron">chevron_right</span>
-                            </button>
-                            <button type="button" class="premium-feature-btn" data-premium-feature="stats" data-premium-locked="0">
-                                <span class="premium-feature-btn__icon material-icons-outlined">insights</span>
-                                <span class="premium-feature-btn__body">
-                                    <span class="premium-feature-btn__title" data-i18n="premium.cardStatsTitle">Daha derin istatistik</span>
-                                    <span class="premium-feature-btn__text" data-i18n="premium.cardStatsText">Hedeflere gidişini net gör, motivasyonun artsın.</span>
-                                </span>
-                                <span class="material-icons-outlined premium-feature-btn__chevron">chevron_right</span>
-                            </button>
-                            <button type="button" class="premium-feature-btn" data-premium-feature="library" data-premium-locked="0">
-                                <span class="premium-feature-btn__icon material-icons-outlined">library_add</span>
-                                <span class="premium-feature-btn__body">
-                                    <span class="premium-feature-btn__title" data-i18n="premium.cardLibraryTitle">Daha geniş kütüphane</span>
-                                    <span class="premium-feature-btn__text" data-i18n="premium.cardLibraryText">Premium ile kütüphanede daha fazla zikir ve dua.</span>
-                                </span>
-                                <span class="material-icons-outlined premium-feature-btn__chevron">chevron_right</span>
-                            </button>
-                            <button type="button" class="premium-feature-btn" data-premium-feature="trash" data-premium-locked="1">
-                                <span class="premium-feature-btn__icon material-icons-outlined">delete</span>
-                                <span class="premium-feature-btn__body">
-                                    <span class="premium-feature-btn__title" data-i18n="premium.cardTrashTitle">Çöp Kutusu (geri al)</span>
-                                    <span class="premium-feature-btn__text" data-i18n="premium.cardTrashText">Yanlışlıkla silinen zikirleri Premium ile geri yükle.</span>
-                                </span>
-                                <span class="material-icons-outlined premium-feature-btn__chevron">chevron_right</span>
-                            </button>
-                        </div>
+                    <div class="premium-grid premium-manage-grid" id="premiumManageFeatureList">
+                        <button type="button" class="premium-card premium-card--action" data-premium-feature="stats">
+                            <div class="premium-card__icon material-icons-outlined">insights</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title" data-i18n="premium.cardStatsTitle">Daha derin istatistik</div>
+                                <div class="premium-card__text" data-i18n="premium.cardStatsText">Hedeflere gidişini net gör, motivasyonun artsın.</div>
+                            </div>
+                        </button>
+                        <button type="button" class="premium-card premium-card--action" data-premium-feature="weekly">
+                            <div class="premium-card__icon material-icons-outlined">summarize</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title" data-i18n="premium.cardWeeklyTitle">Haftalık Rapor</div>
+                                <div class="premium-card__text" data-i18n="premium.cardWeeklyText">Her Pazartesi kısa bir özet: süre, hedef ve trend.</div>
+                            </div>
+                        </button>
+                        <button type="button" class="premium-card premium-card--action" data-premium-feature="theme">
+                            <div class="premium-card__icon material-icons-outlined">palette</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title" data-i18n="premium.cardThemeTitle">Tema & kişiselleştirme</div>
+                                <div class="premium-card__text" data-i18n="premium.cardThemeText">Daha “senin” gibi hissettiren bir arayüz.</div>
+                            </div>
+                        </button>
+                        <button type="button" class="premium-card premium-card--action" data-premium-feature="reminders">
+                            <div class="premium-card__icon material-icons-outlined">notifications_active</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title" data-i18n="premium.cardRemindersTitle">Akıllı hatırlatıcılar</div>
+                                <div class="premium-card__text" data-i18n="premium.cardRemindersText">Ritmine göre nazikçe hatırlatsın.</div>
+                            </div>
+                        </button>
+                        <button type="button" class="premium-card premium-card--action" data-premium-feature="trash">
+                            <div class="premium-card__icon material-icons-outlined">delete</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title" data-i18n="premium.cardTrashTitle">Çöp Kutusu (geri al)</div>
+                                <div class="premium-card__text" data-i18n="premium.cardTrashText">Yanlışlıkla silinen zikirleri Premium ile geri yükle.</div>
+                            </div>
+                        </button>
+                        <button type="button" class="premium-card premium-card--action" data-premium-feature="library">
+                            <div class="premium-card__icon material-icons-outlined">library_add</div>
+                            <div class="premium-card__body">
+                                <div class="premium-card__title" data-i18n="premium.cardLibraryTitle">Daha geniş kütüphane</div>
+                                <div class="premium-card__text" data-i18n="premium.cardLibraryText">Premium ile kütüphanede daha fazla zikir ve dua.</div>
+                            </div>
+                        </button>
                     </div>
                 </div>
             </section>
@@ -1683,7 +1733,7 @@
                 <p class="settings-footnote" style="margin-top: 0;" data-i18n="trash.hint">
                     Yanlışlıkla silinen zikirleri geri alabilirsin. Kalıcı silme için boşalt.
                 </p>
-                <div class="setting-actions" style="margin-top: 0.5rem;">
+                <div class="setting-actions" id="trashClearActions" style="margin-top: 0.5rem;">
                     <button type="button" class="primary-btn" id="trashClearBtn" style="background: transparent; border: 1px solid var(--surface-border);">
                         <span class="material-icons-outlined">delete_sweep</span> <span data-i18n="trash.clearBtn">Çöp kutusunu boşalt</span>
                     </button>
