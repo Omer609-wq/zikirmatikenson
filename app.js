@@ -75,6 +75,7 @@ import {
     percentChange
 } from './lib/weekly-report.js';
 import { showAppAlert, showAppConfirm, showAppPrompt, setupAppDialog } from './lib/app-dialog.js';
+import { setupLocaleWelcome, maybeShowLocaleWelcome, closeLocaleWelcomeIfOpen } from './lib/locale-welcome.js';
 import {
     closePremiumUpsell,
     setPremiumPurchaseNavigator,
@@ -1339,6 +1340,10 @@ async function init() {
     }
 
     refreshRemoteHomeContent();
+    // Dil id/ms/bn/ur ise ilk kez samimi çeviri notu (home boyandıktan sonra).
+    requestAnimationFrame(() => {
+        maybeShowLocaleWelcome(appSettings.locale);
+    });
 }
 
 async function refreshRemoteHomeContent() {
@@ -4596,6 +4601,7 @@ function isOverlayActive(el) {
 }
 
 function closeAllOverlays() {
+    closeLocaleWelcomeIfOpen();
     [
         document.getElementById('appDialogOverlay'),
         copyModalOverlay,
@@ -6610,6 +6616,7 @@ function renderZikirStats() {
 // ===================== EVENT LISTENERS & MODALS =====================
 function setupEventListeners() {
     setupAppDialog();
+    setupLocaleWelcome();
 
     if (document.documentElement.dataset.premiumLockDismissBound !== '1') {
         document.documentElement.dataset.premiumLockDismissBound = '1';
@@ -7284,6 +7291,7 @@ function setupEventListeners() {
                 ensureReminderSchedule().catch(console.error);
             }
             setLocalePickerOpen(false);
+            maybeShowLocaleWelcome(choice);
         });
     });
 

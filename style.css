@@ -5391,6 +5391,22 @@ input:checked + .slider:before { transform: translateX(22px); }
     white-space: pre-line;
     word-break: break-word;
 }
+.locale-welcome__body { margin-bottom: 0.85rem; }
+.locale-welcome__email {
+    display: inline-block;
+    max-width: 100%;
+    font-size: var(--text-base);
+    font-weight: 600;
+    line-height: var(--leading-relaxed);
+    color: var(--accent, #7dd3c0);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    word-break: break-all;
+}
+.locale-welcome__email:hover,
+.locale-welcome__email:focus-visible {
+    opacity: 0.92;
+}
 .app-dialog__footer { padding: 1rem 1.15rem 1.15rem; }
 .app-dialog__footer .app-dialog__actions {
     display: flex;
