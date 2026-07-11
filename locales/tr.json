@@ -244,6 +244,7 @@
     "wakeLock": "Ekranı Uyanık Tut",
     "wakeFootnote": "Ekran uyanık tutma özelliği zikir sayfasındayken aktif olur. Çok eski cihazlarda desteklenmeyebilir.",
     "privacy": "Gizlilik",
+    "rateUs": "Bizi oylayın",
     "reminder": "Günlük Hatırlatıcı",
     "reminderTime": "Hatırlatma Saati"
   },
@@ -262,15 +263,19 @@
   "privacy": {
     "title": "Gizlilik",
     "storageTitle": "Veriler nerede tutuluyor?",
-    "storageText": "Bu uygulama; klasörleriniz, zikirleriniz ve sayaç geçmişinizi cihazınızda saklar (yerel depolama). Varsayılan olarak dışarıya veri göndermez.",
+    "storageText": "Zikirleriniz, klasörleriniz, sayaç geçmişiniz ve ayarlarınız cihazınızda (yerel depolama) saklanır. Hesap açmak zorunlu değildir. Bu veriler varsayılan olarak sunucularımıza gönderilmez.",
     "statsTitle": "İstatistik geçmişi",
-    "statsText": "Günlük tıklama kayıtları cihazınızda tutulur; grafikte son 7 gün gösterilir.",
-    "backupTitle": "Yedekleme ve hesap",
-    "backupText": "Veriler yalnızca bu cihazda tutulur; Android sistem/Google yedeklemesine otomatik dahil edilmez. Uygulama verilerini silmek, cihaz değiştirmek veya kaldırmak tüm kaydı silebilir.",
+    "statsText": "Günlük tıklama ve kullanım özetleri cihazınızda tutulur; istatistiklerde yaklaşık son 1 yıl gösterilir.",
+    "backupTitle": "Yedekleme",
+    "backupText": "Uygulama verisi Android sistem / Google otomatik yedeklemesine dahil edilmez. Uygulama verilerini silmek, cihaz değiştirmek veya kaldırmak tüm kaydı silebilir.",
     "permissionsTitle": "İzinler",
-    "permissionsText": "Titreşim, ses ve ekranı uyanık tutma gibi seçenekler yalnızca uygulama deneyimi içindir ve isteğe bağlıdır.",
+    "permissionsText": "Bildirimler (isteğe bağlı hatırlatıcı), titreşim, ses ve ekranı uyanık tutma uygulama deneyimi içindir. Android’de hatırlatıcıların zamanında gelmesi için tam saatli alarm izni istenebilir. İnternet; Kur’an içeriği, güncelleme duyurusu ve mevsimsel içerik için kullanılır.",
+    "crashTitle": "Çökme raporları",
+    "crashText": "Uygulama çökerse hatayı düzeltmek için teknik bir çökme kaydı gönderilebilir (Firebase Crashlytics). Zikirleriniz ve istatistikleriniz bu kayıtta yer almaz.",
     "billingTitle": "Satın almalar ve abonelik",
-    "billingText": "Ödemeler tamamen Google Play üzerinden işlenir; uygulama kart veya ödeme bilgilerinize hiçbir şekilde erişmez. Abonelik durumunu doğrulamak için satın alma bilgileri (ürün kimliği, işlem durumu, anonim kullanıcı kimliği) abonelik yönetim servisi RevenueCat ile paylaşılır."
+    "billingText": "Ödemeler tamamen Google Play üzerinden işlenir; uygulama kart veya ödeme bilgilerinize hiçbir şekilde erişmez. Abonelik durumunu doğrulamak için satın alma bilgileri (ürün kimliği, işlem durumu, anonim kullanıcı kimliği) abonelik yönetim servisi RevenueCat ile paylaşılır.",
+    "fullPolicy": "Tam gizlilik politikası",
+    "fullPolicyHint": "Kısa özet yukarıdadır; ayrıntılı metin web sayfasında yayınlanır. Politika zaman zaman güncellenebilir."
   },
   "premium": {
     "title": "Premium",

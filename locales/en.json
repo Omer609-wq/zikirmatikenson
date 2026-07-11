@@ -244,6 +244,7 @@
     "wakeLock": "Keep screen awake",
     "wakeFootnote": "Keep awake works on the counter screen. May not work on very old devices.",
     "privacy": "Privacy",
+    "rateUs": "Rate us",
     "reminder": "Daily reminder",
     "reminderTime": "Reminder time"
   },
@@ -262,15 +263,19 @@
   "privacy": {
     "title": "Privacy",
     "storageTitle": "Where is data stored?",
-    "storageText": "This app stores your folders, zikir entries, and counter history on your device (local storage). By default it does not send data externally.",
+    "storageText": "Your dhikr lists, folders, counter history, and settings are stored on your device (local storage). Creating an account is not required. By default this data is not sent to our servers.",
     "statsTitle": "Statistics history",
-    "statsText": "Daily tap records are kept on your device; charts show the last 7 days.",
-    "backupTitle": "Backup and account",
-    "backupText": "Data stays on this device only and is not included in Android system or Google backup. Clearing app data, switching devices, or uninstalling may delete all records.",
+    "statsText": "Daily tap and usage summaries are kept on your device; statistics show about the last year.",
+    "backupTitle": "Backup",
+    "backupText": "App data is not included in Android system / Google automatic backup. Clearing app data, switching devices, or uninstalling may delete all records.",
     "permissionsTitle": "Permissions",
-    "permissionsText": "Options such as vibration, sound, and keep screen awake are only for the in-app experience and are optional.",
+    "permissionsText": "Notifications (optional reminder), vibration, sound, and keep-screen-awake are for the in-app experience. On Android, an exact-alarm permission may be requested so reminders can fire on time. Internet is used for Quran content, update notices, and seasonal content.",
+    "crashTitle": "Crash reports",
+    "crashText": "If the app crashes, a technical crash report may be sent to help us fix the issue (Firebase Crashlytics). Your dhikr lists and statistics are not included in that report.",
     "billingTitle": "Purchases & subscription",
-    "billingText": "Payments are processed entirely by Google Play; the app never accesses your card or payment details. To verify subscription status, purchase info (product ID, transaction state, an anonymous user ID) is shared with the subscription service RevenueCat."
+    "billingText": "Payments are processed entirely by Google Play; the app never accesses your card or payment details. To verify subscription status, purchase info (product ID, transaction state, an anonymous user ID) is shared with the subscription service RevenueCat.",
+    "fullPolicy": "Full privacy policy",
+    "fullPolicyHint": "The summary is above; the detailed policy is published on the web. The policy may be updated from time to time."
   },
   "premium": {
     "title": "Premium",

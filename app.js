@@ -10,6 +10,7 @@ import {
 } from './native-reminders.js';
 import {
     clearUpdateBannerDom,
+    openPlayStore,
     placeUpdateBanner,
     refreshUpdateBannerConfig
 } from './update-banner.js';
@@ -1610,8 +1611,7 @@ async function saveQuranDrawerFolderAdd() {
     return true;
 }
 
-// Günlük tıklama geçmişi: grafik ~7 gün kullanır; eski günleri tutmak istatistik için faydalı,
-// ama localStorage şişmesin diye çok eskiyi budarız (silinen günlerin özeti uygulamada yok).
+// Günlük tıklama geçmişi: istatistik ~1 yıl (günlük/haftalık/aylık/yıllık); localStorage şişmesin diye budarız.
 const HISTORY_RETENTION_DAYS = 400;
 
 // ===================== DATA =====================
@@ -2581,6 +2581,45 @@ function openPremiumHubFeature(featureId) {
     showView(def.viewId);
 }
 
+/** Play Console / uygulama içi tam gizlilik politikası (GitHub Pages org). */
+const PRIVACY_POLICY_BASE_URL = 'https://zikirmatikapp.github.io/gizlilik';
+
+function getPrivacyPolicyUrl() {
+    const loc = typeof getLocale === 'function' ? getLocale() : 'tr';
+    return loc === 'tr' ? `${PRIVACY_POLICY_BASE_URL}/` : `${PRIVACY_POLICY_BASE_URL}/en.html`;
+}
+
+function isAllowedPrivacyPolicyUrl(url) {
+    try {
+        const u = new URL(String(url || ''));
+        if (u.protocol !== 'https:') return false;
+        // Org Pages: https://ORG.github.io/gizlilik/  — hostname kişisel kullanıcı adı olmayabilir
+        if (!u.hostname.endsWith('.github.io')) return false;
+        return u.pathname.startsWith('/gizlilik');
+    } catch {
+        return false;
+    }
+}
+
+function openPrivacyPolicyPage() {
+    const url = getPrivacyPolicyUrl();
+    if (!isAllowedPrivacyPolicyUrl(url)) return;
+    if (isCapacitorNative()) {
+        window.open(url, '_system');
+        return;
+    }
+    window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+function syncPrivacyViewUI() {
+    const billingCard = document.getElementById('privacyBillingCard');
+    if (billingCard) {
+        const showBilling = !!PREMIUM_LIVE;
+        billingCard.hidden = !showBilling;
+        billingCard.classList.toggle('hidden', !showBilling);
+    }
+}
+
 function syncPremiumNavUI() {
     const premiumNavBtn = document.querySelector('.bottom-nav__btn--premium');
     if (premiumNavBtn) {
@@ -2592,6 +2631,7 @@ function syncPremiumNavUI() {
 function syncPremiumLockedControls() {
     syncPremiumNavUI();
     syncTrashButtonUI();
+    syncPrivacyViewUI();
     syncPremiumStatTabsUI();
     syncPremiumHubUI();
     syncTickSoundUI();
@@ -4946,6 +4986,8 @@ function showView(viewId, param = null, options = {}) {
         setLocalePickerOpen(false);
         syncSettingsUI();
         syncPremiumLockedControls();
+    } else if (viewId === 'privacyView') {
+        syncPrivacyViewUI();
     }
 
     currentViewId = viewId;
@@ -7330,6 +7372,18 @@ function setupEventListeners() {
     if (openPrivacyBtn) openPrivacyBtn.addEventListener('click', () => {
         showView('privacyView');
     });
+
+    const settingsRateUsBtn = document.getElementById('settingsRateUsBtn');
+    if (settingsRateUsBtn && settingsRateUsBtn.dataset.bound !== '1') {
+        settingsRateUsBtn.dataset.bound = '1';
+        settingsRateUsBtn.addEventListener('click', () => openPlayStore());
+    }
+
+    const privacyPolicyBtn = document.getElementById('privacyPolicyBtn');
+    if (privacyPolicyBtn && privacyPolicyBtn.dataset.bound !== '1') {
+        privacyPolicyBtn.dataset.bound = '1';
+        privacyPolicyBtn.addEventListener('click', () => openPrivacyPolicyPage());
+    }
 
     if (folderSearchInput) folderSearchInput.addEventListener('input', () => {
         folderSearchQuery = folderSearchInput.value || '';

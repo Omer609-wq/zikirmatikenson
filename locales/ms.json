@@ -244,6 +244,7 @@
     "wakeLock": "Skrin sentiasa hidup",
     "wakeFootnote": "Skrin sentiasa hidup hanya pada skrin pengira. Mungkin tidak disokong pada peranti sangat lama.",
     "privacy": "Privasi",
+    "rateUs": "Nilai kami",
     "reminder": "Peringatan harian",
     "reminderTime": "Masa peringatan"
   },
@@ -262,15 +263,19 @@
   "privacy": {
     "title": "Privasi",
     "storageTitle": "Di manakah data disimpan?",
-    "storageText": "Aplikasi ini menyimpan folder, zikir, dan sejarah pengiraan pada peranti anda (storan tempatan). Secara lalai ia tidak menghantar data ke luar.",
+    "storageText": "Senarai zikir, folder, sejarah pengira, dan tetapan anda disimpan pada peranti (storan tempatan). Membuat akaun tidak wajib. Secara lalai data ini tidak dihantar ke pelayan kami.",
     "statsTitle": "Sejarah statistik",
-    "statsText": "Rekod ketukan harian disimpan pada peranti anda; carta memaparkan 7 hari lepas.",
-    "backupTitle": "Sandaran dan akaun",
-    "backupText": "Data hanya pada peranti ini dan tidak termasuk sandaran sistem Android/Google. Memadam data aplikasi, tukar peranti, atau nyahpasang boleh memadam semua rekod.",
+    "statsText": "Ringkasan ketukan dan penggunaan harian disimpan pada peranti anda; statistik memaparkan kira-kira 1 tahun lepas.",
+    "backupTitle": "Sandaran",
+    "backupText": "Data aplikasi tidak termasuk sandaran automatik sistem Android / Google. Memadam data aplikasi, tukar peranti, atau nyahpasang boleh memadam semua rekod.",
     "permissionsTitle": "Kebenaran",
-    "permissionsText": "Pilihan seperti getaran, bunyi, dan skrin sentiasa hidup hanya untuk pengalaman aplikasi dan adalah pilihan.",
+    "permissionsText": "Pemberitahuan (peringatan pilihan), getaran, bunyi dan skrin sentiasa hidup untuk pengalaman apl. Di Android, kebenaran penggera tepat masa mungkin diminta supaya peringatan tepat masa. Internet digunakan untuk kandungan Al-Quran, notis kemas kini dan kandungan bermusim.",
+    "crashTitle": "Laporan ranap",
+    "crashText": "Jika aplikasi ranap, laporan teknikal boleh dihantar untuk membantu pembaikan (Firebase Crashlytics). Senarai zikir dan statistik anda tidak termasuk dalam laporan itu.",
     "billingTitle": "Pembelian & langganan",
-    "billingText": "Pembayaran diproses sepenuhnya oleh Google Play; aplikasi tidak mengakses maklumat kad atau pembayaran anda. Untuk mengesahkan status langganan, maklumat pembelian (ID produk, status transaksi, ID pengguna tanpa nama) dikongsi dengan perkhidmatan langganan RevenueCat."
+    "billingText": "Pembayaran diproses sepenuhnya oleh Google Play; aplikasi tidak mengakses maklumat kad atau pembayaran anda. Untuk mengesahkan status langganan, maklumat pembelian (ID produk, status transaksi, ID pengguna tanpa nama) dikongsi dengan perkhidmatan langganan RevenueCat.",
+    "fullPolicy": "Dasar privasi penuh",
+    "fullPolicyHint": "Ringkasan di atas; teks terperinci diterbitkan di web. Dasar boleh dikemas kini dari semasa ke semasa."
   },
   "premium": {
     "title": "Premium",

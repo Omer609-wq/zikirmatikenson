@@ -244,6 +244,7 @@
     "wakeLock": "Layar tetap menyala",
     "wakeFootnote": "Layar tetap menyala hanya di layar penghitung. Mungkin tidak didukung di perangkat sangat lama.",
     "privacy": "Privasi",
+    "rateUs": "Beri rating",
     "reminder": "Pengingat harian",
     "reminderTime": "Waktu pengingat"
   },
@@ -262,15 +263,19 @@
   "privacy": {
     "title": "Privasi",
     "storageTitle": "Di mana data disimpan?",
-    "storageText": "Aplikasi ini menyimpan folder, zikir, dan riwayat penghitungan di perangkat Anda (penyimpanan lokal). Secara default tidak mengirim data ke luar.",
+    "storageText": "Daftar zikir, folder, riwayat penghitung, dan pengaturan Anda disimpan di perangkat (penyimpanan lokal). Membuat akun tidak wajib. Secara default data ini tidak dikirim ke server kami.",
     "statsTitle": "Riwayat statistik",
-    "statsText": "Catatan ketukan harian disimpan di perangkat Anda; grafik menampilkan 7 hari terakhir.",
-    "backupTitle": "Cadangan dan akun",
-    "backupText": "Data hanya di perangkat ini dan tidak masuk cadangan sistem Android/Google. Menghapus data aplikasi, ganti perangkat, atau uninstall dapat menghapus semua catatan.",
+    "statsText": "Ringkasan ketukan dan penggunaan harian disimpan di perangkat Anda; statistik menampilkan sekitar 1 tahun terakhir.",
+    "backupTitle": "Cadangan",
+    "backupText": "Data aplikasi tidak termasuk cadangan otomatis sistem Android / Google. Menghapus data aplikasi, ganti perangkat, atau uninstall dapat menghapus semua catatan.",
     "permissionsTitle": "Izin",
-    "permissionsText": "Opsi getar, suara, dan layar tetap menyala hanya untuk pengalaman aplikasi dan bersifat opsional.",
+    "permissionsText": "Notifikasi (pengingat opsional), getar, suara, dan layar tetap menyala untuk pengalaman aplikasi. Di Android, izin alarm tepat waktu dapat diminta agar pengingat tepat waktu. Internet dipakai untuk konten Al-Qur'an, pemberitahuan pembaruan, dan konten musiman.",
+    "crashTitle": "Laporan kerusakan",
+    "crashText": "Jika aplikasi crash, laporan teknis dapat dikirim untuk membantu perbaikan (Firebase Crashlytics). Daftar zikir dan statistik Anda tidak termasuk dalam laporan itu.",
     "billingTitle": "Pembelian & langganan",
-    "billingText": "Pembayaran sepenuhnya diproses oleh Google Play; aplikasi tidak pernah mengakses data kartu atau pembayaranmu. Untuk memverifikasi status langganan, info pembelian (ID produk, status transaksi, ID pengguna anonim) dibagikan dengan layanan langganan RevenueCat."
+    "billingText": "Pembayaran sepenuhnya diproses oleh Google Play; aplikasi tidak pernah mengakses data kartu atau pembayaranmu. Untuk memverifikasi status langganan, info pembelian (ID produk, status transaksi, ID pengguna anonim) dibagikan dengan layanan langganan RevenueCat.",
+    "fullPolicy": "Kebijakan privasi lengkap",
+    "fullPolicyHint": "Ringkasan di atas; teks lengkap dipublikasikan di web. Kebijakan dapat diperbarui dari waktu ke waktu."
   },
   "premium": {
     "title": "Premium",

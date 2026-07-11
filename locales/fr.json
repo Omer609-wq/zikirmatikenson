@@ -244,6 +244,7 @@
     "wakeLock": "Garder l'écran allumé",
     "wakeFootnote": "L'option « garder allumé » fonctionne sur l'écran du compteur. Peut ne pas marcher sur les très anciens appareils.",
     "privacy": "Confidentialité",
+    "rateUs": "Nous noter",
     "reminder": "Rappel quotidien",
     "reminderTime": "Heure du rappel"
   },
@@ -262,15 +263,19 @@
   "privacy": {
     "title": "Confidentialité",
     "storageTitle": "Où sont stockées les données ?",
-    "storageText": "Cette application enregistre vos dossiers, zikir et historique de compteur sur votre appareil (stockage local). Par défaut, aucune donnée n'est envoyée à l'extérieur.",
+    "storageText": "Vos listes de zikr, dossiers, historique du compteur et réglages sont stockés sur votre appareil (stockage local). Créer un compte n'est pas obligatoire. Par défaut, ces données ne sont pas envoyées à nos serveurs.",
     "statsTitle": "Historique des statistiques",
-    "statsText": "Les touches quotidiennes sont conservées sur votre appareil ; les graphiques affichent les 7 derniers jours.",
-    "backupTitle": "Sauvegarde et compte",
-    "backupText": "Les données restent sur cet appareil et ne sont pas incluses dans la sauvegarde système Android/Google. Effacer les données, changer d'appareil ou désinstaller peut tout supprimer.",
+    "statsText": "Les résumés quotidiens de touches et d'utilisation sont conservés sur votre appareil ; les statistiques affichent environ la dernière année.",
+    "backupTitle": "Sauvegarde",
+    "backupText": "Les données de l'app ne sont pas incluses dans la sauvegarde automatique Android / Google. Effacer les données, changer d'appareil ou désinstaller peut tout supprimer.",
     "permissionsTitle": "Autorisations",
-    "permissionsText": "Les options comme vibration, son et garder l'écran allumé servent uniquement à l'expérience dans l'app et sont facultatives.",
+    "permissionsText": "Notifications (rappel optionnel), vibration, son et écran allumé pour l'expérience dans l'app. Sur Android, une autorisation d'alarme exacte peut être demandée pour les rappels à l'heure. Internet sert au contenu Coran, aux avis de mise à jour et au contenu saisonnier.",
+    "crashTitle": "Rapports de plantage",
+    "crashText": "Si l'app plante, un rapport technique peut être envoyé pour aider à corriger le problème (Firebase Crashlytics). Vos listes de zikr et statistiques n'y figurent pas.",
     "billingTitle": "Achats et abonnement",
-    "billingText": "Les paiements sont traités entièrement par Google Play ; l'application n'accède jamais à vos informations de paiement. Pour vérifier l'état de l'abonnement, les informations d'achat (identifiant du produit, état de la transaction, identifiant utilisateur anonyme) sont partagées avec le service d'abonnement RevenueCat."
+    "billingText": "Les paiements sont traités entièrement par Google Play ; l'application n'accède jamais à vos informations de paiement. Pour vérifier l'état de l'abonnement, les informations d'achat (identifiant du produit, état de la transaction, identifiant utilisateur anonyme) sont partagées avec le service d'abonnement RevenueCat.",
+    "fullPolicy": "Politique de confidentialité complète",
+    "fullPolicyHint": "Le résumé est ci-dessus ; le texte détaillé est publié sur le web. La politique peut être mise à jour de temps à autre."
   },
   "premium": {
     "title": "Premium",

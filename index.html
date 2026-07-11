@@ -436,6 +436,10 @@
                     <button type="button" class="primary-btn" id="openPrivacyBtn">
                         <span class="material-icons-outlined">policy</span> <span data-i18n="settings.privacy">Gizlilik</span>
                     </button>
+                    <button type="button" class="rate-us-btn" id="settingsRateUsBtn">
+                        <span class="rate-us-btn__stars" aria-hidden="true">★★★★★</span>
+                        <span data-i18n="settings.rateUs">Bizi oylayın</span>
+                    </button>
                     <div style="height: 4px;"></div>
                     <div class="setting-item" style="margin-top: 0.5rem;">
                         <span><span class="material-icons-outlined">notifications</span> <span data-i18n="settings.reminder">Günlük Hatırlatıcı</span></span>
@@ -736,23 +740,22 @@
                 <div class="stat-card">
                     <h3 data-i18n="privacy.storageTitle">Veriler nerede tutuluyor?</h3>
                     <p class="privacy-card-text" data-i18n="privacy.storageText">
-                        Bu uygulama; klasörleriniz, zikirleriniz ve sayaç geçmişinizi cihazınızda saklar (yerel depolama).
-                        Varsayılan olarak dışarıya veri göndermez.
+                        Zikirleriniz, klasörleriniz, sayaç geçmişiniz ve ayarlarınız cihazınızda (yerel depolama) saklanır. Hesap açmak zorunlu değildir. Bu veriler varsayılan olarak sunucularımıza gönderilmez.
                     </p>
                 </div>
                 <div class="stat-card">
                     <h3 data-i18n="privacy.statsTitle">İstatistik geçmişi</h3>
                     <p class="privacy-card-text" data-i18n="privacy.statsText">
-                        Günlük tıklama kayıtları cihazınızda tutulur; grafikte son 7 gün gösterilir.
+                        Günlük tıklama ve kullanım özetleri cihazınızda tutulur; istatistiklerde yaklaşık son 1 yıl gösterilir.
                     </p>
                 </div>
                 <div class="stat-card">
-                    <h3 data-i18n="privacy.backupTitle">Yedekleme ve hesap</h3>
+                    <h3 data-i18n="privacy.backupTitle">Yedekleme</h3>
                     <p class="privacy-card-text" data-i18n="privacy.backupText">
-                        Veriler şu an yalnızca bu cihazda tutulur. Tarayıcı veya uygulama verilerinizi silmek, cihaz değiştirmek ya da uygulamayı kaldırmak tüm kaydı silebilir; bu yüzden önemli verilerinizi yedeklemenizi öneririz.
+                        Uygulama verisi Android sistem / Google otomatik yedeklemesine dahil edilmez. Uygulama verilerini silmek, cihaz değiştirmek veya kaldırmak tüm kaydı silebilir.
                     </p>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" id="privacyBillingCard" hidden>
                     <h3 data-i18n="privacy.billingTitle">Satın almalar ve abonelik</h3>
                     <p class="privacy-card-text" data-i18n="privacy.billingText">
                         Ödemeler tamamen Google Play üzerinden işlenir; uygulama kart veya ödeme bilgilerinize hiçbir şekilde erişmez. Abonelik durumunu doğrulamak için satın alma bilgileri (ürün kimliği, işlem durumu, anonim kullanıcı kimliği) abonelik yönetim servisi RevenueCat ile paylaşılır.
@@ -761,7 +764,23 @@
                 <div class="stat-card">
                     <h3 data-i18n="privacy.permissionsTitle">İzinler</h3>
                     <p class="privacy-card-text" data-i18n="privacy.permissionsText">
-                        Titreşim, ses ve ekranı uyanık tutma gibi seçenekler yalnızca uygulama deneyimi içindir ve isteğe bağlıdır.
+                        Bildirimler (isteğe bağlı hatırlatıcı), titreşim, ses ve ekranı uyanık tutma uygulama deneyimi içindir. Android’de hatırlatıcıların zamanında gelmesi için tam saatli alarm izni istenebilir. İnternet; Kur’an içeriği, güncelleme duyurusu ve mevsimsel içerik için kullanılır.
+                    </p>
+                </div>
+                <div class="stat-card">
+                    <h3 data-i18n="privacy.crashTitle">Çökme raporları</h3>
+                    <p class="privacy-card-text" data-i18n="privacy.crashText">
+                        Uygulama çökerse hatayı düzeltmek için teknik bir çökme kaydı gönderilebilir (Firebase Crashlytics). Zikirleriniz ve istatistikleriniz bu kayıtta yer almaz.
+                    </p>
+                </div>
+
+                <div class="privacy-actions">
+                    <button type="button" class="secondary-btn" id="privacyPolicyBtn">
+                        <span class="material-icons-outlined" aria-hidden="true">open_in_new</span>
+                        <span data-i18n="privacy.fullPolicy">Tam gizlilik politikası</span>
+                    </button>
+                    <p class="settings-footnote" data-i18n="privacy.fullPolicyHint">
+                        Kısa özet yukarıdadır; ayrıntılı metin web sayfasında yayınlanır. Politika zaman zaman güncellenebilir.
                     </p>
                 </div>
             </section>
