@@ -18,7 +18,25 @@ const DISMISS_STORAGE_KEY = 'zikirmatik_dismissed_update_banners';
 const REMOTE_CONFIG_CACHE_KEY = 'zikirmatik_update_banner_config_cache';
 const DEFAULT_PLAY_STORE =
     'https://play.google.com/store/apps/details?id=com.omerzikirmatik.app';
+const PLAY_STORE_APP_ID = 'com.omerzikirmatik.app';
 export const UPDATE_BANNER_INLINE_FOLDER_THRESHOLD = 3;
+
+/** Uzak JSON'dan gelen playStoreUrl — yalnızca bu uygulamanın Play Store sayfası kabul edilir. */
+export function sanitizePlayStoreUrl(url, fallback = DEFAULT_PLAY_STORE) {
+    const safeFallback = fallback || DEFAULT_PLAY_STORE;
+    const raw = String(url || '').trim();
+    if (!raw) return safeFallback;
+    try {
+        const parsed = new URL(raw);
+        if (parsed.protocol !== 'https:') return safeFallback;
+        if (parsed.hostname !== 'play.google.com') return safeFallback;
+        if (!parsed.pathname.startsWith('/store/apps/details')) return safeFallback;
+        if (parsed.searchParams.get('id') !== PLAY_STORE_APP_ID) return safeFallback;
+        return parsed.toString();
+    } catch {
+        return safeFallback;
+    }
+}
 
 const PREVIEW_PAYLOAD = {
     id: 'onizleme-android-studio',
@@ -111,7 +129,7 @@ function buildPayloadFromRemote(raw, installed) {
         id,
         title: String(raw.title || 'Yeni sürüm mevcut').trim(),
         message: String(raw.message || '').trim(),
-        playStoreUrl: String(raw.playStoreUrl || DEFAULT_PLAY_STORE).trim()
+        playStoreUrl: sanitizePlayStoreUrl(raw.playStoreUrl)
     };
 }
 
@@ -186,7 +204,7 @@ export async function refreshUpdateBannerConfig() {
 }
 
 export function openPlayStore(url) {
-    const target = url || DEFAULT_PLAY_STORE;
+    const target = sanitizePlayStoreUrl(url);
     if (Capacitor.isNativePlatform()) {
         window.open(target, '_system');
         return;
