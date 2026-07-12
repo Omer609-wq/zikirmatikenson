@@ -552,6 +552,8 @@
     "disconnectBtn": "Putuskan akaun",
     "disconnectConfirm": "Putuskan akaun Google? Sandaran awan tidak dipadam.",
     "restoreConfirm": "Sandaran awan akan menggantikan data pada peranti ini. Zikir dan tetapan semasa akan ditimpa. Teruskan?",
+    "existingBackupConfirm": "Sandaran awan sudah wujud untuk akaun Google ini. Pulihkan ke peranti ini sekarang? Batal akan mengekalkan peranti ini tanpa perubahan dan tidak menimpa sandaran awan.",
+    "existingBackupKept": "Sandaran awan dibiarkan tanpa perubahan. Pulihkan sandaran sedia ada untuk menyambung akaun ini.",
     "restoreSuccess": "Sandaran dipulihkan.",
     "connectSuccess": "Akaun disambung dan sandaran selesai.",
     "backupSuccess": "Sandaran dikemas kini.",
