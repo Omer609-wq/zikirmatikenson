@@ -2450,6 +2450,7 @@ function isPremiumStatTab(tab) {
 }
 
 function ensureUnlockedStatTab(tab) {
+    if (tab === 'allTime' && !PREMIUM_LIVE) return 'daily';
     if (isPremiumOnlyFeatureLocked() && isPremiumStatTab(tab)) return 'daily';
     return tab;
 }
@@ -2531,6 +2532,14 @@ function syncPremiumStatTabsUI() {
     const syncBtn = (btn, tabAttr) => {
         if (!btn) return;
         const tab = btn.getAttribute(tabAttr) || '';
+        // "Tüm zamanlar" premium lansmanında kilitli satılacak; lansman öncesi
+        // sürümde ücretsiz verip sonra geri almamak için sekme hiç gösterilmez.
+        if (tab === 'allTime') {
+            const hideAllTime = !PREMIUM_LIVE;
+            btn.hidden = hideAllTime;
+            btn.classList.toggle('hidden', hideAllTime);
+            if (hideAllTime) return;
+        }
         const tabLocked = locked && isPremiumStatTab(tab);
         btn.classList.toggle('is-premium-locked', tabLocked);
         btn.setAttribute('aria-disabled', tabLocked ? 'true' : 'false');
