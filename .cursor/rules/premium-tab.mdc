@@ -9,8 +9,8 @@ Bu branch’te **Premium sekmesi**, **ayarlardaki çöp kutusu** ve **limitler**
 
 ## Main’e merge / yayın
 
-- **Premium gelene kadar (main):** `PREMIUM_LIVE = false`, `PREMIUM_UI_VISIBLE = true` — limit yok; Premium sekmesinde **tanıtım** ekranı (kartlar, “çok yakında”).
-- **Premium lansmanı:** `PREMIUM_LIVE = true` — limitler, Play Billing, Premium sekmesinde **özellik merkezi** (düzenleme ekranlarına giden butonlar).
+- **Premium gelene kadar (main):** `PREMIUM_LIVE = false`, `PREMIUM_UI_VISIBLE = false` — limit yok; ücretsiz kütüphane **tamamı açık** (20 dua + 21 zikir).
+- **Premium lansmanı:** `PREMIUM_LIVE = true` — limitler, Play Billing; kütüphanede ilk 10 dua / 10 zikir ücretsiz, gerisi + `plib_*` kilitli; istatistikte aylık/yıllık/tüm zamanlar kilitli.
 
 ## Limitler (ücretsiz, PREMIUM_LIVE=true iken)
 

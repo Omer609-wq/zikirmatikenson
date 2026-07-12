@@ -772,7 +772,7 @@ const LIBRARY_PREMIUM_PREVIEW_COUNT = 3;
 const PREMIUM_PREVIEW_BUILD = import.meta.env.VITE_PREMIUM_PREVIEW === '1';
 const _premiumPreviewFlags = resolvePremiumPreviewFlags(PREMIUM_PREVIEW_BUILD);
 
-/** false = limit yok, Premium sekmesi gizli (lansman öncesi yayın). true = limitler + özellik merkezi (lansman). */
+/** false = limit yok, kütüphane tam açık (lansman öncesi). true = limitler + kilitli özellikler. */
 const PREMIUM_LIVE = _premiumPreviewFlags.mode ? _premiumPreviewFlags.live : false;
 
 /** Premium sekmesi + ayarlardaki çöp kutusu. Preview kapalıyken gizli. */
@@ -7072,7 +7072,10 @@ function setupEventListeners() {
     zikirStatTabBtns.forEach((btn) => {
         btn.addEventListener('click', () => {
             const tab = btn.getAttribute('data-zikir-stat-tab') || 'daily';
-            if (isPremiumOnlyFeatureLocked() && isPremiumStatTab(tab)) return;
+            if (isPremiumOnlyFeatureLocked() && isPremiumStatTab(tab)) {
+                showPremiumFeatureUpsell();
+                return;
+            }
             zikirStatTabBtns.forEach((b) => b.classList.remove('active'));
             btn.classList.add('active');
             activeZikirStatTab = tab;
@@ -7495,12 +7498,8 @@ function setupEventListeners() {
     statTabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             const tab = btn.getAttribute('data-tab') || 'daily';
-            if (
-                isPremiumOnlyFeatureLocked() &&
-                isPremiumStatTab(tab) &&
-                tab !== 'daily' &&
-                tab !== 'weekly'
-            ) {
+            if (isPremiumOnlyFeatureLocked() && isPremiumStatTab(tab)) {
+                showPremiumFeatureUpsell();
                 return;
             }
             statTabBtns.forEach(b => b.classList.remove('active'));
