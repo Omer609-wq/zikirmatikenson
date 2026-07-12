@@ -1101,6 +1101,9 @@ function captureReaderScrollSnapshot() {
 
 function restoreReaderScrollSnapshot(snapshot) {
     if (!snapshot) return;
+    // Snapshot alındıktan sonra düzen değiştiyse (ayet↔mushaf) eski düzene ait
+    // konum geçersizdir; geri yüklemek yanlış sayfayı/kaydırmayı diriltir.
+    if (snapshot.layout !== getCurrentReaderLayout()) return;
     const scroller = getQuranReaderScroller();
     if (!scroller) return;
 
@@ -3047,10 +3050,14 @@ export function bindQuranReaderMenu(initialReadMode, initialReaderLayout = DEFAU
             e.stopPropagation();
             if (pickLock) return;
             pickLock = true;
+            // Panel, seçim işlenmeden ÖNCE kapatılır: kapanış snapshot'ı gerçek
+            // seçim-öncesi durumu yakalasın. onPick düzeni değiştirmeye başlarsa
+            // (örn. ayet→mushaf) kapanış anındaki yarım durum (sayfa=1) yanlış
+            // "kaldığım yer" olarak alınıp kayıtlı sayfayı eziyordu.
+            setQuranReaderDrawerOpen(false);
             try {
                 onPick();
             } finally {
-                setQuranReaderDrawerOpen(false);
                 window.setTimeout(() => {
                     pickLock = false;
                 }, 400);
