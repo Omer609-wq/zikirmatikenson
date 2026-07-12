@@ -12,7 +12,7 @@ import { getRuntimeFlags, loadRuntimeFlags } from './lib/runtime-flags.js';
 export const UPDATE_BANNER_CONFIG_URL =
     'https://cdn.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/update-banner.json';
 
-export const UPDATE_BANNER_DISABLED = false;
+export const UPDATE_BANNER_DISABLED = true;
 
 const DISMISS_STORAGE_KEY = 'zikirmatik_dismissed_update_banners';
 const REMOTE_CONFIG_CACHE_KEY = 'zikirmatik_update_banner_config_cache';
