@@ -1,11 +1,70 @@
 /**
  * Ana sayfa alt şeridi (#dailyQuoteText): her girişte rastgele bir satır.
  * Günlük hatırlatıcı: sabit Rad 13:28 — locale’e göre meal (lib/reminder-quote.js).
+ *
+ * Uzaktan güncelleme: public/daily-quotes.json (jsDelivr CDN, kaynak: GitHub @main).
+ * Git push ile satırlar store güncellemesi olmadan değişir; dosya yoksa/bozuksa
+ * gömülü listeler kullanılır. Acil güncellemede cache purge:
+ * https://purge.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/daily-quotes.json
  */
+import { Capacitor } from '@capacitor/core';
 import quranQuotesData from './data/quotes-quran.json';
+import { normalizeRemoteDailyQuotes } from './lib/daily-quotes.js';
 import { getReminderQuoteBody, getReminderQuoteNotificationPayload } from './lib/reminder-quote.js';
 
 export { getReminderQuoteBody, getReminderQuoteNotificationPayload } from './lib/reminder-quote.js';
+
+export const DAILY_QUOTES_URL =
+    'https://cdn.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/daily-quotes.json';
+
+const DAILY_QUOTES_CACHE_KEY = 'zikirmatik_daily_quotes_cache';
+
+/** @type {ReturnType<typeof normalizeRemoteDailyQuotes>} */
+let remoteDailyQuotes = null;
+
+function applyRemoteDailyQuotes(raw) {
+    const normalized = normalizeRemoteDailyQuotes(raw);
+    if (normalized) remoteDailyQuotes = normalized;
+    return !!normalized;
+}
+
+/** Açılışta, ağ beklemeden: son indirilen listeyi önbellekten uygula. */
+export function applyCachedRemoteDailyQuotes() {
+    try {
+        const raw = localStorage.getItem(DAILY_QUOTES_CACHE_KEY);
+        if (!raw) return false;
+        return applyRemoteDailyQuotes(JSON.parse(raw));
+    } catch {
+        return false;
+    }
+}
+
+/** CDN'den günün sözü listesini çek; başarısızsa önbellek/gömülü liste kalır. */
+export async function refreshRemoteDailyQuotes() {
+    const urls = [`${DAILY_QUOTES_URL}?t=${Date.now()}`];
+    if (Capacitor.isNativePlatform()) {
+        // Paketle gelen kopya: ilk kurulumda çevrimdışıyken bile en az build anındaki liste.
+        urls.push(`./daily-quotes.json?t=${Date.now()}`);
+    }
+    for (const url of urls) {
+        try {
+            const res = await fetch(url, { cache: 'no-store' });
+            if (!res.ok) continue;
+            const raw = await res.json();
+            if (applyRemoteDailyQuotes(raw)) {
+                try {
+                    localStorage.setItem(DAILY_QUOTES_CACHE_KEY, JSON.stringify(raw));
+                } catch {
+                    /* quota / private mode */
+                }
+                return true;
+            }
+        } catch (e) {
+            console.warn('daily-quotes fetch', url, e);
+        }
+    }
+    return false;
+}
 
 export const APP_QUOTES = [
     'Ölmeden önce tövbe etmekte acele ediniz. (Hadis-i Şerif)',
@@ -136,7 +195,12 @@ function quoteCompactThreshold(locale) {
 
 function pickRandomQuranQuoteEntry(locale) {
     const code = normalizeQuoteLocale(locale);
-    const list = quranQuotesData?.quotes?.[code] || quranQuotesData?.quotes?.en || [];
+    const list =
+        remoteDailyQuotes?.quranQuotes?.[code] ||
+        quranQuotesData?.quotes?.[code] ||
+        remoteDailyQuotes?.quranQuotes?.en ||
+        quranQuotesData?.quotes?.en ||
+        [];
     if (!Array.isArray(list) || !list.length) return null;
     const [s, a, t] = list[Math.floor(Math.random() * list.length)];
     const body = cleanQuoteText(t);
@@ -159,7 +223,8 @@ export function pickRandomQuoteEntry(locale = 'tr') {
         const q = pickRandomQuranQuoteEntry(code);
         if (q) return q;
     }
-    const full = APP_QUOTES[Math.floor(Math.random() * APP_QUOTES.length)];
+    const trQuotes = remoteDailyQuotes?.appQuotes || APP_QUOTES;
+    const full = trQuotes[Math.floor(Math.random() * trQuotes.length)];
     const { body } = splitTrailingRef(full);
     const preview = buildPreview(full, quoteBodyMaxLen(code));
     return {

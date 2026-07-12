@@ -108,7 +108,12 @@ import {
     uploadBackupPayload
 } from './lib/cloud-backup.js';
 import { App } from '@capacitor/app';
-import { pickRandomQuoteEntry, getReminderQuoteNotificationPayload } from './quotes.js';
+import {
+    pickRandomQuoteEntry,
+    getReminderQuoteNotificationPayload,
+    applyCachedRemoteDailyQuotes,
+    refreshRemoteDailyQuotes
+} from './quotes.js';
 import { ESMA_DEFAULT_FAZILET } from './esma-fazilet.js';
 import { ESMA_MEANING_EN } from './esma-meanings-en.js';
 import { ESMA_NAME_EN } from './esma-names-en.js';
@@ -1211,6 +1216,7 @@ async function init() {
     applyWeeklyReportPreviewSample();
     initUsageTracker();
     bindNativeReminderNotificationLaunch(openAppFromReminderNotification);
+    applyCachedRemoteDailyQuotes(); // ağ beklemeden: son indirilen söz listesi
     setDailyQuote();
     setupEventListeners();
     setupSmartRemindersUI();
@@ -1349,7 +1355,8 @@ async function init() {
 async function refreshRemoteHomeContent() {
     await Promise.all([
         refreshUpdateBannerConfig(),
-        refreshSeasonalContent(appSettings.locale)
+        refreshSeasonalContent(appSettings.locale),
+        refreshRemoteDailyQuotes()
     ]);
     applySeasonalContentToAppState(folders, zikirs, appSettings.locale);
     if (document.getElementById('homeView')?.classList.contains('active')) renderFolders();
