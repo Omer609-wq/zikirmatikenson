@@ -10,5 +10,15 @@
             "skipNativeAuth": true,
             "providers": ["google.com"]
         }
+    },
+    "ios": {
+        "includePlugins": [
+            "@capacitor-community/keep-awake",
+            "@capacitor/app",
+            "@capacitor/haptics",
+            "@capacitor/local-notifications",
+            "@capacitor/status-bar",
+            "@revenuecat/purchases-capacitor"
+        ]
     }
 }
