@@ -154,19 +154,6 @@ async function cancelReminderSlots() {
     }
 }
 
-/**
- * @returns {Promise<{ ok: boolean, reason?: string, warnExactAlarm?: boolean }>}
- */
-/** Android 12+: tam saat hatırlatıcı ayar ekranı */
-export async function openExactAlarmSettings() {
-    if (!isCapacitorNative() || Capacitor.getPlatform() !== 'android') return;
-    try {
-        await LocalNotifications.changeExactNotificationSetting();
-    } catch (e) {
-        console.error('LocalNotifications.changeExactNotificationSetting', e);
-    }
-}
-
 export const WEEKLY_REPORT_NOTIFICATION_ID = 9200;
 
 export function isWeeklyReportNotificationId(id) {
@@ -260,16 +247,6 @@ export async function syncNativeDailyReminder(enabled, timeStr, locale = 'tr') {
 
     try {
         await LocalNotifications.schedule({ notifications });
-        if (Capacitor.getPlatform() === 'android') {
-            try {
-                const st = await LocalNotifications.checkExactNotificationSetting();
-                if (st && st.exact_alarm !== 'granted') {
-                    return { ok: true, warnExactAlarm: true };
-                }
-            } catch {
-                /* Android < 12 veya API yok */
-            }
-        }
         return { ok: true };
     } catch (e) {
         console.error('LocalNotifications.schedule', e);
@@ -315,7 +292,7 @@ async function ensureReminderChannels() {
 
 /**
  * @param {{ at: Date, body: string, vibrate?: boolean, extra?: object }[]} slots
- * @returns {Promise<{ ok: boolean, reason?: string, warnExactAlarm?: boolean }>}
+ * @returns {Promise<{ ok: boolean, reason?: string }>}
  */
 export async function syncNativeSmartReminders(slots) {
     if (!isCapacitorNative()) return { ok: true };
@@ -361,16 +338,6 @@ export async function syncNativeSmartReminders(slots) {
 
     try {
         await LocalNotifications.schedule({ notifications });
-        if (Capacitor.getPlatform() === 'android') {
-            try {
-                const st = await LocalNotifications.checkExactNotificationSetting();
-                if (st && st.exact_alarm !== 'granted') {
-                    return { ok: true, warnExactAlarm: true };
-                }
-            } catch {
-                /* Android < 12 */
-            }
-        }
         return { ok: true };
     } catch (e) {
         console.error('LocalNotifications.schedule smart', e);

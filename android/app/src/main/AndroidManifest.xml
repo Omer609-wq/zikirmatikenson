@@ -38,6 +38,5 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- Android 13+ (API 33): bildirim göstermek için zorunlu izin (@capacitor/local-notifications da tanımlar; burada da görünsün) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- Günlük hatırlatıcı: Android 12+ tam saatte tetikleme (Capacitor Local Notifications) -->
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- SCHEDULE_EXACT_ALARM yok: hatırlatıcılar inexact + allowWhileIdle (Play politikası / zikir hatırlatıcısı) -->
 </manifest>

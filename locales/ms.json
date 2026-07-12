@@ -251,9 +251,6 @@
   "reminderDialog": {
     "notificationPermTitle": "Kebenaran pemberitahuan",
     "notificationPermDeniedNative": "Peringatan harian memerlukan kebenaran pemberitahuan. Di Android: Maklumat aplikasi → Pemberitahuan.",
-    "exactAlarmTitle": "Kebenaran penggera",
-    "exactAlarmBody": "Supaya peringatan berbunyi pada masa yang anda pilih, benarkan penggera tepat masa.\n\nKetik di bawah untuk membuka skrin tetapan berkaitan.",
-    "exactAlarmOk": "Buka tetapan",
     "scheduleFailedTitle": "Peringatan",
     "scheduleFailedBody": "Peringatan harian tidak dapat dijadualkan. Kemas kini aplikasi dan cuba lagi; jika masih gagal, semak Tetapan → Pemberitahuan.",
     "unsupportedTitle": "Pemberitahuan",
@@ -269,7 +266,7 @@
     "backupTitle": "Sandaran",
     "backupText": "Data aplikasi tidak termasuk sandaran automatik sistem Android / Google. Memadam data aplikasi, tukar peranti, atau nyahpasang boleh memadam semua rekod.",
     "permissionsTitle": "Kebenaran",
-    "permissionsText": "Pemberitahuan (peringatan pilihan), getaran, bunyi dan skrin sentiasa hidup untuk pengalaman apl. Di Android, kebenaran penggera tepat masa mungkin diminta supaya peringatan tepat masa. Internet digunakan untuk kandungan Al-Quran, notis kemas kini dan kandungan bermusim.",
+    "permissionsText": "Pemberitahuan (peringatan pilihan), getaran, bunyi dan skrin sentiasa hidup untuk pengalaman apl. Internet digunakan untuk kandungan Al-Quran, notis kemas kini dan kandungan bermusim.",
     "crashTitle": "Laporan ranap",
     "crashText": "Jika aplikasi ranap, laporan teknikal boleh dihantar untuk membantu pembaikan (Firebase Crashlytics). Senarai zikir dan statistik anda tidak termasuk dalam laporan itu.",
     "billingTitle": "Pembelian & langganan",

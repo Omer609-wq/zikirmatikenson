@@ -251,9 +251,6 @@
   "reminderDialog": {
     "notificationPermTitle": "Autorisation de notification",
     "notificationPermDeniedNative": "Le rappel quotidien nécessite les notifications. Sur Android : Infos sur l'application → Notifications.",
-    "exactAlarmTitle": "Autorisation d'alarme",
-    "exactAlarmBody": "Pour déclencher le rappel à l'heure exacte choisie, autorisez les alarmes exactes.\n\nAppuyez ci-dessous pour ouvrir l'écran de réglages correspondant.",
-    "exactAlarmOk": "Ouvrir les réglages",
     "scheduleFailedTitle": "Rappel",
     "scheduleFailedBody": "Impossible de programmer le rappel quotidien. Mettez l'app à jour et réessayez ; si le problème persiste, vérifiez Réglages → Notifications.",
     "unsupportedTitle": "Notifications",
@@ -269,7 +266,7 @@
     "backupTitle": "Sauvegarde",
     "backupText": "Les données de l'app ne sont pas incluses dans la sauvegarde automatique Android / Google. Effacer les données, changer d'appareil ou désinstaller peut tout supprimer.",
     "permissionsTitle": "Autorisations",
-    "permissionsText": "Notifications (rappel optionnel), vibration, son et écran allumé pour l'expérience dans l'app. Sur Android, une autorisation d'alarme exacte peut être demandée pour les rappels à l'heure. Internet sert au contenu Coran, aux avis de mise à jour et au contenu saisonnier.",
+    "permissionsText": "Notifications (rappel optionnel), vibration, son et écran allumé pour l'expérience dans l'app. Internet sert au contenu Coran, aux avis de mise à jour et au contenu saisonnier.",
     "crashTitle": "Rapports de plantage",
     "crashText": "Si l'app plante, un rapport technique peut être envoyé pour aider à corriger le problème (Firebase Crashlytics). Vos listes de zikr et statistiques n'y figurent pas.",
     "billingTitle": "Achats et abonnement",

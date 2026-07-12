@@ -251,9 +251,6 @@
   "reminderDialog": {
     "notificationPermTitle": "Izin notifikasi",
     "notificationPermDeniedNative": "Pengingat harian memerlukan izin notifikasi. Di Android: Info aplikasi → Notifikasi.",
-    "exactAlarmTitle": "Izin alarm",
-    "exactAlarmBody": "Agar pengingat berbunyi tepat pada waktu yang Anda pilih, izinkan alarm tepat waktu.\n\nKetuk di bawah untuk membuka layar pengaturan terkait.",
-    "exactAlarmOk": "Buka pengaturan",
     "scheduleFailedTitle": "Pengingat",
     "scheduleFailedBody": "Pengingat harian tidak dapat dijadwalkan. Perbarui aplikasi dan coba lagi; jika masih gagal, periksa Pengaturan → Notifikasi.",
     "unsupportedTitle": "Notifikasi",
@@ -269,7 +266,7 @@
     "backupTitle": "Cadangan",
     "backupText": "Data aplikasi tidak termasuk cadangan otomatis sistem Android / Google. Menghapus data aplikasi, ganti perangkat, atau uninstall dapat menghapus semua catatan.",
     "permissionsTitle": "Izin",
-    "permissionsText": "Notifikasi (pengingat opsional), getar, suara, dan layar tetap menyala untuk pengalaman aplikasi. Di Android, izin alarm tepat waktu dapat diminta agar pengingat tepat waktu. Internet dipakai untuk konten Al-Qur'an, pemberitahuan pembaruan, dan konten musiman.",
+    "permissionsText": "Notifikasi (pengingat opsional), getar, suara, dan layar tetap menyala untuk pengalaman aplikasi. Internet dipakai untuk konten Al-Qur'an, pemberitahuan pembaruan, dan konten musiman.",
     "crashTitle": "Laporan kerusakan",
     "crashText": "Jika aplikasi crash, laporan teknis dapat dikirim untuk membantu perbaikan (Firebase Crashlytics). Daftar zikir dan statistik Anda tidak termasuk dalam laporan itu.",
     "billingTitle": "Pembelian & langganan",

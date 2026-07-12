@@ -5,8 +5,7 @@ import {
     isCapacitorNative,
     refreshNativeBottomInsetVar,
     syncNativeDailyReminder,
-    syncNativeSmartReminders,
-    openExactAlarmSettings
+    syncNativeSmartReminders
 } from './native-reminders.js';
 import {
     clearUpdateBannerDom,
@@ -2992,12 +2991,6 @@ async function ensureReminderSchedule() {
             await showAppAlert(t('reminderDialog.notificationPermDeniedNative'), {
                 title: t('reminderDialog.notificationPermTitle')
             });
-        } else if (reminderSettings.enabled && r.warnExactAlarm) {
-            await showAppAlert(t('reminderDialog.exactAlarmBody'), {
-                title: t('reminderDialog.exactAlarmTitle'),
-                okLabel: t('reminderDialog.exactAlarmOk')
-            });
-            await openExactAlarmSettings();
         } else if (reminderSettings.enabled && !r.ok && r.reason === 'schedule') {
             await showAppAlert(t('reminderDialog.scheduleFailedBody'), {
                 title: t('reminderDialog.scheduleFailedTitle')
@@ -3171,11 +3164,6 @@ async function ensureWeeklyReportSchedule() {
     });
     if (!r.ok && r.reason === 'denied') {
         await showAppAlert(t('weeklyReport.permDenied'), { title: t('reminderDialog.notificationPermTitle') });
-    } else if (r.warnExactAlarm) {
-        await showAppAlert(t('reminderDialog.exactAlarmBody'), {
-            title: t('reminderDialog.exactAlarmTitle'),
-            okLabel: t('reminderDialog.exactAlarmOk')
-        });
     }
 }
 
@@ -4208,12 +4196,6 @@ async function ensureSmartReminderSchedule() {
     const r = await syncNativeSmartReminders(slots);
     if (!r.ok && r.reason === 'denied') {
         await showAppAlert(t('smartReminders.permDenied'), { title: t('reminderDialog.notificationPermTitle') });
-    } else if (r.warnExactAlarm) {
-        await showAppAlert(t('reminderDialog.exactAlarmBody'), {
-            title: t('reminderDialog.exactAlarmTitle'),
-            okLabel: t('reminderDialog.exactAlarmOk')
-        });
-        await openExactAlarmSettings();
     } else if (!r.ok && r.reason === 'schedule') {
         await showAppAlert(t('reminderDialog.scheduleFailedBody'), {
             title: t('reminderDialog.scheduleFailedTitle')

@@ -251,9 +251,6 @@
   "reminderDialog": {
     "notificationPermTitle": "Bildirim izni",
     "notificationPermDeniedNative": "Günlük hatırlatıcı için bildirim izni gerekir. Android'de Uygulama bilgisi → Bildirimler bölümünden açabilirsiniz.",
-    "exactAlarmTitle": "Alarm izni",
-    "exactAlarmBody": "Hatırlatıcının seçtiğiniz saatte çalışması için tam zamanlı alarm iznini açmanız gerekir.\n\nAşağıdaki düğmeye basınca ilgili ayar sayfasına yönlendirileceksiniz.",
-    "exactAlarmOk": "Ayarlara git",
     "scheduleFailedTitle": "Hatırlatıcı",
     "scheduleFailedBody": "Günlük hatırlatıcı zamanlanamadı. Uygulamayı güncelleyip tekrar deneyin; sorun sürerse Ayarlar → Bildirimler bölümünü kontrol edin.",
     "unsupportedTitle": "Bildirim",
@@ -269,7 +266,7 @@
     "backupTitle": "Yedekleme",
     "backupText": "Uygulama verisi Android sistem / Google otomatik yedeklemesine dahil edilmez. Uygulama verilerini silmek, cihaz değiştirmek veya kaldırmak tüm kaydı silebilir.",
     "permissionsTitle": "İzinler",
-    "permissionsText": "Bildirimler (isteğe bağlı hatırlatıcı), titreşim, ses ve ekranı uyanık tutma uygulama deneyimi içindir. Android’de hatırlatıcıların zamanında gelmesi için tam saatli alarm izni istenebilir. İnternet; Kur’an içeriği, güncelleme duyurusu ve mevsimsel içerik için kullanılır.",
+    "permissionsText": "Bildirimler (isteğe bağlı hatırlatıcı), titreşim, ses ve ekranı uyanık tutma uygulama deneyimi içindir. İnternet; Kur’an içeriği, güncelleme duyurusu ve mevsimsel içerik için kullanılır.",
     "crashTitle": "Çökme raporları",
     "crashText": "Uygulama çökerse hatayı düzeltmek için teknik bir çökme kaydı gönderilebilir (Firebase Crashlytics). Zikirleriniz ve istatistikleriniz bu kayıtta yer almaz.",
     "billingTitle": "Satın almalar ve abonelik",

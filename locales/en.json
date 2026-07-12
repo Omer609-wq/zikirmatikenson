@@ -251,9 +251,6 @@
   "reminderDialog": {
     "notificationPermTitle": "Notification permission",
     "notificationPermDeniedNative": "Daily reminders need notification permission. On Android: App info → Notifications.",
-    "exactAlarmTitle": "Alarm permission",
-    "exactAlarmBody": "To run the reminder at the exact time you chose, allow exact alarms.\n\nTap below to open the relevant settings screen.",
-    "exactAlarmOk": "Open settings",
     "scheduleFailedTitle": "Reminder",
     "scheduleFailedBody": "Could not schedule the daily reminder. Update the app and try again; if it persists, check Settings → Notifications.",
     "unsupportedTitle": "Notifications",
@@ -269,7 +266,7 @@
     "backupTitle": "Backup",
     "backupText": "App data is not included in Android system / Google automatic backup. Clearing app data, switching devices, or uninstalling may delete all records.",
     "permissionsTitle": "Permissions",
-    "permissionsText": "Notifications (optional reminder), vibration, sound, and keep-screen-awake are for the in-app experience. On Android, an exact-alarm permission may be requested so reminders can fire on time. Internet is used for Quran content, update notices, and seasonal content.",
+    "permissionsText": "Notifications (optional reminder), vibration, sound, and keep-screen-awake are for the in-app experience. Internet is used for Quran content, update notices, and seasonal content.",
     "crashTitle": "Crash reports",
     "crashText": "If the app crashes, a technical crash report may be sent to help us fix the issue (Firebase Crashlytics). Your dhikr lists and statistics are not included in that report.",
     "billingTitle": "Purchases & subscription",
