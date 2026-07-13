@@ -1,5 +1,5 @@
 /* Vite çıktısı: önbellek listesinde hash’li dosya yok; ağ öncelikli */
-const CACHE_NAME = 'zikirmatik-cache-v8';
+const CACHE_NAME = 'zikirmatik-cache-v9';
 
 self.addEventListener('install', (event) => {
     event.waitUntil(self.skipWaiting());

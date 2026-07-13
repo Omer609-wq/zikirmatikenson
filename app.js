@@ -94,6 +94,11 @@ import {
     installPremiumPreviewConsoleHelper,
     resolvePremiumPreviewFlags
 } from './lib/premium-preview.js';
+import { resolvePremiumViewAccess } from './lib/premium-view-access.js';
+import {
+    getMushafNavOptsForRerender,
+    getMushafNavOptsForSurahOpen
+} from './lib/quran-navigation.js';
 import { applyNativeStatusBarTheme } from './status-bar-theme.js';
 import { runCounterVibration, runDragReorderNudge } from './haptics.js';
 import { setupCrashReporting } from './lib/crash-reporting.js';
@@ -185,16 +190,12 @@ import {
 } from './quran.js';
 
 function mushafNavOptsForRerender() {
-    return appSettings.quranReaderLayout === 'mushaf' ? { preferSaved: true } : {};
+    return getMushafNavOptsForRerender(appSettings.quranReaderLayout);
 }
 
 /** Sure listesinden veya sure numarasıyla açılış (belirli ayet hariç). */
 function mushafNavOptsForSurahOpen(scrollAyah) {
-    if (scrollAyah != null && Number.isFinite(Number(scrollAyah))) return {};
-    if (appSettings.quranReaderLayout === 'mushaf' && appSettings.quranMushafRememberPage) {
-        return { preferSaved: true };
-    }
-    return {};
+    return getMushafNavOptsForSurahOpen(scrollAyah, appSettings.quranReaderLayout);
 }
 
 // ===================== DATA MODELS =====================
@@ -4812,13 +4813,16 @@ function goBackInApp({ fallbackViewId = 'homeView' } = {}) {
 function showView(viewId, param = null, options = {}) {
     const { push = true } = options || {};
     usageTracker?.forceFlush();
-    if (viewId === 'premiumView' && !PREMIUM_UI_VISIBLE) {
-        viewId = 'homeView';
-        param = null;
-    }
-    if (PREMIUM_FEATURE_VIEW_IDS.has(viewId) && !PREMIUM_LIVE) {
-        viewId = 'premiumView';
-        param = null;
+    const premiumAccess = resolvePremiumViewAccess(viewId, param, {
+        premiumLive: PREMIUM_LIVE,
+        premiumUiVisible: PREMIUM_UI_VISIBLE,
+        premiumLocked: isPremiumOnlyFeatureLocked(),
+        premiumFeatureViewIds: PREMIUM_FEATURE_VIEW_IDS
+    });
+    viewId = premiumAccess.viewId;
+    param = premiumAccess.param;
+    if (premiumAccess.blockedPremiumFeature && PREMIUM_UI_VISIBLE) {
+        showPremiumFeatureUpsell();
     }
     const nextState = getViewState(viewId, param);
     const prevState = currentViewId ? getViewState(currentViewId, (
