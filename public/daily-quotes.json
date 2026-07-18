@@ -2,7 +2,7 @@
   "_yardim": [
     "Bu dosya ana sayfa alt seridindeki gunun sozu satirlarini uzaktan gunceller.",
     "appQuotes: Turkce satirlar — Metin (Kaynak) bicimi. Bos/eksikse uygulamadaki gomulu liste kullanilir.",
-    "quranQuotes: TR disi diller icin { en: [[sure, ayet, metin], ...] } — vermezsen gomulu ceviriler kalir.",
+    "quranQuotes: TR disi diller icin { en: [[sure, ayet, metin], ...] veya [sure, ayet, metin, bitisAyet] } — vermezsen gomulu ceviriler kalir.",
     "Yayin: git push -> jsDelivr birkac saatte dagitir. Acil: https://purge.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/daily-quotes.json"
   ],
   "version": 1,
@@ -11,7 +11,7 @@
     "Kalpler ancak Allah'ı anmakla mutmain olur. (Rad Suresi 28)",
     "Dua, müminin silahıdır. (Hadis-i Şerif)",
     "Kim bir iyilik yaparsa ona on katı vardır. (Enam Suresi 160)",
-    "Zorlukla beraber şüphesiz bir kolaylık vardır. (İnşirah Suresi 5)",
+    "Zorlukla beraber şüphesiz bir kolaylık vardır. (İnşirah Suresi 5–6)",
     "Sizin en hayırlınız Kur'an'ı öğrenen ve öğretendir. (Hadis-i Şerif)",
     "Namaz dinin direğidir. (Hadis-i Şerif)",
     "Öyleyse Beni anın ki Ben de sizi anayım; Bana şükredin, nankörlük etmeyin. (Bakara Suresi 152)",
@@ -20,11 +20,7 @@
     "Şüphesiz Allah, sabredenlerle beraberdir. (Bakara Suresi 153)",
     "Biz Kur'an'ı müminlere şifa ve rahmet olarak indirdik. (İsrâ Suresi 82)",
     "İyilikler kötülükleri giderir. (Hud Suresi 114)",
-    "Kim Allah'tan korkarsa, Allah ona bir çıkış yolu yaratır. (Talak Suresi 2)",
-    "Müminler ancak kardeştir. (Hucurât Suresi 10)",
     "De ki: Benim namazım, kurbanım, hayatım ve ölümüm âlemlerin Rabbi Allah içindir. (Enam Suresi 162)",
-    "Karşılaştığınız ordulara karşı sebat edin ve Allah'ı çok zikredin ki kurtuluşa eresiniz. (Enfal Suresi 45)",
-    "Şüphesiz namaz, müminler üzerine vakitleri belirlenmiş bir farzdır. (Nisa Suresi 103)",
     "Rabbinizi içinden ürperti duyarak ve alçak sesle zikredin. (Araf Suresi 205)",
     "Allah'ı anan ile anmayanı, dirilerle ölülere benzetebilirsiniz. (Buhari, Müslim)",
     "Kulum Beni andığında Ben onunla beraberim. (Hadis-i Kudsi, Buhari, Müslim)",
@@ -40,8 +36,17 @@
     "Güzel söz sadakadır. (Buhari, Müslim)",
     "Merhamet etmeyene merhamet olunmaz. (Buhari, Müslim)",
     "Din nasihattır. (Müslim)",
-    "Allah sabredenleri sever. (Al-i İmrân Suresi 146)",
-    "Allah, tevbe edenleri ve tertemiz olanları sever. (Bakara Suresi 222)",
+    "Şüphesiz Ben Allah'ım; Bana kulluk et, Beni anmak için namaz kıl. (Tâhâ Suresi 14)",
+    "Yüce Rabbinin adını tesbih et. (A'lâ Suresi 1)",
+    "Arınmış olan, Rabbinin adını anıp namaz kılan saadete erişir. (A'lâ Suresi 14–15)",
+    "Bir işi bitirince diğerine giriş; ümidini yalnız Rabbinden iste. (İnşirah Suresi 7–8)",
+    "Rabbini hamd ile an; ölünceye kadar Rabbine kulluk et. (Hicr Suresi 98–99)",
+    "Allah'ın yardımı ve zafer gelince Rabbini överek tesbih et ve O'ndan bağışlanma dile. (Nasr Suresi 1–3)",
+    "Öğüt ver; doğrusu öğüt inananlara fayda verir. (Zâriyât Suresi 55)",
+    "Kullarım sana Beni sorarsa: Ben onlara yakınım; dua edene icabet ederim. (Bakara Suresi 186)",
+    "Rabbin seni bırakmadı; ahiret senin için daha hayırlıdır, Rabbin sana verecek ve sen hoşnut olacaksın. (Duhâ Suresi 3–5)",
+    "İnanmış olarak iyi iş işleyene hoş bir hayat yaşatırız. (Nahl Suresi 97)",
+    "Allah kullarına lütufta bulunandır; dilediğini rızıklandırır. (Şûrâ Suresi 19)",
     "Lâ ilâhe illallah, dil ile kalp uyum içinde söylenmedikçe kişi cennete giremez. (Buhari, Müslim)",
     "Lâ havle ve lâ kuvvete illâ billâh, Cennet hazinelerinden bir hazinedir. (Buhari, Müslim)",
     "Ölümü çokça anın; o, dünya sevgisini giderir. (Tirmizi)",
@@ -51,15 +56,9 @@
     "Kim Allah için bir karış yol yürürse, Allah ona iki karış yol yürütür. (Buhari, Müslim)",
     "Allah yolunda atılan her adım, bir sadakadır. (Buhari, Müslim)",
     "De ki: Ey kendilerine zulmeden kullarım! Allah'ın rahmetinden ümit kesmeyin. (Zümer Suresi 53)",
-    "Şüphesiz Allah, kendisine dayanıp güvenenleri sever. (Al-i İmrân Suresi 159)",
-    "Kim Allah'a tevekkül ederse, Allah ona yeter. (Talak Suresi 3)",
-    "Şüphesiz Allah, zorlukla beraber kolaylık verir. (İnşirah Suresi 6)",
-    "Allah bir toplumu, onlar kendilerini değiştirmedikçe değiştirmez. (Ra'd Suresi 11)",
     "Kalpler ancak Allah'ı anmakla huzur bulur. (Ra'd Suresi 28)",
-    "Muhakkak her zorlukla beraber bir ferahlık vardır. (İnşirah Suresi 5)",
     "Allah Teâlâ buyurur: Ben kulumun zannı gibiyim. (Buhari, Müslim)",
     "Allah, kulunun tövbesine çok sevinir. (Müslim)",
-    "Şükrederseniz elbette nimetimi artırırım. (İbrahim Suresi 7)",
     "Ameller niyetlere göredir. (Buhari, Müslim)",
     "Kolaylaştırın, zorlaştırmayın; müjdeleyin, nefret ettirmeyin. (Buhari, Müslim)",
     "Allah, kullarına karşı annesinin çocuğuna merhametinden daha merhametlidir. (Buhari, Müslim)",
@@ -67,6 +66,905 @@
     "Allah, sizin suretlerinize ve mallarınıza değil; kalplerinize ve amellerinize bakar. (Müslim)",
     "Kim bir müminin sıkıntısını giderirse, Allah da onun kıyamet sıkıntılarından birini giderir. (Müslim)",
     "Biriniz, kendisi için sevdiğini kardeşi için de sevmedikçe iman etmiş olmaz. (Buhari, Müslim)",
-    "Yarım hurma ile de olsa ateşten korunun. (Buhari, Müslim)"
-  ]
+    "Yarım hurma ile de olsa ateşten korunun. (Buhari, Müslim)",
+    "Radîtu billâhi Rabben ve bil-İslâmi dînen ve bi-Muhammedin nebiyyan. (Hadis-i Şerif)"
+  ],
+  "quranQuotes": {
+    "en": [
+      [
+        13,
+        28,
+        "Those who have believed and whose hearts are assured by the remembrance of Allah. Unquestionably, by the remembrance of Allah hearts are assured."
+      ],
+      [
+        6,
+        160,
+        "Whoever comes [on the Day of Judgement] with a good deed will have ten times the like thereof [to his credit], and whoever comes with an evil deed will not be recompensed except the like thereof; and they will not be wronged."
+      ],
+      [
+        94,
+        5,
+        "For indeed, with hardship [will be] ease. Indeed, with hardship [will be] ease.",
+        6
+      ],
+      [
+        2,
+        152,
+        "So remember Me; I will remember you. And be grateful to Me and do not deny Me."
+      ],
+      [
+        33,
+        41,
+        "O you who have believed, remember Allah with much remembrance"
+      ],
+      [
+        73,
+        8,
+        "And remember the name of your Lord and devote yourself to Him with [complete] devotion."
+      ],
+      [
+        2,
+        153,
+        "O you who have believed, seek help through patience and prayer. Indeed, Allah is with the patient."
+      ],
+      [
+        17,
+        82,
+        "And We send down of the Qur'an that which is healing and mercy for the believers, but it does not increase the wrongdoers except in loss."
+      ],
+      [
+        11,
+        114,
+        "And establish prayer at the two ends of the day and at the approach of the night. Indeed, good deeds do away with misdeeds. That is a reminder for those who remember."
+      ],
+      [
+        6,
+        162,
+        "Say, \"Indeed, my prayer, my rites of sacrifice, my living and my dying are for Allah, Lord of the worlds."
+      ],
+      [
+        7,
+        205,
+        "And remember your Lord within yourself in humility and in fear without being apparent in speech - in the mornings and the evenings. And do not be among the heedless."
+      ],
+      [
+        33,
+        56,
+        "Indeed, Allah confers blessing upon the Prophet, and His angels [ask Him to do so]. O you who have believed, ask [Allah to confer] blessing upon him and ask [Allah to grant him] peace."
+      ],
+      [
+        39,
+        53,
+        "Say, \"O My servants who have transgressed against themselves [by sinning], do not despair of the mercy of Allah. Indeed, Allah forgives all sins. Indeed, it is He who is the Forgiving, the Merciful."
+      ],
+      [
+        20,
+        14,
+        "Indeed, I am Allah. There is no deity except Me, so worship Me and establish prayer for My remembrance."
+      ],
+      [
+        87,
+        1,
+        "Exalt the name of your Lord, the Most High,"
+      ],
+      [
+        87,
+        14,
+        "He has certainly succeeded who purifies himself And mentions the name of his Lord and prays.",
+        15
+      ],
+      [
+        94,
+        7,
+        "So when you have finished [your duties], then stand up [for worship]. And to your Lord direct [your] longing.",
+        8
+      ],
+      [
+        15,
+        98,
+        "So exalt [Allah] with praise of your Lord and be of those who prostrate [to Him]. And worship your Lord until there comes to you the certainty (death).",
+        99
+      ],
+      [
+        110,
+        1,
+        "When the victory of Allah has come and the conquest, And you see the people entering into the religion of Allah in multitudes, Then exalt [Him] with praise of your Lord and ask forgiveness of Him. Indeed, He is ever Accepting of repentance.",
+        3
+      ],
+      [
+        51,
+        55,
+        "And remind, for indeed, the reminder benefits the believers."
+      ],
+      [
+        2,
+        186,
+        "And when My servants ask you, [O Muhammad], concerning Me - indeed I am near. I respond to the invocation of the supplicant when he calls upon Me. So let them respond to Me [by obedience] and believe in Me that they may be [rightly] guided."
+      ],
+      [
+        93,
+        3,
+        "Your Lord has not taken leave of you, [O Muhammad], nor has He detested [you]. And the Hereafter is better for you than the first [life]. And your Lord is going to give you, and you will be satisfied.",
+        5
+      ],
+      [
+        16,
+        97,
+        "Whoever does righteousness, whether male or female, while he is a believer - We will surely cause him to live a good life, and We will surely give them their reward [in the Hereafter] according to the best of what they used to do."
+      ],
+      [
+        42,
+        19,
+        "Allah is Subtle with His servants; He gives provisions to whom He wills. And He is the Powerful, the Exalted in Might."
+      ]
+    ],
+    "fr": [
+      [
+        13,
+        28,
+        "ceux qui ont cru, et dont les cœurs se tranquillisent à l'évocation d'Allah». Certes, c'est par l'évocation d'Allah que les cœurs se tranquillisent."
+      ],
+      [
+        6,
+        160,
+        "Quiconque viendra avec le bien aura dix fois autant; et quiconque viendra avec le mal ne sera rétribué que par son équivalent. Et on ne leur fera aucune injustice."
+      ],
+      [
+        94,
+        5,
+        "A côté de la difficulté est, certes, une facilité!",
+        6
+      ],
+      [
+        2,
+        152,
+        "Souvenez-vous de Moi donc. Je vous récompenserai. Remerciez-Moi et ne soyez pas ingrats envers Moi!"
+      ],
+      [
+        33,
+        41,
+        "O vous qui croyez! Evoquez Allah d'une façon abondante,"
+      ],
+      [
+        73,
+        8,
+        "Et rappelle-toi le nom de ton Seigneur et consacre-toi totalement à Lui,"
+      ],
+      [
+        2,
+        153,
+        "O les croyants! Cherchez secours dans l'endurance et la Salât. Car Allah est avec ceux qui sont endurants."
+      ],
+      [
+        17,
+        82,
+        "Nous faisons descendre du Coran, ce qui est une guérison et une miséricorde pour les croyants. Cependant, cela ne fait qu'accroître la perdition des injustes."
+      ],
+      [
+        11,
+        114,
+        "Et accomplis la Salât aux deux extrémités du jour et à certaines heures de la nuit. Les bonnes œuvres dissipent les mauvaises. Cela est une exhortation pour ceux qui réfléchissent."
+      ],
+      [
+        6,
+        162,
+        "Dis: «En vérité, ma Salât, mes actes de dévotion, ma vie et ma mort appartiennent à Allah, Seigneur de l'Univers."
+      ],
+      [
+        7,
+        205,
+        "Et invoque ton Seigneur en toi-même, en humilité et crainte, à mi-voix, le matin et le soir, et ne sois pas du nombre des insouciants."
+      ],
+      [
+        33,
+        56,
+        "Certes, Allah et Ses Anges prient sur le Prophète; ô vous qui croyez priez sur lui et adressez [lui] vos salutations."
+      ],
+      [
+        39,
+        53,
+        "Dis: «O Mes serviteurs qui avez commis des excès à votre propre détriment, ne désespérez pas de la miséricorde d'Allah. Car Allah pardonne tous les péchés. Oui, c'est Lui le Pardonneur, le Très Miséricordieux."
+      ],
+      [
+        20,
+        14,
+        "Certes, c'est Moi Allah: point de divinité que Moi. Adore-Moi donc et accomplis la Salât pour te souvenir de Moi."
+      ],
+      [
+        87,
+        1,
+        "Glorifie le nom de ton Seigneur, le Très Haut,"
+      ],
+      [
+        87,
+        14,
+        "Réussit, certes, celui qui se purifie, et se rappelle le nom de son Seigneur, puis célèbre la Salât.",
+        15
+      ],
+      [
+        94,
+        7,
+        "Quand tu te libères, donc, lève-toi, et à ton Seigneur aspire.",
+        8
+      ],
+      [
+        15,
+        98,
+        "Glorifie donc Ton Seigneur par Sa louange et sois de ceux qui se prosternent; et adore ton Seigneur jusqu'à ce que te vienne la certitude (la mort).",
+        99
+      ],
+      [
+        110,
+        1,
+        "Lorsque vient le secours d'Allah ainsi que la victoire, et que tu vois les gens entrer en foule dans la religion d'Allah, alors, par la louange, célèbre la gloire de ton Seigneur et implore Son pardon. Car c'est Lui le grand Accueillant au repentir.",
+        3
+      ],
+      [
+        51,
+        55,
+        "Et rappelle; car le rappel profite aux croyants."
+      ],
+      [
+        2,
+        186,
+        "Et quand Mes serviteurs t'interrogent sur Moi.. alors Je suis tout proche: Je réponds à l'appel de celui qui Me prie quand il Me prie. Qu'ils répondent à Mon appel, et qu'ils croient en Moi, afin qu'ils soient bien guidés."
+      ],
+      [
+        93,
+        3,
+        "Ton Seigneur ne t'a ni abandonné, ni détesté. La vie dernière t'est, certes, meilleure que la vie présente. Ton Seigneur t'accordera certes [Ses faveurs], et alors tu seras satisfait.",
+        5
+      ],
+      [
+        16,
+        97,
+        "Quiconque, mâle ou femelle, fait une bonne œuvre tout en étant croyant, Nous lui ferons vivre une bonne vie. Et Nous les récompenserons, certes, en fonction des meilleures de leurs actions."
+      ],
+      [
+        42,
+        19,
+        "Allah est doux envers Ses serviteurs. Il attribue [Ses biens] à qui Il veut. Et c'est Lui le Fort, le Puissant."
+      ]
+    ],
+    "id": [
+      [
+        13,
+        28,
+        "(yaitu) orang-orang yang beriman dan hati mereka manjadi tenteram dengan mengingat Allah. Ingatlah, hanya dengan mengingati Allah-lah hati menjadi tenteram."
+      ],
+      [
+        6,
+        160,
+        "Barangsiapa membawa amal yang baik, maka baginya (pahala) sepuluh kali lipat amalnya; dan barangsiapa yang membawa perbuatan jahat maka dia tidak diberi pembalasan melainkan seimbang dengan kejahatannya, sedang mereka sedikitpun tidak dianiaya (dirugikan)."
+      ],
+      [
+        94,
+        5,
+        "Karena sesungguhnya sesudah kesulitan itu ada kemudahan, sesungguhnya sesudah kesulitan itu ada kemudahan.",
+        6
+      ],
+      [
+        2,
+        152,
+        "Karena itu, ingatlah kamu kepada-Ku niscaya Aku ingat (pula) kepadamu, dan bersyukurlah kepada-Ku, dan janganlah kamu mengingkari (nikmat)-Ku."
+      ],
+      [
+        33,
+        41,
+        "Hai orang-orang yang beriman, berzdikirlah (dengan menyebut nama) Allah, zikir yang sebanyak-banyaknya."
+      ],
+      [
+        73,
+        8,
+        "Sebutlah nama Tuhanmu, dan beribadatlah kepada-Nya dengan penuh ketekunan."
+      ],
+      [
+        2,
+        153,
+        "Hai orang-orang yang beriman, jadikanlah sabar dan shalat sebagai penolongmu, sesungguhnya Allah beserta orang-orang yang sabar."
+      ],
+      [
+        17,
+        82,
+        "Dan Kami turunkan dari Al Quran suatu yang menjadi penawar dan rahmat bagi orang-orang yang beriman dan Al Quran itu tidaklah menambah kepada orang-orang yang zalim selain kerugian."
+      ],
+      [
+        11,
+        114,
+        "Dan dirikanlah sembahyang itu pada kedua tepi siang (pagi dan petang) dan pada bahagian permulaan daripada malam. Sesungguhnya perbuatan-perbuatan yang baik itu menghapuskan (dosa) perbuatan-perbuatan yang buruk. Itulah peringatan bagi orang-orang yang ingat."
+      ],
+      [
+        6,
+        162,
+        "Katakanlah: sesungguhnya sembahyangku, ibadatku, hidupku dan matiku hanyalah untuk Allah, Tuhan semesta alam."
+      ],
+      [
+        7,
+        205,
+        "Dan sebutlah (nama) Tuhanmu dalam hatimu dengan merendahkan diri dan rasa takut, dan dengan tidak mengeraskan suara, di waktu pagi dan petang, dan janganlah kamu termasuk orang-orang yang lalai."
+      ],
+      [
+        33,
+        56,
+        "Sesungguhnya Allah dan malaikat-malaikat-Nya bershalawat untuk Nabi. Hai orang-orang yang beriman, bershalawatlah kamu untuk Nabi dan ucapkanlah salam penghormatan kepadanya."
+      ],
+      [
+        39,
+        53,
+        "Katakanlah: \"Hai hamba-hamba-Ku yang malampaui batas terhadap diri mereka sendiri, janganlah kamu berputus asa dari rahmat Allah. Sesungguhnya Allah mengampuni dosa-dosa semuanya. Sesungguhnya Dialah Yang Maha Pengampun lagi Maha Penyayang."
+      ],
+      [
+        20,
+        14,
+        "Sesungguhnya Aku ini adalah Allah, tidak ada Tuhan (yang hak) selain Aku, maka sembahlah Aku dan dirikanlah shalat untuk mengingat Aku."
+      ],
+      [
+        87,
+        1,
+        "Sucikanlah nama Tuhanmu Yang Maha Tingi,"
+      ],
+      [
+        87,
+        14,
+        "Sesungguhnya beruntunglah orang yang membersihkan diri (dengan beriman), dan dia ingat nama Tuhannya, lalu dia sembahyang.",
+        15
+      ],
+      [
+        94,
+        7,
+        "Maka apabila kamu telah selesai (dari sesuatu urusan), kerjakanlah dengan sungguh-sungguh (urusan) yang lain, dan hanya kepada Tuhanmulah hendaknya kamu berharap.",
+        8
+      ],
+      [
+        15,
+        98,
+        "maka bertasbihlah dengan memuji Tuhanmu dan jadilah kamu di antara orang-orang yang bersujud (shalat), dan sembahlah Tuhanmu sampai datang kepadamu yang diyakini (ajal).",
+        99
+      ],
+      [
+        110,
+        1,
+        "Apabila telah datang pertolongan Allah dan kemenangan, dan kamu lihat manusia masuk agama Allah dengan berbondong-bondong, maka bertasbihlah dengan memuji Tuhanmu dan mohonlah ampun kepada-Nya. Sesungguhnya Dia adalah Maha Penerima taubat.",
+        3
+      ],
+      [
+        51,
+        55,
+        "Dan tetaplah memberi peringatan, karena sesungguhnya peringatan itu bermanfaat bagi orang-orang yang beriman."
+      ],
+      [
+        2,
+        186,
+        "Dan apabila hamba-hamba-Ku bertanya kepadamu tentang Aku, maka (jawablah), bahwasanya Aku adalah dekat. Aku mengabulkan permohonan orang yang berdoa apabila ia memohon kepada-Ku, maka hendaklah mereka itu memenuhi (segala perintah-Ku) dan hendaklah mereka beriman kepada-Ku, agar mereka selalu berada dalam kebenaran."
+      ],
+      [
+        93,
+        3,
+        "Tuhanmu tiada meninggalkan kamu dan tiada (pula) benci kepadamu. Dan sesungguhnya hari kemudian itu lebih baik bagimu daripada yang sekarang (permulaan). Dan kelak Tuhanmu pasti memberikan karunia-Nya kepadamu, lalu (hati) kamu menjadi puas.",
+        5
+      ],
+      [
+        16,
+        97,
+        "Barangsiapa yang mengerjakan amal saleh, baik laki-laki maupun perempuan dalam keadaan beriman, maka sesungguhnya akan Kami berikan kepadanya kehidupan yang baik dan sesungguhnya akan Kami beri balasan kepada mereka dengan pahala yang lebih baik dari apa yang telah mereka kerjakan."
+      ],
+      [
+        42,
+        19,
+        "Allah Maha lembut terhadap hamba-hamba-Nya; Dia memberi rezeki kepada yang di kehendaki-Nya dan Dialah Yang Maha Kuat lagi Maha Perkasa."
+      ]
+    ],
+    "ms": [
+      [
+        13,
+        28,
+        "(Iaitu) orang-orang yang beriman dan tenang tenteram hati mereka dengan zikrullah\". Ketahuilah dengan \"zikrullah\" itu, tenang tenteramlah hati manusia."
+      ],
+      [
+        6,
+        160,
+        "Sesiapa yang membawa amal kebaikan (pada hari kiamat), maka baginya (balasan) sepuluh kali ganda (dari kebaikan) yang sama dengannya; dan sesiapa yang membawa amal kejahatan, maka ia tidak dibalas melainkan (kejahatan) yang sama dengannya; sedang mereka tidak dianiaya (sedikitpun)."
+      ],
+      [
+        94,
+        5,
+        "Oleh itu, maka (tetapkanlah kepercayaanmu) bahawa sesungguhnya tiap-tiap kesukaran disertai kemudahan, (Sekali lagi ditegaskan): bahawa sesungguhnya tiap-tiap kesukaran disertai kemudahan.",
+        6
+      ],
+      [
+        2,
+        152,
+        "Oleh itu ingatlah kamu kepadaKu (dengan mematuhi hukum dan undang-undangKu), supaya Aku membalas kamu dengan kebaikan; dan bersyukurlah kamu kepadaKu dan janganlah kamu kufur (akan nikmatKu)."
+      ],
+      [
+        33,
+        41,
+        "Wahai orang-orang yang beriman, (untuk bersyukur kepada Allah) ingatlah serta sebutlah nama Allah dengan ingatan serta sebutan yang sebanyak-banyaknya;"
+      ],
+      [
+        73,
+        8,
+        "Dan sebutlah (dengan lidah dan hati) akan nama Tuhanmu (terus menerus siang dan malam), serta tumpukanlah (amal ibadatmu) kepadaNya dengan sebulat-bulat tumpuan."
+      ],
+      [
+        2,
+        153,
+        "Wahai sekalian orang-orang yang beriman! Mintalah pertolongan (untuk menghadapi susah payah dalam menyempurnakan sesuatu perintah Tuhan) dengan bersabar dan dengan (mengerjakan) sembahyang; kerana sesungguhnya Allah menyertai (menolong) orang-orang yang sabar"
+      ],
+      [
+        17,
+        82,
+        "Dan Kami turunkan dengan beransur-ansur dari Al-Quran Aya-ayat Suci yang menjadi ubat penawar dan rahmat bagi orang-orang yang beriman kepadanya; dan (sebaliknya) Al-Quran tidak menambahkan orang-orang yang zalim (disebabkan keingkaran mereka) melainkan kerugian jua."
+      ],
+      [
+        11,
+        114,
+        "Dan dirikanlah sembahyang (wahai Muhammad, engkau dan umatmu), pada dua bahagian siang (pagi dan petang), dan pada waktu-waktu yang berhampiran dengannya dari waktu malam. Sesungguhnya amal-amal kebajikan (terutama sembahyang) itu menghapuskan kejahatan. Perintah-perintah Allah yang demikian adalah menjadi peringatan bagi orang-orang yang mahu beringat."
+      ],
+      [
+        6,
+        162,
+        "Katakanlah: \"Sesungguhnya sembahyangku dan ibadatku, hidupku dan matiku, hanyalah untuk Allah Tuhan yang memelihara dan mentadbirkan sekalian alam."
+      ],
+      [
+        7,
+        205,
+        "Dan sebutlah serta ingatlah akan Tuhanmu dalam hatimu, dengan merendah diri serta dengan perasaan takut (melanggar perintahnya), dan dengan tidak pula menyaringkan suara, pada waktu pagi dan petang dan janganlah engkau menjadi dari orang-orang yang lalai."
+      ],
+      [
+        33,
+        56,
+        "Sesungguhnya Allah dan malaikatNya berselawat (memberi segala penghormatan dan kebaikan) kepada Nabi (Muhammad s.a.w); wahai orang-orang yang beriman berselawatlah kamu kepadanya serta ucapkanlah salam sejahtera dengan penghormatan yang sepenuhnya."
+      ],
+      [
+        39,
+        53,
+        "Katakanlah (wahai Muhammad): \"Wahai hamba-hambaKu yang telah melampaui batas terhadap diri mereka sendiri (dengan perbuatan-perbuatan maksiat), janganlah kamu berputus asa dari rahmat Allah, kerana sesungguhnya Allah mengampunkan segala dosa; sesungguhnya Dia lah jua Yang Maha Pengampun, lagi Maha Mengasihani."
+      ],
+      [
+        20,
+        14,
+        "Sesungguhnya Akulah Allah; tiada tuhan melainkan Aku; oleh itu, sembahlah akan Daku, dan dirikanlah sembahyang untuk mengingati Daku."
+      ],
+      [
+        87,
+        1,
+        "Bertasbihlah mensucikan nama Tuhanmu Yang Maha Tinggi (dari segala sifat-sifat kekurangan), -"
+      ],
+      [
+        87,
+        14,
+        "Sesungguhnya berjayalah orang yang - setelah menerima peringatan itu - berusaha membersihkan dirinya (dengan taat dan amal yang soleh), Dan menyebut-nyebut dengan lidah dan hatinya akan nama Tuhannya serta mangerjakan sembahyang (dengan khusyuk).",
+        15
+      ],
+      [
+        94,
+        7,
+        "Kemudian apabila engkau telah selesai (daripada sesuatu amal soleh), maka bersungguh-sungguhlah engkau berusaha (mengerjakan amal soleh yang lain), Dan kepada Tuhanmu sahaja hendaklah engkau memohon (apa yang engkau gemar dan ingini).",
+        8
+      ],
+      [
+        15,
+        98,
+        "Oleh itu, bertasbihlah engkau dengan memuji Tuhanmu, serta jadilah dari orang-orang yang sujud. Dan sembahlah Tuhanmu, sehingga datang kepadamu (perkara yang tetap) yakin.",
+        99
+      ],
+      [
+        110,
+        1,
+        "Apabila datang pertolongan Allah dan kemenangan (semasa engkau wahai Muhammad berjaya menguasai negeri Makkah), - Dan engkau melihat manusia masuk dalam ugama Allah beramai-ramai, - Maka ucapkanlah tasbih dengan memuji Tuhanmu dan mintalah ampun kepadaNya, sesungguhnya Dia amat menerima taubat.",
+        3
+      ],
+      [
+        51,
+        55,
+        "Dan tetap tekunlah engkau memberi peringatan, kerana sesungguhnya peringatan itu mendatangkan faedah kepada orang-orang yang beriman."
+      ],
+      [
+        2,
+        186,
+        "Dan apabila hamba-hambaKu bertanya kepadamu mengenai Aku maka (beritahu kepada mereka): sesungguhnya Aku (Allah) sentiasa hampir (kepada mereka); Aku perkenankan permohonan orang yang berdoa apabila ia berdoa kepadaKu. Maka hendaklah mereka menyahut seruanku (dengan mematuhi perintahKu), dan hendaklah mereka beriman kepadaKu supaya mereka menjadi baik serta betul."
+      ],
+      [
+        93,
+        3,
+        "(Bahawa) Tuhanmu (wahai Muhammad) tidak meninggalkanmu, dan Ia tidak benci (kepadamu, sebagaimana yang dituduh oleh kaum musyrik). Dan sesungguhnya kesudahan keaadaanmu adalah lebih baik bagimu daripada permulaannya. Dan sesungguhnya Tuhanmu akan memberikanmu (kejayaan dan kebahagiaan di dunia dan di akhirat) sehingga engkau reda - berpuas hati.",
+        5
+      ],
+      [
+        16,
+        97,
+        "Sesiapa yang beramal soleh, dari lelaki atau perempuan, sedang ia beriman, maka sesungguhnya Kami akan menghidupkan dia dengan kehidupan yang baik; dan sesungguhnya kami akan membalas mereka, dengan memberikan pahala yang lebih dari apa yang mereka telah kerjakan."
+      ],
+      [
+        42,
+        19,
+        "Allah Maha Lembut tadbirNya (serta melimpah-limpah kebaikan dan belas kasihanNya) kepada hamba-hambaNya; Ia memberi rezeki kepada sesiapa yang dikehendakiNya (menurut peraturan yang telah ditetapkan), dan Dia lah Yang Maha Kuat, lagi Maha Kuasa."
+      ]
+    ],
+    "bn": [
+      [
+        13,
+        28,
+        "যারা বিশ্বাস স্থাপন করে এবং তাদের অন্তর আল্লাহর যিকির দ্বারা শান্তি লাভ করে; জেনে রাখ, আল্লাহর যিকির দ্বারাই অন্তর সমূহ শান্তি পায়।"
+      ],
+      [
+        6,
+        160,
+        "যে একটি সৎকর্ম করবে, সে তার দশগুণ পাবে এবং যে, একটি মন্দ কাজ করবে, সে তার সমান শাস্তিই পাবে। বস্তুতঃ তাদের প্রতি জুলুম করা হবে না।"
+      ],
+      [
+        94,
+        5,
+        "নিশ্চয় কষ্টের সাথে স্বস্তি রয়েছে।",
+        6
+      ],
+      [
+        2,
+        152,
+        "সুতরাং তোমরা আমাকে স্মরণ কর, আমিও তোমাদের স্মরণ রাখবো এবং আমার কৃতজ্ঞতা প্রকাশ কর; অকৃতজ্ঞ হয়ো না।"
+      ],
+      [
+        33,
+        41,
+        "মুমিনগণ তোমরা আল্লাহকে অধিক পরিমাণে স্মরণ কর।"
+      ],
+      [
+        73,
+        8,
+        "আপনি আপনার পালনকর্তার নাম স্মরণ করুন এবং একাগ্রচিত্তে তাতে মগ্ন হোন।"
+      ],
+      [
+        2,
+        153,
+        "হে মুমিন গন! তোমরা ধৈর্য্য ও নামাযের মাধ্যমে সাহায্য প্রার্থনা কর। নিশ্চিতই আল্লাহ ধৈর্য্যশীলদের সাথে রয়েছেন।"
+      ],
+      [
+        17,
+        82,
+        "আমি কোরআনে এমন বিষয় নাযিল করি যা রোগের সুচিকিৎসা এবং মুমিনের জন্য রহমত। গোনাহগারদের তো এতে শুধু ক্ষতিই বৃদ্ধি পায়।"
+      ],
+      [
+        11,
+        114,
+        "আর দিনের দুই প্রান্তেই নামায ঠিক রাখবে, এবং রাতের প্রান্তভাগে পূর্ণ কাজ অবশ্যই পাপ দূর করে দেয়, যারা স্মরণ রাখে তাদের জন্য এটি এক মহা স্মারক।"
+      ],
+      [
+        6,
+        162,
+        "আপনি বলুনঃ আমার নামায, আমার কোরবাণী এবং আমার জীবন ও মরন বিশ্ব-প্রতিপালক আল্লাহরই জন্যে।"
+      ],
+      [
+        7,
+        205,
+        "আর স্মরণ করতে থাক স্বীয় পালনকর্তাকে আপন মনে ক্রন্দনরত ও ভীত-সন্ত্রস্ত অবস্থায় এবং এমন স্বরে যা চিৎকার করে বলা অপেক্ষা কম; সকালে ও সন্ধ্যায়। আর বে-খবর থেকো না।"
+      ],
+      [
+        33,
+        56,
+        "আল্লাহ ও তাঁর ফেরেশতাগণ নবীর প্রতি রহমত প্রেরণ করেন। হে মুমিনগণ! তোমরা নবীর জন্যে রহমতের তরে দোয়া কর এবং তাঁর প্রতি সালাম প্রেরণ কর।"
+      ],
+      [
+        39,
+        53,
+        "বলুন, হে আমার বান্দাগণ যারা নিজেদের উপর যুলুম করেছ তোমরা আল্লাহর রহমত থেকে নিরাশ হয়ো না। নিশ্চয় আল্লাহ সমস্ত গোনাহ মাফ করেন। তিনি ক্ষমাশীল, পরম দয়ালু।"
+      ],
+      [
+        20,
+        14,
+        "আমিই আল্লাহ আমি ব্যতীত কোন ইলাহ নেই। অতএব আমার এবাদত কর এবং আমার স্মরণার্থে নামায কায়েম কর।"
+      ],
+      [
+        87,
+        1,
+        "আপনি আপনার মহান পালনকর্তার নামের পবিত্রতা বর্ণনা করুন"
+      ],
+      [
+        87,
+        14,
+        "নিশ্চয় সাফল্য লাভ করবে সে, যে শুদ্ধ হয় এবং তার পালনকর্তার নাম স্মরণ করে, অতঃপর নামায আদায় করে।",
+        15
+      ],
+      [
+        94,
+        7,
+        "অতএব, যখন অবসর পান পরিশ্রম করুন। এবং আপনার পালনকর্তার প্রতি মনোনিবেশ করুন।",
+        8
+      ],
+      [
+        15,
+        98,
+        "অতএব আপনি পালনকর্তার সৌন্দর্য স্মরণ করুন এবং সেজদাকারীদের অন্তর্ভূক্ত হয়ে যান। এবং পালনকর্তার এবাদত করুন, যে পর্যন্ত আপনার কাছে নিশ্চিত কথা না আসে।",
+        99
+      ],
+      [
+        110,
+        1,
+        "যখন আসবে আল্লাহর সাহায্য ও বিজয় এবং আপনি মানুষকে দলে দলে আল্লাহর দ্বীনে প্রবেশ করতে দেখবেন, তখন আপনি আপনার পালনকর্তার পবিত্রতা বর্ণনা করুন এবং তাঁর কাছে ক্ষমা প্রার্থনা করুন। নিশ্চয় তিনি ক্ষমাকারী।",
+        3
+      ],
+      [
+        51,
+        55,
+        "এবং বোঝাতে থাকুন; কেননা, বোঝানো মুমিনদের উপকারে আসবে।"
+      ],
+      [
+        2,
+        186,
+        "আর আমার বান্দারা যখন তোমার কাছে জিজ্ঞেস করে আমার ব্যাপারে বস্তুতঃ আমি রয়েছি সন্নিকটে। যারা প্রার্থনা করে, তাদের প্রার্থনা কবুল করে নেই, যখন আমার কাছে প্রার্থনা করে। কাজেই আমার হুকুম মান্য করা এবং আমার প্রতি নিঃসংশয়ে বিশ্বাস করা তাদের একান্ত কর্তব্য। যাতে তারা সৎপথে আসতে পারে।"
+      ],
+      [
+        93,
+        3,
+        "আপনার পালনকর্তা আপনাকে ত্যাগ করেনি এবং আপনার প্রতি বিরূপও হননি। আপনার জন্যে পরকাল ইহকাল অপেক্ষা শ্রেয়। আপনার পালনকর্তা সত্বরই আপনাকে দান করবেন, অতঃপর আপনি সন্তুষ্ট হবেন।",
+        5
+      ],
+      [
+        16,
+        97,
+        "যে সৎকর্ম সম্পাদন করে এবং সে ঈমাণদার, পুরুষ হোক কিংবা নারী আমি তাকে পবিত্র জীবন দান করব এবং প্রতিদানে তাদেরকে তাদের উত্তম কাজের কারণে প্রাপ্য পুরষ্কার দেব যা তারা করত।"
+      ],
+      [
+        42,
+        19,
+        "আল্লাহ তাঁর বান্দাদের প্রতি দয়ালু। তিনি যাকে ইচ্ছা, রিযিক দান করেন। তিনি প্রবল, পরাক্রমশালী।"
+      ]
+    ],
+    "ur": [
+      [
+        13,
+        28,
+        "(یعنی) جو لوگ ایمان لاتے اور جن کے دل یادِ خدا سے آرام پاتے ہیں (ان کو) اور سن رکھو کہ خدا کی یاد سے دل آرام پاتے ہیں"
+      ],
+      [
+        6,
+        160,
+        "اور جو کوئی (خدا کے حضور) نیکی لے کر آئے گا اس کو ویسی دس نیکیاں ملیں گی اور جو برائی لائے گا اسے سزا ویسے ہی ملے گی اور ان پر ظلم نہیں کیا جائے گا"
+      ],
+      [
+        94,
+        5,
+        "ہاں ہاں مشکل کے ساتھ آسانی بھی ہے (اور) بے شک مشکل کے ساتھ آسانی ہے",
+        6
+      ],
+      [
+        2,
+        152,
+        "سو تم مجھے یاد کرو۔ میں تمہیں یاد کیا کروں گا۔ اور میرے احسان مانتے رہنا اور ناشکری نہ کرنا"
+      ],
+      [
+        33,
+        41,
+        "اے اہل ایمان خدا کا بہت ذکر کیا کرو"
+      ],
+      [
+        73,
+        8,
+        "تو اپنے پروردگار کے نام کا ذکر کرو اور ہر طرف سے بےتعلق ہو کر اسی کی طرف متوجہ ہوجاؤ"
+      ],
+      [
+        2,
+        153,
+        "اے ایمان والو صبر اور نماز سے مدد لیا کرو بےشک خدا صبر کرنے والوں کے ساتھ ہے"
+      ],
+      [
+        17,
+        82,
+        "اور ہم قرآن (کے ذریعے) سے وہ چیز نازل کرتے ہیں جو مومنوں کے لئے شفا اور رحمت ہے اور ظالموں کے حق میں تو اس سے نقصان ہی بڑھتا ہے"
+      ],
+      [
+        11,
+        114,
+        "اور دن کے دونوں سروں (یعنی صبح اور شام کے اوقات میں) اور رات کی چند (پہلی) ساعات میں نماز پڑھا کرو۔ کچھ شک نہیں کہ نیکیاں گناہوں کو دور کر دیتی ہیں۔ یہ ان کے لیے نصیحت ہے جو نصیحت قبول کرنے والے ہیں"
+      ],
+      [
+        6,
+        162,
+        "(یہ بھی) کہہ دو کہ میری نماز اور میری عبادت اور میرا جینا اور میرا مرنا سب خدائے رب العالمین ہی کے لیے ہے"
+      ],
+      [
+        7,
+        205,
+        "اور اپنے پروردگار کو دل ہی دل میں عاجزی اور خوف سے اور پست آواز سے صبح وشام یاد کرتے رہو اور (دیکھنا) غافل نہ ہونا"
+      ],
+      [
+        33,
+        56,
+        "خدا اور اس کے فرشتے پیغمبر پر درود بھیجتے ہیں۔ مومنو تم بھی ان پر دُرود اور سلام بھیجا کرو"
+      ],
+      [
+        39,
+        53,
+        "(اے پیغمبر میری طرف سے لوگوں کو) کہہ دو کہ اے میرے بندو جنہوں نے اپنی جانوں پر زیادتی کی ہے خدا کی رحمت سے ناامید نہ ہونا۔ خدا تو سب گناہوں کو بخش دیتا ہے۔ (اور) وہ تو بخشنے والا مہربان ہے"
+      ],
+      [
+        20,
+        14,
+        "بےشک میں ہی خدا ہوں۔ میرے سوا کوئی معبود نہیں تو میری عبادت کرو اور میری یاد کے لئے نماز پڑھا کرو"
+      ],
+      [
+        87,
+        1,
+        "(اے پیغمبر) اپنے پروردگار جلیل الشان کے نام کی تسبیح کرو"
+      ],
+      [
+        87,
+        14,
+        "بے شک وہ مراد کو پہنچ گیا جو پاک ہوا اور اپنے پروردگار کے نام کا ذکر کرتا رہا اور نماز پڑھتا رہا",
+        15
+      ],
+      [
+        94,
+        7,
+        "تو جب فارغ ہوا کرو تو (عبادت میں) محنت کیا کرو اور اپنے پروردگار کی طرف متوجہ ہو جایا کرو",
+        8
+      ],
+      [
+        15,
+        98,
+        "تو تم اپنے پروردگار کی تسبیح کہتے اور (اس کی) خوبیاں بیان کرتے رہو اور سجدہ کرنے والوں میں داخل رہو اور اپنے پروردگار کی عبادت کئے جاؤ یہاں تک کہ تمہاری موت (کا وقت) آجائے",
+        99
+      ],
+      [
+        110,
+        1,
+        "جب خدا کی مدد آ پہنچی اور فتح (حاصل ہو گئی) اور تم نے دیکھ لیا کہ لوگ غول کے غول خدا کے دین میں داخل ہو رہے ہیں تو اپنے پروردگار کی تعریف کے ساتھ تسبیح کرو اور اس سے مغفرت مانگو، بے شک وہ معاف کرنے والا ہے",
+        3
+      ],
+      [
+        51,
+        55,
+        "اور نصیحت کرتے رہو کہ نصیحت مومنوں کو نفع دیتی ہے"
+      ],
+      [
+        2,
+        186,
+        "اور (اے پیغمبر) جب تم سے میرے بندے میرے بارے میں دریافت کریں تو (کہہ دو کہ) میں تو (تمہارے) پاس ہوں جب کوئی پکارنے والا مجھے پکارتا ہے تو میں اس کی دعا قبول کرتا ہوں تو ان کو چاہیئے کہ میرے حکموں کو مانیں اور مجھ پر ایمان لائیں تاکہ نیک رستہ پائیں"
+      ],
+      [
+        93,
+        3,
+        "کہ (اے محمدﷺ) تمہارے پروردگار نے نہ تو تم کو چھوڑا اور نہ (تم سے) ناراض ہوا اور آخرت تمہارے لیے پہلی (حالت یعنی دنیا) سے کہیں بہتر ہے اور تمہیں پروردگار عنقریب وہ کچھ عطا فرمائے گا کہ تم خوش ہو جاؤ گے",
+        5
+      ],
+      [
+        16,
+        97,
+        "جو شخص نیک اعمال کرے گا مرد ہو یا عورت وہ مومن بھی ہوگا تو ہم اس کو (دنیا میں) پاک (اور آرام کی) زندگی سے زندہ رکھیں گے اور (آخرت میں) اُن کے اعمال کا نہایت اچھا صلہ دیں گے"
+      ],
+      [
+        42,
+        19,
+        "خدا اپنے بندوں پر مہربان ہے وہ جس کو چاہتا ہے رزق دیتا ہے۔ اور وہ زور والا (اور) زبردست ہے"
+      ]
+    ],
+    "ar": [
+      [
+        13,
+        28,
+        "ٱلَّذِينَ ءَامَنُوا۟ وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ ٱللَّهِ ۗ أَلَا بِذِكْرِ ٱللَّهِ تَطْمَئِنُّ ٱلْقُلُوبُ"
+      ],
+      [
+        6,
+        160,
+        "مَن جَآءَ بِٱلْحَسَنَةِ فَلَهُۥ عَشْرُ أَمْثَالِهَا ۖ وَمَن جَآءَ بِٱلسَّيِّئَةِ فَلَا يُجْزَىٰٓ إِلَّا مِثْلَهَا وَهُمْ لَا يُظْلَمُونَ"
+      ],
+      [
+        94,
+        5,
+        "فَإِنَّ مَعَ ٱلْعُسْرِ يُسْرًا إِنَّ مَعَ ٱلْعُسْرِ يُسْرًا",
+        6
+      ],
+      [
+        2,
+        152,
+        "فَٱذْكُرُونِىٓ أَذْكُرْكُمْ وَٱشْكُرُوا۟ لِى وَلَا تَكْفُرُونِ"
+      ],
+      [
+        33,
+        41,
+        "يَـٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوا۟ ٱذْكُرُوا۟ ٱللَّهَ ذِكْرًا كَثِيرًا"
+      ],
+      [
+        73,
+        8,
+        "وَٱذْكُرِ ٱسْمَ رَبِّكَ وَتَبَتَّلْ إِلَيْهِ تَبْتِيلًا"
+      ],
+      [
+        2,
+        153,
+        "يَـٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوا۟ ٱسْتَعِينُوا۟ بِٱلصَّبْرِ وَٱلصَّلَوٰةِ ۚ إِنَّ ٱللَّهَ مَعَ ٱلصَّـٰبِرِينَ"
+      ],
+      [
+        17,
+        82,
+        "وَنُنَزِّلُ مِنَ ٱلْقُرْءَانِ مَا هُوَ شِفَآءٌ وَرَحْمَةٌ لِّلْمُؤْمِنِينَ ۙ وَلَا يَزِيدُ ٱلظَّـٰلِمِينَ إِلَّا خَسَارًا"
+      ],
+      [
+        11,
+        114,
+        "وَأَقِمِ ٱلصَّلَوٰةَ طَرَفَىِ ٱلنَّهَارِ وَزُلَفًا مِّنَ ٱلَّيْلِ ۚ إِنَّ ٱلْحَسَنَـٰتِ يُذْهِبْنَ ٱلسَّيِّـَٔاتِ ۚ ذَٰلِكَ ذِكْرَىٰ لِلذَّٰكِرِينَ"
+      ],
+      [
+        6,
+        162,
+        "قُلْ إِنَّ صَلَاتِى وَنُسُكِى وَمَحْيَاىَ وَمَمَاتِى لِلَّهِ رَبِّ ٱلْعَـٰلَمِينَ"
+      ],
+      [
+        7,
+        205,
+        "وَٱذْكُر رَّبَّكَ فِى نَفْسِكَ تَضَرُّعًا وَخِيفَةً وَدُونَ ٱلْجَهْرِ مِنَ ٱلْقَوْلِ بِٱلْغُدُوِّ وَٱلْـَٔاصَالِ وَلَا تَكُن مِّنَ ٱلْغَـٰفِلِينَ"
+      ],
+      [
+        33,
+        56,
+        "إِنَّ ٱللَّهَ وَمَلَـٰٓئِكَتَهُۥ يُصَلُّونَ عَلَى ٱلنَّبِىِّ ۚ يَـٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوا۟ صَلُّوا۟ عَلَيْهِ وَسَلِّمُوا۟ تَسْلِيمًا"
+      ],
+      [
+        39,
+        53,
+        "قُلْ يَـٰعِبَادِىَ ٱلَّذِينَ أَسْرَفُوا۟ عَلَىٰٓ أَنفُسِهِمْ لَا تَقْنَطُوا۟ مِن رَّحْمَةِ ٱللَّهِ ۚ إِنَّ ٱللَّهَ يَغْفِرُ ٱلذُّنُوبَ جَمِيعًا ۚ إِنَّهُۥ هُوَ ٱلْغَفُورُ ٱلرَّحِيمُ"
+      ],
+      [
+        20,
+        14,
+        "إِنَّنِىٓ أَنَا ٱللَّهُ لَآ إِلَـٰهَ إِلَّآ أَنَا۠ فَٱعْبُدْنِى وَأَقِمِ ٱلصَّلَوٰةَ لِذِكْرِىٓ"
+      ],
+      [
+        87,
+        1,
+        "سَبِّحِ ٱسْمَ رَبِّكَ ٱلْأَعْلَى"
+      ],
+      [
+        87,
+        14,
+        "قَدْ أَفْلَحَ مَن تَزَكَّىٰ وَذَكَرَ ٱسْمَ رَبِّهِۦ فَصَلَّىٰ",
+        15
+      ],
+      [
+        94,
+        7,
+        "فَإِذَا فَرَغْتَ فَٱنصَبْ وَإِلَىٰ رَبِّكَ فَٱرْغَب",
+        8
+      ],
+      [
+        15,
+        98,
+        "فَسَبِّحْ بِحَمْدِ رَبِّكَ وَكُن مِّنَ ٱلسَّـٰجِدِينَ وَٱعْبُدْ رَبَّكَ حَتَّىٰ يَأْتِيَكَ ٱلْيَقِينُ",
+        99
+      ],
+      [
+        110,
+        1,
+        "إِذَا جَآءَ نَصْرُ ٱللَّهِ وَٱلْفَتْحُ وَرَأَيْتَ ٱلنَّاسَ يَدْخُلُونَ فِى دِينِ ٱللَّهِ أَفْوَاجًا فَسَبِّحْ بِحَمْدِ رَبِّكَ وَٱسْتَغْفِرْهُ ۚ إِنَّهُۥ كَانَ تَوَّابًۢا",
+        3
+      ],
+      [
+        51,
+        55,
+        "وَذَكِّرْ فَإِنَّ ٱلذِّكْرَىٰ تَنفَعُ ٱلْمُؤْمِنِينَ"
+      ],
+      [
+        2,
+        186,
+        "وَإِذَا سَأَلَكَ عِبَادِى عَنِّى فَإِنِّى قَرِيبٌ ۖ أُجِيبُ دَعْوَةَ ٱلدَّاعِ إِذَا دَعَانِ ۖ فَلْيَسْتَجِيبُوا۟ لِى وَلْيُؤْمِنُوا۟ بِى لَعَلَّهُمْ يَرْشُدُونَ"
+      ],
+      [
+        93,
+        3,
+        "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ وَلَلْـَٔاخِرَةُ خَيْرٌ لَّكَ مِنَ ٱلْأُولَىٰ وَلَسَوْفَ يُعْطِيكَ رَبُّكَ فَتَرْضَىٰٓ",
+        5
+      ],
+      [
+        16,
+        97,
+        "مَنْ عَمِلَ صَـٰلِحًا مِّن ذَكَرٍ أَوْ أُنثَىٰ وَهُوَ مُؤْمِنٌ فَلَنُحْيِيَنَّهُۥ حَيَوٰةً طَيِّبَةً ۖ وَلَنَجْزِيَنَّهُمْ أَجْرَهُم بِأَحْسَنِ مَا كَانُوا۟ يَعْمَلُونَ"
+      ],
+      [
+        42,
+        19,
+        "ٱللَّهُ لَطِيفٌۢ بِعِبَادِهِۦ يَرْزُقُ مَن يَشَآءُ ۖ وَهُوَ ٱلْقَوِىُّ ٱلْعَزِيزُ"
+      ]
+    ]
+  }
 }

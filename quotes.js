@@ -71,7 +71,7 @@ export const APP_QUOTES = [
     "Kalpler ancak Allah'ı anmakla mutmain olur. (Rad Suresi 28)",
     'Dua, müminin silahıdır. (Hadis-i Şerif)',
     'Kim bir iyilik yaparsa ona on katı vardır. (Enam Suresi 160)',
-    'Zorlukla beraber şüphesiz bir kolaylık vardır. (İnşirah Suresi 5)',
+    'Zorlukla beraber şüphesiz bir kolaylık vardır. (İnşirah Suresi 5–6)',
     "Sizin en hayırlınız Kur'an'ı öğrenen ve öğretendir. (Hadis-i Şerif)",
     'Namaz dinin direğidir. (Hadis-i Şerif)',
     'Öyleyse Beni anın ki Ben de sizi anayım; Bana şükredin, nankörlük etmeyin. (Bakara Suresi 152)',
@@ -80,11 +80,7 @@ export const APP_QUOTES = [
     'Şüphesiz Allah, sabredenlerle beraberdir. (Bakara Suresi 153)',
     "Biz Kur'an'ı müminlere şifa ve rahmet olarak indirdik. (İsrâ Suresi 82)",
     'İyilikler kötülükleri giderir. (Hud Suresi 114)',
-    "Kim Allah'tan korkarsa, Allah ona bir çıkış yolu yaratır. (Talak Suresi 2)",
-    'Müminler ancak kardeştir. (Hucurât Suresi 10)',
     'De ki: Benim namazım, kurbanım, hayatım ve ölümüm âlemlerin Rabbi Allah içindir. (Enam Suresi 162)',
-    'Karşılaştığınız ordulara karşı sebat edin ve Allah\'ı çok zikredin ki kurtuluşa eresiniz. (Enfal Suresi 45)',
-    'Şüphesiz namaz, müminler üzerine vakitleri belirlenmiş bir farzdır. (Nisa Suresi 103)',
     'Rabbinizi içinden ürperti duyarak ve alçak sesle zikredin. (Araf Suresi 205)',
     'Allah\'ı anan ile anmayanı, dirilerle ölülere benzetebilirsiniz. (Buhari, Müslim)',
     'Kulum Beni andığında Ben onunla beraberim. (Hadis-i Kudsi, Buhari, Müslim)',
@@ -100,8 +96,17 @@ export const APP_QUOTES = [
     'Güzel söz sadakadır. (Buhari, Müslim)',
     'Merhamet etmeyene merhamet olunmaz. (Buhari, Müslim)',
     'Din nasihattır. (Müslim)',
-    'Allah sabredenleri sever. (Al-i İmrân Suresi 146)',
-    'Allah, tevbe edenleri ve tertemiz olanları sever. (Bakara Suresi 222)',
+    'Şüphesiz Ben Allah\'ım; Bana kulluk et, Beni anmak için namaz kıl. (Tâhâ Suresi 14)',
+    'Yüce Rabbinin adını tesbih et. (A\'lâ Suresi 1)',
+    'Arınmış olan, Rabbinin adını anıp namaz kılan saadete erişir. (A\'lâ Suresi 14–15)',
+    'Bir işi bitirince diğerine giriş; ümidini yalnız Rabbinden iste. (İnşirah Suresi 7–8)',
+    'Rabbini hamd ile an; ölünceye kadar Rabbine kulluk et. (Hicr Suresi 98–99)',
+    'Allah\'ın yardımı ve zafer gelince Rabbini överek tesbih et ve O\'ndan bağışlanma dile. (Nasr Suresi 1–3)',
+    'Öğüt ver; doğrusu öğüt inananlara fayda verir. (Zâriyât Suresi 55)',
+    'Kullarım sana Beni sorarsa: Ben onlara yakınım; dua edene icabet ederim. (Bakara Suresi 186)',
+    'Rabbin seni bırakmadı; ahiret senin için daha hayırlıdır, Rabbin sana verecek ve sen hoşnut olacaksın. (Duhâ Suresi 3–5)',
+    'İnanmış olarak iyi iş işleyene hoş bir hayat yaşatırız. (Nahl Suresi 97)',
+    'Allah kullarına lütufta bulunandır; dilediğini rızıklandırır. (Şûrâ Suresi 19)',
     'Lâ ilâhe illallah, dil ile kalp uyum içinde söylenmedikçe kişi cennete giremez. (Buhari, Müslim)',
     'Lâ havle ve lâ kuvvete illâ billâh, Cennet hazinelerinden bir hazinedir. (Buhari, Müslim)',
     'Ölümü çokça anın; o, dünya sevgisini giderir. (Tirmizi)',
@@ -111,15 +116,9 @@ export const APP_QUOTES = [
     'Kim Allah için bir karış yol yürürse, Allah ona iki karış yol yürütür. (Buhari, Müslim)',
     'Allah yolunda atılan her adım, bir sadakadır. (Buhari, Müslim)',
     'De ki: Ey kendilerine zulmeden kullarım! Allah\'ın rahmetinden ümit kesmeyin. (Zümer Suresi 53)',
-    'Şüphesiz Allah, kendisine dayanıp güvenenleri sever. (Al-i İmrân Suresi 159)',
-    'Kim Allah\'a tevekkül ederse, Allah ona yeter. (Talak Suresi 3)',
-    'Şüphesiz Allah, zorlukla beraber kolaylık verir. (İnşirah Suresi 6)',
-    'Allah bir toplumu, onlar kendilerini değiştirmedikçe değiştirmez. (Ra\'d Suresi 11)',
     'Kalpler ancak Allah\'ı anmakla huzur bulur. (Ra\'d Suresi 28)',
-    'Muhakkak her zorlukla beraber bir ferahlık vardır. (İnşirah Suresi 5)',
     'Allah Teâlâ buyurur: Ben kulumun zannı gibiyim. (Buhari, Müslim)',
     'Allah, kulunun tövbesine çok sevinir. (Müslim)',
-    'Şükrederseniz elbette nimetimi artırırım. (İbrahim Suresi 7)',
     'Ameller niyetlere göredir. (Buhari, Müslim)',
     'Kolaylaştırın, zorlaştırmayın; müjdeleyin, nefret ettirmeyin. (Buhari, Müslim)',
     'Allah, kullarına karşı annesinin çocuğuna merhametinden daha merhametlidir. (Buhari, Müslim)',
@@ -128,6 +127,7 @@ export const APP_QUOTES = [
     'Kim bir müminin sıkıntısını giderirse, Allah da onun kıyamet sıkıntılarından birini giderir. (Müslim)',
     'Biriniz, kendisi için sevdiğini kardeşi için de sevmedikçe iman etmiş olmaz. (Buhari, Müslim)',
     'Yarım hurma ile de olsa ateşten korunun. (Buhari, Müslim)',
+    'Radîtu billâhi Rabben ve bil-İslâmi dînen ve bi-Muhammedin nebiyyan. (Hadis-i Şerif)',
 ];
 
 function normalizeQuoteLocale(locale) {
@@ -193,6 +193,12 @@ function quoteCompactThreshold(locale) {
     return limits[code] ?? 90;
 }
 
+function formatQuranRef(surah, ayah, endAyah) {
+    const end = Number(endAyah);
+    if (Number.isFinite(end) && end > ayah) return `(${surah}:${ayah}–${end})`;
+    return `(${surah}:${ayah})`;
+}
+
 function pickRandomQuranQuoteEntry(locale) {
     const code = normalizeQuoteLocale(locale);
     const list =
@@ -202,9 +208,11 @@ function pickRandomQuranQuoteEntry(locale) {
         quranQuotesData?.quotes?.en ||
         [];
     if (!Array.isArray(list) || !list.length) return null;
-    const [s, a, t] = list[Math.floor(Math.random() * list.length)];
-    const body = cleanQuoteText(t);
-    const ref = `(${s}:${a})`;
+    const row = list[Math.floor(Math.random() * list.length)];
+    const s = Number(row[0]);
+    const a = Number(row[1]);
+    const body = cleanQuoteText(row[2]);
+    const ref = formatQuranRef(s, a, row[3]);
     const full = `${body} ${ref}`;
     const preview = buildPreview(full, quoteBodyMaxLen(code));
     return {
