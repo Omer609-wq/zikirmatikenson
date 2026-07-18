@@ -552,6 +552,8 @@
     "disconnectBtn": "Putuskan akun",
     "disconnectConfirm": "Putuskan akun Google? Cadangan cloud tidak dihapus.",
     "restoreConfirm": "Cadangan cloud akan mengganti data di perangkat ini. Zikir dan pengaturan saat ini akan ditimpa. Lanjutkan?",
+    "existingBackupConfirm": "Cadangan cloud sudah ada untuk akun Google ini. Pulihkan ke perangkat ini sekarang? Batal akan menjaga perangkat ini tetap sama dan tidak menimpa cadangan cloud.",
+    "existingBackupKept": "Cadangan cloud dibiarkan tanpa perubahan. Pulihkan cadangan yang ada untuk menghubungkan akun ini.",
     "restoreSuccess": "Cadangan dipulihkan.",
     "connectSuccess": "Akun terhubung dan cadangan selesai.",
     "backupSuccess": "Cadangan diperbarui.",
