@@ -71,6 +71,13 @@
     --update-banner-btn-highlight: rgba(255, 248, 230, 0.07);
     --update-banner-btn-border: color-mix(in srgb, var(--update-banner-accent) 58%, var(--surface-border));
     --update-banner-btn-border-pulse: var(--update-banner-accent-bright);
+    /* Bizi oylayın — koyu temada altın kart */
+    --rate-us-bg: linear-gradient(180deg, rgba(251, 191, 36, 0.22), rgba(234, 179, 8, 0.12));
+    --rate-us-border: rgba(234, 179, 8, 0.42);
+    --rate-us-fg: #fef3c7;
+    --rate-us-stars: #fbbf24;
+    --rate-us-stars-glow: rgba(251, 191, 36, 0.4);
+    --rate-us-shadow: 0 2px 12px rgba(234, 179, 8, 0.12);
 }
 
 /* ================== ICON FONT (OFFLINE-SAFE) ==================
@@ -311,20 +318,14 @@ body {
     visibility: hidden !important;
     pointer-events: none !important;
 }
-html.quran-drawer-open #bottomNav {
-    display: none !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-}
-html.quran-mushaf-immersive.quran-mushaf-chrome--visible.quran-drawer-open #bottomNav {
-    display: none !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-}
+html.quran-drawer-open #bottomNav,
+html.quran-mushaf-immersive.quran-mushaf-chrome--visible.quran-drawer-open #bottomNav,
 html.quran-drawer-open .bottom-nav {
-    display: none !important;
+    /* display:none scroller yüksekliğini değiştirip ayet konumunu kaydırıyordu;
+       görünmez tut ama yer kaplamaya devam et. */
     visibility: hidden !important;
     pointer-events: none !important;
+    opacity: 0 !important;
 }
 html.quran-tafsir-open .bottom-nav {
     display: none !important;
@@ -2956,9 +2957,33 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
     align-items: flex-start;
     flex-shrink: 0;
 }
-#counterView .glass-header > .icon-btn {
+#counterView .glass-header > .icon-btn,
+#counterView .glass-header > .counter-header-actions {
     margin-top: 0.15rem;
     flex-shrink: 0;
+}
+.counter-header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+}
+.counter-revise-display-btn {
+    background: var(--primary-green);
+    color: #fff;
+    border-radius: 10px;
+}
+.counter-revise-display-btn .material-icons-outlined {
+    font-size: 1.1rem;
+}
+@media (hover: hover) {
+    .counter-revise-display-btn:hover {
+        background: var(--primary-green-hover);
+        color: #fff;
+    }
+}
+.counter-revise-display-btn[hidden] {
+    display: none !important;
 }
 .header-titles {
     text-align: center;
@@ -5571,9 +5596,10 @@ input:checked + .slider:before { transform: translateX(22px); }
     margin: 0.55rem 0 0;
     padding: 0.85rem 1rem;
     border-radius: var(--surface-radius, 12px);
-    border: 1px solid rgba(234, 179, 8, 0.35);
-    background: linear-gradient(180deg, rgba(251, 191, 36, 0.18), rgba(234, 179, 8, 0.10));
-    color: var(--text-white);
+    border: 1px solid var(--rate-us-border);
+    background: var(--rate-us-bg);
+    color: var(--rate-us-fg);
+    box-shadow: var(--rate-us-shadow);
     font: inherit;
     font-weight: 650;
     font-size: var(--text-base);
@@ -5582,10 +5608,10 @@ input:checked + .slider:before { transform: translateX(22px); }
 }
 .rate-us-btn__stars {
     letter-spacing: 0.06em;
-    color: #fbbf24;
+    color: var(--rate-us-stars);
     font-size: 1.05rem;
     line-height: 1;
-    text-shadow: 0 0 10px rgba(251, 191, 36, 0.35);
+    text-shadow: 0 0 10px var(--rate-us-stars-glow);
 }
 .rate-us-btn:active {
     transform: scale(0.98);

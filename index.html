@@ -136,9 +136,14 @@
                         <p id="zikirNote" class="zikir-note">Allah eksikliklerden uzaktır.</p>
                     </div>
                 </div>
-                <button type="button" class="icon-btn" id="openZikirStatsBtn" data-i18n="counter.statsAria" data-i18n-attr="aria-label" data-i18n-title="counter.statsTitle" aria-label="Bu zikrin istatistiği" title="İstatistik">
-                    <span class="material-icons-outlined">bar_chart</span>
-                </button>
+                <div class="counter-header-actions">
+                    <button type="button" class="icon-btn" id="openZikirStatsBtn" data-i18n="counter.statsAria" data-i18n-attr="aria-label" data-i18n-title="counter.statsTitle" aria-label="Bu zikrin istatistiği" title="İstatistik">
+                        <span class="material-icons-outlined">bar_chart</span>
+                    </button>
+                    <button type="button" class="icon-btn counter-revise-display-btn" id="reviseQuranDisplayBtn" hidden data-i18n="counter.reviseDisplay" data-i18n-attr="aria-label" data-i18n-title="counter.reviseDisplay" aria-label="Görünümü düzenle" title="Görünümü düzenle">
+                        <span class="material-icons-outlined" aria-hidden="true">tune</span>
+                    </button>
+                </div>
             </header>
 
             <section class="counter-container">
@@ -566,6 +571,9 @@
                                 <div class="quran-folder-add__modes" id="quranDrawerFolderModeList" role="radiogroup">
                                     <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-read-mode="meal-ar" role="radio" aria-checked="true">
                                         <span class="quran-read-mode-option__label" data-i18n="quran.readModeMealAr">Meal + Arapça</span>
+                                    </button>
+                                    <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-read-mode="meal-translit-ar" role="radio" aria-checked="false">
+                                        <span class="quran-read-mode-option__label" data-i18n="quran.readModeMealTranslitAr">Meal + Okunuş + Arapça</span>
                                     </button>
                                     <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-read-mode="translit-ar" role="radio" aria-checked="false">
                                         <span class="quran-read-mode-option__label" data-i18n="quran.readModeTranslitAr">Okunuş + Arapça</span>
@@ -1504,6 +1512,56 @@
             </div>
             <div class="modal-footer">
                 <button class="primary-btn full-width" id="saveEditBtn" data-i18n="zikir.saveEdit">Güncelle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quran zikir: kayıt / sayaç görünümü revize -->
+    <div class="modal-overlay" id="reviseQuranDisplayOverlay">
+        <div class="modal glass-modal">
+            <div class="modal-header">
+                <h2 data-i18n="counter.reviseDisplayTitle">Kayıt görünümü</h2>
+                <button type="button" class="icon-btn closeModalBtn" data-modal="reviseQuranDisplayOverlay" aria-label="Kapat"><span class="material-icons-outlined">close</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label data-i18n="quran.folderAddModeLabel">Kayıt görünümü</label>
+                    <div class="quran-folder-add__modes" id="reviseQuranDisplayModeList" role="radiogroup">
+                        <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-read-mode="meal-ar" role="radio" aria-checked="true">
+                            <span class="quran-read-mode-option__label" data-i18n="quran.readModeMealAr">Meal + Arapça</span>
+                        </button>
+                        <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-read-mode="meal-translit-ar" role="radio" aria-checked="false">
+                            <span class="quran-read-mode-option__label" data-i18n="quran.readModeMealTranslitAr">Meal + Okunuş + Arapça</span>
+                        </button>
+                        <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-read-mode="translit-ar" role="radio" aria-checked="false">
+                            <span class="quran-read-mode-option__label" data-i18n="quran.readModeTranslitAr">Okunuş + Arapça</span>
+                        </button>
+                        <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-read-mode="ar-only" role="radio" aria-checked="false">
+                            <span class="quran-read-mode-option__label" data-i18n="quran.readModeArOnly">Sadece Arapça</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="quran.folderAddCounterLayoutLabel">Sayaç görünümü</label>
+                    <div class="quran-folder-add__modes" id="reviseQuranDisplayLayoutList" role="radiogroup">
+                        <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-counter-layout="classic" role="radio" aria-checked="true">
+                            <span class="quran-read-mode-option__label" data-i18n="quran.folderAddCounterClassic">Klasik</span>
+                            <span class="quran-read-mode-option__desc" data-i18n="quran.folderAddCounterClassicDesc">Ayetler için kaydırın, büyük sayaç</span>
+                        </button>
+                        <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-counter-layout="compact" role="radio" aria-checked="false">
+                            <span class="quran-read-mode-option__label" data-i18n="quran.folderAddCounterCompact">Kompakt</span>
+                            <span class="quran-read-mode-option__desc" data-i18n="quran.folderAddCounterCompactDesc">Altta küçük sayaç, üstte ayetler</span>
+                        </button>
+                        <button type="button" class="quran-read-mode-option quran-folder-add__mode" data-counter-layout="text-only" role="radio" aria-checked="false">
+                            <span class="quran-read-mode-option__label" data-i18n="quran.folderAddCounterTextOnly">Sadece ayet</span>
+                            <span class="quran-read-mode-option__desc" data-i18n="quran.folderAddCounterTextOnlyDesc">Tam ekran ayet, dokunarak say</span>
+                        </button>
+                    </div>
+                </div>
+                <p id="reviseQuranDisplayError" class="quran-folder-add__error" hidden role="alert"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="primary-btn full-width" id="saveReviseQuranDisplayBtn" data-i18n="counter.reviseDisplaySave">Uygula</button>
             </div>
         </div>
     </div>

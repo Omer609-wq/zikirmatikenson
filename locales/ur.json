@@ -50,7 +50,11 @@
     "reset": "ری سیٹ",
     "statsAria": "اس ذکر کے اعداد و شمار",
     "statsTitle": "اعداد و شمار",
-    "virtueLabel": "فضیلت"
+    "virtueLabel": "فضیلت",
+    "reviseDisplay": "ظاہری شکل تبدیل کریں",
+    "reviseDisplayTitle": "ظاہری شکل کی ترتیبات",
+    "reviseDisplaySave": "لاگو کریں",
+    "reviseDisplayError": "ظاہری شکل تبدیل نہیں ہو سکی۔ کنکشن چیک کر کے دوبارہ کوشش کریں۔"
   },
   "stats": {
     "title": "میرے اعداد و شمار",
@@ -153,6 +157,7 @@
     "readModeTitle": "نظارہ",
     "readModeMealAr": "ترجمہ + عربی",
     "readModeMealArDesc": "عربی متن کے ساتھ اردو ترجمہ",
+    "readModeMealTranslitAr": "ترجمہ + تلفظ + عربی",
     "readModeTranslitAr": "تلفظ + عربی",
     "readModeTranslitArDesc": "ترجمہ بند؛ عربی کے نیچے لاطینی تلفظ",
     "readModeArOnly": "صرف عربی",

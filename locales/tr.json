@@ -50,7 +50,11 @@
     "reset": "Sıfırla",
     "statsAria": "Bu zikrin istatistiği",
     "statsTitle": "İstatistik",
-    "virtueLabel": "Fazilet"
+    "virtueLabel": "Fazilet",
+    "reviseDisplay": "Görünümü düzenle",
+    "reviseDisplayTitle": "Kayıt görünümü",
+    "reviseDisplaySave": "Uygula",
+    "reviseDisplayError": "Görünüm güncellenemedi. Bağlantınızı kontrol edip tekrar deneyin."
   },
   "stats": {
     "title": "İstatistiklerim",
@@ -153,6 +157,7 @@
     "readModeTitle": "Görünüm",
     "readModeMealAr": "Meal + Arapça",
     "readModeMealArDesc": "Arapça metin ve Türkçe meal",
+    "readModeMealTranslitAr": "Meal + Okunuş + Arapça",
     "readModeTranslitAr": "Okunuş + Arapça",
     "readModeTranslitArDesc": "Meal kapalı; Arapça altında Türkçe latin okunuş",
     "readModeArOnly": "Sadece Arapça",

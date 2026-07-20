@@ -50,7 +50,11 @@
     "reset": "Atur ulang",
     "statsAria": "Statistik zikir ini",
     "statsTitle": "Statistik",
-    "virtueLabel": "Keutamaan"
+    "virtueLabel": "Keutamaan",
+    "reviseDisplay": "Ubah tampilan",
+    "reviseDisplayTitle": "Pengaturan tampilan",
+    "reviseDisplaySave": "Terapkan",
+    "reviseDisplayError": "Tampilan tidak bisa diperbarui. Periksa koneksi lalu coba lagi."
   },
   "stats": {
     "title": "Statistik saya",
@@ -139,6 +143,7 @@
     "readModeTitle": "Tampilan",
     "readModeMealAr": "Terjemahan + Arab",
     "readModeMealArDesc": "Teks Arab dengan terjemahan Indonesia",
+    "readModeMealTranslitAr": "Terjemahan + Transliterasi + Arab",
     "readModeTranslitAr": "Transliterasi + Arab",
     "readModeTranslitArDesc": "Tanpa terjemahan; latin di bawah Arab",
     "readModeArOnly": "Hanya Arab",

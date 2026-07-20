@@ -50,7 +50,11 @@
     "reset": "রিসেট",
     "statsAria": "এই জিকিরের পরিসংখ্যান",
     "statsTitle": "পরিসংখ্যান",
-    "virtueLabel": "ফজিলত"
+    "virtueLabel": "ফজিলত",
+    "reviseDisplay": "প্রদর্শন সম্পাদনা",
+    "reviseDisplayTitle": "প্রদর্শন সেটিংস",
+    "reviseDisplaySave": "প্রয়োগ করুন",
+    "reviseDisplayError": "প্রদর্শন আপডেট করা যায়নি। সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।"
   },
   "stats": {
     "title": "আমার পরিসংখ্যান",
@@ -139,6 +143,7 @@
     "readModeTitle": "দৃশ্য",
     "readModeMealAr": "অনুবাদ + আরবি",
     "readModeMealArDesc": "আরবি পাঠের নিচে বাংলা অনুবাদ",
+    "readModeMealTranslitAr": "অনুবাদ + উচ্চারণ + আরবি",
     "readModeTranslitAr": "উচ্চারণ + আরবি",
     "readModeTranslitArDesc": "অনুবাদ ছাড়া; আরবির নিচে লাতিন",
     "readModeArOnly": "শুধু আরবি",

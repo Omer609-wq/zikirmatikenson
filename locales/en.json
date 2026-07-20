@@ -50,7 +50,11 @@
     "reset": "Reset",
     "statsAria": "Statistics for this dhikr",
     "statsTitle": "Statistics",
-    "virtueLabel": "Virtue"
+    "virtueLabel": "Virtue",
+    "reviseDisplay": "Edit display",
+    "reviseDisplayTitle": "Display settings",
+    "reviseDisplaySave": "Apply",
+    "reviseDisplayError": "Could not update display. Check your connection and try again."
   },
   "stats": {
     "title": "My statistics",
@@ -153,6 +157,7 @@
     "readModeTitle": "Display",
     "readModeMealAr": "Translation + Arabic",
     "readModeMealArDesc": "Arabic text with English translation",
+    "readModeMealTranslitAr": "Translation + Transliteration + Arabic",
     "readModeTranslitAr": "Transliteration + Arabic",
     "readModeTranslitArDesc": "No translation; English Latin transliteration under Arabic",
     "readModeArOnly": "Arabic only",

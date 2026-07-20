@@ -33,6 +33,8 @@ import { closeTafsirBridgeSheet, openTafsirBridgeSheet } from './tafsir-bridge.j
 
 const VALID_MEAL_IDS = new Set(['vakfi', 'diyanet', 'bn', 'muyassar', 'sahih', 'hamidullah', 'basmeih', 'indonesian', 'ahmedali', 'jalandhry']);
 const VALID_READ_MODES = new Set(['meal-ar', 'translit-ar', 'ar-only']);
+/** Klasöre ayet kaydında ek seçenek: meal + okunuş + Arapça */
+const VALID_ZIKIR_DISPLAY_MODES = new Set(['meal-ar', 'translit-ar', 'ar-only', 'meal-translit-ar']);
 const VALID_READER_LAYOUTS = new Set(['scroll', 'mushaf']);
 const DEFAULT_QURAN_READ_MODE = 'meal-ar';
 const DEFAULT_QURAN_READER_LAYOUT = 'scroll';
@@ -90,8 +92,26 @@ let mushafChromeVisible = false;
 let mushafChromeBound = false;
 let mushafResizeBound = false;
 let mushafSwipeBound = false;
+/** Panel kapatma jesti mushaf sayfa çevirmeye karışmasın diye kısa bastırma. */
+let mushafGestureSuppressUntil = 0;
 const MUSHAF_TAP_MAX_PX = 14;
 const MUSHAF_SCROLL_LOCK_PX = 10;
+const MUSHAF_DRAWER_GESTURE_SUPPRESS_MS = 450;
+
+function suppressMushafGesturesBriefly(ms = MUSHAF_DRAWER_GESTURE_SUPPRESS_MS) {
+    mushafGestureSuppressUntil = Date.now() + Math.max(0, ms);
+}
+
+function isMushafGestureSuppressed() {
+    return Date.now() < mushafGestureSuppressUntil;
+}
+
+function isMushafSwipeBlocked(eventTarget) {
+    if (isReaderDrawerOpen()) return true;
+    if (isMushafGestureSuppressed()) return true;
+    if (eventTarget?.closest?.('#quranReaderDrawer, #quranAyahExpandOverlay')) return true;
+    return false;
+}
 
 function onMushafViewportResize() {
     if (getCurrentReaderLayout() === 'mushaf') scheduleMushafCanvasFill();
@@ -137,6 +157,18 @@ export function normalizeQuranMeal(mealId, locale = getLocale()) {
 export function normalizeQuranReadMode(mode) {
     const id = String(mode || '').toLowerCase();
     return VALID_READ_MODES.has(id) ? id : DEFAULT_QURAN_READ_MODE;
+}
+
+export function normalizeQuranZikirDisplayMode(mode, locale = getLocale()) {
+    const id = String(mode || '').toLowerCase();
+    const normalized = VALID_ZIKIR_DISPLAY_MODES.has(id) ? id : DEFAULT_QURAN_READ_MODE;
+    if (
+        !localeHasQuranMeal(locale) &&
+        (normalized === 'meal-ar' || normalized === 'meal-translit-ar')
+    ) {
+        return getDefaultQuranReadModeForLocale(locale);
+    }
+    return normalized;
 }
 
 export function normalizeQuranReaderLayout(layout) {
@@ -1479,11 +1511,20 @@ function ensureMushafPageSwipe() {
     let touchStartX = 0;
     let touchStartY = 0;
     let touchScrollTopAtStart = 0;
+    let mushafSwipeArmed = false;
 
     view.addEventListener(
         'touchstart',
         (e) => {
-            if (getCurrentReaderLayout() !== 'mushaf' || e.touches.length !== 1) return;
+            if (getCurrentReaderLayout() !== 'mushaf' || e.touches.length !== 1) {
+                mushafSwipeArmed = false;
+                return;
+            }
+            if (isMushafSwipeBlocked(e.target)) {
+                mushafSwipeArmed = false;
+                return;
+            }
+            mushafSwipeArmed = true;
             touchStartX = e.touches[0].clientX;
             touchStartY = e.touches[0].clientY;
             const pager = document.getElementById('quranMushafPager');
@@ -1495,7 +1536,10 @@ function ensureMushafPageSwipe() {
     view.addEventListener(
         'touchend',
         (e) => {
+            if (!mushafSwipeArmed) return;
+            mushafSwipeArmed = false;
             if (mushafNavigateLock || getCurrentReaderLayout() !== 'mushaf') return;
+            if (isMushafSwipeBlocked(e.target)) return;
             const touch = e.changedTouches[0];
             if (!touch) return;
 
@@ -1965,7 +2009,7 @@ function setupLazyObserver(meal, readMode, readerLayout = DEFAULT_QURAN_READER_L
 
                 const rect = section.getBoundingClientRect();
                 const gap = Math.max(rootRect.top - rect.bottom, rect.top - rootRect.bottom, 0);
-                if (gap > unloadDistance && !isReaderDrawerOpen()) {
+                if (gap > unloadDistance && !isReaderDrawerOpen() && !isMushafGestureSuppressed()) {
                     unloadSurahSection(section);
                 }
             });
@@ -2201,6 +2245,8 @@ function setQuranReaderDrawerOpen(open) {
     if (menuBtn) menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     document.documentElement.classList.toggle('quran-drawer-open', isOpen);
     if (!isOpen) {
+        // Panel kapanırken scroller/lazy unload yer değiştirmesin; kısa bastır.
+        suppressMushafGesturesBriefly();
         setQuranReaderHelpPanelOpen(false);
         resetQuranAyahGotoForm();
         const panel = document.getElementById('quranReaderDrawerPanel');
@@ -2925,8 +2971,11 @@ function attachReaderDrawerSwipe(panel, backdrop) {
 
             if (!axisLock) {
                 if (Math.abs(dx) < EXPAND_SWIPE_LOCK_PX && Math.abs(dy) < EXPAND_SWIPE_LOCK_PX) return;
-                if (Math.abs(dx) > Math.abs(dy) * 1.12) axisLock = 'h';
-                else {
+                if (Math.abs(dx) > Math.abs(dy) * 1.12) {
+                    axisLock = 'h';
+                    // Yatay kapatma jesti mushaf sayfa çevirmeye gitmesin
+                    suppressMushafGesturesBriefly();
+                } else {
                     axisLock = 'v';
                     endSwipeGesture(true);
                     resetSwipeTransform(false);
@@ -2936,6 +2985,7 @@ function attachReaderDrawerSwipe(panel, backdrop) {
 
             if (axisLock !== 'h') return;
             e.preventDefault();
+            e.stopPropagation();
 
             lastX = e.clientX;
             let tx = dx;
@@ -2968,6 +3018,7 @@ function attachReaderDrawerSwipe(panel, backdrop) {
             return;
         }
 
+        suppressMushafGesturesBriefly();
         panel.style.transition = '';
         panel.style.transform = 'translateX(100%)';
         if (backdrop) {

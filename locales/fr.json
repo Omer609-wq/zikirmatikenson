@@ -50,7 +50,11 @@
     "reset": "Réinitialiser",
     "statsAria": "Statistiques de ce dhikr",
     "statsTitle": "Statistiques",
-    "virtueLabel": "Mérite"
+    "virtueLabel": "Mérite",
+    "reviseDisplay": "Modifier l'affichage",
+    "reviseDisplayTitle": "Paramètres d'affichage",
+    "reviseDisplaySave": "Appliquer",
+    "reviseDisplayError": "Impossible de mettre à jour l'affichage. Vérifiez la connexion et réessayez."
   },
   "stats": {
     "title": "Mes statistiques",
@@ -139,6 +143,7 @@
     "readModeTitle": "Affichage",
     "readModeMealAr": "Traduction + arabe",
     "readModeMealArDesc": "Texte arabe avec traduction française",
+    "readModeMealTranslitAr": "Traduction + translittération + arabe",
     "readModeTranslitAr": "Translittération + arabe",
     "readModeTranslitArDesc": "Sans traduction ; latin sous l'arabe",
     "readModeArOnly": "Arabe seul",

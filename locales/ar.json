@@ -50,7 +50,11 @@
     "reset": "إعادة ضبط",
     "statsAria": "إحصائيات هذا الذكر",
     "statsTitle": "الإحصائيات",
-    "virtueLabel": "الفضيلة"
+    "virtueLabel": "الفضيلة",
+    "reviseDisplay": "تعديل العرض",
+    "reviseDisplayTitle": "إعدادات العرض",
+    "reviseDisplaySave": "تطبيق",
+    "reviseDisplayError": "تعذر تحديث العرض. تحقق من الاتصال ثم أعد المحاولة."
   },
   "stats": {
     "title": "إحصائياتي",
@@ -140,6 +144,7 @@
     "readModeTitle": "العرض",
     "readModeMealAr": "معنى + عربي",
     "readModeMealArDesc": "النص العربي مع شرح المعنى (التفسير الميسر) أسفله",
+    "readModeMealTranslitAr": "معنى + نطق + عربي",
     "readModeTranslitAr": "نطق + عربي",
     "readModeTranslitArDesc": "بدون شرح المعنى؛ نطق لاتيني تحت العربي",
     "readModeArOnly": "عربي فقط",

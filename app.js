@@ -161,8 +161,8 @@ import {
     clearQuranSearch,
     closeQuranReaderDrawer,
     normalizeQuranMeal,
-    normalizeQuranReadMode,
     normalizeQuranReadModeForLocale,
+    normalizeQuranZikirDisplayMode,
     normalizeQuranReaderLayout,
     isQuranMushafDomActive,
     syncQuranSettingsForLocale,
@@ -705,7 +705,7 @@ async function syncQuranZikirLocalizedContent() {
         const rows = ayahNums.map((n) => surah.ayahs.find((a) => a.n === n)).filter(Boolean);
         if (!rows.length) continue;
 
-        const displayMode = normalizeQuranReadModeForLocale(
+        const displayMode = normalizeQuranZikirDisplayMode(
             z.quranDisplayMode || getDefaultQuranReadModeForLocale(locale),
             locale
         );
@@ -1418,8 +1418,8 @@ function syncQuranDrawerFolderModeUI(mode) {
     const hasMeal = localeHasQuranMeal(appSettings.locale);
     document.querySelectorAll('#quranDrawerFolderModeList .quran-folder-add__mode').forEach((btn) => {
         const readModeId = btn.getAttribute('data-read-mode');
-        if (readModeId === 'meal-ar') btn.hidden = !hasMeal;
-        const on = normalizeQuranReadModeForLocale(readModeId, appSettings.locale) === mode;
+        if (readModeId === 'meal-ar' || readModeId === 'meal-translit-ar') btn.hidden = !hasMeal;
+        const on = normalizeQuranZikirDisplayMode(readModeId, appSettings.locale) === mode;
         btn.classList.toggle('active', on);
         btn.setAttribute('aria-checked', on ? 'true' : 'false');
     });
@@ -1427,7 +1427,7 @@ function syncQuranDrawerFolderModeUI(mode) {
 
 function getQuranDrawerFolderSelectedMode() {
     const active = document.querySelector('#quranDrawerFolderModeList .quran-folder-add__mode.active');
-    return normalizeQuranReadModeForLocale(
+    return normalizeQuranZikirDisplayMode(
         active?.getAttribute('data-read-mode') || getDefaultQuranReadModeForLocale(appSettings.locale),
         appSettings.locale
     );
@@ -1444,6 +1444,103 @@ function syncQuranDrawerCounterLayoutUI(layout) {
 function getQuranDrawerCounterLayoutSelected() {
     const active = document.querySelector('#quranDrawerFolderLayoutList .quran-folder-add__mode.active');
     return normalizeQuranCounterLayout(active?.getAttribute('data-counter-layout') || 'classic');
+}
+
+function setReviseQuranDisplayError(msg) {
+    const el = document.getElementById('reviseQuranDisplayError');
+    if (!el) return;
+    const text = String(msg || '').trim();
+    if (text) {
+        el.textContent = text;
+        el.hidden = false;
+    } else {
+        el.textContent = '';
+        el.hidden = true;
+    }
+}
+
+function syncReviseQuranDisplayModeUI(mode) {
+    const hasMeal = localeHasQuranMeal(appSettings.locale);
+    document.querySelectorAll('#reviseQuranDisplayModeList .quran-folder-add__mode').forEach((btn) => {
+        const readModeId = btn.getAttribute('data-read-mode');
+        if (readModeId === 'meal-ar' || readModeId === 'meal-translit-ar') btn.hidden = !hasMeal;
+        const on = normalizeQuranZikirDisplayMode(readModeId, appSettings.locale) === mode;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
+}
+
+function getReviseQuranDisplaySelectedMode() {
+    const active = document.querySelector('#reviseQuranDisplayModeList .quran-folder-add__mode.active');
+    return normalizeQuranZikirDisplayMode(
+        active?.getAttribute('data-read-mode') || getDefaultQuranReadModeForLocale(appSettings.locale),
+        appSettings.locale
+    );
+}
+
+function syncReviseQuranDisplayLayoutUI(layout) {
+    document.querySelectorAll('#reviseQuranDisplayLayoutList .quran-folder-add__mode').forEach((btn) => {
+        const on = normalizeQuranCounterLayout(btn.getAttribute('data-counter-layout')) === layout;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
+}
+
+function getReviseQuranDisplaySelectedLayout() {
+    const active = document.querySelector('#reviseQuranDisplayLayoutList .quran-folder-add__mode.active');
+    return normalizeQuranCounterLayout(active?.getAttribute('data-counter-layout') || 'classic');
+}
+
+function openReviseQuranDisplayModal() {
+    const zikir = zikirs.find((z) => z.id === currentZikirId);
+    if (!isQuranZikir(zikir)) return;
+    const mode = normalizeQuranZikirDisplayMode(
+        zikir.quranDisplayMode || getDefaultQuranReadModeForLocale(appSettings.locale),
+        appSettings.locale
+    );
+    const layout = normalizeQuranCounterLayout(zikir.quranCounterLayout);
+    setReviseQuranDisplayError('');
+    syncReviseQuranDisplayModeUI(mode);
+    syncReviseQuranDisplayLayoutUI(layout);
+    openOverlay('reviseQuranDisplayOverlay');
+}
+
+async function applyReviseQuranDisplay() {
+    const zikir = zikirs.find((z) => z.id === currentZikirId);
+    if (!isQuranZikir(zikir)) return false;
+
+    const displayMode = getReviseQuranDisplaySelectedMode();
+    const counterLayout = getReviseQuranDisplaySelectedLayout();
+    const surahN = Number(zikir.quranRef?.s);
+    const ayahNums = getQuranRefAyahNums(zikir.quranRef);
+    if (!Number.isFinite(surahN) || !ayahNums.length) {
+        setReviseQuranDisplayError(t('counter.reviseDisplayError'));
+        return false;
+    }
+
+    const mealId = normalizeQuranMeal(appSettings.quranMeal, appSettings.locale);
+    let surah;
+    try {
+        surah = await fetchSurahAyahs(surahN, mealId, appSettings.locale);
+    } catch {
+        setReviseQuranDisplayError(t('counter.reviseDisplayError'));
+        return false;
+    }
+    const rows = ayahNums.map((n) => surah?.ayahs?.find((a) => a.n === n)).filter(Boolean);
+    if (!rows.length) {
+        setReviseQuranDisplayError(t('counter.reviseDisplayError'));
+        return false;
+    }
+
+    const { arabic, meaning } = buildQuranZikirContent(rows, displayMode);
+    zikir.quranDisplayMode = displayMode;
+    zikir.quranCounterLayout = counterLayout;
+    zikir.arabic = arabic;
+    zikir.meaning = meaning;
+    saveData();
+    updateCounterUI();
+    closeOverlayPreferHistory('reviseQuranDisplayOverlay');
+    return true;
 }
 
 function parseQuranDrawerAyahSelection(ayahCount) {
@@ -1520,6 +1617,11 @@ function buildQuranZikirContent(ayahRows, displayMode) {
         } else if (displayMode === 'translit-ar') {
             const lat = String(ayah.lat || '').trim();
             if (lat) subParts.push(lat);
+        } else if (displayMode === 'meal-translit-ar') {
+            const tr = String(ayah.tr || '').trim();
+            const lat = String(ayah.lat || '').trim();
+            const bits = [lat, tr].filter(Boolean);
+            if (bits.length) subParts.push(bits.join('\n'));
         }
     });
     return {
@@ -4656,7 +4758,7 @@ function closeAllOverlays() {
     });
 }
 
-const SCROLLABLE_OVERLAY_IDS = new Set(['trashOverlay', 'smartReminderEditOverlay']);
+const SCROLLABLE_OVERLAY_IDS = new Set(['trashOverlay', 'smartReminderEditOverlay', 'reviseQuranDisplayOverlay']);
 
 function openOverlay(overlayId, { onOpen } = {}) {
     const el = document.getElementById(overlayId);
@@ -5804,7 +5906,7 @@ function applyQuranCounterLayout(zikir) {
     const quranSub = document.getElementById('quranZikirMeaning');
     const isQuran = isQuranZikir(zikir);
     const layout = isQuran ? normalizeQuranCounterLayout(zikir.quranCounterLayout) : 'classic';
-    const readMode = normalizeQuranReadModeForLocale(
+    const readMode = normalizeQuranZikirDisplayMode(
         zikir.quranDisplayMode || getDefaultQuranReadModeForLocale(appSettings.locale),
         appSettings.locale
     );
@@ -5893,6 +5995,8 @@ function updateCounterUI() {
 
     const { useHeaderAyahText } = applyQuranCounterLayout(zikir);
     const isQuran = isQuranZikir(zikir);
+    const reviseQuranDisplayBtn = document.getElementById('reviseQuranDisplayBtn');
+    if (reviseQuranDisplayBtn) reviseQuranDisplayBtn.hidden = !isQuran;
     const showHeaderZikirMeta = !isQuran || useHeaderAyahText;
     const counterDisplayName = getZikirDisplayName(zikir);
     const rtlUiScript = localeUsesRtlUiScript(appSettings.locale);
@@ -6821,7 +6925,9 @@ function setupEventListeners() {
         quranDrawerFolderModeList.dataset.bound = '1';
         quranDrawerFolderModeList.querySelectorAll('.quran-folder-add__mode').forEach((btn) => {
             btn.addEventListener('click', () => {
-                syncQuranDrawerFolderModeUI(normalizeQuranReadMode(btn.getAttribute('data-read-mode')));
+                syncQuranDrawerFolderModeUI(
+                    normalizeQuranZikirDisplayMode(btn.getAttribute('data-read-mode'), appSettings.locale)
+                );
             });
         });
     }
@@ -7059,6 +7165,40 @@ function setupEventListeners() {
                 b.classList.toggle('active', b.getAttribute('data-zikir-stat-tab') === 'daily');
             });
             openOverlay('zikirStatsOverlay', { onOpen: renderZikirStats });
+        });
+    }
+    const reviseQuranDisplayBtn = document.getElementById('reviseQuranDisplayBtn');
+    if (reviseQuranDisplayBtn && reviseQuranDisplayBtn.dataset.bound !== '1') {
+        reviseQuranDisplayBtn.dataset.bound = '1';
+        reviseQuranDisplayBtn.addEventListener('click', () => openReviseQuranDisplayModal());
+    }
+    const reviseQuranDisplayModeList = document.getElementById('reviseQuranDisplayModeList');
+    if (reviseQuranDisplayModeList && reviseQuranDisplayModeList.dataset.bound !== '1') {
+        reviseQuranDisplayModeList.dataset.bound = '1';
+        reviseQuranDisplayModeList.querySelectorAll('.quran-folder-add__mode').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                syncReviseQuranDisplayModeUI(
+                    normalizeQuranZikirDisplayMode(btn.getAttribute('data-read-mode'), appSettings.locale)
+                );
+            });
+        });
+    }
+    const reviseQuranDisplayLayoutList = document.getElementById('reviseQuranDisplayLayoutList');
+    if (reviseQuranDisplayLayoutList && reviseQuranDisplayLayoutList.dataset.bound !== '1') {
+        reviseQuranDisplayLayoutList.dataset.bound = '1';
+        reviseQuranDisplayLayoutList.querySelectorAll('.quran-folder-add__mode').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                syncReviseQuranDisplayLayoutUI(
+                    normalizeQuranCounterLayout(btn.getAttribute('data-counter-layout'))
+                );
+            });
+        });
+    }
+    const saveReviseQuranDisplayBtn = document.getElementById('saveReviseQuranDisplayBtn');
+    if (saveReviseQuranDisplayBtn && saveReviseQuranDisplayBtn.dataset.bound !== '1') {
+        saveReviseQuranDisplayBtn.dataset.bound = '1';
+        saveReviseQuranDisplayBtn.addEventListener('click', () => {
+            void applyReviseQuranDisplay();
         });
     }
     zikirStatTabBtns.forEach((btn) => {
