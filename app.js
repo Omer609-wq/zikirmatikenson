@@ -6061,13 +6061,7 @@ function appendLibraryCard(parent, z, { locked = false } = {}) {
     const body = document.createElement('div');
     body.className = locked ? 'library-card__blur' : 'library-card__body';
 
-    if (!locked) {
-        const badge = document.createElement('span');
-        badge.className = 'material-icons-outlined lib-badge';
-        badge.title = t('library.verifiedTitle');
-        badge.textContent = 'verified';
-        card.appendChild(badge);
-    } else {
+    if (locked) {
         const star = document.createElement('span');
         star.className = 'library-card__premium-star';
         star.setAttribute('aria-hidden', 'true');
