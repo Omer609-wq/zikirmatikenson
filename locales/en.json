@@ -557,6 +557,8 @@
     "disconnectBtn": "Disconnect account",
     "disconnectConfirm": "Disconnect your Google account? Your cloud backup will not be deleted.",
     "restoreConfirm": "The cloud backup will replace data on this device. Current dhikr and settings will be overwritten. Continue?",
+    "existingBackupConfirm": "A cloud backup already exists for this Google account. Restore it on this device now? Cancel keeps this device unchanged and will not overwrite the cloud backup.",
+    "existingBackupKept": "Cloud backup was left unchanged. Restore the existing backup to connect this account.",
     "restoreSuccess": "Backup restored.",
     "connectSuccess": "Account connected and backup completed.",
     "backupSuccess": "Backup updated.",

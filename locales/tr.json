@@ -557,6 +557,8 @@
     "disconnectBtn": "Bağlantıyı kes",
     "disconnectConfirm": "Google hesabının bağlantısı kesilsin mi? Buluttaki yedeğin silinmez.",
     "restoreConfirm": "Buluttaki yedek bu cihazdaki verilerin yerine yazılır. Mevcut zikirler ve ayarlar silinir. Devam edilsin mi?",
+    "existingBackupConfirm": "Bu Google hesabında zaten bir bulut yedeği var. Şimdi bu cihaza geri yüklensin mi? Vazgeçersen bu cihaz değişmez ve buluttaki yedek üzerine yazılmaz.",
+    "existingBackupKept": "Buluttaki yedek değiştirilmedi. Bu hesabı bağlamak için mevcut yedeği geri yükle.",
     "restoreSuccess": "Yedek geri yüklendi.",
     "connectSuccess": "Hesabın bağlandı ve yedeğin alındı.",
     "backupSuccess": "Yedek güncellendi.",
