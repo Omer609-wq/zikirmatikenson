@@ -92,6 +92,13 @@ html[data-theme="light"] {
     --update-banner-btn-highlight: rgba(255, 248, 225, 0.35);
     --update-banner-btn-border: color-mix(in srgb, var(--update-banner-accent) 62%, var(--surface-border));
     --premium-sheet-shadow: 0 -8px 28px rgba(28, 25, 23, 0.12);
+    /* Bizi oylayın — açık temada soft altın (abartısız, okunaklı) */
+    --rate-us-bg: linear-gradient(180deg, rgba(251, 191, 36, 0.28), rgba(245, 158, 11, 0.14));
+    --rate-us-border: rgba(180, 130, 20, 0.38);
+    --rate-us-fg: #92400e;
+    --rate-us-stars: #d97706;
+    --rate-us-stars-glow: transparent;
+    --rate-us-shadow: none;
 }
 
 html[data-theme="light"] .quran-surah-section__frame {

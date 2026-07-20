@@ -14,7 +14,9 @@
         <item name="windowNoTitle">true</item>
         <item name="android:background">@null</item>
         <!-- JS yüklenene kadar varsayılan lacivert; tema sonra güncellenir -->
+        <item name="android:statusBarColor">#0a0e16</item>
         <item name="android:navigationBarColor">#0a0e16</item>
+        <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">false</item>
     </style>
 

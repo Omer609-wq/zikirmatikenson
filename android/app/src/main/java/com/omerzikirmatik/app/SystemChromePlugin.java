@@ -1,7 +1,9 @@
 package com.omerzikirmatik.app;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.view.View;
+import android.view.Window;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -12,7 +14,7 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
-/** Alt gezinme çubuğu rengi ve sistem güvenli alan (inset) ölçümü. */
+/** Sistem çubukları (üst durum + alt gezinme) rengi ve ikon kontrastı. */
 @CapacitorPlugin(name = "SystemChrome")
 public class SystemChromePlugin extends Plugin {
 
@@ -29,16 +31,27 @@ public class SystemChromePlugin extends Plugin {
     @PluginMethod
     public void applyNavigationBarTheme(PluginCall call) {
         String theme = call.getString("theme", "navy");
-        boolean lightNavBar = "light".equals(theme);
+        boolean lightBars = "light".equals(theme);
+        int barColor = colorForTheme(theme);
 
         getBridge().getActivity().runOnUiThread(() -> {
             try {
-                var window = getActivity().getWindow();
-                window.setNavigationBarColor(colorForTheme(theme));
+                Window window = getActivity().getWindow();
+                View decor = window.getDecorView();
+
+                window.setNavigationBarColor(barColor);
+                window.setStatusBarColor(barColor);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    window.setNavigationBarContrastEnforced(false);
+                    window.setStatusBarContrastEnforced(false);
+                }
+
                 WindowInsetsControllerCompat controller =
-                        WindowCompat.getInsetsController(window, window.getDecorView());
+                        WindowCompat.getInsetsController(window, decor);
                 if (controller != null) {
-                    controller.setAppearanceLightNavigationBars(lightNavBar);
+                    // true = koyu ikonlar (açık zemin); false = açık ikonlar (koyu zemin)
+                    controller.setAppearanceLightStatusBars(lightBars);
+                    controller.setAppearanceLightNavigationBars(lightBars);
                 }
                 call.resolve();
             } catch (Exception e) {
