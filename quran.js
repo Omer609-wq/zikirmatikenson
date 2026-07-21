@@ -1110,6 +1110,51 @@ function restoreQuranReaderScrollTop(scroller, scrollTop) {
     });
 }
 
+/**
+ * Ekranın üstündeki ayeti "çapa" olarak kaydeder.
+ * Okuma modu değişince (ör. meal+Arapça → yalnız Arapça) ayet blokları
+ * kısalıp toplam yükseklik düştüğü için piksel bazlı scrollTop geri yüklemesi
+ * kullanıcıyı bambaşka bir sureye atıyordu. Çapa, konumu ayete bağlar.
+ * @returns {{ surah: string, ayah: string, offset: number } | null}
+ */
+function captureReaderAyahAnchor(scroller) {
+    if (!scroller) return null;
+    const list = document.getElementById('quranAyahList');
+    if (!list) return null;
+    const scTop = scroller.getBoundingClientRect().top;
+    const blocks = list.querySelectorAll('.quran-ayah[data-surah][data-ayah]');
+    for (const el of blocks) {
+        const r = el.getBoundingClientRect();
+        // Görüş alanının üstünü kesen ilk ayet: kullanıcının okuduğu satır.
+        if (r.bottom > scTop + 1) {
+            return {
+                surah: el.getAttribute('data-surah') || '',
+                ayah: el.getAttribute('data-ayah') || '',
+                offset: r.top - scTop
+            };
+        }
+    }
+    return null;
+}
+
+/** Çapadaki ayeti aynı göreli konuma geri getirir. @returns {boolean} başarı */
+function restoreReaderAyahAnchor(scroller, anchor) {
+    if (!scroller || !anchor || !anchor.surah || !anchor.ayah) return false;
+    const el = document.querySelector(
+        `.quran-ayah[data-surah="${anchor.surah}"][data-ayah="${anchor.ayah}"]`
+    );
+    if (!el) return false;
+    const apply = () => {
+        const scTop = scroller.getBoundingClientRect().top;
+        const delta = el.getBoundingClientRect().top - scTop - anchor.offset;
+        if (Math.abs(delta) > 0.5) scroller.scrollTop += delta;
+    };
+    apply();
+    // Yazı tipi/görsel yerleşimi oturunca bir kez daha düzelt.
+    requestAnimationFrame(apply);
+    return true;
+}
+
 function isReaderDrawerOpen() {
     return document.documentElement.classList.contains('quran-drawer-open');
 }
@@ -2092,6 +2137,9 @@ function refreshLoadedSections(readMode, readerLayout = DEFAULT_QURAN_READER_LAY
     const mode = normalizeQuranReadMode(readMode);
     const layout = normalizeQuranReaderLayout(readerLayout);
     const scroller = layout !== 'mushaf' ? getQuranReaderScroller() : null;
+    // Okuma modu değişince blok yükseklikleri değişir; konumu piksele değil
+    // ayete bağla (piksel yalnızca çapa bulunamazsa yedek).
+    const savedAnchor = captureReaderAyahAnchor(scroller);
     const savedScrollTop = scroller ? scroller.scrollTop : null;
     const meal = normalizeQuranMeal(
         (layout === 'mushaf' ? pager?.dataset.mealId : list?.dataset.mealId) ?? '',
@@ -2120,7 +2168,9 @@ function refreshLoadedSections(readMode, readerLayout = DEFAULT_QURAN_READER_LAY
         const surah = surahContentCache.get(surahCacheKey(meal, n, getLocale()));
         if (surah) populateSurahAyahs(section, surah, mode);
     });
-    restoreQuranReaderScrollTop(scroller, savedScrollTop);
+    if (!restoreReaderAyahAnchor(scroller, savedAnchor)) {
+        restoreQuranReaderScrollTop(scroller, savedScrollTop);
+    }
 }
 
 async function scrollToMushafPage(pageNum, mealId, readMode, gen, { persist = false } = {}) {
