@@ -97,6 +97,7 @@ import {
 import { applyNativeStatusBarTheme } from './status-bar-theme.js';
 import { runCounterVibration, runDragReorderNudge } from './haptics.js';
 import { setupCrashReporting } from './lib/crash-reporting.js';
+import { maybeRequestAppReview, recordCompletedRound } from './lib/app-review.js';
 import {
     downloadBackupPayload,
     getCloudBackupAvailability,
@@ -6111,6 +6112,22 @@ function incrementCounter() {
     const isTargetHit = zikir.count % target === 0;
     handleVibration(isTargetHit);
     playTickSound(isTargetHit);
+    if (isTargetHit) onZikirRoundCompleted();
+}
+
+/**
+ * Tur tamamlandı: doğal bir başarı anı. Uygun koşullarda (kurulumdan 3+ gün,
+ * 5+ tur, 120 günde bir) uygulama içi puanlama penceresi istenir. Kutlamayı
+ * kesmemek için kısa gecikmeyle; kota nedeniyle hiç açılmayabilir — sessizdir.
+ */
+function onZikirRoundCompleted() {
+    recordCompletedRound();
+    window.setTimeout(() => {
+        void maybeRequestAppReview({
+            installedAt: appMeta?.installedAt ?? null,
+            isNative: isCapacitorNative()
+        });
+    }, 1200);
 }
 
 function decrementCounter() {

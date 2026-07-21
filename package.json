@@ -32,6 +32,7 @@
         "postinstall": "node scripts/patch-capacitor-proguard.cjs"
     },
     "dependencies": {
+        "@capacitor-community/in-app-review": "^6.0.0",
         "@capacitor-community/keep-awake": "^5.0.1",
         "@capacitor-firebase/authentication": "^6.3.1",
         "@capacitor-firebase/crashlytics": "^6.3.1",
