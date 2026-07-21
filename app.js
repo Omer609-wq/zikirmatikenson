@@ -6117,7 +6117,7 @@ function incrementCounter() {
 
 /**
  * Tur tamamlandı: doğal bir başarı anı. Uygun koşullarda (kurulumdan 3+ gün,
- * 5+ tur, 120 günde bir) uygulama içi puanlama penceresi istenir. Kutlamayı
+ * 5+ tur, 60 günde bir) uygulama içi puanlama penceresi istenir. Kutlamayı
  * kesmemek için kısa gecikmeyle; kota nedeniyle hiç açılmayabilir — sessizdir.
  */
 function onZikirRoundCompleted() {
