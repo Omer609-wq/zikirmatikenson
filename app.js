@@ -91,8 +91,8 @@ import {
     setupPremiumPurchase
 } from './lib/premium-purchase.js';
 import {
-    applyPremiumPreviewEntitlement,
     installPremiumPreviewConsoleHelper,
+    resolvePremiumPreviewEntitlement,
     resolvePremiumPreviewFlags
 } from './lib/premium-preview.js';
 import { applyNativeStatusBarTheme } from './status-bar-theme.js';
@@ -2369,7 +2369,6 @@ function loadData() {
         lifetimeByZikir = {};
     }
 
-    applyPremiumPreviewEntitlement(_premiumPreviewFlags.mode, entitlements);
     syncSettingsUI();
 }
 
@@ -2560,7 +2559,10 @@ function donutSlicePath(cx, cy, rOuter, rInner, startAngle, endAngle) {
 
 function isPremium() {
     if (getRuntimeFlags().premiumDevUnlock) return true;
-    return !!(entitlements && entitlements.premium);
+    return resolvePremiumPreviewEntitlement(
+        _premiumPreviewFlags.mode,
+        !!(entitlements && entitlements.premium)
+    );
 }
 
 /** Premium satışı aktifken ücretsiz kullanıcıya kilitli özellikler (çöp, aylık/yıllık istatistik). */
