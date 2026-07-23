@@ -11,8 +11,8 @@
             "providers": ["google.com"]
         },
         "SplashScreen": {
-            "launchAutoHide": false,
-            "launchShowDuration": 3000,
+            "launchAutoHide": true,
+            "launchShowDuration": 1500,
             "launchFadeOutDuration": 200,
             "backgroundColor": "#0a0e16",
             "androidSplashResourceName": "splash",
