@@ -57,6 +57,7 @@ import {
 } from './lib/usage-areas.js';
 import { syncNativeWeeklyReport } from './lib/weekly-report-notify.js';
 import { getRuntimeFlags, loadRuntimeFlags } from './lib/runtime-flags.js';
+import { hideNativeSplashWhenReady } from './lib/native-splash.js';
 import { buildWeeklyReportPreviewPatch } from './lib/weekly-report-preview.js';
 import {
     buildWeekReport,
@@ -1182,49 +1183,167 @@ let copyingZikirId = null;
 
 // ===================== INIT =====================
 async function init() {
-    await loadRuntimeFlags();
-    if (progressCircle) {
-        progressCircle.style.strokeDasharray = `${CIRCLE_CIRCUMFERENCE} ${CIRCLE_CIRCUMFERENCE}`;
-        progressCircle.style.strokeDashoffset = CIRCLE_CIRCUMFERENCE;
-    }
-    if (ccvProgressCircle) {
-        ccvProgressCircle.style.strokeDasharray = `${CIRCLE_CIRCUMFERENCE} ${CIRCLE_CIRCUMFERENCE}`;
-        ccvProgressCircle.style.strokeDashoffset = CIRCLE_CIRCUMFERENCE;
-    }
+    const splashShownAt = performance.now();
+    // init yarım kalırsa splash sonsuza kadar kalmasın
+    const splashFailSafe = isCapacitorNative()
+        ? setTimeout(() => {
+            void hideNativeSplashWhenReady(0);
+        }, 4000)
+        : null;
+    try {
+        await loadRuntimeFlags();
+        if (progressCircle) {
+            progressCircle.style.strokeDasharray = `${CIRCLE_CIRCUMFERENCE} ${CIRCLE_CIRCUMFERENCE}`;
+            progressCircle.style.strokeDashoffset = CIRCLE_CIRCUMFERENCE;
+        }
+        if (ccvProgressCircle) {
+            ccvProgressCircle.style.strokeDasharray = `${CIRCLE_CIRCUMFERENCE} ${CIRCLE_CIRCUMFERENCE}`;
+            ccvProgressCircle.style.strokeDashoffset = CIRCLE_CIRCUMFERENCE;
+        }
 
-    applyNativeBottomInsetVar();
-    if (isCapacitorNative()) {
-        void setupCrashReporting();
-        setTimeout(() => void refreshNativeBottomInsetVar(), 200);
-        App.addListener('appStateChange', ({ isActive }) => {
-            if (isActive) {
-                void refreshNativeBottomInsetVar();
-                usageTracker?.resume();
-                ensureWeeklyReportSchedule().catch(console.error);
-                void maybeRunAutoCloudBackup();
-            } else {
-                usageTracker?.pause();
-                flushSave(); // arka plana atılırken bekleyen sayaç yazmasını kaybetme
+        applyNativeBottomInsetVar();
+        if (isCapacitorNative()) {
+            void setupCrashReporting();
+            setTimeout(() => void refreshNativeBottomInsetVar(), 200);
+            App.addListener('appStateChange', ({ isActive }) => {
+                if (isActive) {
+                    void refreshNativeBottomInsetVar();
+                    usageTracker?.resume();
+                    ensureWeeklyReportSchedule().catch(console.error);
+                    void maybeRunAutoCloudBackup();
+                } else {
+                    usageTracker?.pause();
+                    flushSave(); // arka plana atılırken bekleyen sayaç yazmasını kaybetme
+                }
+            });
+            App.addListener('backButton', () => {
+                if (canNavigateBackInApp()) goBackInApp();
+                else void App.exitApp();
+            });
+        }
+        loadData();
+        installPremiumPreviewConsoleHelper(PREMIUM_PREVIEW_BUILD);
+        applyWeeklyReportPreviewSample();
+        initUsageTracker();
+        bindNativeReminderNotificationLaunch(openAppFromReminderNotification);
+        applyCachedRemoteDailyQuotes(); // ağ beklemeden: son indirilen söz listesi
+        setDailyQuote();
+        setupEventListeners();
+        setupSmartRemindersUI();
+        setupWeeklyReportUI();
+        setupBackupUI();
+        setPremiumPurchaseNavigator(navigateToPremiumPurchase);
+        setupPremiumUpsell();
+        setupPremiumPurchase({
+            onSubscribe: (result) => {
+                if (result?.ok) {
+                    entitlements.premium = true;
+                    saveData();
+                    syncPremiumLockedControls();
+                    void showAppAlert(t('premiumPurchase.purchaseSuccess'), {
+                        title: t('premiumPurchase.title')
+                    });
+                    return;
+                }
+                if (result?.reason === 'cancelled') return; // kullanıcı vazgeçti; sessiz
+                if (result?.reason === 'pending') {
+                    void showAppAlert(t('premiumPurchase.purchasePending'), {
+                        title: t('premiumPurchase.title')
+                    });
+                    return;
+                }
+                if (result?.reason === 'unavailable') {
+                    void showAppAlert(t('premiumPurchase.stubNote'), { title: t('premiumPurchase.title') });
+                    return;
+                }
+                void showAppAlert(t('premiumPurchase.purchaseError'), {
+                    title: t('premiumPurchase.title')
+                });
+            },
+            onRestore: (result) => {
+                if (result?.ok) {
+                    entitlements.premium = true;
+                    saveData();
+                    syncPremiumLockedControls();
+                    void showAppAlert(t('premiumPurchase.restoreSuccess'), { title: t('premiumPurchase.title') });
+                    return;
+                }
+                if (result?.reason === 'nothing_to_restore') {
+                    void showAppAlert(t('premiumPurchase.restoreNothing'), { title: t('premiumPurchase.title') });
+                    return;
+                }
+                void showAppAlert(t('premiumPurchase.restoreUnavailable'), { title: t('premiumPurchase.title') });
             }
         });
-        App.addListener('backButton', () => {
-            if (canNavigateBackInApp()) goBackInApp();
-            else void App.exitApp();
+        setMultiSelectBarShown(folderMultiSelectBar, false);
+        setMultiSelectBarShown(zikirMultiSelectBar, false);
+        // Do not push on first paint; set the baseline history state.
+        showView('homeView', null, { push: false });
+        ensureInitialHistoryState();
+        setInAppStackTo(getViewState('homeView', null));
+        syncPremiumLockedControls();
+        document.addEventListener('visibilitychange', onAppBecameVisibleForReminders);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState !== 'visible') {
+                usageTracker?.pause();
+                flushSave(); // sekme gizlenince bekleyen sayaç yazmasını diske işle
+                return;
+            }
+            usageTracker?.resume();
+            ensureWeeklyReportSchedule().catch(console.error);
+            void maybeRunAutoCloudBackup();
+            refreshRemoteHomeContent();
         });
+        window.addEventListener('pagehide', () => {
+            usageTracker?.pause();
+            flushSave();
+        });
+        window.addEventListener('pageshow', onPageShowForReminders);
+        // Make Android/iOS/WebView back follow in-app navigation.
+        window.addEventListener('popstate', (e) => {
+            const st = e && e.state ? e.state : null;
+            closeAllOverlays();
+            if (isOverlayState(st)) {
+                const el = document.getElementById(st.overlayId);
+                if (el) el.classList.add('active');
+                if (st.overlayId === 'zikirStatsOverlay') renderZikirStats();
+                return;
+            }
+            if (!st || typeof st !== 'object' || typeof st.viewId !== 'string') {
+                const home = getViewState('homeView', null);
+                setInAppStackTo(home);
+                showView('homeView', null, { push: false });
+                return;
+            }
+            syncInAppStackToHistoryState(st);
+            showView(st.viewId, st.param ?? null, { push: false });
+        });
+        // Some WebViews don't produce reliable history for internal tabs; keep a robust fallback stack.
+        document.addEventListener('keydown', (e) => {
+            // Desktop browsers sometimes map Backspace to back-navigation; don't steal when typing.
+            if (e.key !== 'Backspace') return;
+            const t = e.target;
+            if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+            // Prevent browser default back and use in-app back instead.
+            e.preventDefault();
+            goBackInApp();
+        });
+        if (ESMA_LIST.length !== ESMA_ARABIC.length) {
+            console.warn('Zikirmatik: ESMA_LIST ile ESMA_ARABIC uzunlukları eşleşmiyor.');
+        }
+        if (ESMA_LIST.length !== ESMA_NAME_EN.length || ESMA_LIST.length !== ESMA_NAME_BN.length) {
+            console.warn('Zikirmatik: Esma isim dizileri ESMA_LIST ile eşleşmiyor.');
+        }
+
+        // Home boyandıktan sonra splash’i kapat; ağ/billing işi logo arkasında kalmasın.
+        await hideNativeSplashWhenReady(splashShownAt);
+    } finally {
+        if (splashFailSafe) clearTimeout(splashFailSafe);
     }
-    loadData();
-    installPremiumPreviewConsoleHelper(PREMIUM_PREVIEW_BUILD);
-    applyWeeklyReportPreviewSample();
-    initUsageTracker();
-    bindNativeReminderNotificationLaunch(openAppFromReminderNotification);
-    applyCachedRemoteDailyQuotes(); // ağ beklemeden: son indirilen söz listesi
-    setDailyQuote();
-    setupEventListeners();
-    setupSmartRemindersUI();
-    setupWeeklyReportUI();
-    setupBackupUI();
-    setPremiumPurchaseNavigator(navigateToPremiumPurchase);
-    setupPremiumUpsell();
+
+    if (!isCapacitorNative() && 'serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(console.error);
+    }
     // RevenueCat: abonelik durumu değişince entitlement'ı güncelle (satın alma,
     // yenileme, iptal/süre dolumu — hepsi bu tek dinleyiciden akar).
     void initPremiumPurchases({
@@ -1235,57 +1354,6 @@ async function init() {
             syncPremiumLockedControls();
         }
     });
-    setupPremiumPurchase({
-        onSubscribe: (result) => {
-            if (result?.ok) {
-                entitlements.premium = true;
-                saveData();
-                syncPremiumLockedControls();
-                void showAppAlert(t('premiumPurchase.purchaseSuccess'), {
-                    title: t('premiumPurchase.title')
-                });
-                return;
-            }
-            if (result?.reason === 'cancelled') return; // kullanıcı vazgeçti; sessiz
-            if (result?.reason === 'pending') {
-                void showAppAlert(t('premiumPurchase.purchasePending'), {
-                    title: t('premiumPurchase.title')
-                });
-                return;
-            }
-            if (result?.reason === 'unavailable') {
-                void showAppAlert(t('premiumPurchase.stubNote'), { title: t('premiumPurchase.title') });
-                return;
-            }
-            void showAppAlert(t('premiumPurchase.purchaseError'), {
-                title: t('premiumPurchase.title')
-            });
-        },
-        onRestore: (result) => {
-            if (result?.ok) {
-                entitlements.premium = true;
-                saveData();
-                syncPremiumLockedControls();
-                void showAppAlert(t('premiumPurchase.restoreSuccess'), { title: t('premiumPurchase.title') });
-                return;
-            }
-            if (result?.reason === 'nothing_to_restore') {
-                void showAppAlert(t('premiumPurchase.restoreNothing'), { title: t('premiumPurchase.title') });
-                return;
-            }
-            void showAppAlert(t('premiumPurchase.restoreUnavailable'), { title: t('premiumPurchase.title') });
-        }
-    });
-    setMultiSelectBarShown(folderMultiSelectBar, false);
-    setMultiSelectBarShown(zikirMultiSelectBar, false);
-    // Do not push on first paint; set the baseline history state.
-    showView('homeView', null, { push: false });
-    ensureInitialHistoryState();
-    setInAppStackTo(getViewState('homeView', null));
-    syncPremiumLockedControls();
-    if (!isCapacitorNative() && 'serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').catch(console.error);
-    }
     if (reminderSettings && reminderSettings.enabled) {
         if (!isCapacitorNative()) maybeRequestNotificationPermission();
         ensureReminderSchedule().catch(console.error);
@@ -1293,59 +1361,6 @@ async function init() {
     ensureSmartReminderSchedule().catch(console.error);
     ensureWeeklyReportSchedule().catch(console.error);
     void maybeRunAutoCloudBackup();
-    document.addEventListener('visibilitychange', onAppBecameVisibleForReminders);
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState !== 'visible') {
-            usageTracker?.pause();
-            flushSave(); // sekme gizlenince bekleyen sayaç yazmasını diske işle
-            return;
-        }
-        usageTracker?.resume();
-        ensureWeeklyReportSchedule().catch(console.error);
-        void maybeRunAutoCloudBackup();
-        refreshRemoteHomeContent();
-    });
-    window.addEventListener('pagehide', () => {
-        usageTracker?.pause();
-        flushSave();
-    });
-    window.addEventListener('pageshow', onPageShowForReminders);
-    // Make Android/iOS/WebView back follow in-app navigation.
-    window.addEventListener('popstate', (e) => {
-        const st = e && e.state ? e.state : null;
-        closeAllOverlays();
-        if (isOverlayState(st)) {
-            const el = document.getElementById(st.overlayId);
-            if (el) el.classList.add('active');
-            if (st.overlayId === 'zikirStatsOverlay') renderZikirStats();
-            return;
-        }
-        if (!st || typeof st !== 'object' || typeof st.viewId !== 'string') {
-            const home = getViewState('homeView', null);
-            setInAppStackTo(home);
-            showView('homeView', null, { push: false });
-            return;
-        }
-        syncInAppStackToHistoryState(st);
-        showView(st.viewId, st.param ?? null, { push: false });
-    });
-    // Some WebViews don't produce reliable history for internal tabs; keep a robust fallback stack.
-    document.addEventListener('keydown', (e) => {
-        // Desktop browsers sometimes map Backspace to back-navigation; don't steal when typing.
-        if (e.key !== 'Backspace') return;
-        const t = e.target;
-        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
-        // Prevent browser default back and use in-app back instead.
-        e.preventDefault();
-        goBackInApp();
-    });
-    if (ESMA_LIST.length !== ESMA_ARABIC.length) {
-        console.warn('Zikirmatik: ESMA_LIST ile ESMA_ARABIC uzunlukları eşleşmiyor.');
-    }
-    if (ESMA_LIST.length !== ESMA_NAME_EN.length || ESMA_LIST.length !== ESMA_NAME_BN.length) {
-        console.warn('Zikirmatik: Esma isim dizileri ESMA_LIST ile eşleşmiyor.');
-    }
-
     refreshRemoteHomeContent();
     // Dil id/ms/bn/ur ise ilk kez samimi çeviri notu (home boyandıktan sonra).
     requestAnimationFrame(() => {

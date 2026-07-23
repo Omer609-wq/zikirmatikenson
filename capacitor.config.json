@@ -9,6 +9,15 @@
         "FirebaseAuthentication": {
             "skipNativeAuth": true,
             "providers": ["google.com"]
+        },
+        "SplashScreen": {
+            "launchAutoHide": false,
+            "backgroundColor": "#0a0e16",
+            "androidSplashResourceName": "splash",
+            "androidScaleType": "CENTER_CROP",
+            "showSpinner": false,
+            "splashFullScreen": true,
+            "splashImmersive": true
         }
     },
     "ios": {
@@ -17,6 +26,7 @@
             "@capacitor/app",
             "@capacitor/haptics",
             "@capacitor/local-notifications",
+            "@capacitor/splash-screen",
             "@capacitor/status-bar",
             "@revenuecat/purchases-capacitor"
         ]
