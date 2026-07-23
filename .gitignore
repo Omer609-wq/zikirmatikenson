@@ -13,3 +13,7 @@ android/*.jks
 android/*.pem
 android/keystore.properties
 .env.local
+# Pazarlama çıktıları (video, mağaza görselleri, ham telefon kayıtları).
+# Kaynak kod değil; asıl yerleri YouTube ve Play Console. Git ikili dosyaların
+# her sürümünü kalıcı saklar — repoyu ~100 MB şişirmesin.
+promo/
