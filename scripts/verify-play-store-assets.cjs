@@ -9,6 +9,7 @@ const ROOT = path.join(__dirname, '..');
 const CHECKS = [
     { rel: 'resources/play-console-icon-512.png', w: 512, h: 512, maxKb: 1024 },
     { rel: 'resources/play-feature-1024x500.png', w: 1024, h: 500, maxKb: 15360 },
+    { rel: 'resources/play-feature-1024x500-tr.png', w: 1024, h: 500, maxKb: 15360 },
 ];
 
 (async () => {
