@@ -67,20 +67,34 @@ function quranSearchAssets() {
             const orphanSearchChunks =
                 /^(?:ar-ayah|translit-tr|translit-en|meal-(?:tr|en|id|ms|fr|bn|ur))-[A-Za-z0-9_-]+\.js$/;
             const orphanIndexChunks = /^index-[A-Za-z0-9_-]+\.js$/;
+            if (!fs.existsSync(assetsDir)) return;
+
+            /*
+             * index-*.js yalnızca GERÇEKTEN referanssızsa silinir.
+             * Vite, npm paketlerinin dinamik import parçalarını paketin giriş
+             * dosyasına göre adlandırır (@capacitor/splash-screen/dist/esm/index.js
+             * -> index-<hash>.js). Eskiden yalnız index.html'e bakılıyordu; bu
+             * yüzden SplashScreen, KeepAwake, StatusBar, InAppReview ve RevenueCat
+             * parçaları "artık" sanılıp siliniyor, o eklentiler çalışma anında
+             * "Failed to fetch dynamically imported module" ile patlıyordu.
+             */
+            const referenced = new Set();
             const indexHtmlPath = path.join(__dirname, 'www', 'index.html');
-            let activeIndexChunk = '';
-            if (fs.existsSync(indexHtmlPath)) {
-                const html = fs.readFileSync(indexHtmlPath, 'utf8');
-                const m = html.match(/\.\/assets\/(index-[A-Za-z0-9_-]+\.js)/);
-                activeIndexChunk = m ? m[1] : '';
+            const collect = (text) => {
+                for (const m of text.matchAll(/[A-Za-z0-9_-]+-[A-Za-z0-9_-]+\.js/g)) referenced.add(m[0]);
+            };
+            if (fs.existsSync(indexHtmlPath)) collect(fs.readFileSync(indexHtmlPath, 'utf8'));
+            const assetNames = fs.readdirSync(assetsDir);
+            for (const name of assetNames) {
+                if (!name.endsWith('.js')) continue;
+                collect(fs.readFileSync(path.join(assetsDir, name), 'utf8'));
             }
-            if (fs.existsSync(assetsDir)) {
-                for (const name of fs.readdirSync(assetsDir)) {
-                    if (orphanSearchChunks.test(name)) {
-                        fs.unlinkSync(path.join(assetsDir, name));
-                    } else if (orphanIndexChunks.test(name) && name !== activeIndexChunk) {
-                        fs.unlinkSync(path.join(assetsDir, name));
-                    }
+
+            for (const name of assetNames) {
+                if (orphanSearchChunks.test(name)) {
+                    fs.unlinkSync(path.join(assetsDir, name));
+                } else if (orphanIndexChunks.test(name) && !referenced.has(name)) {
+                    fs.unlinkSync(path.join(assetsDir, name));
                 }
             }
         }
