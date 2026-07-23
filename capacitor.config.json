@@ -12,12 +12,12 @@
         },
         "SplashScreen": {
             "launchAutoHide": false,
+            "launchShowDuration": 3000,
+            "launchFadeOutDuration": 200,
             "backgroundColor": "#0a0e16",
             "androidSplashResourceName": "splash",
             "androidScaleType": "CENTER_CROP",
-            "showSpinner": false,
-            "splashFullScreen": true,
-            "splashImmersive": true
+            "showSpinner": false
         }
     },
     "ios": {

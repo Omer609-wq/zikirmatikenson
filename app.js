@@ -1184,11 +1184,11 @@ let copyingZikirId = null;
 // ===================== INIT =====================
 async function init() {
     const splashShownAt = performance.now();
-    // init yarım kalırsa splash sonsuza kadar kalmasın
+    // rAF / init hatası olsa bile splash kalsın diye ayrı failsafe (hide içinde rAF yok)
     const splashFailSafe = isCapacitorNative()
         ? setTimeout(() => {
             void hideNativeSplashWhenReady(0);
-        }, 4000)
+        }, 2500)
         : null;
     try {
         await loadRuntimeFlags();
@@ -1334,10 +1334,15 @@ async function init() {
         if (ESMA_LIST.length !== ESMA_NAME_EN.length || ESMA_LIST.length !== ESMA_NAME_BN.length) {
             console.warn('Zikirmatik: Esma isim dizileri ESMA_LIST ile eşleşmiyor.');
         }
-
-        // Home boyandıktan sonra splash’i kapat; ağ/billing işi logo arkasında kalmasın.
-        await hideNativeSplashWhenReady(splashShownAt);
+    } catch (err) {
+        console.error('init hatası:', err);
     } finally {
+        // Home hazır olsun ya da hata olsun — splash’i mutlaka kapat
+        try {
+            await hideNativeSplashWhenReady(splashShownAt);
+        } catch (err) {
+            console.warn('Splash kapatılamadı:', err);
+        }
         if (splashFailSafe) clearTimeout(splashFailSafe);
     }
 
