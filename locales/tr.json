@@ -105,7 +105,8 @@
     "detailWhenDua": "Ne zaman okunur",
     "detailVirtueZikir": "Fazilet",
     "premiumMore": "Premium ile +{count} dua ve zikir daha",
-    "premiumLockedAria": "Premium ile açılır"
+    "premiumLockedAria": "Premium ile açılır",
+    "addedAria": "Eklendiği klasörleri göster"
   },
   "quran": {
     "title": "Kur'an-ı Kerim",

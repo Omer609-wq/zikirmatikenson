@@ -105,7 +105,8 @@
     "detailWhenDua": "When to recite",
     "detailVirtueZikir": "Virtue",
     "premiumMore": "Premium with +{count} more duas and dhikr",
-    "premiumLockedAria": "Unlock with Premium"
+    "premiumLockedAria": "Unlock with Premium",
+    "addedAria": "Show folders it was added to"
   },
   "quran": {
     "title": "Qur'an",

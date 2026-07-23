@@ -105,7 +105,8 @@
     "detailWhenDua": "Quand réciter",
     "detailVirtueZikir": "Mérite",
     "premiumMore": "Premium : +{count} douas et dhikr en plus",
-    "premiumLockedAria": "Débloquer avec Premium"
+    "premiumLockedAria": "Débloquer avec Premium",
+    "addedAria": "Afficher les dossiers où il est ajouté"
   },
   "quran": {
     "title": "Coran",

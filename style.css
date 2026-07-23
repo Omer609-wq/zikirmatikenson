@@ -3729,6 +3729,55 @@ html[data-counter-show-round="false"] .round-badge { display: none !important; }
     background: var(--surface-card-active);
     border-color: var(--surface-border-active);
 }
+/* Keşfet kartı — klasöre eklenmiş işareti (sağ üst) */
+.library-card__added {
+    position: absolute;
+    top: 0.7rem;
+    right: 0.7rem;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--primary-green);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.library-card__added .material-icons-outlined {
+    font-size: 1.15rem;
+    line-height: 1;
+}
+.library-card__added:active {
+    background: rgba(16, 185, 129, 0.14);
+}
+.library-card__added-hint {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    z-index: 5;
+    /* Kapsayıcı yalnızca rozet (≈1.9rem) olduğu için genişlik ona sıkışıyordu;
+       max-content ile içeriğe göre açılır, dar ekranda max-width sınırlar. */
+    width: max-content;
+    max-width: min(13rem, 62vw);
+    padding: 4px 8px;
+    border-radius: 7px;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: rgba(10, 14, 22, 0.96);
+    color: rgba(226, 240, 234, 0.95);
+    font-size: 0.66rem;
+    font-weight: 500;
+    line-height: 1.35;
+    text-align: right;
+    white-space: normal;
+    word-break: break-word;
+    pointer-events: none;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
 .library-card h3 {
     font-size: clamp(0.875rem, 3.3vw, 0.96875rem);
     font-weight: 500;

@@ -105,7 +105,8 @@
     "detailWhenDua": "وقت القراءة",
     "detailVirtueZikir": "الفضيلة",
     "premiumMore": "بريميوم: +{count} أذكار ودعاء إضافية",
-    "premiumLockedAria": "يتطلب بريميوم"
+    "premiumLockedAria": "يتطلب بريميوم",
+    "addedAria": "إظهار المجلدات المضاف إليها"
   },
   "quran": {
     "title": "القرآن الكريم",

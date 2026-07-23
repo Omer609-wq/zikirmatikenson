@@ -23,6 +23,7 @@ import {
 } from './seasonal-content.js';
 import { escapeHtml, escapeAttr } from './lib/html.js';
 import { isBaseLibraryItemPremiumLocked } from './lib/library-access.js';
+import { getFoldersForLibraryItem, formatFolderNames } from './lib/library-folders.js';
 import { playCounterTickSound, normalizeCounterTickSound } from './lib/counter-tick-sounds.js';
 import {
     COUNTER_BG_PRESETS,
@@ -6194,6 +6195,51 @@ function libraryMatchesSearch(z, rawQuery) {
     return tokens.every(t => hay.includes(t));
 }
 
+/** Açık olan "eklendiği klasörler" balonlarını kapat. */
+function closeAllLibraryAddedHints() {
+    document.querySelectorAll('.library-card__added-hint').forEach((h) => {
+        h.hidden = true;
+    });
+}
+
+/**
+ * Klasöre eklenmiş kütüphane maddelerine köşe işareti koyar.
+ * İşarete dokunulunca hangi klasörlerde olduğu balonda görünür (aynı madde
+ * birden fazla klasörde olabilir). Kart tıklaması detay açtığı için olay
+ * yayılması durdurulur.
+ */
+function appendLibraryAddedBadge(card, z) {
+    const inFolders = getFoldersForLibraryItem(z.id, zikirs, folders);
+    if (inFolders.length === 0) return;
+
+    const badge = document.createElement('button');
+    badge.type = 'button';
+    badge.className = 'library-card__added';
+    badge.setAttribute('aria-label', t('library.addedAria'));
+    badge.title = t('library.addedAria');
+
+    const glyph = document.createElement('span');
+    glyph.className = 'material-icons-outlined';
+    glyph.setAttribute('aria-hidden', 'true');
+    glyph.textContent = 'check_circle';
+    badge.appendChild(glyph);
+
+    const hint = document.createElement('span');
+    hint.className = 'library-card__added-hint';
+    hint.hidden = true;
+    hint.textContent = formatFolderNames(inFolders);
+    badge.appendChild(hint);
+
+    badge.addEventListener('click', (e) => {
+        e.stopPropagation(); // kart detayını açma
+        const willOpen = hint.hidden;
+        closeAllLibraryAddedHints();
+        hint.hidden = !willOpen;
+    });
+
+    card.appendChild(badge);
+}
+
 function appendLibraryCard(parent, z, { locked = false } = {}) {
     const card = document.createElement(locked ? 'button' : 'div');
     if (locked) card.type = 'button';
@@ -6208,6 +6254,9 @@ function appendLibraryCard(parent, z, { locked = false } = {}) {
         star.setAttribute('aria-hidden', 'true');
         star.textContent = '*';
         card.appendChild(star);
+    } else {
+        // Zaten klasöre eklenmişse köşede işaret; dokununca hangi klasörler.
+        appendLibraryAddedBadge(card, z);
     }
 
     const h3 = document.createElement('h3');
@@ -6796,8 +6845,8 @@ function setupEventListeners() {
     if (document.documentElement.dataset.premiumLockDismissBound !== '1') {
         document.documentElement.dataset.premiumLockDismissBound = '1';
         document.addEventListener('click', (e) => {
-            if (e.target.closest('.premium-lock-star')) return;
-            closeAllPremiumLockHints();
+            if (!e.target.closest('.premium-lock-star')) closeAllPremiumLockHints();
+            if (!e.target.closest('.library-card__added')) closeAllLibraryAddedHints();
         });
     }
 
