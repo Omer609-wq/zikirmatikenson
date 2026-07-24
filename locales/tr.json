@@ -106,7 +106,14 @@
     "detailVirtueZikir": "Fazilet",
     "premiumMore": "Premium ile +{count} dua ve zikir daha",
     "premiumLockedAria": "Premium ile açılır",
-    "addedAria": "Eklendiği klasörleri göster"
+    "addedAria": "Eklendiği klasörleri göster",
+    "detailTitle": "Zikir Detayı",
+    "addToFolder": "Klasörüme Ekle",
+    "selectFolderTitle": "Klasör Seçin",
+    "destFolderLabel": "Eklenecek Klasör",
+    "addBtn": "Ekle",
+    "noFolderTitle": "Klasör yok",
+    "noFolderMsg": "Lütfen önce bir klasör oluşturun."
   },
   "quran": {
     "title": "Kur'an-ı Kerim",

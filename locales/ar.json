@@ -106,7 +106,14 @@
     "detailVirtueZikir": "الفضيلة",
     "premiumMore": "بريميوم: +{count} أذكار ودعاء إضافية",
     "premiumLockedAria": "يتطلب بريميوم",
-    "addedAria": "إظهار المجلدات المضاف إليها"
+    "addedAria": "إظهار المجلدات المضاف إليها",
+    "detailTitle": "التفاصيل",
+    "addToFolder": "أضِف إلى مجلدي",
+    "selectFolderTitle": "اختر مجلدًا",
+    "destFolderLabel": "المجلد الوجهة",
+    "addBtn": "إضافة",
+    "noFolderTitle": "لا يوجد مجلد",
+    "noFolderMsg": "يرجى إنشاء مجلد أولًا."
   },
   "quran": {
     "title": "القرآن الكريم",

@@ -106,7 +106,14 @@
     "detailVirtueZikir": "ফজিলত",
     "premiumMore": "প্রিমিয়ামে আরও +{count} দোয়া ও জিকির",
     "premiumLockedAria": "প্রিমিয়ামে খুলুন",
-    "addedAria": "যে ফোল্ডারে যোগ করা হয়েছে দেখান"
+    "addedAria": "যে ফোল্ডারে যোগ করা হয়েছে দেখান",
+    "detailTitle": "বিস্তারিত",
+    "addToFolder": "আমার ফোল্ডারে যোগ করুন",
+    "selectFolderTitle": "ফোল্ডার নির্বাচন করুন",
+    "destFolderLabel": "গন্তব্য ফোল্ডার",
+    "addBtn": "যোগ করুন",
+    "noFolderTitle": "কোনো ফোল্ডার নেই",
+    "noFolderMsg": "অনুগ্রহ করে প্রথমে একটি ফোল্ডার তৈরি করুন।"
   },
   "quran": {
     "title": "আল-কুরআন",

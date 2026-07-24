@@ -106,7 +106,14 @@
     "detailVirtueZikir": "Virtue",
     "premiumMore": "Premium with +{count} more duas and dhikr",
     "premiumLockedAria": "Unlock with Premium",
-    "addedAria": "Show folders it was added to"
+    "addedAria": "Show folders it was added to",
+    "detailTitle": "Details",
+    "addToFolder": "Add to My Folder",
+    "selectFolderTitle": "Choose a Folder",
+    "destFolderLabel": "Destination folder",
+    "addBtn": "Add",
+    "noFolderTitle": "No folder",
+    "noFolderMsg": "Please create a folder first."
   },
   "quran": {
     "title": "Qur'an",

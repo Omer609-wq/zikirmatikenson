@@ -106,7 +106,14 @@
     "detailVirtueZikir": "فضیلت",
     "premiumMore": "پریمیم میں +{count} مزید دعائیں اور اذکار",
     "premiumLockedAria": "پریمیم سے کھولیں",
-    "addedAria": "جن فولڈرز میں شامل ہے وہ دکھائیں"
+    "addedAria": "جن فولڈرز میں شامل ہے وہ دکھائیں",
+    "detailTitle": "تفصیل",
+    "addToFolder": "میرے فولڈر میں شامل کریں",
+    "selectFolderTitle": "فولڈر منتخب کریں",
+    "destFolderLabel": "ہدف فولڈر",
+    "addBtn": "شامل کریں",
+    "noFolderTitle": "کوئی فولڈر نہیں",
+    "noFolderMsg": "براہِ کرم پہلے ایک فولڈر بنائیں۔"
   },
   "quran": {
     "title": "قرآن",

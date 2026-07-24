@@ -106,7 +106,14 @@
     "detailVirtueZikir": "Mérite",
     "premiumMore": "Premium : +{count} douas et dhikr en plus",
     "premiumLockedAria": "Débloquer avec Premium",
-    "addedAria": "Afficher les dossiers où il est ajouté"
+    "addedAria": "Afficher les dossiers où il est ajouté",
+    "detailTitle": "Détails",
+    "addToFolder": "Ajouter à mon dossier",
+    "selectFolderTitle": "Choisir un dossier",
+    "destFolderLabel": "Dossier de destination",
+    "addBtn": "Ajouter",
+    "noFolderTitle": "Aucun dossier",
+    "noFolderMsg": "Veuillez d'abord créer un dossier."
   },
   "quran": {
     "title": "Coran",

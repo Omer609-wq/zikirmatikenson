@@ -106,7 +106,14 @@
     "detailVirtueZikir": "Keutamaan",
     "premiumMore": "Premium: +{count} doa dan zikir lagi",
     "premiumLockedAria": "Buka dengan Premium",
-    "addedAria": "Tampilkan folder tempat ditambahkan"
+    "addedAria": "Tampilkan folder tempat ditambahkan",
+    "detailTitle": "Detail",
+    "addToFolder": "Tambahkan ke Folder Saya",
+    "selectFolderTitle": "Pilih Folder",
+    "destFolderLabel": "Folder tujuan",
+    "addBtn": "Tambah",
+    "noFolderTitle": "Tidak ada folder",
+    "noFolderMsg": "Silakan buat folder terlebih dahulu."
   },
   "quran": {
     "title": "Al-Qur'an",

@@ -1713,7 +1713,7 @@ async function saveQuranDrawerFolderAdd() {
 
     if (!populateQuranDrawerFolderSelect()) {
         setQuranDrawerFolderError('');
-        await showAppAlert('Lütfen önce bir klasör oluşturun.', { title: 'Klasör yok' });
+        await showAppAlert(t('library.noFolderMsg'), { title: t('library.noFolderTitle') });
         return false;
     }
     const resolvedDestId = document.getElementById('quranDrawerFolderDestSelect')?.value;
@@ -7165,7 +7165,7 @@ function setupEventListeners() {
         });
 
         if(libDestFolder.options.length === 0) {
-            await showAppAlert('Lütfen önce bir klasör oluşturun.', { title: 'Klasör yok' });
+            await showAppAlert(t('library.noFolderMsg'), { title: t('library.noFolderTitle') });
             return;
         }
         openOverlay('libraryFolderSelectOverlay');
