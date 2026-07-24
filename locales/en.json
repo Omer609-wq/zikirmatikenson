@@ -27,7 +27,10 @@
     "seasonalZikirCount": "{count} dhikr",
     "quoteExpandAria": "Show full verse",
     "quoteCollapseAria": "Collapse verse",
-    "folderLimitWarning": "Folder limit reached. Go Premium for unlimited folders."
+    "folderLimitWarning": "Folder limit reached. Go Premium for unlimited folders.",
+    "newFolderTitle": "New folder",
+    "newFolderPrompt": "Enter a name for the new folder.",
+    "folderNameLabel": "Folder name"
   },
   "folder": {
     "search": "Search",
@@ -487,7 +490,18 @@
     "emptyTitle": "Empty for now",
     "emptyText": "Deleted zikir will appear here.",
     "deletePermanentTitle": "Delete permanently",
-    "deletePermanentConfirm": "Delete this item from trash permanently? This cannot be undone."
+    "deletePermanentConfirm": "Delete this item from trash permanently? This cannot be undone.",
+    "clearAllTitle": "Empty trash",
+    "clearAllMsg": "Permanently delete everything in the trash? This cannot be undone.",
+    "clearAllLabel": "Empty",
+    "restore": "Restore",
+    "deleteForever": "Delete",
+    "fallbackZikir": "Dhikr",
+    "fallbackFolder": "Folder",
+    "fallbackItem": "Item",
+    "metaZikir": "Dhikr • {time}",
+    "metaFolder": "Folder ({count} dhikr) • {time}",
+    "restoredFolderName": "Restored"
   },
   "dialog": {
     "info": "Information",
@@ -528,7 +542,8 @@
     "favAdd": "Add to favorites",
     "favRemove": "Remove from favorites",
     "editAria": "Edit",
-    "copyAria": "Copy"
+    "copyAria": "Copy",
+    "copyNoDestMsg": "There is no other folder to move to. Please create a new folder first."
   },
   "confirm": {
     "deleteZikirsTitle": "Delete zikir",
@@ -598,5 +613,11 @@
       "z_3": "Allah is the Greatest.",
       "z_4": "There is no god but Allah."
     }
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "{n} min ago",
+    "hoursAgo": "{n} h ago",
+    "daysAgo": "{n} d ago"
   }
 }

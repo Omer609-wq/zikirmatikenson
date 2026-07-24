@@ -516,6 +516,8 @@ function syncLocalizedDefaults({ persist = false } = {}) {
     if (df) df.name = t('defaults.folderDefault');
     const esma = folders.find((f) => f.id === 'f_esma');
     if (esma) esma.name = t('defaults.folderEsma');
+    const restored = folders.find((f) => f.id === 'f_restored');
+    if (restored) restored.name = t('trash.restoredFolderName');
 
     const localeIsTr = normalizeAppLocale(appSettings.locale) === 'tr';
 
@@ -2791,12 +2793,12 @@ function formatRelativeTime(ts) {
     if (!ts) return '';
     const diffMs = Date.now() - ts;
     const min = Math.floor(diffMs / 60000);
-    if (min < 1) return 'az önce';
-    if (min < 60) return `${min} dk önce`;
+    if (min < 1) return t('time.justNow');
+    if (min < 60) return t('time.minutesAgo', { n: min });
     const h = Math.floor(min / 60);
-    if (h < 48) return `${h} sa önce`;
+    if (h < 48) return t('time.hoursAgo', { n: h });
     const d = Math.floor(h / 24);
-    return `${d} gün önce`;
+    return t('time.daysAgo', { n: d });
 }
 
 function ensureRestoredFolder() {
@@ -2804,7 +2806,7 @@ function ensureRestoredFolder() {
     let f = folders.find((x) => x.id === id);
     if (!f) {
         const maxOrder = folders.reduce((m, ff) => Math.max(m, typeof ff.order === 'number' ? ff.order : -1), -1);
-        f = { id, name: 'Geri Yüklenenler', order: maxOrder + 1 };
+        f = { id, name: t('trash.restoredFolderName'), order: maxOrder + 1 };
         folders.push(f);
     }
     return id;
@@ -2885,7 +2887,10 @@ function deleteTrashEntry(index) {
 async function clearTrashAll() {
     const n = trash && Array.isArray(trash.entries) ? trash.entries.length : 0;
     if (n === 0) return;
-    if (!(await showAppConfirm('Çöp kutusundaki her şey kalıcı olarak silinsin mi? Bu işlem geri alınamaz.', { title: 'Çöp kutusunu boşalt', confirmLabel: 'Boşalt' }))) {
+    if (!(await showAppConfirm(t('trash.clearAllMsg'), {
+        title: t('trash.clearAllTitle'),
+        confirmLabel: t('trash.clearAllLabel')
+    }))) {
         return;
     }
     const zIds = new Set();
@@ -2896,6 +2901,23 @@ async function clearTrashAll() {
     if (zIds.size) removeHistoryForZikirIds(zIds);
     trash.entries = [];
     saveData();
+}
+
+function trashEntryTitle(e) {
+    if (e.kind === 'zikir') {
+        return (e.zikir ? getZikirDisplayName(e.zikir) : '') || t('trash.fallbackZikir');
+    }
+    if (e.kind === 'folder') {
+        return (e.folder && e.folder.name) || t('trash.fallbackFolder');
+    }
+    return t('trash.fallbackItem');
+}
+
+function trashEntryMeta(e) {
+    const time = formatRelativeTime(e.deletedAt);
+    if (e.kind === 'zikir') return t('trash.metaZikir', { time });
+    const count = Array.isArray(e.zikirs) ? e.zikirs.length : 0;
+    return t('trash.metaFolder', { count, time });
 }
 
 function renderPremiumTrash() {
@@ -2910,14 +2932,8 @@ function renderPremiumTrash() {
     if (clearBtn) clearBtn.disabled = entries.length === 0;
 
     entries.slice(0, 60).forEach((e, i) => {
-        const title =
-            e.kind === 'zikir' ? (e.zikir ? getZikirDisplayName(e.zikir) || 'Zikir' : 'Zikir') :
-            e.kind === 'folder' ? (e.folder && e.folder.name ? e.folder.name : 'Klasör') :
-            'Öğe';
-        const sub =
-            e.kind === 'zikir'
-                ? `Zikir • ${formatRelativeTime(e.deletedAt)}`
-                : `Klasör (${Array.isArray(e.zikirs) ? e.zikirs.length : 0} zikir) • ${formatRelativeTime(e.deletedAt)}`;
+        const title = trashEntryTitle(e);
+        const sub = trashEntryMeta(e);
 
         const row = document.createElement('div');
         row.className = 'premium-trash-item';
@@ -2929,11 +2945,11 @@ function renderPremiumTrash() {
             <div class="premium-trash-item__actions">
                 <button type="button" class="premium-mini-btn premium-mini-btn--restore" data-trash-action="restore" data-trash-index="${i}">
                     <span class="material-icons-outlined">restore</span>
-                    Geri al
+                    ${escapeHtml(t('trash.restore'))}
                 </button>
                 <button type="button" class="premium-mini-btn premium-mini-btn--delete" data-trash-action="delete" data-trash-index="${i}">
                     <span class="material-icons-outlined">delete_forever</span>
-                    Sil
+                    ${escapeHtml(t('trash.deleteForever'))}
                 </button>
             </div>
         `;
@@ -2958,14 +2974,8 @@ function renderTrashOverlay() {
     }
 
     entries.slice(0, 80).forEach((e, i) => {
-        const title =
-            e.kind === 'zikir' ? (e.zikir ? getZikirDisplayName(e.zikir) || 'Zikir' : 'Zikir') :
-            e.kind === 'folder' ? (e.folder && e.folder.name ? e.folder.name : 'Klasör') :
-            'Öğe';
-        const sub =
-            e.kind === 'zikir'
-                ? `Zikir • ${formatRelativeTime(e.deletedAt)}`
-                : `Klasör (${Array.isArray(e.zikirs) ? e.zikirs.length : 0} zikir) • ${formatRelativeTime(e.deletedAt)}`;
+        const title = trashEntryTitle(e);
+        const sub = trashEntryMeta(e);
 
         const row = document.createElement('div');
         row.className = 'premium-trash-item';
@@ -2977,11 +2987,11 @@ function renderTrashOverlay() {
             <div class="premium-trash-item__actions">
                 <button type="button" class="premium-mini-btn premium-mini-btn--restore" data-trash-action="restore" data-trash-index="${i}">
                     <span class="material-icons-outlined">restore</span>
-                    Geri al
+                    ${escapeHtml(t('trash.restore'))}
                 </button>
                 <button type="button" class="premium-mini-btn premium-mini-btn--delete" data-trash-action="delete" data-trash-index="${i}">
                     <span class="material-icons-outlined">delete_forever</span>
-                    Sil
+                    ${escapeHtml(t('trash.deleteForever'))}
                 </button>
             </div>
         `;
@@ -7226,9 +7236,9 @@ function setupEventListeners() {
     newFolderBtn.addEventListener('click', async () => {
         if (folderSelectMode) return;
         if (handleFolderLimitBlocked()) return;
-        const name = await showAppPrompt('Yeni klasör için bir ad yazın.', '', {
-            title: 'Yeni klasör',
-            inputLabel: 'Klasör adı'
+        const name = await showAppPrompt(t('home.newFolderPrompt'), '', {
+            title: t('home.newFolderTitle'),
+            inputLabel: t('home.folderNameLabel')
         });
         if (name != null && name.trim()) {
             const maxOrder = folders.reduce((m, f) => Math.max(m, typeof f.order === 'number' ? f.order : -1), -1);
@@ -7766,8 +7776,8 @@ async function openCopyModal(zId) {
     });
 
     if(copyDestFolder.options.length === 0) {
-        await showAppAlert('Hedeflenecek başka klasör yok. Lütfen önce yeni bir klasör oluşturun.', {
-            title: 'Klasör yok'
+        await showAppAlert(t('zikir.copyNoDestMsg'), {
+            title: t('library.noFolderTitle')
         });
         return;
     }

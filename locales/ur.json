@@ -27,7 +27,10 @@
     "seasonalZikirCount": "{count} ذکر",
     "quoteExpandAria": "آیت مکمل دکھائیں",
     "quoteCollapseAria": "آیت سمیٹیں",
-    "folderLimitWarning": "فولڈر کی حد پوری ہو گئی۔ پریمیم سے لامحدود فولڈر۔"
+    "folderLimitWarning": "فولڈر کی حد پوری ہو گئی۔ پریمیم سے لامحدود فولڈر۔",
+    "newFolderTitle": "نیا فولڈر",
+    "newFolderPrompt": "نئے فولڈر کا نام لکھیں۔",
+    "folderNameLabel": "فولڈر کا نام"
   },
   "folder": {
     "search": "تلاش",
@@ -487,7 +490,18 @@
     "emptyTitle": "فی الحال خالی",
     "emptyText": "حذف شدہ ذکر یہاں نظر آئیں گے۔",
     "deletePermanentTitle": "مستقل حذف",
-    "deletePermanentConfirm": "اس آئٹم کو ردی ٹوکری سے مستقل حذف کریں؟ یہ واپس نہیں ہو سکتا۔"
+    "deletePermanentConfirm": "اس آئٹم کو ردی ٹوکری سے مستقل حذف کریں؟ یہ واپس نہیں ہو سکتا۔",
+    "clearAllTitle": "ردی کی ٹوکری خالی کریں",
+    "clearAllMsg": "ردی کی ٹوکری کی ہر چیز مستقل طور پر حذف کر دی جائے؟ یہ عمل واپس نہیں ہو سکتا۔",
+    "clearAllLabel": "خالی کریں",
+    "restore": "بحال کریں",
+    "deleteForever": "حذف",
+    "fallbackZikir": "ذکر",
+    "fallbackFolder": "فولڈر",
+    "fallbackItem": "آئٹم",
+    "metaZikir": "ذکر • {time}",
+    "metaFolder": "فولڈر ({count} ذکر) • {time}",
+    "restoredFolderName": "بحال شدہ"
   },
   "dialog": {
     "info": "معلومات",
@@ -528,7 +542,8 @@
     "favAdd": "پسندیدہ میں",
     "favRemove": "پسندیدہ سے ہٹائیں",
     "editAria": "ترمیم",
-    "copyAria": "کاپی"
+    "copyAria": "کاپی",
+    "copyNoDestMsg": "منتقلی کے لیے کوئی اور فولڈر نہیں۔ براہِ کرم پہلے ایک نیا فولڈر بنائیں۔"
   },
   "confirm": {
     "deleteZikirsTitle": "ذکر حذف",
@@ -598,5 +613,11 @@
       "z_3": "اللہ سب سے بڑا ہے۔",
       "z_4": "اللہ کے سوا کوئی معبود نہیں۔"
     }
+  },
+  "time": {
+    "justNow": "ابھی",
+    "minutesAgo": "{n} منٹ پہلے",
+    "hoursAgo": "{n} گھنٹے پہلے",
+    "daysAgo": "{n} دن پہلے"
   }
 }

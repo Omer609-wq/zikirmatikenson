@@ -27,7 +27,10 @@
     "seasonalZikirCount": "{count} ذكر",
     "quoteExpandAria": "عرض الآية كاملة",
     "quoteCollapseAria": "طي الآية",
-    "folderLimitWarning": "تم الوصول إلى حد المجلدات. بريميوم للمجلدات غير المحدودة."
+    "folderLimitWarning": "تم الوصول إلى حد المجلدات. بريميوم للمجلدات غير المحدودة.",
+    "newFolderTitle": "مجلد جديد",
+    "newFolderPrompt": "أدخل اسمًا للمجلد الجديد.",
+    "folderNameLabel": "اسم المجلد"
   },
   "folder": {
     "search": "بحث",
@@ -488,7 +491,18 @@
     "emptyTitle": "فارغة حالياً",
     "emptyText": "ستظهر الأذكار المحذوفة هنا.",
     "deletePermanentTitle": "حذف دائم",
-    "deletePermanentConfirm": "حذف هذا العنصر من سلة المحذوفات نهائياً؟ لا يمكن التراجع."
+    "deletePermanentConfirm": "حذف هذا العنصر من سلة المحذوفات نهائياً؟ لا يمكن التراجع.",
+    "clearAllTitle": "إفراغ سلة المحذوفات",
+    "clearAllMsg": "هل تريد حذف كل ما في سلة المحذوفات نهائيًا؟ لا يمكن التراجع.",
+    "clearAllLabel": "إفراغ",
+    "restore": "استعادة",
+    "deleteForever": "حذف",
+    "fallbackZikir": "ذكر",
+    "fallbackFolder": "مجلد",
+    "fallbackItem": "عنصر",
+    "metaZikir": "ذكر • {time}",
+    "metaFolder": "مجلد ({count} ذكر) • {time}",
+    "restoredFolderName": "المستعادة"
   },
   "dialog": {
     "info": "معلومة",
@@ -529,7 +543,8 @@
     "favAdd": "إضافة إلى المفضلة",
     "favRemove": "إزالة من المفضلة",
     "editAria": "تعديل",
-    "copyAria": "نسخ"
+    "copyAria": "نسخ",
+    "copyNoDestMsg": "لا يوجد مجلد آخر للنقل إليه. يرجى إنشاء مجلد جديد أولًا."
   },
   "confirm": {
     "deleteZikirsTitle": "حذف الذكر",
@@ -599,5 +614,11 @@
       "z_3": "اللَّهُ أَعْظَمُ وَأَكْبَرُ مِنْ كُلِّ شَيْءٍ.",
       "z_4": "لَا مَعْبُودَ بِحَقٍّ إِلَّا اللَّهُ."
     }
+  },
+  "time": {
+    "justNow": "الآن",
+    "minutesAgo": "قبل {n} د",
+    "hoursAgo": "قبل {n} س",
+    "daysAgo": "قبل {n} ي"
   }
 }

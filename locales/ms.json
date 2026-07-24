@@ -27,7 +27,10 @@
     "seasonalZikirCount": "{count} zikir",
     "quoteExpandAria": "Tunjuk ayat penuh",
     "quoteCollapseAria": "Kecilkan ayat",
-    "folderLimitWarning": "Had folder dicapai. Premium untuk folder tanpa had."
+    "folderLimitWarning": "Had folder dicapai. Premium untuk folder tanpa had.",
+    "newFolderTitle": "Folder baharu",
+    "newFolderPrompt": "Masukkan nama untuk folder baharu.",
+    "folderNameLabel": "Nama folder"
   },
   "folder": {
     "search": "Cari",
@@ -487,7 +490,18 @@
     "emptyTitle": "Kosong buat masa ini",
     "emptyText": "Zikir yang dipadam akan muncul di sini.",
     "deletePermanentTitle": "Padam kekal",
-    "deletePermanentConfirm": "Padam item ini dari tong sampah secara kekal? Tindakan ini tidak boleh dibatalkan."
+    "deletePermanentConfirm": "Padam item ini dari tong sampah secara kekal? Tindakan ini tidak boleh dibatalkan.",
+    "clearAllTitle": "Kosongkan tong sampah",
+    "clearAllMsg": "Padam kekal semua kandungan tong sampah? Tindakan ini tidak boleh dibuat asal.",
+    "clearAllLabel": "Kosongkan",
+    "restore": "Pulihkan",
+    "deleteForever": "Padam",
+    "fallbackZikir": "Zikir",
+    "fallbackFolder": "Folder",
+    "fallbackItem": "Item",
+    "metaZikir": "Zikir • {time}",
+    "metaFolder": "Folder ({count} zikir) • {time}",
+    "restoredFolderName": "Dipulihkan"
   },
   "dialog": {
     "info": "Maklumat",
@@ -528,7 +542,8 @@
     "favAdd": "Tambah ke kegemaran",
     "favRemove": "Buang dari kegemaran",
     "editAria": "Edit",
-    "copyAria": "Salin"
+    "copyAria": "Salin",
+    "copyNoDestMsg": "Tiada folder lain sebagai destinasi. Sila cipta folder baharu dahulu."
   },
   "confirm": {
     "deleteZikirsTitle": "Padam zikir",
@@ -598,5 +613,11 @@
       "z_3": "Allah Maha Besar.",
       "z_4": "Tiada tuhan melainkan Allah."
     }
+  },
+  "time": {
+    "justNow": "baru sahaja",
+    "minutesAgo": "{n} min lalu",
+    "hoursAgo": "{n} jam lalu",
+    "daysAgo": "{n} hari lalu"
   }
 }

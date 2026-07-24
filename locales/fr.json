@@ -27,7 +27,10 @@
     "seasonalZikirCount": "{count} dhikr",
     "quoteExpandAria": "Afficher le verset en entier",
     "quoteCollapseAria": "Réduire le verset",
-    "folderLimitWarning": "Limite de dossiers atteinte. Premium pour des dossiers illimités."
+    "folderLimitWarning": "Limite de dossiers atteinte. Premium pour des dossiers illimités.",
+    "newFolderTitle": "Nouveau dossier",
+    "newFolderPrompt": "Entrez un nom pour le nouveau dossier.",
+    "folderNameLabel": "Nom du dossier"
   },
   "folder": {
     "search": "Rechercher",
@@ -487,7 +490,18 @@
     "emptyTitle": "Vide pour l'instant",
     "emptyText": "Les zikir supprimés apparaîtront ici.",
     "deletePermanentTitle": "Supprimer définitivement",
-    "deletePermanentConfirm": "Supprimer cet élément de la corbeille définitivement ? Cette action est irréversible."
+    "deletePermanentConfirm": "Supprimer cet élément de la corbeille définitivement ? Cette action est irréversible.",
+    "clearAllTitle": "Vider la corbeille",
+    "clearAllMsg": "Supprimer définitivement tout le contenu de la corbeille ? Cette action est irréversible.",
+    "clearAllLabel": "Vider",
+    "restore": "Restaurer",
+    "deleteForever": "Supprimer",
+    "fallbackZikir": "Dhikr",
+    "fallbackFolder": "Dossier",
+    "fallbackItem": "Élément",
+    "metaZikir": "Dhikr • {time}",
+    "metaFolder": "Dossier ({count} dhikr) • {time}",
+    "restoredFolderName": "Restaurés"
   },
   "dialog": {
     "info": "Information",
@@ -528,7 +542,8 @@
     "favAdd": "Ajouter aux favoris",
     "favRemove": "Retirer des favoris",
     "editAria": "Modifier",
-    "copyAria": "Copier"
+    "copyAria": "Copier",
+    "copyNoDestMsg": "Aucun autre dossier disponible. Veuillez d'abord créer un nouveau dossier."
   },
   "confirm": {
     "deleteZikirsTitle": "Supprimer le zikir",
@@ -598,5 +613,11 @@
       "z_3": "Allah est le plus grand.",
       "z_4": "Il n'y a de divinité qu'Allah."
     }
+  },
+  "time": {
+    "justNow": "à l'instant",
+    "minutesAgo": "il y a {n} min",
+    "hoursAgo": "il y a {n} h",
+    "daysAgo": "il y a {n} j"
   }
 }

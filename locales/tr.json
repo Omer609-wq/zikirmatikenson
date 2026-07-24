@@ -27,7 +27,10 @@
     "seasonalZikirCount": "{count} zikir",
     "quoteExpandAria": "Ayeti tam göster",
     "quoteCollapseAria": "Ayeti daralt",
-    "folderLimitWarning": "Klasör sınırına ulaşıldı. Premium ile sınırsız klasör oluşturabilirsin."
+    "folderLimitWarning": "Klasör sınırına ulaşıldı. Premium ile sınırsız klasör oluşturabilirsin.",
+    "newFolderTitle": "Yeni klasör",
+    "newFolderPrompt": "Yeni klasör için bir ad yazın.",
+    "folderNameLabel": "Klasör adı"
   },
   "folder": {
     "search": "Ara",
@@ -487,7 +490,18 @@
     "emptyTitle": "Şimdilik boş",
     "emptyText": "Silinen zikirler burada görünecek.",
     "deletePermanentTitle": "Kalıcı sil",
-    "deletePermanentConfirm": "Bu öğe çöp kutusundan kalıcı olarak silinsin mi? Bu işlem geri alınamaz."
+    "deletePermanentConfirm": "Bu öğe çöp kutusundan kalıcı olarak silinsin mi? Bu işlem geri alınamaz.",
+    "clearAllTitle": "Çöp kutusunu boşalt",
+    "clearAllMsg": "Çöp kutusundaki her şey kalıcı olarak silinsin mi? Bu işlem geri alınamaz.",
+    "clearAllLabel": "Boşalt",
+    "restore": "Geri al",
+    "deleteForever": "Sil",
+    "fallbackZikir": "Zikir",
+    "fallbackFolder": "Klasör",
+    "fallbackItem": "Öğe",
+    "metaZikir": "Zikir • {time}",
+    "metaFolder": "Klasör ({count} zikir) • {time}",
+    "restoredFolderName": "Geri Yüklenenler"
   },
   "dialog": {
     "info": "Bilgi",
@@ -528,7 +542,8 @@
     "favAdd": "Favorilere ekle",
     "favRemove": "Favoriden çıkar",
     "editAria": "Düzenle",
-    "copyAria": "Kopyala"
+    "copyAria": "Kopyala",
+    "copyNoDestMsg": "Hedeflenecek başka klasör yok. Lütfen önce yeni bir klasör oluşturun."
   },
   "confirm": {
     "deleteZikirsTitle": "Zikirleri sil",
@@ -598,5 +613,11 @@
       "z_3": "Allah en büyüktür.",
       "z_4": "Allah'tan başka ilah yoktur."
     }
+  },
+  "time": {
+    "justNow": "az önce",
+    "minutesAgo": "{n} dk önce",
+    "hoursAgo": "{n} sa önce",
+    "daysAgo": "{n} gün önce"
   }
 }

@@ -27,7 +27,10 @@
     "seasonalZikirCount": "{count} জিকির",
     "quoteExpandAria": "আয়াত সম্পূর্ণ দেখান",
     "quoteCollapseAria": "আয়াত সংকুচিত করুন",
-    "folderLimitWarning": "ফোল্ডার সীমায় পৌঁছেছে। প্রিমিয়ামে সীমাহীন ফোল্ডার।"
+    "folderLimitWarning": "ফোল্ডার সীমায় পৌঁছেছে। প্রিমিয়ামে সীমাহীন ফোল্ডার।",
+    "newFolderTitle": "নতুন ফোল্ডার",
+    "newFolderPrompt": "নতুন ফোল্ডারের নাম লিখুন।",
+    "folderNameLabel": "ফোল্ডারের নাম"
   },
   "folder": {
     "search": "খুঁজুন",
@@ -487,7 +490,18 @@
     "emptyTitle": "এখন খালি",
     "emptyText": "মুছে ফেলা জিকির এখানে দেখা যাবে।",
     "deletePermanentTitle": "স্থায়ী মুছুন",
-    "deletePermanentConfirm": "ট্র্যাশ থেকে এই আইটেম স্থায়ীভাবে মুছবেন? এটি পূর্বাবস্থায় ফেরানো যাবে না।"
+    "deletePermanentConfirm": "ট্র্যাশ থেকে এই আইটেম স্থায়ীভাবে মুছবেন? এটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "clearAllTitle": "ট্র্যাশ খালি করুন",
+    "clearAllMsg": "ট্র্যাশের সবকিছু স্থায়ীভাবে মুছে ফেলা হবে? এটি পূর্বাবস্থায় ফেরানো যাবে না।",
+    "clearAllLabel": "খালি করুন",
+    "restore": "পুনরুদ্ধার",
+    "deleteForever": "মুছুন",
+    "fallbackZikir": "জিকির",
+    "fallbackFolder": "ফোল্ডার",
+    "fallbackItem": "আইটেম",
+    "metaZikir": "জিকির • {time}",
+    "metaFolder": "ফোল্ডার ({count} জিকির) • {time}",
+    "restoredFolderName": "পুনরুদ্ধারকৃত"
   },
   "dialog": {
     "info": "তথ্য",
@@ -528,7 +542,8 @@
     "favAdd": "পছন্দের তালিকায় যোগ করুন",
     "favRemove": "পছন্দের তালিকা থেকে সরান",
     "editAria": "সম্পাদনা",
-    "copyAria": "কপি"
+    "copyAria": "কপি",
+    "copyNoDestMsg": "স্থানান্তরের জন্য অন্য কোনো ফোল্ডার নেই। অনুগ্রহ করে আগে একটি নতুন ফোল্ডার তৈরি করুন।"
   },
   "confirm": {
     "deleteZikirsTitle": "জিকির মুছুন",
@@ -598,5 +613,11 @@
       "z_3": "আল্লাহ সবকিছুর চেয়ে মহান।",
       "z_4": "আল্লাহ ছাড়া সত্য কোনো উপাস্য নেই।"
     }
+  },
+  "time": {
+    "justNow": "এইমাত্র",
+    "minutesAgo": "{n} মি. আগে",
+    "hoursAgo": "{n} ঘ. আগে",
+    "daysAgo": "{n} দিন আগে"
   }
 }
