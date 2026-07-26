@@ -19,7 +19,7 @@
         "cap:feature-graphic": "node scripts/generate-play-feature.cjs",
         "cap:play-store": "node scripts/prepare-app-icon.cjs && node scripts/generate-play-feature.cjs && node scripts/verify-play-store-assets.cjs",
         "i18n:verify": "node scripts/verify-locale-keys.cjs",
-        "test": "node scripts/verify-locale-keys.cjs && node --test lib/*.test.js quran-ref-search.test.js quran-ayah-text-search.test.js",
+        "test": "node scripts/verify-locale-keys.cjs && node --test lib/*.test.js quran-ref-search.test.js quran-ayah-text-search.test.js app-navigation-history.test.js",
         "translit:en:verify": "node scripts/verify-quran-translit-en.cjs",
         "translit:en:build": "node scripts/convert-quran-translit-en.cjs",
         "translit:en:build:phonetic": "node scripts/convert-quran-translit-en.cjs --phonetic",
