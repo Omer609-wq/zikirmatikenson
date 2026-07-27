@@ -4773,7 +4773,9 @@ function closeAllOverlays() {
         libraryFolderSelectOverlay,
         libraryDetailOverlay,
         zikirStatsOverlay,
-        document.getElementById('smartReminderEditOverlay')
+        document.getElementById('smartReminderEditOverlay'),
+        // Kur'an zikri "Görünümü düzenle" — popstate/back bu listeyi kullanır
+        document.getElementById('reviseQuranDisplayOverlay')
     ].forEach((el) => {
         if (el) el.classList.remove('active');
     });
@@ -4859,7 +4861,9 @@ const IN_APP_BACK_OVERLAY_IDS = [
     'trashOverlay',
     'libraryFolderSelectOverlay',
     'libraryDetailOverlay',
-    'zikirStatsOverlay'
+    'zikirStatsOverlay',
+    'smartReminderEditOverlay',
+    'reviseQuranDisplayOverlay'
 ];
 
 function canNavigateBackInApp() {
