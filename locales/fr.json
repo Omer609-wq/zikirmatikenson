@@ -557,6 +557,8 @@
     "disconnectBtn": "Déconnecter le compte",
     "disconnectConfirm": "Déconnecter votre compte Google ? La sauvegarde cloud ne sera pas supprimée.",
     "restoreConfirm": "La sauvegarde cloud remplacera les données sur cet appareil. Les dhikr et réglages actuels seront écrasés. Continuer ?",
+    "existingBackupConfirm": "Une sauvegarde cloud existe déjà pour ce compte Google. La restaurer sur cet appareil maintenant ? Annuler garde cet appareil inchangé et n'écrase pas la sauvegarde cloud.",
+    "existingBackupKept": "La sauvegarde cloud est restée inchangée. Restaurez la sauvegarde existante pour connecter ce compte.",
     "restoreSuccess": "Sauvegarde restaurée.",
     "connectSuccess": "Compte connecté et sauvegarde effectuée.",
     "backupSuccess": "Sauvegarde mise à jour.",
