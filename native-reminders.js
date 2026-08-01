@@ -1,5 +1,6 @@
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
+import { createAsyncSerial } from './lib/async-serial.js';
 import { getReminderQuoteNotificationPayload } from './lib/reminder-quote.js';
 import { SystemChrome } from './system-chrome.js';
 
@@ -15,6 +16,14 @@ const REMINDER_CANCEL_COUNT = 40;
 const REMINDER_NOTIFICATION_EXTRA = { openApp: true, view: 'homeView' };
 
 let reminderNotificationLaunchBound = false;
+
+/**
+ * Overlapping syncNativeDailyReminder / syncNativeSmartReminders calls race:
+ * enable → (await permissions/channels) → disable cancels → stale enable schedules.
+ * Serialize so the latest user intent always wins.
+ */
+const enqueueDailyReminderSync = createAsyncSerial();
+const enqueueSmartReminderSync = createAsyncSerial();
 
 /** Android bildirim ikonları — res/drawable altında */
 const ANDROID_NOTIFICATION_ICONS = {
@@ -187,7 +196,11 @@ export function bindNativeReminderNotificationLaunch(onOpen) {
     });
 }
 
-export async function syncNativeDailyReminder(enabled, timeStr, locale = 'tr') {
+export function syncNativeDailyReminder(enabled, timeStr, locale = 'tr') {
+    return enqueueDailyReminderSync(() => syncNativeDailyReminderUnlocked(enabled, timeStr, locale));
+}
+
+async function syncNativeDailyReminderUnlocked(enabled, timeStr, locale = 'tr') {
     if (!isCapacitorNative()) return { ok: true };
 
     await cancelReminderSlots();
@@ -294,7 +307,12 @@ async function ensureReminderChannels() {
  * @param {{ at: Date, body: string, vibrate?: boolean, extra?: object }[]} slots
  * @returns {Promise<{ ok: boolean, reason?: string }>}
  */
-export async function syncNativeSmartReminders(slots) {
+export function syncNativeSmartReminders(slots) {
+    const snapshot = Array.isArray(slots) ? slots.slice() : [];
+    return enqueueSmartReminderSync(() => syncNativeSmartRemindersUnlocked(snapshot));
+}
+
+async function syncNativeSmartRemindersUnlocked(slots) {
     if (!isCapacitorNative()) return { ok: true };
 
     await cancelSmartReminderSlots();
