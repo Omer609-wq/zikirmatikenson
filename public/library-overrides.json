@@ -1,0 +1,5 @@
+{
+    "_note": "Kütüphane metin düzeltmeleri; mağaza güncellemesi gerekmeden yayınlanır. Şema ve kurallar: docs/I18N.md → 'Uzaktan kütüphane düzeltmesi'. Katmanlar: tr (kanon), en (TR dışı ortak meal/bağlam), ar/bn/ur (yalnızca okunuş adı). Bir metni ikinci kez değiştirirken önceki metni prev içine yaz.",
+    "version": 1,
+    "items": {}
+}

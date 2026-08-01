@@ -24,6 +24,7 @@ import {
 import { escapeHtml, escapeAttr } from './lib/html.js';
 import { isBaseLibraryItemPremiumLocked } from './lib/library-access.js';
 import { getFoldersForLibraryItem, formatFolderNames } from './lib/library-folders.js';
+import { buildSearchHaystack, scoreSearchMatch, toSearchTokens } from './lib/fuzzy-search.js';
 import { playCounterTickSound, normalizeCounterTickSound } from './lib/counter-tick-sounds.js';
 import {
     COUNTER_BG_PRESETS,
@@ -117,6 +118,10 @@ import {
     applyCachedRemoteDailyQuotes,
     refreshRemoteDailyQuotes
 } from './quotes.js';
+import {
+    applyCachedLibraryOverrides,
+    refreshLibraryOverrides
+} from './library-overrides.js';
 import { ESMA_DEFAULT_FAZILET } from './esma-fazilet.js';
 import { ESMA_MEANING_EN } from './esma-meanings-en.js';
 import { ESMA_NAME_EN } from './esma-names-en.js';
@@ -1224,6 +1229,7 @@ async function init() {
                 else void App.exitApp();
             });
         }
+        applyCachedLibraryOverrides(); // ilk boyamadan önce: son indirilen metin düzeltmeleri
         loadData();
         installPremiumPreviewConsoleHelper(PREMIUM_PREVIEW_BUILD);
         applyWeeklyReportPreviewSample();
@@ -1377,12 +1383,19 @@ async function init() {
 }
 
 async function refreshRemoteHomeContent() {
-    await Promise.all([
+    const [, , , libraryOverridesChanged] = await Promise.all([
         refreshUpdateBannerConfig(),
         refreshSeasonalContent(appSettings.locale),
-        refreshRemoteDailyQuotes()
+        refreshRemoteDailyQuotes(),
+        refreshLibraryOverrides()
     ]);
     applySeasonalContentToAppState(folders, zikirs, appSettings.locale);
+    if (libraryOverridesChanged) {
+        // Kayıtlı zikirlerdeki kütüphane metinlerini yeni kanona çek + görünümleri tazele.
+        syncLocalizedDefaults({ persist: true });
+        const libView = document.getElementById('libraryView');
+        if (libView && !libView.classList.contains('hidden')) renderLibrary();
+    }
     if (document.getElementById('homeView')?.classList.contains('active')) renderFolders();
     const fd = document.getElementById('folderDetailView');
     if (fd?.classList.contains('active') && isSeasonalFolderId(currentFolderId)) {
@@ -5727,24 +5740,55 @@ function getEffectiveFazilet(z) {
     return getEsmaDefaultFaziletForZikir(z);
 }
 
+/**
+ * Klasör araması alanları.
+ * Esma: yalnızca aktif locale adı/meali yetmez — TR/EN/BN/AR okunuş ve TR/EN meal
+ * hepsi yığına girer (kullanıcı dilinden bağımsız arayabilsin).
+ */
+function folderZikirSearchParts(z) {
+    const parts = [
+        getZikirDisplayName(z),
+        getZikirDisplayMeaning(z),
+        z.arabic,
+        getEffectiveFazilet(z)
+    ];
+    const esmaIdx = parseEsmaZikirIndex(z);
+    if (esmaIdx >= 0) {
+        for (const name of getKnownEsmaNames(esmaIdx)) parts.push(name);
+        for (const meaning of getKnownEsmaMeanings(esmaIdx)) parts.push(meaning);
+    }
+    return parts;
+}
+
 function renderFolderDetail() {
     const folder = folders.find(f => f.id === currentFolderId);
     if (!folder) return;
     if (!zikirSelectMode) zikirSelectBarVisible = false;
     folderDetailTitle.textContent = folder.name;
 
-    const q = (folderSearchQuery || '').trim().toLocaleLowerCase(getLocaleTag());
+    const searchTokens = toSearchTokens(folderSearchQuery);
+    const searching = searchTokens.length > 0;
+    // Arama sırasında alaka puanı, aksi hâlde kullanıcının sürükleme sırası geçerli.
+    const searchScores = new Map();
     const fZikirsAll = zikirs.filter(z => z.folderId === currentFolderId);
     const fZikirs = fZikirsAll.filter(z => {
         if (folderFavOnly && !z.favorite) return false;
-        if (!q) return true;
-        const name = getZikirDisplayName(z).toLocaleLowerCase(getLocaleTag());
-        const meaning = getZikirDisplayMeaning(z).toLocaleLowerCase(getLocaleTag());
-        const arabic = (z.arabic || '');
-        const fz = getEffectiveFazilet(z).toLocaleLowerCase(getLocaleTag());
-        return name.includes(q) || meaning.includes(q) || arabic.includes(q) || fz.includes(q);
-    }).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-    const canDragZikir = !q && !folderFavOnly && !isSeasonalFolderId(currentFolderId);
+        if (!searching) return true;
+        const score = scoreSearchMatch(
+            buildSearchHaystack(folderZikirSearchParts(z)),
+            searchTokens
+        );
+        if (score == null) return false;
+        searchScores.set(z.id, score);
+        return true;
+    }).sort((a, b) => {
+        if (searching) {
+            const diff = searchScores.get(a.id) - searchScores.get(b.id);
+            if (diff) return diff;
+        }
+        return (a.order ?? 0) - (b.order ?? 0);
+    });
+    const canDragZikir = !searching && !folderFavOnly && !isSeasonalFolderId(currentFolderId);
 
     if (folderZikirDragHint) {
         if (isSeasonalFolderId(currentFolderId)) {
@@ -6177,8 +6221,7 @@ function maybeRefreshZikirStatsModal() {
 
 // ===================== LIBRARY LOGIC =====================
 function libraryItemSearchHaystack(z) {
-    const kw = (z.keywords != null ? String(z.keywords) : '');
-    return `${z.name} ${z.meaning} ${z.context} ${z.source} ${kw}`.toLocaleLowerCase(getLocaleTag());
+    return buildSearchHaystack([z.name, z.meaning, z.context, z.source, z.keywords]);
 }
 
 const LIBRARY_CARD_CONTEXT_MAX = 120;
@@ -6196,13 +6239,12 @@ function libraryCardSubtitle(z) {
     return z.meaning || '';
 }
 
-/** Arama metnindeki her kelime yığında geçmeli (boşlukla ayrılmış). */
-function libraryMatchesSearch(z, rawQuery) {
-    const q = (rawQuery || '').trim();
-    if (!q) return true;
-    const hay = libraryItemSearchHaystack(z);
-    const tokens = q.toLocaleLowerCase(getLocaleTag()).split(/\s+/).filter(Boolean);
-    return tokens.every(t => hay.includes(t));
+/**
+ * Arama metnindeki her kelime yığında geçmeli; küçük yazım hataları telafi edilir.
+ * @returns {number|null} alaka puanı (küçük = daha iyi); eşleşme yoksa `null`
+ */
+function libraryMatchScore(z, tokens) {
+    return scoreSearchMatch(libraryItemSearchHaystack(z), tokens);
 }
 
 /** Açık olan "eklendiği klasörler" balonlarını kapat. */
@@ -6342,14 +6384,23 @@ function renderLibrary() {
 
 function renderLibraryContent() {
     libraryGrid.innerHTML = '';
-    const q = (librarySearchQuery || '').trim();
-    const searchActive = q.length > 0;
+    const searchTokens = toSearchTokens(librarySearchQuery);
+    const searchActive = searchTokens.length > 0;
     const premiumUser = isPremium();
     const sourceLib = getZikirLibrary(premiumUser);
     const filteredBase = searchActive
         ? sourceLib
         : sourceLib.filter((z) => z.category === activeLibraryCat);
-    const filtered = filteredBase.filter((z) => libraryMatchesSearch(z, q));
+
+    let filtered = filteredBase;
+    if (searchActive) {
+        // Arama açıkken kartlar alaka sırasına dizilir; eşitlikte kaynak sırası korunur.
+        filtered = filteredBase
+            .map((z) => ({ z, score: libraryMatchScore(z, searchTokens) }))
+            .filter((row) => row.score != null)
+            .sort((a, b) => a.score - b.score)
+            .map((row) => row.z);
+    }
 
     filtered.forEach((z) => {
         const locked = isLibraryCardLocked(z, premiumUser);

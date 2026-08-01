@@ -19,6 +19,7 @@ import {
     resolveLocaleFromSystem,
     resolveLocaleFromTag
 } from './lib/app-locale.js';
+import { LIBRARY_OVERRIDE_LAYERS } from './lib/library-overrides.js';
 
 export { DEFAULT_APP_LOCALE, normalizeAppLocale, resolveLocaleFromSystem, resolveLocaleFromTag };
 
@@ -206,6 +207,72 @@ export function tForLocale(locale, key) {
     return str == null ? null : String(str);
 }
 
+/* ---- Uzak kütüphane düzeltmeleri (public/library-overrides.json) ---------------
+ * Gömülü JSON'lara dokunulmaz; yama yalnızca dışarı verilen maddeye uygulanır.
+ * Böylece `getKnownLibrary*Texts` gömülü özgün metni bilmeye devam eder ve
+ * kullanıcının klasöründeki eski metin "elle düzenlenmiş" sanılmaz.
+ * Yükleme/önbellek: library-overrides.js
+ */
+/** @type {Record<string, { byLayer: Record<string, object>, prev: Record<string, string[]> }> | null} */
+let libraryOverridesById = null;
+
+/** @param {ReturnType<import('./lib/library-overrides.js').normalizeLibraryOverrides>} normalized */
+export function setLibraryOverrides(normalized) {
+    libraryOverridesById = normalized && normalized.items ? normalized.items : null;
+}
+
+function getLibraryOverrideEntry(id) {
+    return (libraryOverridesById && libraryOverridesById[id]) || null;
+}
+
+/**
+ * Locale'in gerçekten kullandığı katmanlardan birleşik yama.
+ * TR = kanon. Diğer diller: TR'den yalnızca dil-bağımsız alanlar + `en` + varsa `ar`/`bn`/`ur`.
+ */
+function overridePatchForLocale(id, code) {
+    const entry = getLibraryOverrideEntry(id);
+    if (!entry) return null;
+    const tr = entry.byLayer.tr || null;
+    if (code === 'tr') return tr;
+
+    const patch = {};
+    if (tr) {
+        for (const key of ['arabic', 'target', 'category', 'source']) {
+            if (tr[key] != null) patch[key] = tr[key];
+        }
+    }
+    Object.assign(patch, entry.byLayer.en || {}, entry.byLayer[code] || {});
+    return Object.keys(patch).length ? patch : null;
+}
+
+/** Nihai (locale politikası uygulanmış) maddeye yamayı geçir. */
+function applyLibraryOverrideToItem(item, code) {
+    if (!item) return item;
+    const patch = overridePatchForLocale(item.id, code);
+    if (!patch) return item;
+
+    const out = { ...item };
+    const category = patch.category || item.category;
+    for (const [key, value] of Object.entries(patch)) {
+        if (value == null || value === '') continue;
+        // TR dışında `context` yalnızca dualarda gösterilir (zikirde fazilet TR'ye özel).
+        if (key === 'context' && code !== 'tr' && category !== 'dua') continue;
+        out[key] = value;
+    }
+    return out;
+}
+
+/** Yeni değerler + `prev` listesi: eski metinli kayıtlar da "bilinen" sayılsın. */
+function addLibraryOverrideKnownTexts(known, id, layerField, prevField, layers = LIBRARY_OVERRIDE_LAYERS) {
+    const entry = getLibraryOverrideEntry(id);
+    if (!entry) return;
+    for (const layer of layers) {
+        const value = entry.byLayer[layer] && entry.byLayer[layer][layerField];
+        if (value) known.add(String(value).trim());
+    }
+    for (const value of entry.prev[prevField] || []) known.add(String(value).trim());
+}
+
 function mergeLibraryItem(base, overlay) {
     if (!overlay) return base;
     const merged = { ...base };
@@ -222,10 +289,13 @@ export function getLibraryNameForLocale(id, locale) {
     const base = libraryTrById.get(id);
     if (!base) return '';
     const code = normalizeAppLocale(locale);
+    const patch = overridePatchForLocale(id, code);
+    if (patch && patch.name) return patch.name;
     if (code === 'tr') return String(base.name || '').trim();
     if (code === 'ar') {
         const ar = libraryArById.get(id);
         if (ar && ar.name) return String(ar.name).trim();
+        if (patch && patch.arabic) return patch.arabic;
         if (base.arabic) return String(base.arabic).trim();
         return '';
     }
@@ -255,6 +325,8 @@ export function getKnownLibraryNameTexts(id) {
     if (bn && bn.name) known.add(String(bn.name).trim());
     if (ur && ur.name) known.add(String(ur.name).trim());
     if (ar && ar.name) known.add(String(ar.name).trim());
+    addLibraryOverrideKnownTexts(known, id, 'name', 'name');
+    addLibraryOverrideKnownTexts(known, id, 'arabic', 'name');
     return known;
 }
 
@@ -284,14 +356,14 @@ function buildLibrary(locale, includePremium) {
     const overlayById = new Map((pack.base || []).map((item) => [item.id, item]));
     let list = libraryTr.map((item) => {
         const merged = mergeLibraryItem(item, overlayById.get(item.id));
-        return applyLibraryLocalePolicy(merged, code);
+        return applyLibraryOverrideToItem(applyLibraryLocalePolicy(merged, code), code);
     });
     if (includePremium && libraryPremiumTr) {
         const premOverlay = new Map((pack.premium || []).map((item) => [item.id, item]));
         list = list.concat(
             libraryPremiumTr.map((item) => {
                 const merged = mergeLibraryItem(item, premOverlay.get(item.id));
-                return applyLibraryLocalePolicy(merged, code);
+                return applyLibraryOverrideToItem(applyLibraryLocalePolicy(merged, code), code);
             })
         );
     }
@@ -310,7 +382,7 @@ export function getZikirLibraryPremiumOnly() {
     const premOverlay = new Map((pack.premium || []).map((item) => [item.id, item]));
     return libraryPremiumTr.map((item) => {
         const merged = mergeLibraryItem(item, premOverlay.get(item.id));
-        return applyLibraryLocalePolicy(merged, code);
+        return applyLibraryOverrideToItem(applyLibraryLocalePolicy(merged, code), code);
     });
 }
 
@@ -318,9 +390,13 @@ export function getZikirLibraryPremiumOnly() {
 export function getLibraryCanonItem(id, locale) {
     const base = libraryTrById.get(id);
     if (!base) return null;
-    if (normalizeAppLocale(locale) === 'tr') return { ...base };
+    const code = normalizeAppLocale(locale);
+    if (code === 'tr') return applyLibraryOverrideToItem({ ...base }, 'tr');
     const enRow = libraryContextEnById.get(id) || libraryPremiumEnById.get(id);
-    return applyLibraryLocalePolicy(mergeLibraryItem(base, enRow), locale);
+    return applyLibraryOverrideToItem(
+        applyLibraryLocalePolicy(mergeLibraryItem(base, enRow), code),
+        code
+    );
 }
 
 export function getLibraryMeaningForLocale(id, locale) {
@@ -331,8 +407,11 @@ export function getLibraryMeaningForLocale(id, locale) {
 /** Zikir maddelerinde TR `context` = fazilet metni. */
 export function getLibraryFaziletForLocale(id) {
     const base = libraryTrById.get(id);
-    if (!base || base.category !== 'zikir') return '';
-    return base.context && String(base.context).trim() ? String(base.context).trim() : '';
+    if (!base) return '';
+    const patch = overridePatchForLocale(id, 'tr');
+    if (((patch && patch.category) || base.category) !== 'zikir') return '';
+    const context = (patch && patch.context) || base.context;
+    return context && String(context).trim() ? String(context).trim() : '';
 }
 
 export function getKnownLibraryMeaningTexts(id) {
@@ -341,12 +420,22 @@ export function getKnownLibraryMeaningTexts(id) {
     const en = libraryContextEnById.get(id) || libraryPremiumEnById.get(id);
     if (tr && tr.meaning) known.add(String(tr.meaning).trim());
     if (en && en.meaning) known.add(String(en.meaning).trim());
+    addLibraryOverrideKnownTexts(known, id, 'meaning', 'meaning');
     return known;
 }
 
 export function getKnownLibraryFaziletTexts(id) {
+    const known = new Set();
+    /* Gömülü özgün fazilet: uzak düzeltme sonrası da "bilinen" kalmalı. */
+    const base = libraryTrById.get(id);
+    if (base && base.category === 'zikir' && base.context && String(base.context).trim()) {
+        known.add(String(base.context).trim());
+    }
     const fz = getLibraryFaziletForLocale(id);
-    return fz ? new Set([fz]) : new Set();
+    if (fz) known.add(fz);
+    /* Fazilet TR'ye özel: yalnızca `tr` katmanının `context` değeri. */
+    addLibraryOverrideKnownTexts(known, id, 'context', 'fazilet', ['tr']);
+    return known;
 }
 
 /** Eski kayıtlar: kütüphaneden eklenmiş ama libraryId yoksa isim/Arapça ile eşleştir. */
