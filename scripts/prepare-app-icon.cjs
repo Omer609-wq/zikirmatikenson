@@ -21,9 +21,14 @@ const playIcon = path.join(ROOT, 'resources', 'play-console-icon-512.png');
 const LAUNCHER_SIZE = 1024;
 /** Launcher — kaynak tam ikon kompozisyonu (çerçeve + filigran dahil) */
 const SYMBOL_SCALE = Number.isFinite(scaleArg) ? scaleArg : LAUNCHER_ONLY ? 1 : 0.95;
-/** Play Console — maske yok, amblem daha dolu; launcher’dan ayrı ölçek (CLI arg 3) */
+/**
+ * Play Console — maske yok, amblem daha dolu; launcher’dan AYRI ölçek (CLI arg 3).
+ * 1.62: mağaza arama listesinde amblem rakiplerin yanında silik kalmasın diye
+ * (~%60 doldurma). Launcher ikonu bilerek daha küçük/nefesli kalır — ana ekranda
+ * adaptive maske ve diğer ikonlarla uyum önemli.
+ */
 const playScaleArg = parseFloat(cliArgs[2], 10);
-const PLAY_STORE_SCALE = Number.isFinite(playScaleArg) ? playScaleArg : 1.0;
+const PLAY_STORE_SCALE = Number.isFinite(playScaleArg) ? playScaleArg : 1.62;
 /** Programatik çerçeve — yeni kaynakta çerçeve/filigran gömülü */
 const ADD_GOLD_FRAME = false;
 
