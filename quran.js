@@ -2563,6 +2563,31 @@ let updateSurahScrollNav = () => {};
 
 // Sure listesinde "başa/sona git" oklarini bagla (bir kez). Oklar ekranin
 // dikey ortasinda; en ustte ust ok, en altta alt ok gizlenir.
+/**
+ * Kaydırmada saniyede onlarca kez çalışmasın diye kısar.
+ *
+ * Yalnız requestAnimationFrame'e güvenilmez: sayfa gizliyken (uygulama arka
+ * planda) rAF hiç gelmez, "planlandı" bayrağı kalıcı açık kalır ve güncelleme
+ * bir daha çalışmaz — sayfa geri görünür olsa bile. setTimeout yedeğiyle
+ * hangisi önce gelirse o çalıştırır ve bayrağı serbest bırakır.
+ */
+function makeThrottledUpdater(fn) {
+    let scheduled = false;
+    return () => {
+        if (scheduled) return;
+        scheduled = true;
+        let done = false;
+        const run = () => {
+            if (done) return;
+            done = true;
+            scheduled = false;
+            fn();
+        };
+        requestAnimationFrame(run);
+        setTimeout(run, 120);
+    };
+}
+
 function ensureSurahScrollNavBound() {
     const scroller = document.querySelector('#quranView .main-content.scrollable');
     const upBtn = document.getElementById('quranSurahScrollUp');
@@ -2571,9 +2596,7 @@ function ensureSurahScrollNavBound() {
     if (scroller.dataset.surahScrollNavBound === '1') return;
     scroller.dataset.surahScrollNavBound = '1';
 
-    let rafPending = false;
     const apply = () => {
-        rafPending = false;
         const surahsPanel = document.getElementById('quranSurahsPanel');
         const onSurahsTab = !!surahsPanel && !surahsPanel.hidden;
         const max = scroller.scrollHeight - scroller.clientHeight;
@@ -2582,11 +2605,7 @@ function ensureSurahScrollNavBound() {
         upBtn.hidden = !onSurahsTab || !scrollable || top <= 8;
         downBtn.hidden = !onSurahsTab || !scrollable || top >= max - 8;
     };
-    updateSurahScrollNav = () => {
-        if (rafPending) return;
-        rafPending = true;
-        requestAnimationFrame(apply);
-    };
+    updateSurahScrollNav = makeThrottledUpdater(apply);
 
     scroller.addEventListener('scroll', updateSurahScrollNav, { passive: true });
     upBtn.addEventListener('click', () => scroller.scrollTo({ top: 0, behavior: 'smooth' }));
@@ -2655,26 +2674,7 @@ function ensureSurahJumpNavBound() {
             nextBtn.title = name ? `${t('quran.nextSurahAria')}: ${name}` : t('quran.nextSurahAria');
         }
     };
-    /*
-     * Scroll'da her frame 114 bölüm taranmasın diye kısılır. Yalnız rAF'a
-     * güvenilmez: sayfa gizliyken (arka plan sekmesi/uygulama) rAF hiç
-     * gelmez ve bekleyen bayrak kalıcı kilitlenirdi. setTimeout yedeği,
-     * hangisi önce gelirse onunla çalıştırıp bayrağı serbest bırakır.
-     */
-    let scheduled = false;
-    updateSurahJumpNav = () => {
-        if (scheduled) return;
-        scheduled = true;
-        let done = false;
-        const run = () => {
-            if (done) return;
-            done = true;
-            scheduled = false;
-            apply();
-        };
-        requestAnimationFrame(run);
-        setTimeout(run, 120);
-    };
+    updateSurahJumpNav = makeThrottledUpdater(apply);
 
     const jump = (delta) => {
         const cur = getVisibleSurahNumber();
