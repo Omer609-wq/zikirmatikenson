@@ -223,7 +223,9 @@
     "folderAddConfirm": "Enregistrer",
     "folderAddNeedAyah": "Saisissez au moins un numéro de verset.",
     "folderAddMaxAyahs": "Vous pouvez ajouter au maximum 3 versets.",
-    "folderAddInvalidAyah": "Saisissez un numéro de verset valide (1–{max})."
+    "folderAddInvalidAyah": "Saisissez un numéro de verset valide (1–{max}).",
+    "prevSurahAria": "Sourate précédente",
+    "nextSurahAria": "Sourate suivante"
   },
   "settings": {
     "title": "Paramètres",

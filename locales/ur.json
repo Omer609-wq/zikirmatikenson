@@ -223,7 +223,9 @@
     "folderAddConfirm": "محفوظ",
     "folderAddNeedAyah": "کم از کم ایک آیت نمبر درج کریں۔",
     "folderAddMaxAyahs": "زیادہ سے زیادہ ۳ آیات شامل کر سکتے ہیں۔",
-    "folderAddInvalidAyah": "درست آیت نمبر (۱–{max}) درج کریں۔"
+    "folderAddInvalidAyah": "درست آیت نمبر (۱–{max}) درج کریں۔",
+    "prevSurahAria": "پچھلی سورت",
+    "nextSurahAria": "اگلی سورت"
   },
   "settings": {
     "title": "ترتیبات",

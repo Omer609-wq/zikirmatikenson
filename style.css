@@ -4016,6 +4016,18 @@ html[data-counter-show-round="false"] .round-badge { display: none !important; }
 .quran-surah-scroll-nav--up { top: calc(4.4rem + env(safe-area-inset-top, 0px)); }
 .quran-surah-scroll-nav--down { bottom: calc(4.6rem + var(--app-bottom-inset-merged, 0px)); }
 .quran-surah-scroll-nav:active { transform: translateX(-50%) scale(0.9); }
+/* Ayet görünümü — önceki/sonraki sure (çift ok). Konum oklarından ayrışsın diye
+   biraz daha büyük ve yeşil vurgulu; alt ok meal seçicinin üstünde kalır. */
+.quran-surah-jump {
+    width: 30px;
+    height: 30px;
+    color: var(--primary-green, #10b981);
+    opacity: 0.72;
+}
+.quran-surah-jump svg { width: 16px; height: 16px; }
+.quran-surah-jump.quran-surah-scroll-nav--down {
+    bottom: calc(5.4rem + var(--app-bottom-inset-merged, 0px));
+}
 @media (hover: hover) {
     .quran-surah-scroll-nav:hover { opacity: 1; background: var(--icon-hover-bg, rgba(40, 52, 66, 0.96)); }
 }

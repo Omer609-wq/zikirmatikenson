@@ -223,7 +223,9 @@
     "folderAddConfirm": "Save",
     "folderAddNeedAyah": "Enter at least one verse number.",
     "folderAddMaxAyahs": "You can add at most 3 verses.",
-    "folderAddInvalidAyah": "Enter a valid verse number (1–{max})."
+    "folderAddInvalidAyah": "Enter a valid verse number (1–{max}).",
+    "prevSurahAria": "Previous surah",
+    "nextSurahAria": "Next surah"
   },
   "settings": {
     "title": "Settings",

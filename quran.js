@@ -486,6 +486,8 @@ function getQuranSearchSuggestionHits(query) {
             surah: hit.surah,
             ayah: hit.ayah,
             mealId: hit.mealId,
+            // Meal aramasında kart görünümü okunuş/sadece-Arapça ise meal+Arapça'ya geç.
+            readModeId: 'meal-ar',
             displayName: hit.displayName,
             label: `${scopedPrefix}${t('quran.searchMealHit', {
                 meal: mealLabel,
@@ -2415,6 +2417,8 @@ export async function renderQuranSurahDetail(
     const gen = ++renderGeneration;
     syncMealSelect(meal, locale);
     syncReaderTitle();
+    ensureSurahJumpNavBound();
+    updateSurahJumpNav();
 
     if (!targetIsMushaf && (wasMushafAtStart || leavingMushaf)) {
         leaveMushafForScrollList();
@@ -2475,6 +2479,7 @@ export async function renderQuranSurahDetail(
         } else {
             await scrollToSurahSection(n, layout, meal, mode, gen);
         }
+        updateSurahJumpNav();
     };
 
     if (!forceShell && !layoutChanged && sameMeal && sameMode && sameLayout) {
@@ -2589,6 +2594,107 @@ function ensureSurahScrollNavBound() {
         scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' })
     );
     updateSurahScrollNav();
+}
+
+/* ========== Ayet görünümü: önceki / sonraki sureye atlama ==========
+ * Sure listesindeki TEK oklar konum bazlıdır (başa/sona git). Buradakiler
+ * içerik bazlı olduğu için ÇİFT ok ikonu kullanılır — kullanıcı ikisini
+ * karıştırmasın. Yalnızca liste modunda görünür; mushaf'ta sayfa çevirme var.
+ */
+
+/** Ekranın üstünde duran sure bölümünün numarası. */
+function getVisibleSurahNumber() {
+    const list = document.getElementById('quranAyahList');
+    const scroller = getQuranReaderScroller();
+    if (!list || !scroller) return null;
+    const scTop = scroller.getBoundingClientRect().top;
+    let fallback = null;
+    for (const sec of list.querySelectorAll('.quran-surah-section[data-surah]')) {
+        const n = Number(sec.getAttribute('data-surah'));
+        if (!Number.isFinite(n)) continue;
+        const r = sec.getBoundingClientRect();
+        if (fallback == null) fallback = n;
+        // Üst kenarı geçmiş ama altı hâlâ ekranda olan bölüm = okunan sure
+        if (r.bottom > scTop + 1) return n;
+    }
+    return fallback;
+}
+
+let updateSurahJumpNav = () => {};
+
+function ensureSurahJumpNavBound() {
+    const prevBtn = document.getElementById('quranPrevSurahBtn');
+    const nextBtn = document.getElementById('quranNextSurahBtn');
+    const scroller = document.querySelector('#quranSurahView .main-content.scrollable');
+    if (!prevBtn || !nextBtn || !scroller) return;
+    if (scroller.dataset.surahJumpBound === '1') return;
+    scroller.dataset.surahJumpBound = '1';
+
+    const apply = () => {
+        const view = document.getElementById('quranSurahView');
+        const active = !!view && !view.classList.contains('hidden');
+        const listMode = getCurrentReaderLayout() !== 'mushaf';
+        const n = active && listMode ? getVisibleSurahNumber() : null;
+
+        if (!active || !listMode || n == null) {
+            prevBtn.hidden = true;
+            nextBtn.hidden = true;
+            return;
+        }
+        // Uçlarda ilgili ok gizlenir (Fatiha'da önceki, Nâs'ta sonraki yok)
+        prevBtn.hidden = n <= 1;
+        nextBtn.hidden = n >= 114;
+
+        const locale = getLocale();
+        if (!prevBtn.hidden) {
+            const name = getSurahLocalizedName(n - 1, locale) || '';
+            prevBtn.title = name ? `${t('quran.prevSurahAria')}: ${name}` : t('quran.prevSurahAria');
+        }
+        if (!nextBtn.hidden) {
+            const name = getSurahLocalizedName(n + 1, locale) || '';
+            nextBtn.title = name ? `${t('quran.nextSurahAria')}: ${name}` : t('quran.nextSurahAria');
+        }
+    };
+    /*
+     * Scroll'da her frame 114 bölüm taranmasın diye kısılır. Yalnız rAF'a
+     * güvenilmez: sayfa gizliyken (arka plan sekmesi/uygulama) rAF hiç
+     * gelmez ve bekleyen bayrak kalıcı kilitlenirdi. setTimeout yedeği,
+     * hangisi önce gelirse onunla çalıştırıp bayrağı serbest bırakır.
+     */
+    let scheduled = false;
+    updateSurahJumpNav = () => {
+        if (scheduled) return;
+        scheduled = true;
+        let done = false;
+        const run = () => {
+            if (done) return;
+            done = true;
+            scheduled = false;
+            apply();
+        };
+        requestAnimationFrame(run);
+        setTimeout(run, 120);
+    };
+
+    const jump = (delta) => {
+        const cur = getVisibleSurahNumber();
+        if (cur == null) return;
+        const target = cur + delta;
+        if (target < 1 || target > 114) return;
+        const list = document.getElementById('quranAyahList');
+        const meal = getQuranReaderMealId();
+        const mode = normalizeQuranReadMode(list?.dataset.readMode ?? '');
+        void (async () => {
+            await scrollToSurahSection(target, 'scroll', meal, mode, renderGeneration);
+            scheduleVisibleSurahLoad();
+            updateSurahJumpNav();
+        })();
+    };
+
+    prevBtn.addEventListener('click', () => jump(-1));
+    nextBtn.addEventListener('click', () => jump(1));
+    scroller.addEventListener('scroll', () => updateSurahJumpNav(), { passive: true });
+    updateSurahJumpNav();
 }
 
 export function renderQuranSurahList() {

@@ -668,6 +668,20 @@
                 <div id="quranAyahList" class="quran-ayah-list"></div>
             </section>
 
+            <!-- Sure atlama: çift ok, sure listesindeki tek oklardan (başa/sona git) ayrışsın -->
+            <button type="button" id="quranPrevSurahBtn" class="quran-surah-scroll-nav quran-surah-scroll-nav--up quran-surah-jump" data-i18n="quran.prevSurahAria" data-i18n-attr="aria-label" aria-label="Önceki sure" hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="6 17 12 11 18 17" />
+                    <polyline points="6 11 12 5 18 11" />
+                </svg>
+            </button>
+            <button type="button" id="quranNextSurahBtn" class="quran-surah-scroll-nav quran-surah-scroll-nav--down quran-surah-jump" data-i18n="quran.nextSurahAria" data-i18n-attr="aria-label" aria-label="Sonraki sure" hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="6 13 12 19 18 13" />
+                    <polyline points="6 7 12 13 18 7" />
+                </svg>
+            </button>
+
             <div id="quranTafsirBridgeOverlay" class="quran-tafsir-bridge" hidden aria-hidden="true">
                 <button type="button" class="quran-tafsir-bridge__backdrop" id="quranTafsirBridgeBackdrop" data-i18n="quran.closeAria" data-i18n-attr="aria-label" aria-label="Kapat"></button>
                 <div class="quran-tafsir-bridge__sheet" role="dialog" aria-modal="true" aria-labelledby="quranTafsirBridgeTitle">

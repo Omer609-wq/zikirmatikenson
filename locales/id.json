@@ -223,7 +223,9 @@
     "folderAddConfirm": "Simpan",
     "folderAddNeedAyah": "Masukkan setidaknya satu nomor ayat.",
     "folderAddMaxAyahs": "Anda dapat menambahkan maksimal 3 ayat.",
-    "folderAddInvalidAyah": "Masukkan nomor ayat yang valid (1–{max})."
+    "folderAddInvalidAyah": "Masukkan nomor ayat yang valid (1–{max}).",
+    "prevSurahAria": "Surah sebelumnya",
+    "nextSurahAria": "Surah berikutnya"
   },
   "settings": {
     "title": "Pengaturan",

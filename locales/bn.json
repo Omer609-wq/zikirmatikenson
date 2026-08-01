@@ -223,7 +223,9 @@
     "folderAddConfirm": "সংরক্ষণ",
     "folderAddNeedAyah": "কমপক্ষে একটি আয়াত নম্বর লিখুন।",
     "folderAddMaxAyahs": "সর্বোচ্চ ৩টি আয়াত যোগ করতে পারেন।",
-    "folderAddInvalidAyah": "বৈধ আয়াত নম্বর লিখুন (1–{max})।"
+    "folderAddInvalidAyah": "বৈধ আয়াত নম্বর লিখুন (1–{max})।",
+    "prevSurahAria": "পূর্ববর্তী সূরা",
+    "nextSurahAria": "পরবর্তী সূরা"
   },
   "settings": {
     "title": "সেটিংস",

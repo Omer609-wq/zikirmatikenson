@@ -223,7 +223,9 @@
     "folderAddConfirm": "Kaydet",
     "folderAddNeedAyah": "En az bir ayet numarası girin.",
     "folderAddMaxAyahs": "En fazla 3 ayet ekleyebilirsiniz.",
-    "folderAddInvalidAyah": "Geçerli ayet numarası girin (1–{max})."
+    "folderAddInvalidAyah": "Geçerli ayet numarası girin (1–{max}).",
+    "prevSurahAria": "Önceki sure",
+    "nextSurahAria": "Sonraki sure"
   },
   "settings": {
     "title": "Ayarlar",
