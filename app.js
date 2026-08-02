@@ -4784,7 +4784,8 @@ function closeAllOverlays() {
         libraryFolderSelectOverlay,
         libraryDetailOverlay,
         zikirStatsOverlay,
-        document.getElementById('smartReminderEditOverlay')
+        document.getElementById('smartReminderEditOverlay'),
+        document.getElementById('quranSearchGuideOverlay')
     ].forEach((el) => {
         if (el) el.classList.remove('active');
     });
@@ -4870,7 +4871,8 @@ const IN_APP_BACK_OVERLAY_IDS = [
     'trashOverlay',
     'libraryFolderSelectOverlay',
     'libraryDetailOverlay',
-    'zikirStatsOverlay'
+    'zikirStatsOverlay',
+    'quranSearchGuideOverlay'
 ];
 
 function canNavigateBackInApp() {
