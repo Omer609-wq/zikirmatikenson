@@ -1,7 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Zikirmatik Dhikr Quran</string>
-    <string name="title_activity_main">Zikirmatik Dhikr Quran</string>
+    <!-- Ana ekran simgesinin altinda yazan ad. Magaza basligindan AYRI:
+         magaza basligi ASO icin uzun olabilir (30 karakter), burasi ~12
+         karakterde kesilir. Sadece marka adi kalsin. -->
+    <string name="app_name">Zikirmatik</string>
+    <string name="title_activity_main">Zikirmatik</string>
     <string name="package_name">com.omerzikirmatik.app</string>
     <string name="custom_url_scheme">com.omerzikirmatik.app</string>
 </resources>
