@@ -514,9 +514,9 @@
     "inputLabelName": "Nom"
   },
   "localeWelcome": {
-    "title": "Thanks for using Zikirmatik",
-    "body": "Thanks for downloading our app. We're still improving it every day.\n\nWe care a lot about translations — if something looks off, we're sorry.\n\nPlease email us below if you spot anything that needs fixing. Every message helps.",
-    "ok": "OK"
+    "title": "Merci d’utiliser Zikirmatik",
+    "body": "Nous sommes ravis que vous ayez téléchargé notre application. Nous continuons à l’améliorer et à la simplifier chaque jour.\n\nNous avons mis beaucoup de soin dans la traduction française — s’il reste une tournure maladroite ou inexacte, veuillez nous en excuser.\n\nSi vous repérez quelque chose à corriger, écrivez-nous à l’adresse ci-dessous. Chacun de vos messages compte énormément pour nous.",
+    "ok": "D’accord"
   },
   "zikir": {
     "addTitle": "Ajouter un zikir",
