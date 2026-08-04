@@ -38,5 +38,17 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- Android 13+ (API 33): bildirim göstermek için zorunlu izin (@capacitor/local-notifications da tanımlar; burada da görünsün) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- SCHEDULE_EXACT_ALARM yok: hatırlatıcılar inexact + allowWhileIdle (Play politikası / zikir hatırlatıcısı) -->
+    <!--
+      Hatırlatıcının seçilen saatte gelmesi için gerekli. Bu izin olmadan
+      @capacitor/local-notifications setAndAllowWhileIdle (inexact) dalına düşer;
+      inexact alarmlar App Standby Bucket'a tabidir ve uygulama bir süre
+      açılmayınca saatlerce ertelenir — kullanıcı uygulamayı açtığında hepsi
+      birden gelir.
+
+      USE_EXACT_ALARM tercih EDİLMEDİ: o izin kurulumda otomatik verilir ama Play
+      yalnızca çekirdek işlevi alarm/takvim olan uygulamalara izin veriyor; zikir
+      sayacı bu tanıma girmeyebilir. SCHEDULE_EXACT_ALARM ise kullanıcının
+      onayına bağlı, reddedilirse uygulama eski (inexact) davranışa düşer.
+    -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 </manifest>

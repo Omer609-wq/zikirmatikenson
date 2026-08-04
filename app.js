@@ -3,10 +3,17 @@ import {
     applyNativeBottomInsetVar,
     bindNativeReminderNotificationLaunch,
     isCapacitorNative,
+    openExactAlarmSettings,
     refreshNativeBottomInsetVar,
     syncNativeDailyReminder,
     syncNativeSmartReminders
 } from './native-reminders.js';
+import {
+    markExactAlarmPrompted,
+    readExactAlarmPromptState,
+    shouldPromptForExactAlarm,
+    writeExactAlarmPromptState
+} from './lib/exact-alarm-prompt.js';
 import {
     clearUpdateBannerDom,
     openPlayStore,
@@ -3137,6 +3144,42 @@ function scheduleInAppReminderTick() {
     }, ms);
 }
 
+/**
+ * Bildirim planlandı ama "tam zamanlı alarm" izni yoksa, sebebini anlatıp sistem
+ * ayarına yönlendirmeyi teklif eder. İzinsiz de bildirim gelir; yalnızca saati
+ * saatlerce kayabilir (bkz. lib/exact-alarm-prompt.js).
+ *
+ * ensureReminderSchedule her uygulama görünür oluşunda çalıştığı için sıklık
+ * kontrolü şart: karar shouldPromptForExactAlarm'da.
+ */
+async function maybeOfferExactAlarmPermission(exactState) {
+    const state = readExactAlarmPromptState();
+    if (!shouldPromptForExactAlarm({
+        state,
+        reminderEnabled: reminderSettings.enabled,
+        exactState,
+        now: Date.now()
+    })) return;
+
+    // Diyalogdan önce işaretle: kullanıcı kapatırsa ya da uygulama o sırada
+    // kapanırsa bir sonraki açılışta tekrar sorulmasın.
+    writeExactAlarmPromptState(markExactAlarmPrompted(state, Date.now()));
+
+    const ok = await showAppConfirm(t('reminderDialog.exactAlarmBody'), {
+        title: t('reminderDialog.exactAlarmTitle'),
+        confirmLabel: t('reminderDialog.exactAlarmOpen'),
+        cancelLabel: t('reminderDialog.exactAlarmLater')
+    });
+    if (!ok) return;
+
+    const next = await openExactAlarmSettings();
+    // Zaten kurulmuş alarmlar inexact olarak kaydedildi; AlarmManager bunları
+    // kendiliğinden yükseltmez, izin verildiyse baştan kurmak gerekir.
+    if (next === 'granted') {
+        await syncNativeDailyReminder(reminderSettings.enabled, reminderSettings.time, getLocale());
+    }
+}
+
 async function ensureReminderSchedule() {
     if (isCapacitorNative()) {
         clearInAppReminderTick();
@@ -3149,6 +3192,8 @@ async function ensureReminderSchedule() {
             await showAppAlert(t('reminderDialog.scheduleFailedBody'), {
                 title: t('reminderDialog.scheduleFailedTitle')
             });
+        } else if (reminderSettings.enabled && r.ok) {
+            await maybeOfferExactAlarmPermission(r.exact);
         }
         return;
     }

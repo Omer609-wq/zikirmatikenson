@@ -273,7 +273,11 @@
     "scheduleFailedBody": "Günlük hatırlatıcı zamanlanamadı. Uygulamayı güncelleyip tekrar deneyin; sorun sürerse Ayarlar → Bildirimler bölümünü kontrol edin.",
     "unsupportedTitle": "Bildirim",
     "unsupportedBody": "Bu tarayıcı veya görünüm bildirim desteklemiyor.",
-    "deniedWebBody": "Bildirim izni kapalı. Hatırlatıcı için telefon veya tarayıcı ayarlarından bu uygulamaya bildirim izni vermeniz gerekir."
+    "deniedWebBody": "Bildirim izni kapalı. Hatırlatıcı için telefon veya tarayıcı ayarlarından bu uygulamaya bildirim izni vermeniz gerekir.",
+    "exactAlarmTitle": "Hatırlatıcı tam saatinde gelsin",
+    "exactAlarmBody": "Android pil tasarrufu için hatırlatıcıları erteleyebiliyor; bildirim bazen geç geliyor, bazen de ancak uygulamayı açtığınızda görünüyor.\n\nAçılacak ekranda «Alarmlar ve hatırlatıcılar» iznini verirseniz hatırlatıcı seçtiğiniz saatte gelir.",
+    "exactAlarmOpen": "Ayarı aç",
+    "exactAlarmLater": "Şimdi değil"
   },
   "privacy": {
     "title": "Gizlilik",

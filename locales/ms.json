@@ -273,7 +273,11 @@
     "scheduleFailedBody": "Peringatan harian tidak dapat dijadualkan. Kemas kini aplikasi dan cuba lagi; jika masih gagal, semak Tetapan → Pemberitahuan.",
     "unsupportedTitle": "Pemberitahuan",
     "unsupportedBody": "Pelayar atau paparan ini tidak menyokong pemberitahuan.",
-    "deniedWebBody": "Pemberitahuan disekat. Benarkan pemberitahuan untuk aplikasi ini dalam tetapan telefon atau pelayar."
+    "deniedWebBody": "Pemberitahuan disekat. Benarkan pemberitahuan untuk aplikasi ini dalam tetapan telefon atau pelayar.",
+    "exactAlarmTitle": "Agar peringatan tiba tepat pada masanya",
+    "exactAlarmBody": "Untuk menjimatkan bateri, Android boleh menangguhkan peringatan — jadi notifikasi kadangkala lewat, atau hanya muncul apabila anda membuka aplikasi.\n\nBenarkan “Penggera & peringatan” pada skrin seterusnya supaya peringatan tiba pada waktu yang anda pilih.",
+    "exactAlarmOpen": "Buka tetapan",
+    "exactAlarmLater": "Nanti dulu"
   },
   "privacy": {
     "title": "Privasi",

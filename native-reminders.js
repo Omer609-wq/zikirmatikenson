@@ -187,12 +187,50 @@ export function bindNativeReminderNotificationLaunch(onOpen) {
     });
 }
 
+/**
+ * Tam zamanlı alarm izninin durumu.
+ *
+ * Yalnızca Android 12+ (API 31) için anlamlı: altındaki sürümlerde ve iOS'ta
+ * alarmlar zaten tam zamanlı çalışır, istenecek bir izin yoktur. Plugin'in
+ * checkExactNotificationSetting'i iOS'ta tanımlı olmadığı için platform
+ * kontrolü şart — çağrılırsa "not implemented" fırlatır.
+ *
+ * @returns {Promise<'granted'|'denied'|'unsupported'>}
+ */
+export async function getExactAlarmState() {
+    if (!isCapacitorNative() || Capacitor.getPlatform() !== 'android') return 'unsupported';
+    try {
+        const res = await LocalNotifications.checkExactNotificationSetting();
+        return res?.exact_alarm === 'granted' ? 'granted' : 'denied';
+    } catch (e) {
+        // Eski plugin sürümü ya da beklenmedik hata: izin akışını hiç başlatma.
+        console.warn('checkExactNotificationSetting', e);
+        return 'unsupported';
+    }
+}
+
+/**
+ * Sistemin "Alarmlar ve hatırlatıcılar" ayar ekranını açar ve kullanıcı geri
+ * döndüğünde yeni durumu verir.
+ * @returns {Promise<'granted'|'denied'|'unsupported'>}
+ */
+export async function openExactAlarmSettings() {
+    if (!isCapacitorNative() || Capacitor.getPlatform() !== 'android') return 'unsupported';
+    try {
+        const res = await LocalNotifications.changeExactNotificationSetting();
+        return res?.exact_alarm === 'granted' ? 'granted' : 'denied';
+    } catch (e) {
+        console.warn('changeExactNotificationSetting', e);
+        return 'denied';
+    }
+}
+
 export async function syncNativeDailyReminder(enabled, timeStr, locale = 'tr') {
-    if (!isCapacitorNative()) return { ok: true };
+    if (!isCapacitorNative()) return { ok: true, exact: 'unsupported' };
 
     await cancelReminderSlots();
 
-    if (!enabled) return { ok: true };
+    if (!enabled) return { ok: true, exact: 'unsupported' };
 
     let perm = await LocalNotifications.checkPermissions().catch(() => ({ display: 'prompt' }));
     if (perm.display !== 'granted') {
@@ -247,7 +285,9 @@ export async function syncNativeDailyReminder(enabled, timeStr, locale = 'tr') {
 
     try {
         await LocalNotifications.schedule({ notifications });
-        return { ok: true };
+        // İzin yoksa da planlandı — bildirim yine gelir, yalnızca saati kayabilir.
+        // Çağıran bu bilgiyle kullanıcıya izin ekranını önerip öneremeyeceğine karar verir.
+        return { ok: true, exact: await getExactAlarmState() };
     } catch (e) {
         console.error('LocalNotifications.schedule', e);
         return { ok: false, reason: 'schedule' };

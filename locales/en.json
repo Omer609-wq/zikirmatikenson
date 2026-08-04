@@ -273,7 +273,11 @@
     "scheduleFailedBody": "Could not schedule the daily reminder. Update the app and try again; if it persists, check Settings → Notifications.",
     "unsupportedTitle": "Notifications",
     "unsupportedBody": "This browser or view does not support notifications.",
-    "deniedWebBody": "Notifications are blocked. Allow notifications for this app in your phone or browser settings to use reminders."
+    "deniedWebBody": "Notifications are blocked. Allow notifications for this app in your phone or browser settings to use reminders.",
+    "exactAlarmTitle": "Get reminders exactly on time",
+    "exactAlarmBody": "To save battery, Android can delay reminders — so the notification sometimes arrives late, or only once you open the app.\n\nAllow “Alarms & reminders” on the next screen and your reminder will arrive at the time you chose.",
+    "exactAlarmOpen": "Open setting",
+    "exactAlarmLater": "Not now"
   },
   "privacy": {
     "title": "Privacy",

@@ -273,7 +273,11 @@
     "scheduleFailedBody": "Pengingat harian tidak dapat dijadwalkan. Perbarui aplikasi dan coba lagi; jika masih gagal, periksa Pengaturan → Notifikasi.",
     "unsupportedTitle": "Notifikasi",
     "unsupportedBody": "Browser atau tampilan ini tidak mendukung notifikasi.",
-    "deniedWebBody": "Notifikasi diblokir. Izinkan notifikasi untuk aplikasi ini di pengaturan ponsel atau browser agar pengingat berfungsi."
+    "deniedWebBody": "Notifikasi diblokir. Izinkan notifikasi untuk aplikasi ini di pengaturan ponsel atau browser agar pengingat berfungsi.",
+    "exactAlarmTitle": "Agar pengingat datang tepat waktu",
+    "exactAlarmBody": "Untuk menghemat baterai, Android bisa menunda pengingat — jadi notifikasi kadang terlambat, atau baru muncul saat Anda membuka aplikasi.\n\nIzinkan “Alarm & pengingat” di layar berikutnya agar pengingat datang pada jam yang Anda pilih.",
+    "exactAlarmOpen": "Buka pengaturan",
+    "exactAlarmLater": "Nanti saja"
   },
   "privacy": {
     "title": "Privasi",
