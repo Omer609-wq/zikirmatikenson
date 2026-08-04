@@ -273,7 +273,11 @@
     "scheduleFailedBody": "Impossible de programmer le rappel quotidien. Mettez l'app à jour et réessayez ; si le problème persiste, vérifiez Réglages → Notifications.",
     "unsupportedTitle": "Notifications",
     "unsupportedBody": "Ce navigateur ou cette vue ne prend pas en charge les notifications.",
-    "deniedWebBody": "Les notifications sont bloquées. Autorisez les notifications pour cette app dans les réglages du téléphone ou du navigateur."
+    "deniedWebBody": "Les notifications sont bloquées. Autorisez les notifications pour cette app dans les réglages du téléphone ou du navigateur.",
+    "exactAlarmTitle": "Recevoir les rappels à l’heure exacte",
+    "exactAlarmBody": "Pour économiser la batterie, Android peut retarder les rappels : la notification arrive parfois en retard, ou seulement au moment où vous ouvrez l’application.\n\nAutorisez « Alarmes et rappels » sur l’écran suivant pour que votre rappel arrive à l’heure choisie.",
+    "exactAlarmOpen": "Ouvrir le réglage",
+    "exactAlarmLater": "Plus tard"
   },
   "privacy": {
     "title": "Confidentialité",
