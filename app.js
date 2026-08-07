@@ -202,7 +202,8 @@ function mushafNavOptsForSurahOpen(scrollAyah) {
     if (appSettings.quranReaderLayout === 'mushaf' && appSettings.quranMushafRememberPage) {
         return { preferSaved: true };
     }
-    return {};
+    // Scroll list: do not restore prior scrollTop — jump to the selected surah.
+    return { forceSurahStart: true };
 }
 
 // ===================== DATA MODELS =====================
