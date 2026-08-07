@@ -26,11 +26,12 @@ import {
     searchAyahTextHits
 } from './quran-ayah-text-search.js';
 import { getSurahLocalizedName } from './quran-surah-names.js';
-
-export { getSurahLocalizedName } from './quran-surah-names.js';
+import { resolveScrollListFinishAction } from './lib/quran-surah-nav.js';
 import { t, getLocale, normalizeAppLocale } from './i18n.js';
 import { closeTafsirBridgeSheet, openTafsirBridgeSheet } from './tafsir-bridge.js';
 
+export { getSurahLocalizedName } from './quran-surah-names.js';
+export { resolveScrollListFinishAction } from './lib/quran-surah-nav.js';
 const VALID_MEAL_IDS = new Set(['vakfi', 'diyanet', 'bn', 'muyassar', 'sahih', 'hamidullah', 'basmeih', 'indonesian', 'ahmedali', 'jalandhry']);
 const VALID_READ_MODES = new Set(['meal-ar', 'translit-ar', 'ar-only']);
 /** Klasöre ayet kaydında ek seçenek: meal + okunuş + Arapça */
@@ -2465,16 +2466,28 @@ export async function renderQuranSurahDetail(
     };
 
     const finishScroll = async () => {
-        if (scrollAyah != null && Number.isFinite(Number(scrollAyah))) {
+        if (isMushaf) {
+            if (scrollAyah != null && Number.isFinite(Number(scrollAyah))) {
+                await scrollToAyah(n, Number(scrollAyah), meal, mode, gen, layout);
+            } else {
+                await scrollToMushafPage(
+                    resolveMushafStartPage(n, scrollAyah, mushafOpts),
+                    meal,
+                    mode,
+                    gen
+                );
+            }
+            updateSurahJumpNav();
+            return;
+        }
+        const action = resolveScrollListFinishAction({
+            scrollAyah,
+            forceSurahStart: !!mushafNav.forceSurahStart,
+            savedReaderScrollTop
+        });
+        if (action === 'ayah') {
             await scrollToAyah(n, Number(scrollAyah), meal, mode, gen, layout);
-        } else if (isMushaf) {
-            await scrollToMushafPage(
-                resolveMushafStartPage(n, scrollAyah, mushafOpts),
-                meal,
-                mode,
-                gen
-            );
-        } else if (savedReaderScrollTop != null && savedReaderScrollTop > 0) {
+        } else if (action === 'restore') {
             restoreQuranReaderScrollTop(getQuranReaderScroller(), savedReaderScrollTop);
         } else {
             await scrollToSurahSection(n, layout, meal, mode, gen);
