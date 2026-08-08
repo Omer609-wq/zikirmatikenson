@@ -184,6 +184,8 @@ import {
     setQuranNavigateToSurah,
     setQuranReadModeChangeHandler,
     setQuranReaderLayoutChangeHandler,
+    setQuranVisibleSurahChangeHandler,
+    getVisibleSurahNumber,
     setMushafSettingsApi,
     fetchSurahAyahs,
     getSurahLocalizedName,
@@ -191,9 +193,15 @@ import {
     syncQuranAyahFavoriteButtons,
     syncQuranTabVisibility
 } from './quran.js';
+import { resolveQuranReaderSurahId } from './lib/quran-visible-surah.js';
 
 function mushafNavOptsForRerender() {
     return appSettings.quranReaderLayout === 'mushaf' ? { preferSaved: true } : {};
+}
+
+/** Liste modunda atlanan/kaydırılan sureyi tercih et; mushaf'ta current'a düş. */
+function getActiveQuranSurahId() {
+    return resolveQuranReaderSurahId(currentQuranSurahId, getVisibleSurahNumber());
 }
 
 /** Sure listesinden veya sure numarasıyla açılış (belirli ayet hariç). */
@@ -2123,8 +2131,10 @@ function applyAppLocale(locale) {
     }
     const qsv = document.getElementById('quranSurahView');
     if (qsv && qsv.classList.contains('active') && currentQuranSurahId != null) {
+        const surahN = getActiveQuranSurahId();
+        currentQuranSurahId = surahN;
         void renderQuranSurahDetail(
-            currentQuranSurahId,
+            surahN,
             appSettings.quranMeal,
             appSettings.quranReadMode,
             null,
@@ -7096,12 +7106,17 @@ function setupEventListeners() {
         }
         showView('quranSurahView', n);
     });
+    setQuranVisibleSurahChangeHandler((surahN) => {
+        currentQuranSurahId = surahN;
+    });
     setQuranMealChangeHandler((mealId) => {
         appSettings.quranMeal = normalizeQuranMeal(mealId, appSettings.locale);
         saveData();
         if (currentQuranSurahId != null) {
+            const surahN = getActiveQuranSurahId();
+            currentQuranSurahId = surahN;
             void renderQuranSurahDetail(
-                currentQuranSurahId,
+                surahN,
                 appSettings.quranMeal,
                 appSettings.quranReadMode,
                 null,
@@ -7115,8 +7130,10 @@ function setupEventListeners() {
         appSettings.quranReadMode = normalizeQuranReadModeForLocale(readMode, appSettings.locale);
         saveData();
         if (currentQuranSurahId != null) {
+            const surahN = getActiveQuranSurahId();
+            currentQuranSurahId = surahN;
             void renderQuranSurahDetail(
-                currentQuranSurahId,
+                surahN,
                 appSettings.quranMeal,
                 appSettings.quranReadMode,
                 null,
@@ -7134,7 +7151,7 @@ function setupEventListeners() {
         const qsv = document.getElementById('quranSurahView');
         if (!qsv || qsv.classList.contains('hidden')) return;
 
-        let surahN = currentQuranSurahId ?? 1;
+        let surahN = getActiveQuranSurahId();
         let scrollAyah = null;
         let mushafNav = nextLayout === 'mushaf' ? mushafNavOptsForRerender() : {};
 
@@ -7143,6 +7160,8 @@ function setupEventListeners() {
             scrollAyah = 1;
             currentQuranSurahId = 1;
             mushafNav = { leavingMushaf: true };
+        } else {
+            currentQuranSurahId = surahN;
         }
 
         void renderQuranSurahDetail(
