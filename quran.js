@@ -76,6 +76,8 @@ let navigateToSurah = null;
 let onMealChange = null;
 let onReadModeChange = null;
 let onReaderLayoutChange = null;
+/** Sure atlama / kaydırma sonrası app state senkronu (currentQuranSurahId). */
+let onVisibleSurahChange = null;
 let renderGeneration = 0;
 const surahContentCache = new Map();
 let lazyObserver = null;
@@ -245,6 +247,16 @@ export function setQuranReadModeChangeHandler(fn) {
 
 export function setQuranReaderLayoutChangeHandler(fn) {
     onReaderLayoutChange = typeof fn === 'function' ? fn : null;
+}
+
+export function setQuranVisibleSurahChangeHandler(fn) {
+    onVisibleSurahChange = typeof fn === 'function' ? fn : null;
+}
+
+function notifyVisibleSurahChange(surahN) {
+    const n = Number(surahN);
+    if (!Number.isFinite(n) || n < 1 || n > 114) return;
+    if (onVisibleSurahChange) onVisibleSurahChange(Math.trunc(n));
 }
 
 /** Sağ panelden düzen seçimi — dokunmatikte güvenilir giriş noktası. */
@@ -2622,7 +2634,7 @@ function ensureSurahScrollNavBound() {
  */
 
 /** Ekranın üstünde duran sure bölümünün numarası. */
-function getVisibleSurahNumber() {
+export function getVisibleSurahNumber() {
     const list = document.getElementById('quranAyahList');
     const scroller = getQuranReaderScroller();
     if (!list || !scroller) return null;
@@ -2660,6 +2672,8 @@ function ensureSurahJumpNavBound() {
             nextBtn.hidden = true;
             return;
         }
+        // Kaydırma / atlama showView çağırmaz; meal/düzen yeniden çizimi için state'i güncelle.
+        notifyVisibleSurahChange(n);
         // Uçlarda ilgili ok gizlenir (Fatiha'da önceki, Nâs'ta sonraki yok)
         prevBtn.hidden = n <= 1;
         nextBtn.hidden = n >= 114;
@@ -2681,6 +2695,8 @@ function ensureSurahJumpNavBound() {
         if (cur == null) return;
         const target = cur + delta;
         if (target < 1 || target > 114) return;
+        // Hedefi hemen senkronla — meal değişimi scroll bitmeden gelirse eski sureye dönmesin.
+        notifyVisibleSurahChange(target);
         const list = document.getElementById('quranAyahList');
         const meal = getQuranReaderMealId();
         const mode = normalizeQuranReadMode(list?.dataset.readMode ?? '');
