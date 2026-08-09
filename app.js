@@ -189,11 +189,19 @@ import {
     getSurahLocalizedName,
     resolveQuranSurahInput,
     syncQuranAyahFavoriteButtons,
-    syncQuranTabVisibility
+    syncQuranTabVisibility,
+    getMushafCurrentPage
 } from './quran.js';
+import {
+    getMushafNavOptsForRerender as resolveMushafNavOptsForRerender,
+    resolveScrollTargetLeavingMushaf
+} from './lib/quran-layout-nav.js';
 
 function mushafNavOptsForRerender() {
-    return appSettings.quranReaderLayout === 'mushaf' ? { preferSaved: true } : {};
+    return resolveMushafNavOptsForRerender(
+        appSettings.quranReaderLayout,
+        !!appSettings.quranMushafRememberPage
+    );
 }
 
 /** Sure listesinden veya sure numarasıyla açılış (belirli ayet hariç). */
@@ -7139,9 +7147,13 @@ function setupEventListeners() {
         let mushafNav = nextLayout === 'mushaf' ? mushafNavOptsForRerender() : {};
 
         if (nextLayout === 'scroll' && wasMushaf) {
-            surahN = 1;
-            scrollAyah = 1;
-            currentQuranSurahId = 1;
+            const target = resolveScrollTargetLeavingMushaf(
+                getMushafCurrentPage(),
+                currentQuranSurahId ?? 1
+            );
+            surahN = target.surah;
+            scrollAyah = target.ayah;
+            currentQuranSurahId = surahN;
             mushafNav = { leavingMushaf: true };
         }
 
