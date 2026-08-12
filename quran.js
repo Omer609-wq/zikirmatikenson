@@ -26,8 +26,10 @@ import {
     searchAyahTextHits
 } from './quran-ayah-text-search.js';
 import { getSurahLocalizedName } from './quran-surah-names.js';
+import { resolveScrollPlaceRestore } from './lib/quran-scroll-place.js';
 
 export { getSurahLocalizedName } from './quran-surah-names.js';
+export { resolveScrollPlaceRestore } from './lib/quran-scroll-place.js';
 import { t, getLocale, normalizeAppLocale } from './i18n.js';
 import { closeTafsirBridgeSheet, openTafsirBridgeSheet } from './tafsir-bridge.js';
 
@@ -2412,8 +2414,14 @@ export async function renderQuranSurahDetail(
     const leavingMushaf = !!mushafNav.leavingMushaf;
     const targetIsMushaf = layout === 'mushaf';
     const forceShell = wasMushafAtStart !== targetIsMushaf || leavingMushaf;
-    const savedReaderScrollTop =
-        !targetIsMushaf && !leavingMushaf ? getQuranReaderScroller()?.scrollTop ?? null : null;
+    // Meal/locale rebuild changes ayah block heights — capture ayah identity, not
+    // only pixels (pixel restore after meal swap jumps to the wrong ayah).
+    const scrollerForPlace =
+        !targetIsMushaf && !leavingMushaf ? getQuranReaderScroller() : null;
+    const savedReaderAyahAnchor = scrollerForPlace
+        ? captureReaderAyahAnchor(scrollerForPlace)
+        : null;
+    const savedReaderScrollTop = scrollerForPlace ? scrollerForPlace.scrollTop ?? null : null;
     const gen = ++renderGeneration;
     syncMealSelect(meal, locale);
     syncReaderTitle();
@@ -2465,16 +2473,43 @@ export async function renderQuranSurahDetail(
     };
 
     const finishScroll = async () => {
-        if (scrollAyah != null && Number.isFinite(Number(scrollAyah))) {
+        if (isMushaf) {
+            if (scrollAyah != null && Number.isFinite(Number(scrollAyah))) {
+                await scrollToAyah(n, Number(scrollAyah), meal, mode, gen, layout);
+            } else {
+                await scrollToMushafPage(
+                    resolveMushafStartPage(n, scrollAyah, mushafOpts),
+                    meal,
+                    mode,
+                    gen
+                );
+            }
+            updateSurahJumpNav();
+            return;
+        }
+
+        const place = resolveScrollPlaceRestore({
+            scrollAyah,
+            forceSurahStart: !!mushafNav.forceSurahStart,
+            savedAnchor: savedReaderAyahAnchor,
+            savedReaderScrollTop
+        });
+        if (place === 'ayah') {
             await scrollToAyah(n, Number(scrollAyah), meal, mode, gen, layout);
-        } else if (isMushaf) {
-            await scrollToMushafPage(
-                resolveMushafStartPage(n, scrollAyah, mushafOpts),
-                meal,
-                mode,
-                gen
-            );
-        } else if (savedReaderScrollTop != null && savedReaderScrollTop > 0) {
+        } else if (place === 'anchor') {
+            const anchorSurah = Number(savedReaderAyahAnchor.surah);
+            const anchorAyah = Number(savedReaderAyahAnchor.ayah);
+            await prefetchReaderSections(meal, mode, layout, anchorSurah, anchorAyah, gen);
+            if (gen !== renderGeneration) return;
+            if (!restoreReaderAyahAnchor(getQuranReaderScroller(), savedReaderAyahAnchor)) {
+                // Çapa DOM'da yoksa eski piksel yedeği; o da yoksa sure başı.
+                if (savedReaderScrollTop != null && savedReaderScrollTop > 0) {
+                    restoreQuranReaderScrollTop(getQuranReaderScroller(), savedReaderScrollTop);
+                } else {
+                    await scrollToSurahSection(n, layout, meal, mode, gen);
+                }
+            }
+        } else if (place === 'pixel') {
             restoreQuranReaderScrollTop(getQuranReaderScroller(), savedReaderScrollTop);
         } else {
             await scrollToSurahSection(n, layout, meal, mode, gen);
