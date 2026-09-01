@@ -1,5 +1,7 @@
 {
     "_note": "Kütüphane metin düzeltmeleri; mağaza güncellemesi gerekmeden yayınlanır. Şema ve kurallar: docs/I18N.md → 'Uzaktan kütüphane düzeltmesi'. Katmanlar: tr (kanon), en (TR dışı ortak meal/bağlam), ar/bn/ur (yalnızca okunuş adı). Bir metni ikinci kez değiştirirken önceki metni prev içine yaz.",
+    "_pushSonrasi": "PUSH TEK BASINA YETMEZ: jsDelivr @main etiketini saatlerce onbellekte tutar ve ?t= gibi parametreleri yok sayar. Her push'tan sonra purge adresini cagir, yoksa kullanicilar eski dosyayi almaya devam eder: https://purge.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/library-overrides.json",
+    "_arKatmaniTuzagi": "Bir maddede en.name yaziyorsan ar.name'i de yaz (degismemis olsa bile). overridePatchForLocale once en katmanini uygular; ar yamasi yoksa Arapca kullaniciya Latin okunus duser.",
     "version": 1,
     "items": {
         "lib_12": {
