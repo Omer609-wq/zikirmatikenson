@@ -145,13 +145,23 @@
                     "Subhanallahi wa bihamdihi 'adada khalqihi",
                     "সুবহানাল্লাহি ওয়া বিহামদিহি আদাদা খালকিহি",
                     "سبحان اللہ وبحمدہ عدد خلقہ"
+                ],
+                "meaning": [
+                    "Allah'ı yaratıklarının sayısı kadar, nefsinin rızası, Arş'ının ağırlığı ve kelimelerinin mürekkebi kadar hamd ile tesbih ederim.",
+                    "Glory and praise be to Allah as much as the number of His creation, as pleases Him, as the weight of His Throne, and as the ink of His words."
+                ],
+                "fazilet": [
+                    "Cüveyriye (r.anha) hadisinde: bu geniş tesbihi birkaç kez söylemenin uzun zikirden daha üstün olduğu bildirilir."
                 ]
             },
             "tr": {
-                "name": "Sübhânellâhi ve bi hamdihi adede halkihi ve rıdâ nefsihi ve zinete arşihi ve midâde kelimâtih"
+                "name": "Sübhânellâhi ve bi hamdihi adede halkihi ve rıdâ nefsihi ve zinete arşihi ve midâde kelimâtih",
+                "meaning": "Allah'ı, yarattıkları sayısınca, kendi zâtının hoşnutluğunca, Arş'ının ağırlığınca ve kelimelerini yazmaya yetecek mürekkep kadar hamd ile tesbih ederim.",
+                "context": "Cüveyriye validemizden (r.anhâ) rivayet edilmiştir: Hz. Peygamber onu sabah zikir hâlinde bırakmış, kuşluk vakti döndüğünde hâlâ aynı yerde oturuyordu. 'Senden ayrıldıktan sonra üç kez söylediğim şu dört söz, senin sabahtan beri söylediklerinle tartılsa onlara ağır basardı' buyurdu."
             },
             "en": {
-                "name": "Subhanallahi wa bihamdihi 'adada khalqihi wa rida nafsihi wa zinata 'arshihi wa midada kalimatih"
+                "name": "Subhanallahi wa bihamdihi 'adada khalqihi wa rida nafsihi wa zinata 'arshihi wa midada kalimatih",
+                "meaning": "Glory and praise be to Allah as much as the number of His creation, as much as pleases His Self, as much as the weight of His Throne, and as much ink as would record His words."
             },
             "bn": {
                 "name": "সুবহানাল্লাহি ওয়া বিহামদিহি আদাদা খালকিহি ওয়া রিদা নাফসিহি ওয়া যিনাতা আরশিহি ওয়া মিদাদা কালিমাতিহ"
