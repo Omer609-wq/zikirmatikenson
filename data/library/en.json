@@ -196,17 +196,17 @@
   },
   {
     "id": "lib_12",
-    "name": "La ilaha illallahu wahdahu la sharika lah",
+    "name": "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu wa huwa 'ala kulli shay'in qadir",
     "meaning": "There is no god but Allah alone, without partner; to Him belongs dominion and praise; He is over all things capable."
   },
   {
     "id": "lib_13",
-    "name": "Hasbiyallahu la ilaha illa huwa",
-    "meaning": "Allah is sufficient for me; there is no god but He; in Him I have placed my trust."
+    "name": "Hasbiyallahu la ilaha illa huwa, 'alayhi tawakkaltu wa huwa Rabbul-'Arshil-'Azim",
+    "meaning": "Allah is sufficient for me; there is no god but He; in Him I have placed my trust, and He is the Lord of the Mighty Throne."
   },
   {
     "id": "lib_14",
-    "name": "Rabbi-ghfir warham",
+    "name": "Rabbighfir warham wa Anta khayrur-rahimin",
     "meaning": "My Lord, forgive and have mercy; You are the best of those who show mercy."
   },
   {
@@ -216,7 +216,7 @@
   },
   {
     "id": "lib_16",
-    "name": "Subhanallahi wa bihamdihi Subhanallahil-'Azim",
+    "name": "Subhanallahi wa bihamdih, subhanallahil-'Azim",
     "meaning": "Glory be to Allah and praise be to Him; glory be to Allah, the Magnificent."
   },
   {
@@ -226,22 +226,57 @@
   },
   {
     "id": "lib_18",
-    "name": "Allahumma Antas-Salam",
+    "name": "Allahumma Antas-Salam wa minkas-salam, tabarakta ya Dhal-Jalali wal-Ikram",
     "meaning": "O Allah, You are Peace and from You comes peace; blessed are You, Owner of majesty and honor."
   },
   {
     "id": "lib_19",
-    "name": "La ilaha illallah (mulk, hayat, qudrah)",
-    "meaning": "(Full supplication of tawhid with dominion, life, death, and power over all things.)"
+    "name": "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu, yuhyi wa yumit, wa huwa hayyun la yamut, biyadihil-khayru wa huwa 'ala kulli shay'in qadir",
+    "meaning": "There is no god but Allah alone, without partner; to Him belongs dominion and praise; He gives life and causes death; He is ever-living and never dies; in His hand is all good; He is over all things capable."
   },
   {
     "id": "lib_20",
-    "name": "Subhanallahi wa bihamdihi 'adada khalqihi",
+    "name": "Subhanallahi wa bihamdihi 'adada khalqihi wa rida nafsihi wa zinata 'arshihi wa midada kalimatih",
     "meaning": "Glory and praise be to Allah as much as the number of His creation, as pleases Him, as the weight of His Throne, and as the ink of His words."
   },
   {
     "id": "lib_21",
     "name": "La ilaha illallahu'l-Malikul-Haqqul-Mubin",
     "meaning": "There is no god but Allah, the King, the Truth, the Clear."
+  },
+  {
+    "id": "lib_d_tovbe_seyyidul_istigfar",
+    "name": "Allahumma anta rabbi la ilaha illa anta, khalaqtani wa ana 'abduka wa ana 'ala 'ahdika wa wa'dika mastata'tu, a'udhu bika min sharri ma sana'tu, abu'u laka bini'matika 'alayya wa abu'u bidhanbi faghfir li fa innahu la yaghfirudh-dhunuba illa ant",
+    "meaning": "O Allah, You are my Lord; there is no god but You. You created me and I am Your servant. I keep Your covenant and promise as best I can. I seek refuge in You from the evil of what I have done. I admit Your blessings upon me and confess my sin—so forgive me, for none forgives sins but You.",
+    "context": "From Shaddad ibn Aws (r.a.): the Prophet called this Sayyid al-Istighfar—the finest words of seeking forgiveness. Say it in the morning or at bedtime.",
+    "keywords": "istighfar sayyid repentance forgiveness morning bedtime"
+  },
+  {
+    "id": "lib_d_tovbe_tesbihat",
+    "name": "Astaghfirullah, astaghfirullah, astaghfirullahal-'Azimal-Karimalladhi la ilaha illa Huwal-Hayyul-Qayyumu wa atubu ilayh, wa nas'aluhut-tawbata wal-maghfirata wal-hidayata lana, innahu Huwat-Tawwabur-Rahim, tawbata 'abdin zalimin linafsihi la yamliku linafsihi mawtan wa la hayatan wa la nushura",
+    "meaning": "I seek forgiveness from Allah, I seek forgiveness from Allah, I seek forgiveness from Allah the Magnificent, the Generous, besides whom there is no god, the Ever-Living, the Sustainer, and I turn to Him in repentance. We ask Him for repentance, forgiveness and guidance for us; indeed He is the Accepter of repentance, the Merciful. The repentance of a servant who has wronged himself, who holds for himself no power over death, life, or resurrection.",
+    "context": "Recited after the closing salam of an obligatory prayer, at the start of the tasbihat. A long istighfar form widespread in the Turkish tradition; the servant confesses his helplessness while repenting.",
+    "keywords": "repentance forgiveness prayer tasbihat sin guidance mercy"
+  },
+  {
+    "id": "lib_d_tovbe_ebubekir",
+    "name": "Allahumma inni zalamtu nafsi zulman kathiran wa la yaghfirudh-dhunuba illa Anta, faghfir li maghfiratan min 'indika warhamni innaka Antal-Ghafurur-Rahim",
+    "meaning": "O Allah, I have wronged myself greatly, and none forgives sins but You. So forgive me with forgiveness from Yourself and have mercy on me; indeed You are the Most Forgiving, the Most Merciful.",
+    "context": "Taught by the Prophet (peace be upon him) to Abu Bakr (may Allah be pleased with him) when he asked for a supplication to say in his prayer. Recite in prayer, after the tashahhud or in prostration.",
+    "keywords": "repentance forgiveness prayer sin mercy abu bakr"
+  },
+  {
+    "id": "lib_d_tovbe_adem",
+    "name": "Rabbana zalamna anfusana wa in lam taghfir lana wa tarhamna lanakunanna minal-khasirin",
+    "meaning": "Our Lord, we have wronged ourselves; if You do not forgive us and have mercy on us, we shall surely be among the losers.",
+    "context": "The repentance of Adam and Hawwa (peace be upon them) in the Qur’an, the first example of turning back to Allah. Recite after a mistake, in regret and return.",
+    "keywords": "repentance regret sin adam mercy forgiveness quran"
+  },
+  {
+    "id": "lib_d_tovbe_afuvvun",
+    "name": "Allahumma innaka 'Afuwwun Karimun tuhibbul-'afwa fa'fu 'anni",
+    "meaning": "O Allah, You are Most Pardoning, Most Generous; You love to pardon, so pardon me.",
+    "context": "Taught to Aisha (may Allah be pleased with her) when she asked what to say if she found Laylat al-Qadr. Recite on the Night of Decree and whenever seeking pardon.",
+    "keywords": "pardon forgiveness laylatul qadr ramadan mercy repentance"
   }
 ]

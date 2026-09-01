@@ -1,5 +1,90 @@
 {
     "_note": "Kütüphane metin düzeltmeleri; mağaza güncellemesi gerekmeden yayınlanır. Şema ve kurallar: docs/I18N.md → 'Uzaktan kütüphane düzeltmesi'. Katmanlar: tr (kanon), en (TR dışı ortak meal/bağlam), ar/bn/ur (yalnızca okunuş adı). Bir metni ikinci kez değiştirirken önceki metni prev içine yaz.",
     "version": 1,
-    "items": {}
+    "items": {
+        "lib_12": {
+            "prev": {
+                "name": [
+                    "Lâ ilâhe illallâhu vahdehu lâ şerîke leh",
+                    "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+                    "La ilaha illallahu wahdahu la sharika lah",
+                    "লা ইলাহা ইল্লাল্লাহু ওয়াহদাহু লা শারীকা লাহু",
+                    "لا إلہ إلا اللہ وحده لا شریک لہ"
+                ]
+            }
+        },
+        "lib_13": {
+            "prev": {
+                "name": [
+                    "Hasbiyallâhu lâ ilâhe illâ hu",
+                    "حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ، عَلَيْهِ تَوَكَّلْتُ",
+                    "Hasbiyallahu la ilaha illa huwa",
+                    "হাসবিয়াল্লাহু লা ইলাহা ইল্লা হুয়া",
+                    "حسبی اللہ لا إلہ إلا ہو"
+                ]
+            }
+        },
+        "lib_14": {
+            "prev": {
+                "name": [
+                    "Rabbîğfir ve rahhem",
+                    "رَبِّ اغْفِرْ وَارْحَمْ وَأَنْتَ خَيْرُ الرَّاحِمِينَ",
+                    "Rabbi-ghfir warham",
+                    "রাব্বিগফির ওয়ারহাম",
+                    "رب اغفر وارحم"
+                ]
+            }
+        },
+        "lib_16": {
+            "prev": {
+                "name": [
+                    "Sübhânellâhi ve bi hamdihi",
+                    "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ سُبْحَانَ اللَّهِ الْعَظِيمِ",
+                    "Subhanallahi wa bihamdihi Subhanallahil-'Azim",
+                    "সুবহানাল্লাহি ওয়া বিহামদিহি সুবহানাল্লাহিল আযীম",
+                    "سبحان اللہ وبحمدہ سبحان اللہ العظیم"
+                ]
+            }
+        },
+        "lib_18": {
+            "prev": {
+                "name": [
+                    "Allâhümmâ entes-selâm",
+                    "اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ",
+                    "Allahumma Antas-Salam",
+                    "আল্লাহুম্মা আনতাস সালাম",
+                    "اللہم أنت السلام"
+                ]
+            }
+        },
+        "lib_20": {
+            "prev": {
+                "name": [
+                    "Sübhânellâhi ve bi hamdihi adede halkihi",
+                    "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ عَدَدَ خَلْقِهِ وَرِضَا نَفْسِهِ وَزِنَةَ عَرْشِهِ وَمِدَادَ كَلِمَاتِهِ",
+                    "Subhanallahi wa bihamdihi 'adada khalqihi",
+                    "সুবহানাল্লাহি ওয়া বিহামদিহি আদাদা খালকিহি",
+                    "سبحان اللہ وبحمدہ عدد خلقہ"
+                ]
+            }
+        },
+        "lib_19": {
+            "prev": {
+                "name": [
+                    "Lâ ilâhe illallâhu (mülk, hayât, hayy)",
+                    "La ilaha illallah (mulk, hayat, qudrah)",
+                    "লা ইলাহা ইল্লাল্লাহু (মুলক, হায়াত)",
+                    "لا إلہ إلا اللہ (ملک، حیات)",
+                    "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ، وَهُوَ حَيٌّ لَا يَمُوتُ، بِيَدِهِ الْخَيْرُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ"
+                ],
+                "meaning": [
+                    "(Tevhid ve mülk, hayat ölüm, O'nun elinde hayır ve her şeye güç yetirme sıfatlarıyla tam zikir.)",
+                    "(Full supplication of tawhid with dominion, life, death, and power over all things.)"
+                ],
+                "fazilet": [
+                    "Kelime-i tevhidin mülk, hayat-ölüm ve kudret sıfatlarıyla geniş formu. Günlük zikir ve yakarışta okunur."
+                ]
+            }
+        }
+    }
 }

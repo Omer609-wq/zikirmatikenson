@@ -1,14 +1,19 @@
 # Premium kütüphane — taslak (çalışma dosyası)
 
-Kaynak: `premium-tr.draft.json` · **Sıradaki id:** `plib_64` · **Taslak toplam:** 50 dua
+Kaynak: `premium-tr.draft.json` · **Sıradaki id:** `plib_64` · **Taslak toplam:** 49 dua
 
-**Shipped:** `premium-tr.json` ← 50 madde.
+**Shipped:** `premium-tr.json` ← 49 madde.
 
-**EN overlay:** `premium-id.json` ← 50 madde (`name` Latin + `meaning`/`context` EN).
+**EN overlay:** `premium-id.json` ← 49 madde (`name` Latin + `meaning`/`context` EN).
 
-**BN / UR okunuş:** `bn.json` / `ur.json` ← 50 premium `name`.
+**BN / UR okunuş:** `bn.json` / `ur.json` ← 49 premium `name`.
 
-**AR okunuş:** `ar.json` ← 50 premium `name`.
+**AR okunuş:** `ar.json` ← 49 premium `name`.
+
+**`plib_21` ücretsize alındı:** Seyyidü'l-istiğfar, Tövbe ve İstiğfar grubu için `tr.json`'a
+`lib_d_tovbe_seyyidul_istigfar` id'siyle taşındı (`plib_` öneki premium kilidinin kendisi olduğu için
+id değişmek zorundaydı). EN metni `premium-id.json` → `en.json`; `bn`/`ur`/`ar` satırları yeni id ile
+korundu. `plib_21` id'si yeniden kullanılmaz.
 
 **Mükerrer:** Yalnızca **aynı okunuş** (`name`); meal/bağlam/fazilet aynı olabilir.
 

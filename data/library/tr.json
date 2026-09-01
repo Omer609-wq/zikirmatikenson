@@ -180,16 +180,6 @@
     "keywords": "yağmur gök yağış şükür bereket"
   },
   {
-    "id": "lib_d_sikinti_yunus",
-    "category": "dua",
-    "name": "Lâ ilâhe illâ ente sübhâneke innî küntü minez-zâlimîn",
-    "meaning": "Senden başka ilah yok; Seni noksan sıfatlardan tenzih ederim; ben zulmedenlerden oldum.",
-    "context": "Sıkıntı, korku veya ümitsizlik anında; Yunus (a.s.) duası olarak kalbi Allah'a yönlendirmek için.",
-    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
-    "target": 1,
-    "keywords": "sıkıntı dert korku ümit tevekkül gemi"
-  },
-  {
     "id": "lib_d_ilim",
     "category": "dua",
     "name": "Rabbi zidnî ilmen nâfi'an ve fehmen vâsian",
@@ -198,6 +188,78 @@
     "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
     "target": 1,
     "keywords": "ilim ders okul Kuran çalışma hikmet"
+  },
+  {
+    "id": "lib_d_tovbe_tesbihat",
+    "category": "dua",
+    "name": "Estağfirullah, estağfirullah, estağfirullâhe'l-azîme'l-kerîm ellezî lâ ilâhe illâ hüve'l-hayye'l-kayyûme ve etûbü ileyh. Ve nes'elühü't-tevbete ve'l-mağfirete ve'l-hidâyete lenâ, innehû hüve't-tevvâbü'r-rahîm. Tevbete abdin zâlimin li-nefsihî, lâ yemlikü li-nefsihî mevten velâ hayâten velâ nüşûrâ",
+    "arabic": "أَسْتَغْفِرُ اللهَ، أَسْتَغْفِرُ اللهَ، أَسْتَغْفِرُ اللهَ الْعَظِيمَ الْكَرِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ وَأَتُوبُ إِلَيْهِ، وَنَسْأَلُهُ التَّوْبَةَ وَالْمَغْفِرَةَ وَالْهِدَايَةَ لَنَا، إِنَّهُ هُوَ التَّوَّابُ الرَّحِيمُ، تَوْبَةَ عَبْدٍ ظَالِمٍ لِنَفْسِهِ لَا يَمْلِكُ لِنَفْسِهِ مَوْتًا وَلَا حَيَاةً وَلَا نُشُورًا",
+    "meaning": "Allah'tan bağışlanma dilerim, Allah'tan bağışlanma dilerim. Kendisinden başka ilah olmayan, Hayy ve Kayyûm olan yüce ve kerîm Allah'tan bağışlanma diler ve O'na tövbe ederim. O'ndan bizim için tövbe, mağfiret ve hidayet dileriz; şüphesiz O, tövbeleri çokça kabul eden ve çok merhametlidir. Kendine zulmetmiş, kendisi için ne ölüme, ne hayata, ne de yeniden dirilmeye gücü yeten bir kulun tövbesiyle tövbe ederim.",
+    "context": "Farz namazların selamından sonra, tesbihata başlarken okunur. Kulun aczini itiraf ederek tövbe etmesini ifade eder; günlük istiğfarın en yaygın uzun formudur.",
+    "source": "Namaz tesbihatı formu. Hadis temelli bölümleri: Müslim 591 (sahih — namaz sonrası üç kez istiğfar); Tirmizi 3397 (hasen garîb — 'ellezî lâ ilâhe illâ hüve'l-hayyu'l-kayyûm ve etûbü ileyh'). Devamındaki bölümler tesbihat geleneğinden derlenmiştir.",
+    "target": 1,
+    "keywords": "tövbe istiğfar namaz tesbihat farz selam günah mağfiret hidayet af",
+    "group": "tovbe"
+  },
+  {
+    "id": "lib_d_tovbe_seyyidul_istigfar",
+    "category": "dua",
+    "name": "Allahümme ente rabbî lâ ilâhe illâ ente, halaktanî ve ene abduke ve ene alâ ahdike ve va'dike mâ estaata't, eûzü bike min şerri mâ sana't, ebû'u leke bi ni'metike aleyye ve ebû'u bi zenbî fağfir lî fe innehû lâ yağfiruz-zünûbe illâ ent",
+    "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+    "meaning": "Allah'ım! Sen benim Rabbimsin; Senden başka ilah yoktur. Beni Sen yarattın, ben Senin kulunum. Gücüm yettiğince ahdine ve vaadine bağlıyım. Yaptıklarımın şerrinden Sana sığınırım; nimetini itiraf eder, günahımı itiraf ederim. Beni bağışla; günahları ancak Sen affedersin.",
+    "context": "Şeddâd b. Evs'ten (r.a.) rivayet edildiğine göre Hz. Peygamber bunu seyyidü'l-istiğfar (istiğfarın en faziletlisi) diye öğretti. Sabah veya yatarken okunur.",
+    "source": "Buhari 6306; Müslim 2702 (sahih)",
+    "target": 1,
+    "keywords": "istiğfar seyyid tövbe mağfiret sabah yatmak gece",
+    "group": "tovbe"
+  },
+  {
+    "id": "lib_d_tovbe_ebubekir",
+    "category": "dua",
+    "name": "Allâhümme innî zalemtü nefsî zulmen kesîran ve lâ yağfiruz-zünûbe illâ ente, fağfir lî mağfiraten min indike verhamnî, inneke entel-Ğafûru'r-Rahîm",
+    "arabic": "اللَّهُمَّ إِنِّي ظَلَمْتُ نَفْسِي ظُلْمًا كَثِيرًا وَلَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ فَاغْفِرْ لِي مَغْفِرَةً مِنْ عِنْدِكَ وَارْحَمْنِي إِنَّكَ أَنْتَ الْغَفُورُ الرَّحِيمُ",
+    "meaning": "Allah'ım! Ben nefsime çokça zulmettim. Günahları senden başka bağışlayacak yoktur. Beni kendi katından bir mağfiretle bağışla ve bana merhamet et. Şüphesiz sen çok bağışlayan, çok merhamet edensin.",
+    "context": "Hz. Ebû Bekir (r.a.) Peygamber'e 'Namazımda okuyacağım bir dua öğret' dediğinde kendisine öğretilen duadır. Namazda, teşehhüdden sonra veya secdede okunur.",
+    "source": "Buhari, Ezan 149 (nr. 834); Müslim, Zikir 48 (nr. 2705) — sahih",
+    "target": 1,
+    "keywords": "tövbe istiğfar namaz nefis zulüm günah mağfiret merhamet ebubekir",
+    "group": "tovbe"
+  },
+  {
+    "id": "lib_d_tovbe_adem",
+    "category": "dua",
+    "name": "Rabbenâ zalemnâ enfüsenâ ve in lem tağfir lenâ ve terhamnâ lenekûnenne minel hâsirîn",
+    "arabic": "رَبَّنَا ظَلَمْنَا أَنْفُسَنَا وَإِنْ لَمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ الْخَاسِرِينَ",
+    "meaning": "Rabbimiz! Biz kendimize zulmettik. Eğer bizi bağışlamaz ve bize merhamet etmezsen, mutlaka hüsrana uğrayanlardan oluruz.",
+    "context": "Hz. Âdem ile Havvâ'nın hatalarından sonra ettikleri tövbe duasıdır; Kur'an'da tövbenin ilk örneği olarak geçer. Hata sonrası pişmanlık ve dönüş için okunur.",
+    "source": "Kur'an-ı Kerim, A'râf sûresi 7/23",
+    "target": 1,
+    "keywords": "tövbe pişmanlık hata günah adem havva mağfiret merhamet hüsran",
+    "group": "tovbe"
+  },
+  {
+    "id": "lib_d_sikinti_yunus",
+    "category": "dua",
+    "name": "Lâ ilâhe illâ ente sübhâneke innî küntü minez-zâlimîn",
+    "meaning": "Senden başka ilah yok; Seni noksan sıfatlardan tenzih ederim; ben zulmedenlerden oldum.",
+    "context": "Hz. Yûnus'un (a.s.) balığın karnındayken ettiği duadır. Hem hatayı itiraf edip tövbe etmek, hem de sıkıntıdan kurtuluş için okunur.",
+    "source": "Kur'an-ı Kerim, Enbiyâ sûresi 21/87; Tirmizi 3505 (hasen)",
+    "target": 1,
+    "keywords": "tövbe sıkıntı darlık kurtuluş zalim itiraf yunus balık dua",
+    "arabic": "لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ",
+    "group": "tovbe"
+  },
+  {
+    "id": "lib_d_tovbe_afuvvun",
+    "category": "dua",
+    "name": "Allâhümme inneke afüvvün kerîmün tuhibbü'l-afve fa'fu annî",
+    "arabic": "اللَّهُمَّ إِنَّكَ عَفُوٌّ كَرِيمٌ تُحِبُّ الْعَفْوَ فَاعْفُ عَنِّي",
+    "meaning": "Allah'ım! Şüphesiz sen çok affedici ve cömertsin, affetmeyi seversin; beni de affet.",
+    "context": "Hz. Âişe'nin (r.a.) 'Kadir gecesine denk gelirsem ne diyeyim?' sorusuna karşılık öğretilen duadır. Kadir gecesinde ve genel olarak af dilemek için okunur.",
+    "source": "Tirmizi, Daavât 84 (nr. 3513) — sahih; İbn Mace 3850",
+    "target": 1,
+    "keywords": "tövbe af mağfiret kadir gecesi ramazan afüvv kerim bağışlanma",
+    "group": "tovbe"
   },
   {
     "id": "lib_1",
@@ -323,7 +385,7 @@
   {
     "id": "lib_12",
     "category": "zikir",
-    "name": "Lâ ilâhe illallâhu vahdehu lâ şerîke leh",
+    "name": "Lâ ilâhe illallâhu vahdehu lâ şerîke leh, lehü'l-mülkü ve lehü'l-hamdü ve hüve alâ külli şey'in kadîr",
     "arabic": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
     "meaning": "Allah'tan başka ilah yoktur, O tektir, ortağı yoktur; mülk O'nundur, hamd O'nadır; O her şeye kadirdir.",
     "context": "Hadiste: günde yüz defa okuyana on köle azadı sevabı, yüz hasene, yüz günahın silinmesi ve o gün şeytana karşı koruma bildirilir.",
@@ -334,9 +396,9 @@
   {
     "id": "lib_13",
     "category": "zikir",
-    "name": "Hasbiyallâhu lâ ilâhe illâ hu",
-    "arabic": "حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ، عَلَيْهِ تَوَكَّلْتُ",
-    "meaning": "Allah bana yeter; O'ndan başka ilah yoktur; yalnız O'na tevekkül ettim.",
+    "name": "Hasbiyallâhu lâ ilâhe illâ hû, aleyhi tevekkeltü ve hüve rabbü'l-arşi'l-azîm",
+    "arabic": "حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ، عَلَيْهِ تَوَكَّلْتُ، وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
+    "meaning": "Allah bana yeter; O'ndan başka ilah yoktur; yalnız O'na tevekkül ettim. O, yüce Arş'ın Rabbidir.",
     "context": "Kur’an’da (Tevbe 129) Peygamber’e hitaben geçer; tevekkül ve kifayet ayetidir. Korku ve endişede okunur.",
     "source": "Kur'an-ı Kerim, Tevbe 129",
     "target": 100,
@@ -345,7 +407,7 @@
   {
     "id": "lib_14",
     "category": "zikir",
-    "name": "Rabbîğfir ve rahhem",
+    "name": "Rabbiğfir verham ve ente hayru'r-râhimîn",
     "arabic": "رَبِّ اغْفِرْ وَارْحَمْ وَأَنْتَ خَيْرُ الرَّاحِمِينَ",
     "meaning": "Rabbim, bağışla ve merhamet et; Sen merhamet edenlerin en hayırlısısın.",
     "context": "Kur’an’da (Mü’minûn 118) geçen af ve rahmet duasıdır. Tövbe ve mağfiret dilemek için okunur.",
@@ -367,7 +429,7 @@
   {
     "id": "lib_16",
     "category": "zikir",
-    "name": "Sübhânellâhi ve bi hamdihi",
+    "name": "Sübhânellâhi ve bi hamdihi, sübhânellâhi'l-azîm",
     "arabic": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ سُبْحَانَ اللَّهِ الْعَظِيمِ",
     "meaning": "Allah'ı hamd ile tenzih ederim; Azîm olan Allah'ı tenzih ederim.",
     "context": "Hadiste dile hafif, mizanda ağır ve Rahman’a sevimli iki kelime olarak övülür: “Sübhanallahi ve bihamdihi, Sübhanallâhil-azîm”.",
@@ -389,7 +451,7 @@
   {
     "id": "lib_18",
     "category": "zikir",
-    "name": "Allâhümmâ entes-selâm",
+    "name": "Allâhümme entes-selâm ve minkes-selâm, tebârekte yâ ze'l-celâli ve'l-ikrâm",
     "arabic": "اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ",
     "meaning": "Allah'ım, Sen Selâmsın; selâm Sendendir. Ey celâl ve ikram sahibi, mübarek olan Sensin.",
     "context": "Namaz selâmından hemen sonra okunan sünnet duadır. Selâm ve bereket dilemek için teşehhüd sonrası zikredilir.",
@@ -400,18 +462,18 @@
   {
     "id": "lib_19",
     "category": "zikir",
-    "name": "Lâ ilâhe illallâhu (mülk, hayât, hayy)",
+    "name": "Lâ ilâhe illallâhu vahdehu lâ şerîke leh, lehü'l-mülkü ve lehü'l-hamdü, yuhyî ve yumît, ve hüve hayyun lâ yemût, biyedihi'l-hayr ve hüve alâ külli şey'in kadîr",
     "arabic": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ، وَهُوَ حَيٌّ لَا يَمُوتُ، بِيَدِهِ الْخَيْرُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
-    "meaning": "(Tevhid ve mülk, hayat ölüm, O'nun elinde hayır ve her şeye güç yetirme sıfatlarıyla tam zikir.)",
-    "context": "Kelime-i tevhidin mülk, hayat-ölüm ve kudret sıfatlarıyla geniş formu. Günlük zikir ve yakarışta okunur.",
-    "source": "Tirmizi ve diğer hadis mecmuaları (çeşitli rivayetler)",
+    "meaning": "Allah'tan başka ilah yoktur, O tektir, ortağı yoktur; mülk O'nundur, hamd O'nadır; diriltir ve öldürür; O diridir, asla ölmez; hayır O'nun elindedir; O her şeye kadirdir.",
+    "context": "Kelime-i tevhidin mülk, hayat-ölüm, kudret ve hayrın Allah'ın elinde oluşu sıfatlarıyla genişletilmiş formudur. Gün içinde genel zikir olarak okunur. Bu uzun lafza mahsus sevap rivayetlerinin dereceleri ihtilaflı olduğu için belirli bir sevap miktarı belirtilmemiştir.",
+    "source": "Tehlilin genişletilmiş lafzı; muhtelif rivayetlerde yer alır, dereceleri ihtilaflıdır. Kısa formu sahihtir (Buhari, Daavât; Müslim, Zikir).",
     "target": 1,
-    "keywords": "yatarken gece mülk hayat ölüm tevhid tam"
+    "keywords": "tevhid tehlil kelime-i tevhid mülk hayat ölüm kudret hayır zikir"
   },
   {
     "id": "lib_20",
     "category": "zikir",
-    "name": "Sübhânellâhi ve bi hamdihi adede halkihi",
+    "name": "Sübhânellâhi ve bi hamdihi adede halkihi ve rıdâ nefsihi ve zinete arşihi ve midâde kelimâtih",
     "arabic": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ عَدَدَ خَلْقِهِ وَرِضَا نَفْسِهِ وَزِنَةَ عَرْشِهِ وَمِدَادَ كَلِمَاتِهِ",
     "meaning": "Allah'ı yaratıklarının sayısı kadar, nefsinin rızası, Arş'ının ağırlığı ve kelimelerinin mürekkebi kadar hamd ile tesbih ederim.",
     "context": "Cüveyriye (r.anha) hadisinde: bu geniş tesbihi birkaç kez söylemenin uzun zikirden daha üstün olduğu bildirilir.",

@@ -20,6 +20,8 @@ html[data-theme="light"] {
     --surface-card-ghost: linear-gradient(165deg, #fffdf8 0%, #f5efe4 100%);
     --surface-border: rgba(87, 83, 78, 0.16);
     --surface-border-active: rgba(87, 83, 78, 0.26);
+    /* Krem zeminde parlak yeşil sönük kalıyor; koyu ton kullanılır. */
+    --library-group-icon: #047857;
     --surface-shadow: 0 4px 18px rgba(28, 25, 23, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.65);
     --icon-hover-bg: rgba(28, 25, 23, 0.06);
     --header-home-title: #1c1917;

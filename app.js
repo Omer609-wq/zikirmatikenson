@@ -31,6 +31,7 @@ import {
 import { escapeHtml, escapeAttr } from './lib/html.js';
 import { isBaseLibraryItemPremiumLocked } from './lib/library-access.js';
 import { getFoldersForLibraryItem, formatFolderNames } from './lib/library-folders.js';
+import { getLibraryGroup, getLibraryGroupItems, splitLibraryByGroup } from './lib/library-groups.js';
 import { buildSearchHaystack, scoreSearchMatch, toSearchTokens } from './lib/fuzzy-search.js';
 import { playCounterTickSound, normalizeCounterTickSound } from './lib/counter-tick-sounds.js';
 import {
@@ -666,6 +667,7 @@ let weeklyReportWeekIndex = 3;
 let currentFolderId = null;
 let currentZikirId = null;
 let currentQuranSurahId = null;
+let currentLibraryGroupId = null;
 let quranAyahFavorites = [];
 import { QURAN_COUNTER_LAYOUTS, normalizeQuranCounterLayout } from './lib/quran-counter-layout.js';
 
@@ -970,6 +972,8 @@ const exitStealthBtn = document.getElementById('exitStealthBtn');
 
 // Library View
 const libraryGrid = document.getElementById('libraryGrid');
+const libraryGroupGrid = document.getElementById('libraryGroupGrid');
+const libraryGroupTitle = document.getElementById('libraryGroupTitle');
 const libraryCategoryTabs = document.querySelectorAll('#libraryCategoryTabs .tab-btn');
 const librarySearchInput = document.getElementById('librarySearchInput');
 const libraryDetailOverlay = document.getElementById('libraryDetailOverlay');
@@ -1402,6 +1406,8 @@ async function refreshRemoteHomeContent() {
         syncLocalizedDefaults({ persist: true });
         const libView = document.getElementById('libraryView');
         if (libView && !libView.classList.contains('hidden')) renderLibrary();
+        const libGroupView = document.getElementById('libraryGroupView');
+        if (libGroupView && !libGroupView.classList.contains('hidden')) renderLibraryGroupDetail();
     }
     if (document.getElementById('homeView')?.classList.contains('active')) renderFolders();
     const fd = document.getElementById('folderDetailView');
@@ -2133,6 +2139,8 @@ function applyAppLocale(locale) {
     syncQuranDrawerFolderModeUI(appSettings.quranReadMode);
     const libView = document.getElementById('libraryView');
     if (libView && !libView.classList.contains('hidden')) renderLibrary();
+    const libGroupView = document.getElementById('libraryGroupView');
+    if (libGroupView && !libGroupView.classList.contains('hidden')) renderLibraryGroupDetail();
     const qv = document.getElementById('quranView');
     if (qv && qv.classList.contains('active')) {
         if (getQuranViewTab() === 'favorites') {
@@ -5024,6 +5032,7 @@ function showView(viewId, param = null, options = {}) {
         currentViewId === 'folderDetailView' ? currentFolderId :
         currentViewId === 'counterView' ? currentZikirId :
         currentViewId === 'quranSurahView' ? currentQuranSurahId :
+        currentViewId === 'libraryGroupView' ? currentLibraryGroupId :
         null
     )) : null;
 
@@ -5126,6 +5135,9 @@ function showView(viewId, param = null, options = {}) {
     } else if (viewId === 'libraryView') {
         resetLibraryCategoryTab();
         renderLibrary();
+    } else if (viewId === 'libraryGroupView') {
+        currentLibraryGroupId = param;
+        renderLibraryGroupDetail();
     } else if (viewId === 'quranView') {
         if (getQuranViewTab() === 'favorites') {
             void renderQuranFavoritesList(appSettings.quranMeal, quranAyahFavorites);
@@ -6447,7 +6459,16 @@ function renderLibraryContent() {
             .map((row) => row.z);
     }
 
-    filtered.forEach((z) => {
+    // Konu grupları yalnızca gezinirken üstte toplanır; arama düz sonuç verir
+    // (grup içindeki madde de tekil kart olarak çıkar).
+    let loose = filtered;
+    if (!searchActive) {
+        const split = splitLibraryByGroup(filtered, activeLibraryCat);
+        loose = split.loose;
+        split.groups.forEach((g) => appendLibraryGroupCard(libraryGrid, g));
+    }
+
+    loose.forEach((z) => {
         const locked = isLibraryCardLocked(z, premiumUser);
         if (!premiumUser && !searchActive && isPremiumOnlyFeatureLocked() && locked) return;
         appendLibraryCard(libraryGrid, z, { locked });
@@ -6458,10 +6479,78 @@ function renderLibraryContent() {
     }
 }
 
+/** Keşfet listesinin başındaki konu kartı — dokununca grup sayfasını açar. */
+function appendLibraryGroupCard(parent, group) {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'library-card library-card--group';
+
+    const icon = document.createElement('span');
+    icon.className = 'material-icons-outlined library-card__group-icon';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.textContent = 'auto_stories';
+    card.appendChild(icon);
+
+    const body = document.createElement('div');
+    body.className = 'library-card__body';
+
+    const h3 = document.createElement('h3');
+    h3.textContent = t(group.nameKey);
+    const p = document.createElement('p');
+    p.textContent = t('library.groupCount', { count: group.items.length });
+    body.appendChild(h3);
+    body.appendChild(p);
+    card.appendChild(body);
+
+    const chevron = document.createElement('span');
+    chevron.className = 'material-icons-outlined library-card__group-chevron';
+    chevron.setAttribute('aria-hidden', 'true');
+    chevron.textContent = 'chevron_right';
+    card.appendChild(chevron);
+
+    card.addEventListener('click', () => showView('libraryGroupView', group.id));
+    parent.appendChild(card);
+}
+
+function renderLibraryGroupDetail() {
+    void ensurePremiumLibraryLoaded().then(() => renderLibraryGroupContent());
+}
+
+function renderLibraryGroupContent() {
+    if (!libraryGroupGrid) return;
+    const group = getLibraryGroup(currentLibraryGroupId);
+    if (!group) {
+        showView('libraryView');
+        return;
+    }
+    if (libraryGroupTitle) libraryGroupTitle.textContent = t(group.nameKey);
+
+    libraryGroupGrid.innerHTML = '';
+    const premiumUser = isPremium();
+    getLibraryGroupItems(group.id, getZikirLibrary(premiumUser)).forEach((z) => {
+        appendLibraryCard(libraryGroupGrid, z, { locked: isLibraryCardLocked(z, premiumUser) });
+    });
+}
+
+/** Okunuş metni bu uzunlukları aşınca detay penceresinde punto kademe kademe küçülür. */
+const LIB_DETAIL_NAME_LONG = 140;
+const LIB_DETAIL_NAME_XLONG = 240;
+
+function applyLibDetailNameScale(el, text) {
+    if (!el) return;
+    const len = String(text || '').length;
+    el.classList.toggle(
+        'lib-detail-name--long',
+        len >= LIB_DETAIL_NAME_LONG && len < LIB_DETAIL_NAME_XLONG
+    );
+    el.classList.toggle('lib-detail-name--xlong', len >= LIB_DETAIL_NAME_XLONG);
+}
+
 function openLibraryDetail(z) {
     selectedLibraryItem = z;
     const detailName = z.name || '';
     libDetailName.textContent = detailName;
+    applyLibDetailNameScale(libDetailName, detailName);
     applyArabicTextAttrs(libDetailName, localeUsesRtlUiScript(appSettings.locale));
     const ar = z.arabic && String(z.arabic).trim();
     if (libDetailArabic) {
@@ -6491,6 +6580,9 @@ function openLibraryDetail(z) {
     }
     if (libDetailContext) libDetailContext.textContent = ctx || '';
     if (libDetailContextWrap) libDetailContextWrap.hidden = !ctx;
+    // Gövde artık kayabiliyor; önceki maddeden kalan kaydırma sıfırlanır.
+    const detailBody = libDetailName?.closest('.modal-body');
+    if (detailBody) detailBody.scrollTop = 0;
     openOverlay('libraryDetailOverlay');
 }
 
