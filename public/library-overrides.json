@@ -11,6 +11,21 @@
                     "লা ইলাহা ইল্লাল্লাহু ওয়াহদাহু লা শারীকা লাহু",
                     "لا إلہ إلا اللہ وحده لا شریک لہ"
                 ]
+            },
+            "tr": {
+                "name": "Lâ ilâhe illallâhu vahdehu lâ şerîke leh, lehü'l-mülkü ve lehü'l-hamdü ve hüve alâ külli şey'in kadîr"
+            },
+            "en": {
+                "name": "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu wa huwa 'ala kulli shay'in qadir"
+            },
+            "bn": {
+                "name": "লা ইলাহা ইল্লাল্লাহু ওয়াহদাহু লা শারীকা লাহু, লাহুল মুলকু ওয়া লাহুল হামদু ওয়া হুওয়া আলা কুল্লি শাইইন কাদীর"
+            },
+            "ur": {
+                "name": "لا إلہ إلا اللہ وحدہ لا شریک لہ، لہ الملک ولہ الحمد وہو علی کل شیء قدیر"
+            },
+            "ar": {
+                "name": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ"
             }
         },
         "lib_13": {
@@ -22,6 +37,24 @@
                     "হাসবিয়াল্লাহু লা ইলাহা ইল্লা হুয়া",
                     "حسبی اللہ لا إلہ إلا ہو"
                 ]
+            },
+            "tr": {
+                "name": "Hasbiyallâhu lâ ilâhe illâ hû, aleyhi tevekkeltü ve hüve rabbü'l-arşi'l-azîm",
+                "meaning": "Allah bana yeter; O'ndan başka ilah yoktur; yalnız O'na tevekkül ettim. O, yüce Arş'ın Rabbidir.",
+                "arabic": "حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ، عَلَيْهِ تَوَكَّلْتُ، وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ"
+            },
+            "en": {
+                "name": "Hasbiyallahu la ilaha illa huwa, 'alayhi tawakkaltu wa huwa Rabbul-'Arshil-'Azim",
+                "meaning": "Allah is sufficient for me; there is no god but He; in Him I have placed my trust, and He is the Lord of the Mighty Throne."
+            },
+            "bn": {
+                "name": "হাসবিয়াল্লাহু লা ইলাহা ইল্লা হুওয়া, আলাইহি তাওয়াক্কালতু ওয়া হুওয়া রাব্বুল আরশিল আযীম"
+            },
+            "ur": {
+                "name": "حسبی اللہ لا إلہ إلا ہو، علیہ توکلت وہو رب العرش العظیم"
+            },
+            "ar": {
+                "name": "حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ، عَلَيْهِ تَوَكَّلْتُ، وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ"
             }
         },
         "lib_14": {
@@ -33,6 +66,21 @@
                     "রাব্বিগফির ওয়ারহাম",
                     "رب اغفر وارحم"
                 ]
+            },
+            "tr": {
+                "name": "Rabbiğfir verham ve ente hayru'r-râhimîn"
+            },
+            "en": {
+                "name": "Rabbighfir warham wa Anta khayrur-rahimin"
+            },
+            "bn": {
+                "name": "রাব্বিগফির ওয়ারহাম ওয়া আনতা খাইরুর রাহিমীন"
+            },
+            "ur": {
+                "name": "رب اغفر وارحم وأنت خیر الراحمین"
+            },
+            "ar": {
+                "name": "رَبِّ اغْفِرْ وَارْحَمْ وَأَنْتَ خَيْرُ الرَّاحِمِينَ"
             }
         },
         "lib_16": {
@@ -44,6 +92,21 @@
                     "সুবহানাল্লাহি ওয়া বিহামদিহি সুবহানাল্লাহিল আযীম",
                     "سبحان اللہ وبحمدہ سبحان اللہ العظیم"
                 ]
+            },
+            "tr": {
+                "name": "Sübhânellâhi ve bi hamdihi, sübhânellâhi'l-azîm"
+            },
+            "en": {
+                "name": "Subhanallahi wa bihamdih, subhanallahil-'Azim"
+            },
+            "bn": {
+                "name": "সুবহানাল্লাহি ওয়া বিহামদিহি, সুবহানাল্লাহিল আযীম"
+            },
+            "ur": {
+                "name": "سبحان اللہ وبحمدہ، سبحان اللہ العظیم"
+            },
+            "ar": {
+                "name": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ سُبْحَانَ اللَّهِ الْعَظِيمِ"
             }
         },
         "lib_18": {
@@ -55,6 +118,21 @@
                     "আল্লাহুম্মা আনতাস সালাম",
                     "اللہم أنت السلام"
                 ]
+            },
+            "tr": {
+                "name": "Allâhümme entes-selâm ve minkes-selâm, tebârekte yâ ze'l-celâli ve'l-ikrâm"
+            },
+            "en": {
+                "name": "Allahumma Antas-Salam wa minkas-salam, tabarakta ya Dhal-Jalali wal-Ikram"
+            },
+            "bn": {
+                "name": "আল্লাহুম্মা আনতাস সালাম ওয়া মিনকাস সালাম, তাবারাকতা ইয়া যাল জালালি ওয়াল ইকরাম"
+            },
+            "ur": {
+                "name": "اللہم أنت السلام ومنک السلام، تبارکت یا ذا الجلال والإکرام"
+            },
+            "ar": {
+                "name": "اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ"
             }
         },
         "lib_20": {
@@ -66,6 +144,21 @@
                     "সুবহানাল্লাহি ওয়া বিহামদিহি আদাদা খালকিহি",
                     "سبحان اللہ وبحمدہ عدد خلقہ"
                 ]
+            },
+            "tr": {
+                "name": "Sübhânellâhi ve bi hamdihi adede halkihi ve rıdâ nefsihi ve zinete arşihi ve midâde kelimâtih"
+            },
+            "en": {
+                "name": "Subhanallahi wa bihamdihi 'adada khalqihi wa rida nafsihi wa zinata 'arshihi wa midada kalimatih"
+            },
+            "bn": {
+                "name": "সুবহানাল্লাহি ওয়া বিহামদিহি আদাদা খালকিহি ওয়া রিদা নাফসিহি ওয়া যিনাতা আরশিহি ওয়া মিদাদা কালিমাতিহ"
+            },
+            "ur": {
+                "name": "سبحان اللہ وبحمدہ عدد خلقہ ورضا نفسہ وزنۃ عرشہ ومداد کلماتہ"
+            },
+            "ar": {
+                "name": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ عَدَدَ خَلْقِهِ وَرِضَا نَفْسِهِ وَزِنَةَ عَرْشِهِ وَمِدَادَ كَلِمَاتِهِ"
             }
         },
         "lib_19": {
@@ -84,6 +177,26 @@
                 "fazilet": [
                     "Kelime-i tevhidin mülk, hayat-ölüm ve kudret sıfatlarıyla geniş formu. Günlük zikir ve yakarışta okunur."
                 ]
+            },
+            "tr": {
+                "name": "Lâ ilâhe illallâhu vahdehu lâ şerîke leh, lehü'l-mülkü ve lehü'l-hamdü, yuhyî ve yumît, ve hüve hayyun lâ yemût, biyedihi'l-hayr ve hüve alâ külli şey'in kadîr",
+                "meaning": "Allah'tan başka ilah yoktur, O tektir, ortağı yoktur; mülk O'nundur, hamd O'nadır; diriltir ve öldürür; O diridir, asla ölmez; hayır O'nun elindedir; O her şeye kadirdir.",
+                "context": "Kelime-i tevhidin mülk, hayat-ölüm, kudret ve hayrın Allah'ın elinde oluşu sıfatlarıyla genişletilmiş formudur. Gün içinde genel zikir olarak okunur. Bu uzun lafza mahsus sevap rivayetlerinin dereceleri ihtilaflı olduğu için belirli bir sevap miktarı belirtilmemiştir.",
+                "source": "Tehlilin genişletilmiş lafzı; muhtelif rivayetlerde yer alır, dereceleri ihtilaflıdır. Kısa formu sahihtir (Buhari, Daavât; Müslim, Zikir).",
+                "keywords": "tevhid tehlil kelime-i tevhid mülk hayat ölüm kudret hayır zikir"
+            },
+            "en": {
+                "name": "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu, yuhyi wa yumit, wa huwa hayyun la yamut, biyadihil-khayru wa huwa 'ala kulli shay'in qadir",
+                "meaning": "There is no god but Allah alone, without partner; to Him belongs dominion and praise; He gives life and causes death; He is ever-living and never dies; in His hand is all good; He is over all things capable."
+            },
+            "bn": {
+                "name": "লা ইলাহা ইল্লাল্লাহু ওয়াহদাহু লা শারীকা লাহু, লাহুল মুলকু ওয়া লাহুল হামদু, ইউহয়ী ওয়া ইউমীতু, ওয়া হুওয়া হাইয়্যুন লা ইয়ামূতু, বিয়াদিহিল খাইরু ওয়া হুওয়া আলা কুল্লি শাইইন কাদীর"
+            },
+            "ur": {
+                "name": "لا إلہ إلا اللہ وحدہ لا شریک لہ، لہ الملک ولہ الحمد، یحیی ویمیت، وہو حی لا یموت، بیدہ الخیر وہو علی کل شیء قدیر"
+            },
+            "ar": {
+                "name": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ، وَهُوَ حَيٌّ لَا يَمُوتُ، بِيَدِهِ الْخَيْرُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ"
             }
         }
     }
