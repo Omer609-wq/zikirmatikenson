@@ -524,13 +524,35 @@ function getZikirDisplayMeaning(z) {
     return String(z.meaning || '').trim();
 }
 
+/**
+ * Kayıtlı zikirlerdeki kütüphane/esma/klasik metinleri kanona çeker.
+ *
+ * Yalnızca **uygulamanın kendi yazdığı** metinler güncellenir: `known` kümesi maddenin
+ * gömülü metinlerini, uzak düzeltmenin her dil katmanını ve `prev` içindeki eski
+ * sürümleri taşır. Kullanıcının elle yazdığı metin bu kümede olmadığı için el sürülmez.
+ *
+ * Boş anlam da doldurulmaz: kullanıcı "Anlamı / Not" alanını sildiyse silinmiş kalır.
+ * Fazilet bunun dışında — düzenleme penceresi "boş bırakırsan uygulama önerisini
+ * kullanır" dediği için orada boş hâlâ "varsayılana dön" anlamına gelir.
+ *
+ * @param {{ persist?: boolean }} [opts] persist: yalnızca gerçekten değişiklik olduysa yazar.
+ */
 function syncLocalizedDefaults({ persist = false } = {}) {
+    let changed = false;
+
+    /** Alanı yalnızca gerçekten farklıysa yazar; gereksiz kayıt tetiklenmesin. */
+    const setField = (obj, field, next) => {
+        if (next == null || obj[field] === next) return;
+        obj[field] = next;
+        changed = true;
+    };
+
     const df = folders.find((f) => f.id === 'f_default');
-    if (df) df.name = t('defaults.folderDefault');
+    if (df) setField(df, 'name', t('defaults.folderDefault'));
     const esma = folders.find((f) => f.id === 'f_esma');
-    if (esma) esma.name = t('defaults.folderEsma');
+    if (esma) setField(esma, 'name', t('defaults.folderEsma'));
     const restored = folders.find((f) => f.id === 'f_restored');
-    if (restored) restored.name = t('trash.restoredFolderName');
+    if (restored) setField(restored, 'name', t('trash.restoredFolderName'));
 
     const localeIsTr = normalizeAppLocale(appSettings.locale) === 'tr';
 
@@ -538,14 +560,12 @@ function syncLocalizedDefaults({ persist = false } = {}) {
         const z = zikirs.find((x) => x.id === zid);
         if (!z) continue;
         const curM = String(z.meaning || '').trim();
-        const knownM = getKnownClassicZikirMeanings(zid);
-        if (!curM || knownM.has(curM)) {
-            z.meaning = getLocalizedClassicZikirMeaning(zid);
+        if (curM && getKnownClassicZikirMeanings(zid).has(curM)) {
+            setField(z, 'meaning', getLocalizedClassicZikirMeaning(zid));
         }
         const curN = String(z.name || '').trim();
-        const knownN = getKnownClassicZikirNames(zid);
-        if (!curN || knownN.has(curN)) {
-            z.name = getLocalizedClassicZikirName(zid);
+        if (!curN || getKnownClassicZikirNames(zid).has(curN)) {
+            setField(z, 'name', getLocalizedClassicZikirName(zid));
         }
     }
 
@@ -553,38 +573,39 @@ function syncLocalizedDefaults({ persist = false } = {}) {
         const idx = parseEsmaZikirIndex(z);
         if (idx < 0) continue;
         const curM = String(z.meaning || '').trim();
-        const knownM = getKnownEsmaMeanings(idx);
-        const nextM = getEsmaMeaningForLocale(idx);
-        if (!curM || knownM.has(curM)) z.meaning = nextM;
+        if (curM && getKnownEsmaMeanings(idx).has(curM)) {
+            setField(z, 'meaning', getEsmaMeaningForLocale(idx));
+        }
         const curN = String(z.name || '').trim();
-        const knownN = getKnownEsmaNames(idx);
-        const nextN = getEsmaNameForLocale(idx);
-        if (!curN || knownN.has(curN)) z.name = nextN;
+        if (!curN || getKnownEsmaNames(idx).has(curN)) {
+            setField(z, 'name', getEsmaNameForLocale(idx));
+        }
     }
 
     for (const z of zikirs) {
         if (!z.libraryId) continue;
         const curM = String(z.meaning || '').trim();
-        const knownM = getKnownLibraryMeaningTexts(z.libraryId);
-        const nextM = getLibraryMeaningForLocale(z.libraryId, appSettings.locale);
-        if (!curM || knownM.has(curM)) z.meaning = nextM;
+        if (curM && getKnownLibraryMeaningTexts(z.libraryId).has(curM)) {
+            setField(z, 'meaning', getLibraryMeaningForLocale(z.libraryId, appSettings.locale));
+        }
 
         const curN = String(z.name || '').trim();
-        const knownN = getKnownLibraryNameTexts(z.libraryId);
-        const nextN = getLibraryNameForLocale(z.libraryId, appSettings.locale);
-        if (!curN || knownN.has(curN)) z.name = nextN;
+        if (!curN || getKnownLibraryNameTexts(z.libraryId).has(curN)) {
+            setField(z, 'name', getLibraryNameForLocale(z.libraryId, appSettings.locale));
+        }
 
         const knownF = getKnownLibraryFaziletTexts(z.libraryId);
         const nextF = localeIsTr ? getLibraryFaziletForLocale(z.libraryId) : '';
         const curF = z.fazilet != null ? String(z.fazilet).trim() : '';
         if (localeIsTr) {
-            if (nextF && (!curF || knownF.has(curF))) z.fazilet = nextF;
+            if (nextF && (!curF || knownF.has(curF))) setField(z, 'fazilet', nextF);
         } else if (curF && knownF.has(curF)) {
             delete z.fazilet;
+            changed = true;
         }
     }
 
-    if (persist) saveData();
+    if (persist && changed) saveData();
 
     const home = document.getElementById('homeView');
     if (home && home.classList.contains('active')) renderFolders();
@@ -1401,9 +1422,13 @@ async function refreshRemoteHomeContent() {
         refreshLibraryOverrides()
     ]);
     applySeasonalContentToAppState(folders, zikirs, appSettings.locale);
+    // Her açılışta kanona çek. Eskiden yalnızca `libraryOverridesChanged` doğruyken
+    // çalışıyordu; düzeltme önbellekten geldiğinde imza değişmediği için bu koşul
+    // sağlanmıyor ve klasördeki kopyalar Keşfet ile ayrışıyordu. Senkron değişiklik
+    // yoksa yazma yapmaz, bu yüzden koşulsuz çağırmak ucuz.
+    syncLocalizedDefaults({ persist: true });
     if (libraryOverridesChanged) {
-        // Kayıtlı zikirlerdeki kütüphane metinlerini yeni kanona çek + görünümleri tazele.
-        syncLocalizedDefaults({ persist: true });
+        // Düzeltme gerçekten değiştiyse kütüphane görünümlerini de tazele.
         const libView = document.getElementById('libraryView');
         if (libView && !libView.classList.contains('hidden')) renderLibrary();
         const libGroupView = document.getElementById('libraryGroupView');
