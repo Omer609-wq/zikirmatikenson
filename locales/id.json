@@ -153,8 +153,10 @@
     "allTimeSliceMeta": "{count} · {pct}%",
     "year": "Tahun",
     "chartMonthDays": "Bulan ini — harian",
-    "todayTotal": "Hari ini: {count}",
-    "chartPage": "Halaman {page} dari {total}"
+    "chartPage": "Halaman {page} dari {total}",
+    "todayTitle": "Hari ini",
+    "todayTop": "Terbanyak: {name}",
+    "todayTotal": "Hari ini: {count}"
   },
   "library": {
     "title": "Perpustakaan zikir",

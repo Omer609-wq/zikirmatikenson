@@ -153,8 +153,10 @@
     "allTimeSliceMeta": "{count} taps · {pct}%",
     "year": "Year",
     "chartMonthDays": "This month — daily",
-    "todayTotal": "Today: {count}",
-    "chartPage": "Page {page} of {total}"
+    "chartPage": "Page {page} of {total}",
+    "todayTitle": "Today",
+    "todayTop": "Most: {name}",
+    "todayTotal": "Today: {count}"
   },
   "library": {
     "title": "Zikir library",

@@ -4181,11 +4181,13 @@ html[data-counter-show-round="false"] .round-badge { display: none !important; }
     transform: scale(1.25);
 }
 
-/* "Bugün: 42" — Günlük sekmesi kalkınca haftalık görünüme eklendi. */
-.chart-today-note {
-    font-size: 0.78rem;
-    opacity: 0.75;
-    margin: -0.15rem 0 0.6rem;
+/* Bugün kartı: diğer kartlarla aynı dil, biraz daha alçak — grafiğin hemen
+   üstünde durduğu için sayfayı gereksiz uzatmasın. */
+.stat-card--today {
+    padding: 0.75rem 1.1rem 0.8rem;
+}
+.stat-card--today .stat-value {
+    font-size: clamp(1rem, 3.6vw, 1.125rem);
 }
 /* Aylık (12 ay): küçük ay etiketi; sütun kalınlığı haftalık ile aynı (max-width: 14%) */
 .css-chart--months {

@@ -153,8 +153,10 @@
     "allTimeSliceMeta": "{count} · {pct}%",
     "year": "سال",
     "chartMonthDays": "یہ مہینہ — روزانہ",
-    "todayTotal": "آج: {count}",
-    "chartPage": "{total} میں سے {page} صفحہ"
+    "chartPage": "{total} میں سے {page} صفحہ",
+    "todayTitle": "آج",
+    "todayTop": "سب سے زیادہ: {name}",
+    "todayTotal": "آج: {count}"
   },
   "library": {
     "title": "ذکر کی لائبریری",

@@ -153,8 +153,10 @@
     "allTimeSliceMeta": "{count} · {pct}%",
     "year": "বছর",
     "chartMonthDays": "এই মাস — দৈনিক",
-    "todayTotal": "আজ: {count}",
-    "chartPage": "{total}-এর {page} নম্বর পাতা"
+    "chartPage": "{total}-এর {page} নম্বর পাতা",
+    "todayTitle": "আজ",
+    "todayTop": "সর্বাধিক: {name}",
+    "todayTotal": "আজ: {count}"
   },
   "library": {
     "title": "জিকির লাইব্রেরি",

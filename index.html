@@ -292,10 +292,16 @@
                     <div class="stat-subtitle" id="statBestDayCount">Veri yok</div>
                 </div>
 
+                <!-- "Günlük" sekmesi kalktı; bugüne ait bilgi haftalıkta burada -->
+                <div class="stat-card stat-card--today" id="statsTodayCard" hidden>
+                    <h3 data-i18n="stats.todayTitle">Bugün</h3>
+                    <div class="stat-value" id="statsTodayValue">-</div>
+                    <div class="stat-subtitle" id="statsTodayTop"></div>
+                </div>
+
                 <!-- Simple CSS Bar Chart -->
                 <div class="chart-container">
                     <h3 id="statsChartHeading" data-i18n="stats.chartTitle">Aktivite Grafiği (Son 7 Gün)</h3>
-                    <div class="chart-today-note" id="statsTodayNote" hidden></div>
                     <div class="chart-wrapper">
                         <div class="chart-y-axis" id="chartYAxis">
                             <span>1000</span>

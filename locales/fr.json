@@ -153,8 +153,10 @@
     "allTimeSliceMeta": "{count} · {pct} %",
     "year": "Année",
     "chartMonthDays": "Ce mois-ci — par jour",
-    "todayTotal": "Aujourd’hui : {count}",
-    "chartPage": "Page {page} sur {total}"
+    "chartPage": "Page {page} sur {total}",
+    "todayTitle": "Aujourd’hui",
+    "todayTop": "Le plus : {name}",
+    "todayTotal": "Aujourd’hui : {count}"
   },
   "library": {
     "title": "Bibliothèque de zikir",

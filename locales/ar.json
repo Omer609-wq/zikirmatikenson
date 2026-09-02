@@ -153,8 +153,10 @@
     "allTimeSliceMeta": "{count} · {pct}%",
     "year": "السنة",
     "chartMonthDays": "هذا الشهر — يوميًا",
-    "todayTotal": "اليوم: {count}",
-    "chartPage": "صفحة {page} من {total}"
+    "chartPage": "صفحة {page} من {total}",
+    "todayTitle": "اليوم",
+    "todayTop": "الأكثر: {name}",
+    "todayTotal": "اليوم: {count}"
   },
   "library": {
     "title": "مكتبة الأذكار",

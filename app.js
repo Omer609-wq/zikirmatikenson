@@ -7490,6 +7490,56 @@ function renderChartWithPager({ chartEl, yAxisEl, pagerEl, pack, pageIndex, onPa
     return idx;
 }
 
+/**
+ * "Günlük" sekmesi kalkınca kaybolan iki bilgi tek kartta: bugünün toplamı ve
+ * bugün en çok çekilen zikir. Yalnızca haftalıkta görünür — diğer sekmelerde
+ * dönem zaten bugünü kapsıyor, ayrıca göstermek tekrar olurdu.
+ */
+function renderTodayCard() {
+    const card = document.getElementById('statsTodayCard');
+    if (!card) return;
+    if (activeStatTab !== 'weekly') {
+        card.hidden = true;
+        return;
+    }
+    card.hidden = false;
+
+    const today = getTodayString();
+    const locale = getLocaleTag();
+
+    const valueEl = document.getElementById('statsTodayValue');
+    if (valueEl) {
+        valueEl.textContent = t('stats.dayTotal', {
+            count: dayHistoryTotal(today).toLocaleString(locale)
+        });
+    }
+
+    const topEl = document.getElementById('statsTodayTop');
+    if (!topEl) return;
+
+    const block = (history && history[today]) || {};
+    let topId = null;
+    let topCount = 0;
+    for (const zid of Object.keys(block)) {
+        const n = Number(block[zid]) || 0;
+        if (n > topCount) {
+            topCount = n;
+            topId = zid;
+        }
+    }
+    // Bugün hiç çekim yoksa "en çok" satırı anlamsız; kartta yalnızca 0 kalır.
+    if (!topId || topCount <= 0) {
+        topEl.hidden = true;
+        topEl.textContent = '';
+        return;
+    }
+    const z = zikirs.find((x) => x.id === topId);
+    topEl.hidden = false;
+    topEl.textContent = t('stats.todayTop', {
+        name: z ? getZikirDisplayName(z) : t('stats.unknown')
+    });
+}
+
 function renderStats() {
     activeStatTab = ensureUnlockedStatTab(activeStatTab);
     statTabBtns.forEach((b) => {
@@ -7577,17 +7627,7 @@ function renderStats() {
     const statsChartHeading = document.getElementById('statsChartHeading');
     if (statsChartHeading) statsChartHeading.textContent = t(chartPack.headingKey);
 
-    // "Günlük" sekmesi kalktı; bugünün sayısı haftalık görünümde burada duruyor.
-    const todayNote = document.getElementById('statsTodayNote');
-    if (todayNote) {
-        const showToday = activeStatTab === 'weekly';
-        todayNote.hidden = !showToday;
-        todayNote.textContent = showToday
-            ? t('stats.todayTotal', {
-                  count: dayHistoryTotal(getTodayString()).toLocaleString(getLocaleTag())
-              })
-            : '';
-    }
+    renderTodayCard();
 
     statMonthPage = renderChartWithPager({
         chartEl: activityChart,
