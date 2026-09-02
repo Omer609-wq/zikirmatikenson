@@ -205,8 +205,10 @@
             <header class="glass-header">
                 <button class="icon-btn backBtn" data-target="folderDetailView"><span class="material-icons-outlined">arrow_back</span></button>
                 <div class="header-titles">
-                    <h1 id="zikirTitle">Subhanallah</h1>
+                    <!-- Okunuş, Arapça ve anlam tek kaydırma alanında: uzun okunuş
+                         kırpılmadan tam görünsün, gerekirse kullanıcı kaydırsın. -->
                     <div class="zikir-header-scroll" id="zikirHeaderScroll">
+                        <h1 id="zikirTitle">Subhanallah</h1>
                         <p id="zikirArabic" class="zikir-arabic-header" dir="rtl" lang="ar" style="display:none;"></p>
                         <p id="zikirNote" class="zikir-note">Allah eksikliklerden uzaktır.</p>
                     </div>
@@ -265,9 +267,9 @@
 
             <section class="main-content scrollable">
                 <div class="stats-tabs stats-tabs--period">
-                    <button class="tab-btn active" data-tab="daily" data-i18n="stats.daily">Günlük</button>
-                    <button class="tab-btn" data-tab="weekly" data-i18n="stats.weekly">Haftalık</button>
+                    <button class="tab-btn active" data-tab="weekly" data-i18n="stats.weekly">Haftalık</button>
                     <button class="tab-btn" data-tab="monthly" data-i18n="stats.monthly">Aylık</button>
+                    <button class="tab-btn" data-tab="year" data-i18n="stats.year">Yıl</button>
                     <button class="tab-btn" data-tab="yearly" data-i18n="stats.yearly">Yıllık</button>
                     <button class="tab-btn" data-tab="allTime" data-i18n="stats.allTime">Tüm zamanlar</button>
                 </div>
@@ -293,6 +295,7 @@
                 <!-- Simple CSS Bar Chart -->
                 <div class="chart-container">
                     <h3 id="statsChartHeading" data-i18n="stats.chartTitle">Aktivite Grafiği (Son 7 Gün)</h3>
+                    <div class="chart-today-note" id="statsTodayNote" hidden></div>
                     <div class="chart-wrapper">
                         <div class="chart-y-axis" id="chartYAxis">
                             <span>1000</span>
@@ -303,6 +306,7 @@
                             <!-- Bars Injected Via JS -->
                         </div>
                     </div>
+                    <div class="chart-pager" id="statsChartPager" hidden></div>
                 </div>
                 </div>
 
@@ -1679,9 +1683,9 @@
             </div>
             <div class="modal-body">
                 <div class="stats-tabs stats-tabs--period zikir-stats-tabs">
-                    <button type="button" class="tab-btn active" data-zikir-stat-tab="daily" data-i18n="stats.daily">Günlük</button>
-                    <button type="button" class="tab-btn" data-zikir-stat-tab="weekly" data-i18n="stats.weekly">Haftalık</button>
+                    <button type="button" class="tab-btn active" data-zikir-stat-tab="weekly" data-i18n="stats.weekly">Haftalık</button>
                     <button type="button" class="tab-btn" data-zikir-stat-tab="monthly" data-i18n="stats.monthly">Aylık</button>
+                    <button type="button" class="tab-btn" data-zikir-stat-tab="year" data-i18n="stats.year">Yıl</button>
                     <button type="button" class="tab-btn" data-zikir-stat-tab="yearly" data-i18n="stats.yearly">Yıllık</button>
                 </div>
                 <div class="stat-card">
@@ -1699,6 +1703,7 @@
                         </div>
                         <div class="css-chart" id="zikirActivityChart"></div>
                     </div>
+                    <div class="chart-pager" id="zikirStatsChartPager" hidden></div>
                 </div>
             </div>
         </div>

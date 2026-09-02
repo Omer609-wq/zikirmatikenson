@@ -121,7 +121,6 @@
   },
   "stats": {
     "title": "میرے اعداد و شمار",
-    "daily": "روزانہ",
     "weekly": "ہفتہ وار",
     "monthly": "ماہانہ",
     "yearly": "سالانہ",
@@ -133,11 +132,9 @@
     "chartLast7Days": "آخری ۷ دن — روزانہ",
     "chartYearMonths": "اس سال — مہینہ وار (۱۲)",
     "chartByYear": "آخری ۵ سال — کل",
-    "summaryToday": "آج",
     "summaryWeek": "آخری ۷ دن",
     "summaryMonth": "اس مہینے",
     "summaryYear": "اس سال",
-    "summarySubRecord": "ریکارڈ شدہ ٹیپ",
     "summarySubTotal": "کل ٹیپ",
     "chartZikirSuffix": "یہ ذکر",
     "clicksUnit": "{count} بار",
@@ -153,7 +150,11 @@
     "allTimeEmpty": "ابھی تک کوئی ذکر نہیں",
     "allTimeTotalLabel": "کل",
     "allTimeDonutAria": "کل {count} ذکر",
-    "allTimeSliceMeta": "{count} · {pct}%"
+    "allTimeSliceMeta": "{count} · {pct}%",
+    "year": "سال",
+    "chartMonthDays": "یہ مہینہ — روزانہ",
+    "todayTotal": "آج: {count}",
+    "chartPage": "{total} میں سے {page} صفحہ"
   },
   "library": {
     "title": "ذکر کی لائبریری",

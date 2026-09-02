@@ -121,7 +121,6 @@
   },
   "stats": {
     "title": "Statistik saya",
-    "daily": "Harian",
     "weekly": "Mingguan",
     "monthly": "Bulanan",
     "yearly": "Tahunan",
@@ -133,11 +132,9 @@
     "chartLast7Days": "7 hari terakhir — harian",
     "chartYearMonths": "Tahun ini — per bulan (12)",
     "chartByYear": "5 tahun terakhir — total",
-    "summaryToday": "Hari ini",
     "summaryWeek": "7 hari terakhir",
     "summaryMonth": "Bulan ini",
     "summaryYear": "Tahun ini",
-    "summarySubRecord": "catatan ketukan",
     "summarySubTotal": "total ketukan",
     "chartZikirSuffix": "zikir ini",
     "clicksUnit": "{count} kali",
@@ -153,7 +150,11 @@
     "allTimeEmpty": "Belum ada zikir tercatat",
     "allTimeTotalLabel": "Total",
     "allTimeDonutAria": "Total {count} zikir",
-    "allTimeSliceMeta": "{count} · {pct}%"
+    "allTimeSliceMeta": "{count} · {pct}%",
+    "year": "Tahun",
+    "chartMonthDays": "Bulan ini — harian",
+    "todayTotal": "Hari ini: {count}",
+    "chartPage": "Halaman {page} dari {total}"
   },
   "library": {
     "title": "Perpustakaan zikir",

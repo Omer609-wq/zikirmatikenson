@@ -9,6 +9,12 @@ import {
     syncNativeSmartReminders
 } from './native-reminders.js';
 import {
+    clampPageIndex,
+    findPageIndex,
+    splitIntoBalancedPages,
+    MONTH_CHART_PAGE_COUNT
+} from './lib/chart-pages.js';
+import {
     markExactAlarmPrompted,
     readExactAlarmPromptState,
     shouldPromptForExactAlarm,
@@ -821,8 +827,14 @@ function refreshViewsAfterLocalizedZikirSync() {
     const statsView = document.getElementById('statsView');
     if (statsView && !statsView.classList.contains('hidden')) renderStats();
 }
-let activeStatTab = 'daily';
-let activeZikirStatTab = 'daily';
+let activeStatTab = 'weekly';
+let activeZikirStatTab = 'weekly';
+/**
+ * Aylık grafikte gösterilen sayfa (0 = ayın ilk yarısı).
+ * -1 = "otomatik": sekmeye ilk girişte bugünün bulunduğu sayfa açılır.
+ */
+let statMonthPage = -1;
+let zikirStatMonthPage = -1;
 let folderSearchQuery = '';
 let folderFavOnly = false;
 let suppressListNavigation = false;
@@ -884,7 +896,11 @@ const PREMIUM_HUB_FEATURES = {
     library: { viewId: 'libraryView', locked: false }
 };
 
-const PREMIUM_STAT_TABS = new Set(['monthly', 'yearly', 'allTime']);
+/**
+ * Ücretsizde yalnızca "Haftalık" açık. 'year' listeye eklendi çünkü o sekme
+ * eski "Aylık"ın (yılın 12 ayı) devamı — premium sınırı yerinde kalsın.
+ */
+const PREMIUM_STAT_TABS = new Set(['monthly', 'year', 'yearly', 'allTime']);
 
 const ALL_TIME_SLICE_COLORS = [
     '#2ecc71',
@@ -2298,8 +2314,10 @@ function syncNativeNumeralsSettingVisibility() {
 
 function syncArabicFontSettingVisibility() {
     if (!arabicFontSetting) return;
-    const show = !localeUsesArabicScript(appSettings.locale);
-    setSettingsBlockHidden(arabicFontSetting, !show);
+    /* Arapçada okunuşun kendisi Arapça olduğu için alt satır gizlenir ve ayar
+       eskiden saklanıyordu. Artık aynı adım sayaç başlığındaki Arapça metni
+       ölçeklediğinden ayar her dilde görünür. */
+    setSettingsBlockHidden(arabicFontSetting, false);
 }
 
 function syncArabicFontSettingUI() {
@@ -2680,8 +2698,8 @@ function isPremiumStatTab(tab) {
 }
 
 function ensureUnlockedStatTab(tab) {
-    if (tab === 'allTime' && !PREMIUM_LIVE) return 'daily';
-    if (isPremiumOnlyFeatureLocked() && isPremiumStatTab(tab)) return 'daily';
+    if (tab === 'allTime' && !PREMIUM_LIVE) return 'weekly';
+    if (isPremiumOnlyFeatureLocked() && isPremiumStatTab(tab)) return 'weekly';
     return tab;
 }
 
@@ -5204,7 +5222,7 @@ function showView(viewId, param = null, options = {}) {
     } else if (viewId === 'statsView') {
         activeStatTab = ensureUnlockedStatTab(activeStatTab);
         statTabBtns.forEach((b) => {
-            b.classList.toggle('active', (b.getAttribute('data-tab') || 'daily') === activeStatTab);
+            b.classList.toggle('active', (b.getAttribute('data-tab') || 'weekly') === activeStatTab);
         });
         syncPremiumStatTabsUI();
         renderStats();
@@ -7216,9 +7234,18 @@ function getHistoryYearRange(count = 5) {
     return out;
 }
 
+/** Bir ayın tüm günleri ("2026-09" -> 2026-09-01 … 2026-09-30). */
+function getDaysInMonth(ym = getTodayString().slice(0, 7)) {
+    const [y, m] = ym.split('-').map((x) => parseInt(x, 10));
+    if (!Number.isFinite(y) || !Number.isFinite(m)) return [];
+    // Gün 0 = önceki ayın son günü; ayın kaç çektiğini böyle buluyoruz (28/29/30/31).
+    const last = new Date(y, m, 0).getDate();
+    return Array.from({ length: last }, (_, i) => `${ym}-${String(i + 1).padStart(2, '0')}`);
+}
+
 function getStatPeriodDayKeys(tab) {
-    if (tab === 'daily') return [getTodayString()];
     if (tab === 'weekly') return getLastNDayKeys(7);
+    if (tab === 'monthly') return getDaysInMonth();
     return getDaysInYear();
 }
 
@@ -7230,7 +7257,7 @@ function buildChartBuckets(tab, zid) {
     const today = getTodayString();
     const locale = getLocaleTag();
 
-    if (tab === 'daily' || tab === 'weekly') {
+    if (tab === 'weekly') {
         const days = getLastNDayKeys(7);
         return {
             density: 'default',
@@ -7246,6 +7273,21 @@ function buildChartBuckets(tab, zid) {
         };
     }
     if (tab === 'monthly') {
+        // Ayın günleri iki sayfaya bölünür; etiket gün numarası (1–31).
+        const buckets = getDaysInMonth().map((ds) => ({
+            key: ds,
+            label: String(parseInt(ds.slice(8), 10)),
+            val: zid ? zikirClicksOnDay(ds, zid) : dayHistoryTotal(ds),
+            highlight: ds === today
+        }));
+        return {
+            density: 'dense',
+            headingKey: 'stats.chartMonthDays',
+            buckets,
+            pages: splitIntoBalancedPages(buckets, MONTH_CHART_PAGE_COUNT)
+        };
+    }
+    if (tab === 'year') {
         const months = getYearMonthKeys();
         const curMonth = today.slice(0, 7);
         return {
@@ -7301,9 +7343,14 @@ function chartYAxisLabels(values, scaleMax) {
     return { top, mid, bottom: 0 };
 }
 
-function renderBarChart(chartEl, yAxisEl, buckets, density) {
+/**
+ * @param {number} [scaleMaxOverride] Sayfalı grafikte AYIN TAMAMINA göre ölçek.
+ * Her sayfa kendi maksimumuna göre ölçeklenseydi, 20 çekilen bir gün ikinci
+ * sayfada 200 çekilen bir gün kadar yüksek görünür ve grafik yalan söylerdi.
+ */
+function renderBarChart(chartEl, yAxisEl, buckets, density, scaleMaxOverride) {
     const values = buckets.map((b) => b.val);
-    const scaleMax = chartScaleMax(values);
+    const scaleMax = scaleMaxOverride > 0 ? scaleMaxOverride : chartScaleMax(values);
     const axis = chartYAxisLabels(values, scaleMax);
 
     if (yAxisEl) {
@@ -7342,10 +7389,111 @@ function renderBarChart(chartEl, yAxisEl, buckets, density) {
     });
 }
 
+/** Kaydırmanın sayfa değiştirmesi için gereken en az yatay mesafe. */
+const CHART_SWIPE_COMMIT_PX = 40;
+
+/**
+ * Grafiğe yatay kaydırma bağlar. Bir kez bağlanır; güncel davranış her
+ * çizimde `el._onChartSwipe` üzerinden tazelenir.
+ */
+function bindChartSwipe(el) {
+    if (!el || el.dataset.swipeBound === '1') return;
+    el.dataset.swipeBound = '1';
+
+    let startX = 0;
+    let startY = 0;
+    let armed = false;
+
+    el.addEventListener(
+        'touchstart',
+        (e) => {
+            armed = e.touches.length === 1;
+            if (!armed) return;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        },
+        { passive: true }
+    );
+
+    el.addEventListener(
+        'touchend',
+        (e) => {
+            if (!armed) return;
+            armed = false;
+            const touch = e.changedTouches[0];
+            if (!touch) return;
+            const dx = touch.clientX - startX;
+            const dy = touch.clientY - startY;
+            // Grafik dikey kaydırılan bir listenin içinde: dikey hareket
+            // baskınsa kullanıcı sayfayı kaydırıyordur, sekme değiştirme.
+            if (Math.abs(dx) <= Math.abs(dy) * 1.12) return;
+            if (Math.abs(dx) < CHART_SWIPE_COMMIT_PX) return;
+            if (typeof el._onChartSwipe === 'function') el._onChartSwipe(dx < 0 ? 1 : -1);
+        },
+        { passive: true }
+    );
+}
+
+function renderChartPagerDots(pagerEl, pageCount, activeIndex, onPick) {
+    if (!pagerEl) return;
+    if (pageCount <= 1) {
+        pagerEl.hidden = true;
+        pagerEl.innerHTML = '';
+        return;
+    }
+    pagerEl.hidden = false;
+    pagerEl.innerHTML = '';
+    for (let i = 0; i < pageCount; i++) {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'chart-pager__dot';
+        if (i === activeIndex) {
+            dot.classList.add('chart-pager__dot--active');
+            dot.setAttribute('aria-current', 'true');
+        }
+        dot.setAttribute('aria-label', t('stats.chartPage', { page: i + 1, total: pageCount }));
+        dot.addEventListener('click', () => onPick(i));
+        pagerEl.appendChild(dot);
+    }
+}
+
+/**
+ * Grafiği çizer; pack sayfalıysa noktaları ve kaydırmayı da kurar.
+ * @returns {number} kullanılan sayfa indeksi (çağıran durumu saklar)
+ */
+function renderChartWithPager({ chartEl, yAxisEl, pagerEl, pack, pageIndex, onPageChange }) {
+    if (!pack.pages || pack.pages.length <= 1) {
+        if (pagerEl) {
+            pagerEl.hidden = true;
+            pagerEl.innerHTML = '';
+        }
+        if (chartEl) chartEl._onChartSwipe = null;
+        renderBarChart(chartEl, yAxisEl, pack.buckets, pack.density);
+        return 0;
+    }
+
+    const pages = pack.pages;
+    const idx = pageIndex < 0 ? findPageIndex(pages, (b) => b.highlight) : clampPageIndex(pageIndex, pages.length);
+    // Ölçek ayın tamamından: sayfalar birbiriyle karşılaştırılabilir kalsın.
+    const scaleMax = chartScaleMax(pack.buckets.map((b) => b.val));
+
+    renderBarChart(chartEl, yAxisEl, pages[idx], pack.density, scaleMax);
+    renderChartPagerDots(pagerEl, pages.length, idx, onPageChange);
+
+    bindChartSwipe(chartEl);
+    if (chartEl) {
+        chartEl._onChartSwipe = (step) => {
+            const next = clampPageIndex(idx + step, pages.length);
+            if (next !== idx) onPageChange(next);
+        };
+    }
+    return idx;
+}
+
 function renderStats() {
     activeStatTab = ensureUnlockedStatTab(activeStatTab);
     statTabBtns.forEach((b) => {
-        b.classList.toggle('active', (b.getAttribute('data-tab') || 'daily') === activeStatTab);
+        b.classList.toggle('active', (b.getAttribute('data-tab') || 'weekly') === activeStatTab);
     });
     syncPremiumStatTabsUI();
 
@@ -7428,7 +7576,30 @@ function renderStats() {
     const chartPack = buildChartBuckets(activeStatTab);
     const statsChartHeading = document.getElementById('statsChartHeading');
     if (statsChartHeading) statsChartHeading.textContent = t(chartPack.headingKey);
-    renderBarChart(activityChart, document.getElementById('chartYAxis'), chartPack.buckets, chartPack.density);
+
+    // "Günlük" sekmesi kalktı; bugünün sayısı haftalık görünümde burada duruyor.
+    const todayNote = document.getElementById('statsTodayNote');
+    if (todayNote) {
+        const showToday = activeStatTab === 'weekly';
+        todayNote.hidden = !showToday;
+        todayNote.textContent = showToday
+            ? t('stats.todayTotal', {
+                  count: dayHistoryTotal(getTodayString()).toLocaleString(getLocaleTag())
+              })
+            : '';
+    }
+
+    statMonthPage = renderChartWithPager({
+        chartEl: activityChart,
+        yAxisEl: document.getElementById('chartYAxis'),
+        pagerEl: document.getElementById('statsChartPager'),
+        pack: chartPack,
+        pageIndex: statMonthPage,
+        onPageChange: (i) => {
+            statMonthPage = i;
+            renderStats();
+        }
+    });
 }
 
 function renderAllTimeStats() {
@@ -7558,7 +7729,7 @@ function renderZikirStats() {
     if (!zid || !zikirActivityChart) return;
     activeZikirStatTab = ensureUnlockedStatTab(activeZikirStatTab);
     zikirStatTabBtns.forEach((b) => {
-        b.classList.toggle('active', (b.getAttribute('data-zikir-stat-tab') || 'daily') === activeZikirStatTab);
+        b.classList.toggle('active', (b.getAttribute('data-zikir-stat-tab') || 'weekly') === activeZikirStatTab);
     });
     syncPremiumStatTabsUI();
     const z = zikirs.find((x) => x.id === zid);
@@ -7573,24 +7744,37 @@ function renderZikirStats() {
 
     if (zikirStatsSummaryLabel && zikirStatsSummaryValue && zikirStatsSummarySub) {
         const labelKeys = {
-            daily: 'stats.summaryToday',
             weekly: 'stats.summaryWeek',
             monthly: 'stats.summaryMonth',
+            year: 'stats.summaryYear',
             yearly: 'stats.summaryYear'
         };
-        zikirStatsSummaryLabel.textContent = t(labelKeys[activeZikirStatTab] || labelKeys.daily);
-        zikirStatsSummaryValue.textContent = String(
-            activeZikirStatTab === 'daily' ? zikirClicksOnDay(getTodayString(), zid) : periodSum
-        );
+        zikirStatsSummaryLabel.textContent = t(labelKeys[activeZikirStatTab] || labelKeys.weekly);
+        zikirStatsSummaryValue.textContent = String(periodSum);
+        // "Günlük" sekmesi kalktı; bu zikrin bugünkü sayısı haftalıkta alt satırda.
         zikirStatsSummarySub.textContent =
-            activeZikirStatTab === 'daily' ? t('stats.summarySubRecord') : t('stats.summarySubTotal');
+            activeZikirStatTab === 'weekly'
+                ? t('stats.todayTotal', {
+                      count: zikirClicksOnDay(getTodayString(), zid).toLocaleString(getLocaleTag())
+                  })
+                : t('stats.summarySubTotal');
     }
 
     const chartPack = buildChartBuckets(activeZikirStatTab, zid);
     if (zikirStatsChartHeading) {
         zikirStatsChartHeading.textContent = `${t(chartPack.headingKey)} — ${t('stats.chartZikirSuffix')}`;
     }
-    renderBarChart(zikirActivityChart, zikirChartYAxis, chartPack.buckets, chartPack.density);
+    zikirStatMonthPage = renderChartWithPager({
+        chartEl: zikirActivityChart,
+        yAxisEl: zikirChartYAxis,
+        pagerEl: document.getElementById('zikirStatsChartPager'),
+        pack: chartPack,
+        pageIndex: zikirStatMonthPage,
+        onPageChange: (i) => {
+            zikirStatMonthPage = i;
+            renderZikirStats();
+        }
+    });
 }
 
 // ===================== EVENT LISTENERS & MODALS =====================
@@ -8004,9 +8188,10 @@ function setupEventListeners() {
     if(decrementBtn) decrementBtn.addEventListener('click', decrementCounter);
     if (openZikirStatsBtn && zikirStatsOverlay) {
         openZikirStatsBtn.addEventListener('click', () => {
-            activeZikirStatTab = 'daily';
+            activeZikirStatTab = 'weekly';
+            zikirStatMonthPage = -1;
             zikirStatTabBtns.forEach((b) => {
-                b.classList.toggle('active', b.getAttribute('data-zikir-stat-tab') === 'daily');
+                b.classList.toggle('active', b.getAttribute('data-zikir-stat-tab') === 'weekly');
             });
             openOverlay('zikirStatsOverlay', { onOpen: renderZikirStats });
         });
@@ -8047,7 +8232,7 @@ function setupEventListeners() {
     }
     zikirStatTabBtns.forEach((btn) => {
         btn.addEventListener('click', () => {
-            const tab = btn.getAttribute('data-zikir-stat-tab') || 'daily';
+            const tab = btn.getAttribute('data-zikir-stat-tab') || 'weekly';
             if (isPremiumOnlyFeatureLocked() && isPremiumStatTab(tab)) {
                 showPremiumFeatureUpsell();
                 return;
@@ -8055,6 +8240,8 @@ function setupEventListeners() {
             zikirStatTabBtns.forEach((b) => b.classList.remove('active'));
             btn.classList.add('active');
             activeZikirStatTab = tab;
+            // Aya her girişte bugünün sayfasından başla.
+            zikirStatMonthPage = -1;
             renderZikirStats();
         });
     });
@@ -8473,7 +8660,7 @@ function setupEventListeners() {
 
     statTabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            const tab = btn.getAttribute('data-tab') || 'daily';
+            const tab = btn.getAttribute('data-tab') || 'weekly';
             if (isPremiumOnlyFeatureLocked() && isPremiumStatTab(tab)) {
                 showPremiumFeatureUpsell();
                 return;
@@ -8481,6 +8668,7 @@ function setupEventListeners() {
             statTabBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             activeStatTab = tab;
+            statMonthPage = -1;
             renderStats();
         });
     });

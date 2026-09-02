@@ -121,7 +121,6 @@
   },
   "stats": {
     "title": "إحصائياتي",
-    "daily": "يومي",
     "weekly": "أسبوعي",
     "monthly": "شهري",
     "yearly": "سنوي",
@@ -133,11 +132,9 @@
     "chartLast7Days": "آخر 7 أيام — يومي",
     "chartYearMonths": "هذا العام — شهري (12)",
     "chartByYear": "آخر 5 سنوات — الإجمالي",
-    "summaryToday": "اليوم",
     "summaryWeek": "آخر 7 أيام",
     "summaryMonth": "هذا الشهر",
     "summaryYear": "هذا العام",
-    "summarySubRecord": "نقرات مسجلة",
     "summarySubTotal": "إجمالي النقرات",
     "chartZikirSuffix": "هذا الذكر",
     "clicksUnit": "{count} مرة",
@@ -153,7 +150,11 @@
     "allTimeEmpty": "لم تسجل ذكرا بعد",
     "allTimeTotalLabel": "الإجمالي",
     "allTimeDonutAria": "إجمالي {count} ذكر",
-    "allTimeSliceMeta": "{count} · {pct}%"
+    "allTimeSliceMeta": "{count} · {pct}%",
+    "year": "السنة",
+    "chartMonthDays": "هذا الشهر — يوميًا",
+    "todayTotal": "اليوم: {count}",
+    "chartPage": "صفحة {page} من {total}"
   },
   "library": {
     "title": "مكتبة الأذكار",

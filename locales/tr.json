@@ -121,7 +121,6 @@
   },
   "stats": {
     "title": "İstatistiklerim",
-    "daily": "Günlük",
     "weekly": "Haftalık",
     "monthly": "Aylık",
     "yearly": "Yıllık",
@@ -133,11 +132,9 @@
     "chartLast7Days": "Son 7 gün — günlük",
     "chartYearMonths": "Bu yıl — aylık (12 ay)",
     "chartByYear": "Son 5 yıl — toplam",
-    "summaryToday": "Bugün",
     "summaryWeek": "Son 7 gün",
     "summaryMonth": "Bu ay",
     "summaryYear": "Bu yıl",
-    "summarySubRecord": "çekim kaydı",
     "summarySubTotal": "toplam çekim",
     "chartZikirSuffix": "bu zikir",
     "clicksUnit": "{count} kez",
@@ -153,7 +150,11 @@
     "allTimeEmpty": "Henüz zikir çekmedin",
     "allTimeTotalLabel": "Toplam",
     "allTimeDonutAria": "Toplam {count} zikir çekimi",
-    "allTimeSliceMeta": "{count} çekim · {pct}%"
+    "allTimeSliceMeta": "{count} çekim · {pct}%",
+    "year": "Yıl",
+    "chartMonthDays": "Bu ay — günlük",
+    "todayTotal": "Bugün: {count}",
+    "chartPage": "Sayfa {page} / {total}"
   },
   "library": {
     "title": "Zikir Kütüphanesi",

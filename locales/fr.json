@@ -121,7 +121,6 @@
   },
   "stats": {
     "title": "Mes statistiques",
-    "daily": "Quotidien",
     "weekly": "Hebdomadaire",
     "monthly": "Mensuel",
     "yearly": "Annuel",
@@ -133,11 +132,9 @@
     "chartLast7Days": "7 derniers jours — quotidien",
     "chartYearMonths": "Cette année — par mois (12)",
     "chartByYear": "5 dernières années — total",
-    "summaryToday": "Aujourd'hui",
     "summaryWeek": "7 derniers jours",
     "summaryMonth": "Ce mois-ci",
     "summaryYear": "Cette année",
-    "summarySubRecord": "touches enregistrées",
     "summarySubTotal": "touches au total",
     "chartZikirSuffix": "ce dhikr",
     "clicksUnit": "{count} fois",
@@ -153,7 +150,11 @@
     "allTimeEmpty": "Aucun dhikr enregistré",
     "allTimeTotalLabel": "Total",
     "allTimeDonutAria": "Total {count} dhikr",
-    "allTimeSliceMeta": "{count} · {pct} %"
+    "allTimeSliceMeta": "{count} · {pct} %",
+    "year": "Année",
+    "chartMonthDays": "Ce mois-ci — par jour",
+    "todayTotal": "Aujourd’hui : {count}",
+    "chartPage": "Page {page} sur {total}"
   },
   "library": {
     "title": "Bibliothèque de zikir",

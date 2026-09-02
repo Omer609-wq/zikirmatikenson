@@ -121,7 +121,6 @@
   },
   "stats": {
     "title": "My statistics",
-    "daily": "Daily",
     "weekly": "Weekly",
     "monthly": "Monthly",
     "yearly": "Yearly",
@@ -133,11 +132,9 @@
     "chartLast7Days": "Last 7 days — daily",
     "chartYearMonths": "This year — by month (12)",
     "chartByYear": "Last 5 years — total",
-    "summaryToday": "Today",
     "summaryWeek": "Last 7 days",
     "summaryMonth": "This month",
     "summaryYear": "This year",
-    "summarySubRecord": "recorded taps",
     "summarySubTotal": "total taps",
     "chartZikirSuffix": "this dhikr",
     "clicksUnit": "{count} times",
@@ -153,7 +150,11 @@
     "allTimeEmpty": "No dhikr recorded yet",
     "allTimeTotalLabel": "Total",
     "allTimeDonutAria": "Total {count} dhikr recitations",
-    "allTimeSliceMeta": "{count} taps · {pct}%"
+    "allTimeSliceMeta": "{count} taps · {pct}%",
+    "year": "Year",
+    "chartMonthDays": "This month — daily",
+    "todayTotal": "Today: {count}",
+    "chartPage": "Page {page} of {total}"
   },
   "library": {
     "title": "Zikir library",

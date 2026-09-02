@@ -77,6 +77,12 @@
     --arabic-subline-list-font: calc(
         var(--arabic-subline-base) + var(--arabic-subline-list-step) * var(--arabic-subline-step-size)
     );
+    /* Arapça arayüzde okunuşun kendisi Arapça: sayaç başlığı da aynı adımla
+       ölçeklenir. Taban mevcut başlık puntosu, yani adım 0'da görünüm değişmez. */
+    --arabic-title-base: 1.0625rem;
+    --arabic-title-font: calc(
+        var(--arabic-title-base) + var(--arabic-subline-step) * var(--arabic-subline-step-size)
+    );
     --leading-tight: 1.25;
     --leading-body: 1.45;
     --leading-relaxed: 1.5;
@@ -3431,6 +3437,13 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
 .arabic-font-setting__preview {
     font-size: var(--arabic-subline-font);
 }
+/* Arapça arayüz: okunuş zaten Arapça olduğu için "Arapça yazı boyutu" ayarı
+   sayaç başlığını ölçekler. Seçici, uzunluğa göre otomatik punto kademesinden
+   (zikir-name--long/xlong) daha güçlü — Arapçada boyutu kullanıcı belirler. */
+html[lang='ar'] #counterView .header-titles h1,
+html[lang='ar'] .arabic-font-setting__preview {
+    font-size: var(--arabic-title-font);
+}
 .zikir-list .zikir-arabic {
     color: var(--text-arabic, rgba(203, 213, 225, 0.88));
     line-height: var(--leading-relaxed);
@@ -3561,7 +3574,11 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
 .counter-container {
     position: relative;
     flex-grow: 1;
-    min-height: 0;
+    /* Uzun okunuşta başlık büyüyünce sayaç eziliyordu: halka 280px + eylem
+       düğmeleri + iç boşluk ~405px ister; altına inince tur rozeti, gizli mod
+       düğmesi ve "Dokunarak Say" kırpılıyordu. Alan önce sayaca ayrılır,
+       başlık kalanı kullanır ve kendi içinde kayar. */
+    min-height: min(26rem, 58dvh);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -4112,11 +4129,63 @@ html[data-counter-show-round="false"] .round-badge { display: none !important; }
     max-width: 14%;
     height: 100%; 
 }
+/* Aylık (ayın 15–16 günü): 12 aylıktan biraz daha sıkışık ama etiketler
+   gün numarası (1–2 hane), ay kısaltmasından dar olduğu için rahat sığar. */
+.css-chart--dense {
+    gap: 0.1rem;
+    justify-content: space-between;
+    padding: 0;
+}
 .css-chart--dense .chart-bar-group {
     max-width: none;
 }
 .css-chart--dense .chart-label {
-    font-size: 0.58rem;
+    font-size: 0.54rem;
+    line-height: 1.1;
+    margin-top: 0.4rem;
+    letter-spacing: -0.03em;
+    word-break: keep-all;
+}
+
+/* Grafik altındaki sayfa noktaları (telefon ana ekranı gibi). */
+.chart-pager {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.85rem;
+}
+.chart-pager__dot {
+    width: 7px;
+    height: 7px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    /* --glass-border (%6) bu boyutta görünmüyordu: pasif nokta kaybolunca
+       "iki sayfa var" bilgisi de kayboluyor. Silik ama okunur bir gri. */
+    background: var(--text-gray);
+    opacity: 0.35;
+    cursor: pointer;
+    transition: opacity 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    /* Nokta 7px; dokunma hedefi görsel boyuttan bağımsız olarak büyütülür. */
+    position: relative;
+}
+.chart-pager__dot::after {
+    content: '';
+    position: absolute;
+    inset: -9px;
+}
+.chart-pager__dot--active {
+    background: var(--primary-green);
+    opacity: 1;
+    transform: scale(1.25);
+}
+
+/* "Bugün: 42" — Günlük sekmesi kalkınca haftalık görünüme eklendi. */
+.chart-today-note {
+    font-size: 0.78rem;
+    opacity: 0.75;
+    margin: -0.15rem 0 0.6rem;
 }
 /* Aylık (12 ay): küçük ay etiketi; sütun kalınlığı haftalık ile aynı (max-width: 14%) */
 .css-chart--months {
@@ -6148,13 +6217,16 @@ input:checked + .slider:before { transform: translateX(22px); }
 }
 
 /* Sayaç ve istatistik başlığı iki satırda "…" ile kırpılıyordu; uzun zikir ve
-   dualarda okunuşun sonu görünmüyordu. Kırpma kaldırıldı — metnin tamamı
-   görünür, çok uzunsa başlık kendi içinde kayar ve sayacı ezmez. */
+   dualarda okunuşun sonu görünmüyordu. Kırpma kaldırıldı: okunuş tam görünür.
+   Sayaç ekranında kendi kaydırma çubuğu yok — okunuş, Arapça ve anlam
+   `.zikir-header-scroll` içinde birlikte kayar. */
 #counterView .header-titles h1,
 .zikir-stats-modal .modal-header h2 {
     display: block;
     -webkit-line-clamp: unset;
     line-clamp: unset;
+}
+.zikir-stats-modal .modal-header h2 {
     max-height: min(20dvh, 8rem);
     overflow-y: auto;
     overscroll-behavior: contain;

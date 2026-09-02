@@ -121,7 +121,6 @@
   },
   "stats": {
     "title": "আমার পরিসংখ্যান",
-    "daily": "দৈনিক",
     "weekly": "সাপ্তাহিক",
     "monthly": "মাসিক",
     "yearly": "বার্ষিক",
@@ -133,11 +132,9 @@
     "chartLast7Days": "গত ৭ দিন — দৈনিক",
     "chartYearMonths": "এই বছর — মাস অনুযায়ী (১২)",
     "chartByYear": "গত ৫ বছর — মোট",
-    "summaryToday": "আজ",
     "summaryWeek": "গত ৭ দিন",
     "summaryMonth": "এই মাস",
     "summaryYear": "এই বছর",
-    "summarySubRecord": "রেকর্ড করা ট্যাপ",
     "summarySubTotal": "মোট ট্যাপ",
     "chartZikirSuffix": "এই জিকির",
     "clicksUnit": "{count} বার",
@@ -153,7 +150,11 @@
     "allTimeEmpty": "এখনও কোনো জিকির নেই",
     "allTimeTotalLabel": "মোট",
     "allTimeDonutAria": "মোট {count} জিকির",
-    "allTimeSliceMeta": "{count} · {pct}%"
+    "allTimeSliceMeta": "{count} · {pct}%",
+    "year": "বছর",
+    "chartMonthDays": "এই মাস — দৈনিক",
+    "todayTotal": "আজ: {count}",
+    "chartPage": "{total}-এর {page} নম্বর পাতা"
   },
   "library": {
     "title": "জিকির লাইব্রেরি",
