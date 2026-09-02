@@ -111,9 +111,11 @@ import { setupCrashReporting } from './lib/crash-reporting.js';
 import {
     HATIM_GROUP_LIMIT,
     HATIM_GROUP_NAME_MAX,
+    HATIM_MEMBER_NAME_MAX,
     HATIM_JUZ_COUNT,
     JUZ_CLAIMED,
     JUZ_DONE,
+    JUZ_FREE,
     claimJuz,
     completeJuz,
     createHatimGroup,
@@ -418,12 +420,28 @@ function applyArabicTextAttrs(el, on) {
     }
 }
 
+/**
+ * Kayıtlı zikir adları bir süre 80 karaktere kırpılıyordu (sanitize sınırı);
+ * uzun okunuşlar kelime ortasından kesik kaldı. Böyle bir ad "kullanıcı
+ * düzenlemesi" sayılıp korunmasın diye onarılabilir kabul edilir: tam 80
+ * karakter olacak ve bilinen bir metnin başlangıcı olacak.
+ */
+const LEGACY_ZIKIR_NAME_TRUNCATION = 80;
+
+function isLegacyTruncatedZikirName(cur, known) {
+    if (cur.length !== LEGACY_ZIKIR_NAME_TRUNCATION) return false;
+    for (const text of known) {
+        if (text.length > cur.length && text.startsWith(cur)) return true;
+    }
+    return false;
+}
+
 function resolveLibraryBackedName(z) {
     if (!z || !z.libraryId) return null;
     const cur = String(z.name || '').trim();
     const known = getKnownLibraryNameTexts(z.libraryId);
     const canonical = getLibraryNameForLocale(z.libraryId, appSettings.locale);
-    if (!cur || known.has(cur)) return canonical;
+    if (!cur || known.has(cur) || isLegacyTruncatedZikirName(cur, known)) return canonical;
     return cur;
 }
 
@@ -608,7 +626,9 @@ function syncLocalizedDefaults({ persist = false } = {}) {
         }
 
         const curN = String(z.name || '').trim();
-        if (!curN || getKnownLibraryNameTexts(z.libraryId).has(curN)) {
+        const knownN = getKnownLibraryNameTexts(z.libraryId);
+        // Kırpılmış ad da "bozuk durum"dur, kullanıcı tercihi değil: onarılır.
+        if (!curN || knownN.has(curN) || isLegacyTruncatedZikirName(curN, knownN)) {
             setField(z, 'name', getLibraryNameForLocale(z.libraryId, appSettings.locale));
         }
 
@@ -5849,6 +5869,16 @@ function getLocalMemberId() {
     return appMeta.memberId;
 }
 
+/** Son kullanılan ad — cüz alma isteminde hazır gelir, her seferinde yazdırmaz. */
+function getLocalMemberName() {
+    return (appMeta && typeof appMeta.memberName === 'string' && appMeta.memberName) || '';
+}
+
+function setLocalMemberName(name) {
+    if (!appMeta || typeof appMeta !== 'object') appMeta = { installedAt: null };
+    appMeta.memberName = String(name || '').trim().slice(0, HATIM_MEMBER_NAME_MAX);
+}
+
 function findHatimGroup(id) {
     return hatimGroups.find((g) => g.id === id) || null;
 }
@@ -6032,13 +6062,15 @@ function renderHatimGroupView() {
                     : juz.state === JUZ_CLAIMED
                       ? t('community.legendClaimed')
                       : t('community.legendFree');
+            const who = juz.state === JUZ_FREE ? '' : juz.byName || t('community.someone');
             return `
                 <button type="button"
                     class="hatim-cell hatim-cell--${cls}${isMine ? ' hatim-cell--mine' : ''}"
                     data-juz="${juz.n}"
-                    aria-label="${escapeAttr(`${hatimJuzLabel(juz.n)} — ${stateLabel}`)}">
-                    <span class="hatim-cell__num">${juz.n}</span>
+                    aria-label="${escapeAttr(`${hatimJuzLabel(juz.n)} — ${stateLabel}${who ? ' — ' + who : ''}`)}">
                     ${icon ? `<span class="hatim-cell__icon material-icons-outlined" aria-hidden="true">${icon}</span>` : ''}
+                    <span class="hatim-cell__num">${juz.n}</span>
+                    ${who ? `<span class="hatim-cell__name">${escapeHtml(who)}</span>` : ''}
                 </button>
             `;
         })
@@ -6104,7 +6136,7 @@ function renderHatimJuzDetail() {
     const actions = document.getElementById('hatimJuzActions');
     if (!actions) return;
     const buttons = [];
-    if (juz.state === 'free') {
+    if (juz.state === JUZ_FREE) {
         buttons.push(`<button type="button" class="primary-btn full-width" data-hatim-action="claim">${escapeHtml(t('community.claimJuz'))}</button>`);
     } else if (juz.by === me && juz.state === JUZ_CLAIMED) {
         buttons.push(`<button type="button" class="primary-btn full-width" data-hatim-action="complete">${escapeHtml(t('community.completeJuz'))}</button>`);
@@ -6112,8 +6144,11 @@ function renderHatimJuzDetail() {
     } else if (juz.by === me && juz.state === JUZ_DONE) {
         buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="uncomplete">${escapeHtml(t('community.uncompleteJuz'))}</button>`);
     }
-    // Okuma her durumda açık — başkasının cüzüne de bakılabilir.
-    buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="read">${escapeHtml(t('community.readJuz'))}</button>`);
+    // Okuma yalnızca kendi üstlendiğin cüzde: alınmamış ya da başkasının cüzünde
+    // "oku" düğmesi kullanıcıyı üstlenmeden okumaya yönlendiriyordu.
+    if (juz.by === me) {
+        buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="read">${escapeHtml(t('community.readJuz'))}</button>`);
+    }
     actions.innerHTML = buttons.join('');
 }
 
@@ -6145,7 +6180,22 @@ async function handleHatimJuzAction(action) {
     }
 
     let res = null;
-    if (action === 'claim') res = claimJuz(group, currentHatimJuzN, me);
+    if (action === 'claim') {
+        // Cüzü kimin aldığı grupta görüneceği için ad burada sorulur.
+        const name = await showAppPrompt(t('community.claimNamePrompt'), getLocalMemberName(), {
+            title: t('community.claimNameTitle'),
+            inputLabel: t('community.claimNameLabel'),
+            maxLength: HATIM_MEMBER_NAME_MAX
+        });
+        if (name == null) return;
+        const trimmed = String(name).trim().slice(0, HATIM_MEMBER_NAME_MAX);
+        if (!trimmed) {
+            await showAppAlert(t('community.claimNameRequired'));
+            return;
+        }
+        setLocalMemberName(trimmed);
+        res = claimJuz(group, currentHatimJuzN, me, { memberName: trimmed });
+    }
     else if (action === 'complete') res = completeJuz(group, currentHatimJuzN, me);
     else if (action === 'uncomplete') res = uncompleteJuz(group, currentHatimJuzN, me);
     else if (action === 'release') res = releaseJuz(group, currentHatimJuzN, me);
@@ -6638,6 +6688,7 @@ function updateCounterUI() {
     if (headerTitles) headerTitles.classList.toggle('header-titles--rtl-ui', rtlUiScript);
     if (zikirTitle) {
         zikirTitle.textContent = counterDisplayName;
+        applyZikirNameScale(zikirTitle, counterDisplayName);
         applyArabicTextAttrs(zikirTitle, rtlUiScript);
     }
     if (zikirArabicHeader) {
@@ -7033,25 +7084,29 @@ function renderLibraryGroupContent() {
     });
 }
 
-/** Okunuş metni bu uzunlukları aşınca detay penceresinde punto kademe kademe küçülür. */
-const LIB_DETAIL_NAME_LONG = 140;
-const LIB_DETAIL_NAME_XLONG = 240;
+/** Okunuş metni bu uzunlukları aşınca başlık puntosu kademe kademe küçülür. */
+const ZIKIR_NAME_LONG = 140;
+const ZIKIR_NAME_XLONG = 240;
 
-function applyLibDetailNameScale(el, text) {
+/**
+ * Uzun okunuşlar kırpılmadan sığsın diye punto kademesi.
+ * Detay penceresi, sayaç başlığı ve istatistik başlığında kullanılır.
+ */
+function applyZikirNameScale(el, text) {
     if (!el) return;
     const len = String(text || '').length;
     el.classList.toggle(
-        'lib-detail-name--long',
-        len >= LIB_DETAIL_NAME_LONG && len < LIB_DETAIL_NAME_XLONG
+        'zikir-name--long',
+        len >= ZIKIR_NAME_LONG && len < ZIKIR_NAME_XLONG
     );
-    el.classList.toggle('lib-detail-name--xlong', len >= LIB_DETAIL_NAME_XLONG);
+    el.classList.toggle('zikir-name--xlong', len >= ZIKIR_NAME_XLONG);
 }
 
 function openLibraryDetail(z) {
     selectedLibraryItem = z;
     const detailName = z.name || '';
     libDetailName.textContent = detailName;
-    applyLibDetailNameScale(libDetailName, detailName);
+    applyZikirNameScale(libDetailName, detailName);
     applyArabicTextAttrs(libDetailName, localeUsesRtlUiScript(appSettings.locale));
     const ar = z.arabic && String(z.arabic).trim();
     if (libDetailArabic) {
@@ -7508,7 +7563,9 @@ function renderZikirStats() {
     syncPremiumStatTabsUI();
     const z = zikirs.find((x) => x.id === zid);
     if (zikirStatsTitle) {
-        zikirStatsTitle.textContent = z ? getZikirDisplayName(z) : t('stats.titleFallback');
+        const statsTitle = z ? getZikirDisplayName(z) : t('stats.titleFallback');
+        zikirStatsTitle.textContent = statsTitle;
+        applyZikirNameScale(zikirStatsTitle, statsTitle);
     }
 
     const periodKeys = getStatPeriodDayKeys(activeZikirStatTab);

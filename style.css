@@ -2504,15 +2504,20 @@ button.premium-card.premium-card--action:active {
     color: var(--primary-green);
 }
 
-/* 30 cüz tablosu — 6 sütun × 5 satır */
+/* 30 cüz tablosu — 5 sütun × 6 satır. minmax(0,1fr): sade 1fr içeriğe göre
+   büyüdüğü için uzun bir isim sütunu genişletip ızgarayı bozuyordu. */
 .hatim-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0.5rem;
 }
 .hatim-cell {
     position: relative;
-    aspect-ratio: 1;
+    min-width: 0;
+    overflow: hidden;
+    /* Kare yerine: altta alan kişinin adı için bir satır yer bırakılır. */
+    min-height: 3.5rem;
+    padding: 0.3rem 0.2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2548,9 +2553,25 @@ button.premium-card.premium-card--action:active {
     font-weight: 700;
     line-height: 1;
 }
+/* İkon köşeye alınır; orta alan numara + ad için serbest kalır.
+   Renk körlüğünde durum yalnızca renkten anlaşılmasın diye ikon korunur. */
 .hatim-cell__icon {
-    font-size: 14px;
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    font-size: 11px;
     line-height: 1;
+    opacity: 0.75;
+}
+
+.hatim-cell__name {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.5625rem;
+    line-height: 1.2;
+    opacity: 0.9;
 }
 
 .hatim-legend {
@@ -6110,15 +6131,33 @@ input:checked + .slider:before { transform: translateX(22px); }
     letter-spacing: -0.02em;
     word-break: break-word;
 }
-/* Uzun okunuş metinleri (ör. tesbihat istiğfarı ~300 karakter) pencereyi
-   şişirmesin diye punto iki kademe küçülür. Eşikler app.js'te. */
-.lib-detail-name--long {
+/* Uzun okunuş metinleri (ör. tesbihat istiğfarı ~300 karakter) alanı
+   şişirmesin diye punto iki kademe küçülür. Eşikler app.js'te
+   (applyZikirNameScale). Detay penceresi, sayaç ve istatistik başlığı. */
+.lib-detail-name.zikir-name--long,
+#counterView .header-titles h1.zikir-name--long,
+.zikir-stats-modal .modal-header h2.zikir-name--long {
     font-size: clamp(0.85rem, 3.1vw, 0.95rem);
     line-height: 1.55;
 }
-.lib-detail-name--xlong {
+.lib-detail-name.zikir-name--xlong,
+#counterView .header-titles h1.zikir-name--xlong,
+.zikir-stats-modal .modal-header h2.zikir-name--xlong {
     font-size: clamp(0.78rem, 2.8vw, 0.875rem);
     line-height: 1.5;
+}
+
+/* Sayaç ve istatistik başlığı iki satırda "…" ile kırpılıyordu; uzun zikir ve
+   dualarda okunuşun sonu görünmüyordu. Kırpma kaldırıldı — metnin tamamı
+   görünür, çok uzunsa başlık kendi içinde kayar ve sayacı ezmez. */
+#counterView .header-titles h1,
+.zikir-stats-modal .modal-header h2 {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    max-height: min(20dvh, 8rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 .lib-detail-meaning {
     font-size: var(--text-sm);
