@@ -30,6 +30,35 @@
     --surface-radius: 14px;
     /* Sekme çubuğu (istatistik / kütüphane): klasör yüzeyiyle aynı */
     --surface-tabs-bg: var(--surface-card);
+
+    /* Klasör kartının yüksekliği — topluluk kartı bunun iki katı olsun diye aynı
+       jetonlardan türetilir: dikey padding + başlık satırı + alt satır + kenarlık. */
+    --folder-card-height: calc(1.7rem + 2px + var(--text-base) * var(--leading-tight) + 0.15rem + var(--text-xs) * var(--leading-body));
+    /* Topluluk kartı: iki klasör kartı + aralarındaki boşluk kadar yer kaplar. */
+    --community-card-height: calc(2 * var(--folder-card-height) + 0.75rem);
+    /* Topluluk kartı — haftalık rapordaki seri kutucuklarıyla (.wr-tile--flame-*)
+       aynı dil: kart yüzeyinin üstüne 145° saydam renk katmanı. Sol üst köşede mavi,
+       sağ alt köşede yeşil. Vurgu (accent) temasına bağlı değil; kart tek başına
+       duran bir marka öğesi olduğu için tema ile dönmez. */
+    --community-card-bg:
+        linear-gradient(145deg, rgba(37, 99, 235, 0.32) 0%, rgba(13, 148, 136, 0.22) 50%, rgba(16, 185, 129, 0.32) 100%),
+        var(--surface-card);
+    --community-card-border: rgba(56, 189, 248, 0.18);
+    --community-card-shadow: 0 8px 26px rgba(8, 60, 90, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    --community-card-icon-bg: rgba(255, 255, 255, 0.07);
+    --community-card-icon-border: rgba(255, 255, 255, 0.13);
+    --community-card-chevron: rgba(255, 255, 255, 0.38);
+    /* Hatim cüz durumları: boş → sarı (alındı) → yeşil (bitti). Renk tek başına
+       ayırt edici değil; hücrelerde ayrıca ikon var (renk körlüğü). */
+    --hatim-free-bg: rgba(148, 163, 184, 0.09);
+    --hatim-free-border: rgba(148, 163, 184, 0.18);
+    --hatim-free-fg: var(--text-gray);
+    --hatim-claimed-bg: rgba(234, 179, 8, 0.16);
+    --hatim-claimed-border: rgba(234, 179, 8, 0.34);
+    --hatim-claimed-fg: #fbbf24;
+    --hatim-done-bg: rgba(16, 185, 129, 0.16);
+    --hatim-done-border: rgba(16, 185, 129, 0.34);
+    --hatim-done-fg: #34d399;
     
     /* Tipografi — mobil öncelikli ölçek */
     --font-main: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -2178,6 +2207,469 @@ button.premium-card.premium-card--action:active {
     line-height: var(--leading-body);
 }
 
+/* ================== TOPLULUK KARTI (ana ekran) ==================
+ * Klasör ızgarasının (#folderGrid) dışında, ipucu metninin hemen altında durur.
+ * Izgaraya ait olmadığı için sürükle-sırala ve uzun bas-sil akışlarına hiç girmez:
+ * yeri sabittir ve silinemez. Yükseklik iki klasör kartı + aradaki boşluk kadardır.
+ * Başlık üstte durur; altındaki boşluk topluluk içeriğine ayrılmıştır.
+ */
+.community-card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: var(--community-card-height);
+    margin-bottom: 0.75rem;
+    padding: 0.85rem 0.9rem;
+    border: 1px solid var(--community-card-border);
+    border-radius: calc(var(--surface-radius) + 3px);
+    background: var(--community-card-bg);
+    box-shadow: var(--community-card-shadow);
+    color: var(--text-white);
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.22s cubic-bezier(0.25, 0.8, 0.35, 1), filter 0.2s ease;
+}
+.community-card:active {
+    transform: scale(0.99);
+    filter: brightness(1.12);
+}
+.community-card:focus-visible {
+    outline: 2px solid var(--community-card-border);
+    outline-offset: 2px;
+}
+
+/* Üst başlık satırı: ikon + ad + chevron */
+.community-card__header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.community-card__icon {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    background: var(--community-card-icon-bg);
+    border: 1px solid var(--community-card-icon-border);
+}
+.community-card__icon .material-icons-outlined {
+    font-size: 1.2rem;
+    color: inherit;
+}
+
+.community-card__title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--text-md);
+    font-weight: 600;
+    line-height: var(--leading-tight);
+    letter-spacing: 0.005em;
+}
+
+.community-card__chevron {
+    flex: 0 0 auto;
+    font-size: 22px;
+    color: var(--community-card-chevron);
+}
+
+/* Kartın alt boşluğu: özet şerit + tek satır bilgi */
+.community-card__body {
+    position: relative;
+    z-index: 1;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.community-card__strip {
+    display: grid;
+    grid-template-columns: repeat(30, 1fr);
+    gap: 2px;
+}
+.community-card__dot {
+    height: 6px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.16);
+}
+.community-card__dot--claimed { background: var(--hatim-claimed-fg); }
+.community-card__dot--done { background: var(--hatim-done-fg); }
+.community-card__hint {
+    font-size: var(--text-xs);
+    line-height: var(--leading-body);
+    opacity: 0.85;
+}
+
+/* Çoklu seçim modunda ana ekran yalnızca klasörlere odaklanır */
+#homeView.home-view--select-mode .community-card {
+    display: none;
+}
+
+/* ================== HATİM GRUPLARI ================== */
+.hatim-section-title {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-gray);
+    margin: 0.25rem 0 0.55rem;
+}
+.hatim-mine {
+    margin-bottom: 1.4rem;
+}
+.hatim-mine__list,
+.hatim-group-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.hatim-mine__row,
+.hatim-group-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--surface-radius);
+    background: var(--surface-card);
+    box-shadow: var(--surface-shadow);
+    color: var(--text-white);
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.hatim-mine__row:active,
+.hatim-group-row:active {
+    background: var(--surface-card-active);
+}
+
+/* Cüzlerim satırı: numara rozeti + cüz adı/grup + durum etiketi */
+.hatim-mine__juz {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 8px;
+    font-size: var(--text-base);
+    font-weight: 700;
+    background: var(--hatim-free-bg);
+    border: 1px solid var(--hatim-free-border);
+    color: var(--hatim-free-fg);
+}
+.hatim-mine__juz--claimed {
+    background: var(--hatim-claimed-bg);
+    border-color: var(--hatim-claimed-border);
+    color: var(--hatim-claimed-fg);
+}
+.hatim-mine__juz--done {
+    background: var(--hatim-done-bg);
+    border-color: var(--hatim-done-border);
+    color: var(--hatim-done-fg);
+}
+.hatim-mine__text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+.hatim-mine__title {
+    font-size: var(--text-base);
+    font-weight: 500;
+}
+.hatim-mine__group,
+.hatim-group-row__meta {
+    font-size: var(--text-xs);
+    color: var(--text-gray);
+}
+.hatim-mine__state {
+    flex: 0 0 auto;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    background: var(--hatim-claimed-bg);
+    color: var(--hatim-claimed-fg);
+}
+.hatim-mine__state--done {
+    background: var(--hatim-done-bg);
+    color: var(--hatim-done-fg);
+}
+
+/* Grup satırı: ad + ilerleme */
+.hatim-group-row__text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.22rem;
+}
+.hatim-group-row__name {
+    font-size: var(--text-base);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.hatim-group-row__bar,
+.hatim-summary__bar {
+    height: 5px;
+    border-radius: 999px;
+    background: var(--hatim-free-bg);
+    overflow: hidden;
+}
+.hatim-group-row__bar {
+    margin-top: 0.15rem;
+}
+.hatim-group-row__fill,
+.hatim-summary__fill {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--hatim-done-fg);
+    transition: width 0.3s ease;
+}
+.hatim-group-row__chevron {
+    flex: 0 0 auto;
+    font-size: 22px;
+    color: var(--text-gray);
+}
+.hatim-empty {
+    font-size: var(--text-sm);
+    color: var(--text-gray);
+    line-height: var(--leading-body);
+    text-align: center;
+    padding: 1.25rem 0.5rem;
+}
+
+/* Grup ekranı üst özeti */
+.hatim-summary {
+    margin-bottom: 0.9rem;
+}
+.hatim-summary__text {
+    margin-top: 0.45rem;
+    font-size: var(--text-sm);
+    color: var(--text-gray);
+    text-align: center;
+}
+
+.hatim-code {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    margin-bottom: 1rem;
+    border: 1px dashed var(--surface-border-active);
+    border-radius: var(--surface-radius);
+    background: transparent;
+    color: var(--text-white);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.hatim-code__text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    text-align: left;
+}
+.hatim-code__label {
+    font-size: var(--text-xs);
+    color: var(--text-gray);
+}
+.hatim-code__value {
+    font-size: var(--text-md);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+}
+.hatim-code .material-icons-outlined {
+    flex: 0 0 auto;
+    color: var(--primary-green);
+}
+
+/* 30 cüz tablosu — 6 sütun × 5 satır */
+.hatim-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.5rem;
+}
+.hatim-cell {
+    position: relative;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1rem;
+    border-radius: 10px;
+    border: 1px solid var(--hatim-free-border);
+    background: var(--hatim-free-bg);
+    color: var(--hatim-free-fg);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s ease;
+}
+.hatim-cell:active {
+    transform: scale(0.94);
+}
+.hatim-cell--claimed {
+    background: var(--hatim-claimed-bg);
+    border-color: var(--hatim-claimed-border);
+    color: var(--hatim-claimed-fg);
+}
+.hatim-cell--done {
+    background: var(--hatim-done-bg);
+    border-color: var(--hatim-done-border);
+    color: var(--hatim-done-fg);
+}
+/* Kendi cüzün kalın çerçeveyle ayrılır — başkasınınkiyle karışmasın */
+.hatim-cell--mine {
+    border-width: 2px;
+}
+.hatim-cell__num {
+    font-size: var(--text-base);
+    font-weight: 700;
+    line-height: 1;
+}
+.hatim-cell__icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.hatim-legend {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 0.9rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-xs);
+    color: var(--text-gray);
+}
+.hatim-legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+.hatim-legend__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background: var(--hatim-free-bg);
+    border: 1px solid var(--hatim-free-border);
+}
+.hatim-legend__dot--claimed {
+    background: var(--hatim-claimed-bg);
+    border-color: var(--hatim-claimed-border);
+}
+.hatim-legend__dot--done {
+    background: var(--hatim-done-bg);
+    border-color: var(--hatim-done-border);
+}
+
+.hatim-delete-btn {
+    margin-top: 1.6rem;
+    color: var(--text-gray);
+}
+
+/* ---- Cüz detay penceresi ---- */
+.hatim-juz-state {
+    font-size: var(--text-sm);
+    line-height: var(--leading-body);
+    padding: 0.55rem 0.75rem;
+    border-radius: 10px;
+    background: var(--hatim-free-bg);
+    border: 1px solid var(--hatim-free-border);
+    color: var(--text-gray);
+}
+.hatim-juz-state--claimed {
+    background: var(--hatim-claimed-bg);
+    border-color: var(--hatim-claimed-border);
+    color: var(--hatim-claimed-fg);
+}
+.hatim-juz-state--done {
+    background: var(--hatim-done-bg);
+    border-color: var(--hatim-done-border);
+    color: var(--hatim-done-fg);
+}
+
+.hatim-juz-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 0.5rem;
+    margin: 0.9rem 0 0;
+}
+.hatim-juz-fact {
+    padding: 0.55rem 0.6rem;
+    border-radius: 10px;
+    background: var(--hatim-free-bg);
+    border: 1px solid var(--hatim-free-border);
+}
+.hatim-juz-fact dt {
+    font-size: var(--text-xs);
+    color: var(--text-gray);
+}
+.hatim-juz-fact dd {
+    margin: 0.15rem 0 0;
+    font-size: var(--text-base);
+    font-weight: 600;
+}
+
+.hatim-juz-surahs {
+    margin-top: 1.1rem;
+}
+.hatim-juz-surahs__title {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-gray);
+    margin: 0 0 0.45rem;
+}
+.hatim-juz-surahs__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+.hatim-juz-surahs__list li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: var(--text-sm);
+}
+.hatim-juz-surah__range {
+    flex: 0 0 auto;
+    font-size: var(--text-xs);
+    color: var(--text-gray);
+}
+
+.hatim-juz-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
 /* Güncelleme duyurusu — aktif değilken slot boş kalır (klasörler dolar) */
 .update-banner-slot {
     margin-top: 0.75rem;
@@ -2800,6 +3292,12 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .community-card {
+        transition: filter 0.2s ease;
+    }
+    .community-card:active {
+        transform: none;
+    }
     .folder-card {
         transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.01ms;
     }

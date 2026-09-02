@@ -108,6 +108,24 @@ import {
 import { applyNativeStatusBarTheme } from './status-bar-theme.js';
 import { runCounterVibration, runDragReorderNudge } from './haptics.js';
 import { setupCrashReporting } from './lib/crash-reporting.js';
+import {
+    HATIM_GROUP_LIMIT,
+    HATIM_GROUP_NAME_MAX,
+    HATIM_JUZ_COUNT,
+    JUZ_CLAIMED,
+    JUZ_DONE,
+    claimJuz,
+    completeJuz,
+    createHatimGroup,
+    getHatimProgress,
+    getNextMemberJuz,
+    isHatimComplete,
+    isValidHatimCode,
+    listMemberJuz,
+    releaseJuz,
+    uncompleteJuz
+} from './lib/hatim-groups.js';
+import { getJuzDetail } from './lib/hatim-juz.js';
 import { maybeRequestAppReview, recordCompletedRound } from './lib/app-review.js';
 import {
     downloadBackupPayload,
@@ -689,6 +707,10 @@ let currentFolderId = null;
 let currentZikirId = null;
 let currentQuranSurahId = null;
 let currentLibraryGroupId = null;
+/** @type {ReturnType<typeof createHatimGroup>[]} */
+let hatimGroups = [];
+let currentHatimGroupId = null;
+let currentHatimJuzN = null;
 let quranAyahFavorites = [];
 import { QURAN_COUNTER_LAYOUTS, normalizeQuranCounterLayout } from './lib/quran-counter-layout.js';
 
@@ -2315,6 +2337,7 @@ function loadData() {
             appMeta = { installedAt: getTodayString() };
             lifetimeTotal = 0;
             lifetimeByZikir = {};
+            hatimGroups = [];
             syncSettingsUI();
             return;
         }
@@ -2343,6 +2366,7 @@ function loadData() {
         appMeta = sanitized.appMeta || { installedAt: null };
         lifetimeTotal = sanitized.lifetimeTotal || 0;
         lifetimeByZikir = sanitized.lifetimeByZikir || {};
+        hatimGroups = sanitized.hatimGroups || [];
 
         // Ordering (folders + zikirs)
         let touched = false;
@@ -2511,7 +2535,8 @@ function buildBackupPayload() {
         quranAyahFavorites,
         appMeta,
         lifetimeTotal,
-        lifetimeByZikir
+        lifetimeByZikir,
+        hatimGroups
     };
 }
 
@@ -3817,6 +3842,7 @@ function applySanitizedBackupToApp(sanitized) {
     appMeta = sanitized.appMeta || { installedAt: null };
     lifetimeTotal = sanitized.lifetimeTotal || 0;
     lifetimeByZikir = sanitized.lifetimeByZikir || {};
+    hatimGroups = sanitized.hatimGroups || [];
     entitlements = localEntitlements;
     if (localCloudBackup) patchCloudBackupMeta(localCloudBackup);
 
@@ -4881,7 +4907,12 @@ function closeAllOverlays() {
     });
 }
 
-const SCROLLABLE_OVERLAY_IDS = new Set(['trashOverlay', 'smartReminderEditOverlay', 'reviseQuranDisplayOverlay']);
+const SCROLLABLE_OVERLAY_IDS = new Set([
+    'trashOverlay',
+    'smartReminderEditOverlay',
+    'reviseQuranDisplayOverlay',
+    'hatimJuzOverlay'
+]);
 
 function openOverlay(overlayId, { onOpen } = {}) {
     const el = document.getElementById(overlayId);
@@ -5160,6 +5191,11 @@ function showView(viewId, param = null, options = {}) {
     } else if (viewId === 'libraryView') {
         resetLibraryCategoryTab();
         renderLibrary();
+    } else if (viewId === 'communityView') {
+        renderCommunityView();
+    } else if (viewId === 'hatimGroupView') {
+        if (param != null) currentHatimGroupId = param;
+        renderHatimGroupView();
     } else if (viewId === 'libraryGroupView') {
         currentLibraryGroupId = param;
         renderLibraryGroupDetail();
@@ -5795,6 +5831,446 @@ function renderFolders() {
             onDismiss: () => renderFolders()
         });
     }
+
+    renderCommunityCardSummary();
+}
+
+// ================== TOPLULUK / HATİM GRUPLARI ==================
+// Bu adımda gruplar yalnızca cihazda yaşar; cüz sahipliği yerel bir üye kimliğine
+// bağlanır. Çok kullanıcılı katman eklendiğinde bu kimlik uid ile değişir, model aynı kalır.
+
+/** Cüz sahipliğini taşıyan yerel kimlik; ilk ihtiyaçta üretilir ve kalıcı olur. */
+function getLocalMemberId() {
+    if (!appMeta || typeof appMeta !== 'object') appMeta = { installedAt: null };
+    if (!appMeta.memberId) {
+        appMeta.memberId = mintId('m');
+        saveData();
+    }
+    return appMeta.memberId;
+}
+
+function findHatimGroup(id) {
+    return hatimGroups.find((g) => g.id === id) || null;
+}
+
+/** Model saf olduğu için güncellenmiş grubu diziye geri yazarız. */
+function commitHatimGroup(next) {
+    const idx = hatimGroups.findIndex((g) => g.id === next.id);
+    if (idx < 0) return;
+    hatimGroups[idx] = next;
+    saveData();
+}
+
+function hatimSurahName(n) {
+    return getSurahLocalizedName(n, appSettings.locale) || t('quran.surahFallback', { n });
+}
+
+function hatimJuzLabel(n) {
+    return t('community.juzLabel', { n });
+}
+
+/** "Bakara 141" — cüz sınırlarını okunur biçimde yazar. */
+function hatimAyahRef(ref) {
+    return `${hatimSurahName(ref.surah)} ${ref.ayah}`;
+}
+
+function hatimJuzStateClass(juz) {
+    if (juz.state === JUZ_DONE) return 'done';
+    if (juz.state === JUZ_CLAIMED) return 'claimed';
+    return 'free';
+}
+
+/** Kullanıcının sıradaki cüzü: tüm gruplarda üstlenilmiş ama bitmemiş ilk cüz. */
+function getHatimNextForMember() {
+    const me = getLocalMemberId();
+    for (const group of hatimGroups) {
+        const next = getNextMemberJuz(group, me);
+        if (next) return { group, juz: next };
+    }
+    return null;
+}
+
+/* ---------- Ana ekrandaki Topluluk kartı ---------- */
+
+function renderCommunityCardSummary() {
+    const body = document.getElementById('communityCardBody');
+    if (!body) return;
+
+    if (!hatimGroups.length) {
+        body.innerHTML = `<span class="community-card__hint">${escapeHtml(t('community.cardEmpty'))}</span>`;
+        return;
+    }
+
+    const next = getHatimNextForMember();
+    const primary = next ? next.group : hatimGroups[0];
+    const progress = getHatimProgress(primary);
+    const summary = next
+        ? t('community.cardSummary', { groups: hatimGroups.length, juz: next.juz.n })
+        : t('community.cardSummaryDone', {
+              groups: hatimGroups.length,
+              done: progress.done,
+              total: progress.total
+          });
+
+    const strip = primary.juz
+        .map((jz) => `<span class="community-card__dot community-card__dot--${hatimJuzStateClass(jz)}"></span>`)
+        .join('');
+
+    body.innerHTML = `
+        <span class="community-card__strip" aria-hidden="true">${strip}</span>
+        <span class="community-card__hint">${escapeHtml(summary)}</span>
+    `;
+}
+
+/* ---------- Topluluk ekranı ---------- */
+
+function renderCommunityView() {
+    const me = getLocalMemberId();
+    const list = document.getElementById('hatimGroupList');
+    const emptyHint = document.getElementById('hatimEmptyHint');
+    const mineBlock = document.getElementById('hatimMineBlock');
+    const mineList = document.getElementById('hatimMineList');
+    const groupsTitle = document.getElementById('hatimGroupsTitle');
+    const limitWarning = document.getElementById('hatimLimitWarning');
+    const newBtn = document.getElementById('newHatimGroupBtn');
+
+    if (!list) return;
+
+    // Cüzlerim — tüm grupları tek listede toplar, hangi cüzün nerede olduğu görünür.
+    const mine = hatimGroups.flatMap((g) =>
+        listMemberJuz(g, me).map((juz) => ({ group: g, juz }))
+    );
+    if (mineBlock) mineBlock.hidden = mine.length === 0;
+    if (mineList) {
+        mineList.innerHTML = mine
+            .map(({ group, juz }) => {
+                const stateKey = juz.state === JUZ_DONE ? 'juzDoneShort' : 'juzReading';
+                return `
+                    <button type="button" class="hatim-mine__row" data-group-id="${escapeAttr(group.id)}" data-juz="${juz.n}">
+                        <span class="hatim-mine__juz hatim-mine__juz--${hatimJuzStateClass(juz)}">${juz.n}</span>
+                        <span class="hatim-mine__text">
+                            <span class="hatim-mine__title">${escapeHtml(hatimJuzLabel(juz.n))}</span>
+                            <span class="hatim-mine__group">${escapeHtml(group.name)}</span>
+                        </span>
+                        <span class="hatim-mine__state hatim-mine__state--${hatimJuzStateClass(juz)}">${escapeHtml(t(`community.${stateKey}`))}</span>
+                    </button>
+                `;
+            })
+            .join('');
+    }
+
+    if (groupsTitle) groupsTitle.hidden = hatimGroups.length === 0;
+    if (emptyHint) emptyHint.hidden = hatimGroups.length > 0;
+
+    list.innerHTML = hatimGroups
+        .map((group) => {
+            const progress = getHatimProgress(group);
+            const percent = Math.round(((progress.done + progress.claimed) / progress.total) * 100);
+            return `
+                <button type="button" class="hatim-group-row" data-group-id="${escapeAttr(group.id)}">
+                    <span class="hatim-group-row__text">
+                        <span class="hatim-group-row__name">${escapeHtml(group.name)}</span>
+                        <span class="hatim-group-row__meta">${escapeHtml(
+                            t('community.groupProgress', { done: progress.done, total: progress.total })
+                        )}</span>
+                        <span class="hatim-group-row__bar"><span class="hatim-group-row__fill" style="width:${percent}%"></span></span>
+                    </span>
+                    <span class="material-icons-outlined hatim-group-row__chevron" aria-hidden="true">chevron_right</span>
+                </button>
+            `;
+        })
+        .join('');
+
+    const atLimit = hatimGroups.length >= HATIM_GROUP_LIMIT;
+    if (limitWarning) limitWarning.classList.toggle('visible', atLimit);
+    if (newBtn) newBtn.style.display = atLimit ? 'none' : 'flex';
+}
+
+/* ---------- Hatim grubu ekranı ---------- */
+
+function renderHatimGroupView() {
+    const group = findHatimGroup(currentHatimGroupId);
+    if (!group) {
+        showView('communityView', null, { push: false });
+        return;
+    }
+    const me = getLocalMemberId();
+
+    const title = document.getElementById('hatimGroupTitle');
+    if (title) title.textContent = group.name;
+
+    const codeValue = document.getElementById('hatimCodeValue');
+    if (codeValue) codeValue.textContent = group.code;
+
+    const progress = getHatimProgress(group);
+    const fill = document.getElementById('hatimSummaryFill');
+    const bar = document.getElementById('hatimSummaryBar');
+    const text = document.getElementById('hatimSummaryText');
+    if (fill) fill.style.width = `${Math.round((progress.done / progress.total) * 100)}%`;
+    if (bar) bar.setAttribute('aria-valuenow', String(progress.done));
+    if (text) {
+        text.textContent = isHatimComplete(group)
+            ? t('community.hatimComplete')
+            : t('community.groupProgress', { done: progress.done, total: progress.total });
+    }
+
+    const grid = document.getElementById('hatimJuzGrid');
+    if (!grid) return;
+    grid.innerHTML = group.juz
+        .map((juz) => {
+            const cls = hatimJuzStateClass(juz);
+            const isMine = juz.by === me;
+            const icon =
+                juz.state === JUZ_DONE
+                    ? 'check'
+                    : juz.state === JUZ_CLAIMED
+                      ? 'schedule'
+                      : '';
+            const stateLabel =
+                juz.state === JUZ_DONE
+                    ? t('community.legendDone')
+                    : juz.state === JUZ_CLAIMED
+                      ? t('community.legendClaimed')
+                      : t('community.legendFree');
+            return `
+                <button type="button"
+                    class="hatim-cell hatim-cell--${cls}${isMine ? ' hatim-cell--mine' : ''}"
+                    data-juz="${juz.n}"
+                    aria-label="${escapeAttr(`${hatimJuzLabel(juz.n)} — ${stateLabel}`)}">
+                    <span class="hatim-cell__num">${juz.n}</span>
+                    ${icon ? `<span class="hatim-cell__icon material-icons-outlined" aria-hidden="true">${icon}</span>` : ''}
+                </button>
+            `;
+        })
+        .join('');
+}
+
+/* ---------- Cüz detayı ---------- */
+
+function renderHatimJuzDetail() {
+    const group = findHatimGroup(currentHatimGroupId);
+    const detail = getJuzDetail(currentHatimJuzN);
+    if (!group || !detail) return;
+
+    const juz = group.juz.find((x) => x.n === detail.juz);
+    const me = getLocalMemberId();
+
+    const title = document.getElementById('hatimJuzTitle');
+    if (title) title.textContent = hatimJuzLabel(detail.juz);
+
+    const stateEl = document.getElementById('hatimJuzState');
+    if (stateEl) {
+        const who = juz.byName || t('community.someone');
+        let key = 'community.juzStateFree';
+        if (juz.state === JUZ_CLAIMED) key = juz.by === me ? 'community.juzStateClaimedMine' : 'community.juzStateClaimedOther';
+        else if (juz.state === JUZ_DONE) key = juz.by === me ? 'community.juzStateDoneMine' : 'community.juzStateDoneOther';
+        stateEl.textContent = t(key, { name: who });
+        stateEl.className = `hatim-juz-state hatim-juz-state--${hatimJuzStateClass(juz)}`;
+    }
+
+    const facts = document.getElementById('hatimJuzFacts');
+    if (facts) {
+        const rows = [
+            [t('community.factStart'), hatimAyahRef(detail.start)],
+            [t('community.factEnd'), hatimAyahRef(detail.end)],
+            [t('community.factPages'), `${detail.startPage}–${detail.endPage}`],
+            [t('community.factAyahs'), String(detail.ayahCount)],
+            [t('community.factSurahs'), String(detail.surahCount)]
+        ];
+        facts.innerHTML = rows
+            .map(
+                ([label, value]) =>
+                    `<div class="hatim-juz-fact"><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`
+            )
+            .join('');
+    }
+
+    const surahs = document.getElementById('hatimJuzSurahs');
+    if (surahs) {
+        const items = detail.surahs
+            .map((span) => {
+                const range = span.complete
+                    ? t('community.surahFull')
+                    : `${span.from}–${span.to}`;
+                return `<li><span class="hatim-juz-surah__name">${escapeHtml(hatimSurahName(span.surah))}</span><span class="hatim-juz-surah__range">${escapeHtml(range)}</span></li>`;
+            })
+            .join('');
+        surahs.innerHTML = `
+            <h3 class="hatim-juz-surahs__title">${escapeHtml(t('community.surahsTitle'))}</h3>
+            <ul class="hatim-juz-surahs__list">${items}</ul>
+        `;
+    }
+
+    const actions = document.getElementById('hatimJuzActions');
+    if (!actions) return;
+    const buttons = [];
+    if (juz.state === 'free') {
+        buttons.push(`<button type="button" class="primary-btn full-width" data-hatim-action="claim">${escapeHtml(t('community.claimJuz'))}</button>`);
+    } else if (juz.by === me && juz.state === JUZ_CLAIMED) {
+        buttons.push(`<button type="button" class="primary-btn full-width" data-hatim-action="complete">${escapeHtml(t('community.completeJuz'))}</button>`);
+        buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="release">${escapeHtml(t('community.releaseJuz'))}</button>`);
+    } else if (juz.by === me && juz.state === JUZ_DONE) {
+        buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="uncomplete">${escapeHtml(t('community.uncompleteJuz'))}</button>`);
+    }
+    // Okuma her durumda açık — başkasının cüzüne de bakılabilir.
+    buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="read">${escapeHtml(t('community.readJuz'))}</button>`);
+    actions.innerHTML = buttons.join('');
+}
+
+function openHatimJuzDetail(juzN) {
+    currentHatimJuzN = Number(juzN);
+    renderHatimJuzDetail();
+    openOverlay('hatimJuzOverlay');
+}
+
+function closeHatimJuzDetail() {
+    if (!closeOverlayPreferHistory('hatimJuzOverlay')) {
+        document.getElementById('hatimJuzOverlay')?.classList.remove('active');
+    }
+}
+
+/* ---------- Eylemler ---------- */
+
+async function handleHatimJuzAction(action) {
+    const group = findHatimGroup(currentHatimGroupId);
+    if (!group || !currentHatimJuzN) return;
+    const me = getLocalMemberId();
+
+    if (action === 'read') {
+        const detail = getJuzDetail(currentHatimJuzN);
+        if (!detail) return;
+        closeHatimJuzDetail();
+        showView('quranSurahView', { surah: detail.start.surah, ayah: detail.start.ayah });
+        return;
+    }
+
+    let res = null;
+    if (action === 'claim') res = claimJuz(group, currentHatimJuzN, me);
+    else if (action === 'complete') res = completeJuz(group, currentHatimJuzN, me);
+    else if (action === 'uncomplete') res = uncompleteJuz(group, currentHatimJuzN, me);
+    else if (action === 'release') res = releaseJuz(group, currentHatimJuzN, me);
+    if (!res) return;
+
+    if (!res.ok) {
+        if (res.reason === 'taken') await showAppAlert(t('community.claimTaken'));
+        return;
+    }
+
+    commitHatimGroup(res.group);
+    renderHatimGroupView();
+    renderHatimJuzDetail();
+    renderCommunityCardSummary();
+
+    if (action === 'complete' && isHatimComplete(res.group)) {
+        closeHatimJuzDetail();
+        await showAppAlert(t('community.hatimComplete'));
+    }
+}
+
+async function handleCreateHatimGroup() {
+    if (hatimGroups.length >= HATIM_GROUP_LIMIT) return;
+    const name = await showAppPrompt(t('community.newGroupPrompt'), '', {
+        title: t('community.newGroupTitle'),
+        inputLabel: t('community.groupNameLabel')
+    });
+    if (name == null || !name.trim()) return;
+
+    const group = createHatimGroup({
+        name: name.trim().slice(0, HATIM_GROUP_NAME_MAX),
+        ownerId: getLocalMemberId(),
+        order: hatimGroups.length
+    });
+    hatimGroups.push(group);
+    saveData();
+    renderCommunityCardSummary();
+    showView('hatimGroupView', group.id);
+}
+
+async function handleJoinHatimGroup() {
+    const code = await showAppPrompt(t('community.joinPrompt'), '', {
+        title: t('community.joinTitle'),
+        inputLabel: t('community.codeLabel')
+    });
+    if (code == null || !code.trim()) return;
+    if (!isValidHatimCode(code)) {
+        await showAppAlert(t('community.codeInvalid'));
+        return;
+    }
+    // Kod arama sunucu tarafı; çok kullanıcılı katman gelene kadar dürüstçe söylenir.
+    await showAppAlert(t('community.joinNotAvailable'));
+}
+
+async function handleShareHatimGroup() {
+    const group = findHatimGroup(currentHatimGroupId);
+    if (!group) return;
+    const text = t('community.shareText', { code: group.code });
+    try {
+        if (navigator.share) {
+            await navigator.share({ text });
+            return;
+        }
+    } catch (_) {
+        return; // kullanıcı paylaşımı iptal etti
+    }
+    try {
+        await navigator.clipboard.writeText(text);
+        await showAppAlert(t('community.shareCopied'));
+    } catch (e) {
+        console.error('hatim share', e);
+    }
+}
+
+async function handleDeleteHatimGroup() {
+    const group = findHatimGroup(currentHatimGroupId);
+    if (!group) return;
+    const ok = await showAppConfirm(t('community.deleteConfirm', { name: group.name }));
+    if (!ok) return;
+    hatimGroups = hatimGroups.filter((g) => g.id !== group.id);
+    saveData();
+    currentHatimGroupId = null;
+    renderCommunityCardSummary();
+    showView('communityView');
+}
+
+function setupHatimListeners() {
+    document.getElementById('communityCard')?.addEventListener('click', () => {
+        showView('communityView');
+    });
+    document.getElementById('newHatimGroupBtn')?.addEventListener('click', () => {
+        void handleCreateHatimGroup();
+    });
+    document.getElementById('joinHatimGroupBtn')?.addEventListener('click', () => {
+        void handleJoinHatimGroup();
+    });
+    document.getElementById('hatimShareBtn')?.addEventListener('click', () => {
+        void handleShareHatimGroup();
+    });
+    document.getElementById('hatimDeleteGroupBtn')?.addEventListener('click', () => {
+        void handleDeleteHatimGroup();
+    });
+
+    document.getElementById('hatimGroupList')?.addEventListener('click', (e) => {
+        const row = e.target.closest('.hatim-group-row');
+        if (row) showView('hatimGroupView', row.dataset.groupId);
+    });
+
+    document.getElementById('hatimMineList')?.addEventListener('click', (e) => {
+        const row = e.target.closest('.hatim-mine__row');
+        if (!row) return;
+        currentHatimGroupId = row.dataset.groupId;
+        showView('hatimGroupView', row.dataset.groupId);
+        openHatimJuzDetail(Number(row.dataset.juz));
+    });
+
+    document.getElementById('hatimJuzGrid')?.addEventListener('click', (e) => {
+        const cell = e.target.closest('.hatim-cell');
+        if (cell) openHatimJuzDetail(Number(cell.dataset.juz));
+    });
+
+    document.getElementById('hatimJuzActions')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-hatim-action]');
+        if (btn) void handleHatimJuzAction(btn.dataset.hatimAction);
+    });
 }
 
 function getEsmaListEntryForZikir(z) {
@@ -7084,6 +7560,8 @@ function setupEventListeners() {
     }
 
     // Back Buttons
+    setupHatimListeners();
+
     document.querySelectorAll('.backBtn').forEach(btn => {
         btn.addEventListener('click', () => {
             // Always prefer in-app stack so back returns to the last screen, not a hard-coded target.

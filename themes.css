@@ -101,6 +101,24 @@ html[data-theme="light"] {
     --rate-us-stars: #d97706;
     --rate-us-stars-glow: transparent;
     --rate-us-shadow: none;
+    /* Topluluk kartı — krem zeminde saydam katman soluk kalıyor, bir tık koyultuldu */
+    --community-card-bg:
+        linear-gradient(145deg, rgba(30, 64, 175, 0.36) 0%, rgba(15, 118, 110, 0.28) 50%, rgba(4, 120, 87, 0.38) 100%),
+        var(--surface-card);
+    --community-card-border: rgba(13, 90, 130, 0.24);
+    --community-card-shadow: 0 6px 18px rgba(20, 60, 80, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    --community-card-icon-bg: rgba(12, 40, 60, 0.07);
+    --community-card-icon-border: rgba(12, 40, 60, 0.14);
+    --community-card-chevron: rgba(28, 25, 23, 0.42);
+    /* Hatim cüz durumları — krem zeminde koyu sarı/yeşil, açık tonlar kayboluyor */
+    --hatim-free-bg: rgba(28, 25, 23, 0.05);
+    --hatim-free-border: rgba(28, 25, 23, 0.13);
+    --hatim-claimed-bg: rgba(217, 119, 6, 0.13);
+    --hatim-claimed-border: rgba(180, 83, 9, 0.32);
+    --hatim-claimed-fg: #b45309;
+    --hatim-done-bg: rgba(4, 120, 87, 0.12);
+    --hatim-done-border: rgba(4, 120, 87, 0.3);
+    --hatim-done-fg: #047857;
 }
 
 html[data-theme="light"] .quran-surah-section__frame {
@@ -373,6 +391,24 @@ html[data-theme="black"] {
     --update-banner-btn-fg: #faf3dc;
     --update-banner-btn-highlight: rgba(255, 252, 240, 0.1);
     --premium-sheet-shadow: 0 -8px 28px rgba(0, 0, 0, 0.28);
+    /* Topluluk kartı — AMOLED siyahta parlamasın diye bir tık kısık */
+    --community-card-bg:
+        linear-gradient(145deg, rgba(37, 99, 235, 0.28) 0%, rgba(13, 148, 136, 0.18) 50%, rgba(16, 185, 129, 0.26) 100%),
+        var(--surface-card);
+    --community-card-border: rgba(56, 189, 248, 0.14);
+    --community-card-shadow: 0 8px 26px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    --community-card-icon-bg: rgba(255, 255, 255, 0.06);
+    --community-card-icon-border: rgba(255, 255, 255, 0.11);
+    --community-card-chevron: rgba(255, 255, 255, 0.35);
+    /* Hatim cüz durumları — AMOLED siyahta bir tık kısık */
+    --hatim-free-bg: rgba(163, 163, 163, 0.08);
+    --hatim-free-border: rgba(163, 163, 163, 0.16);
+    --hatim-claimed-bg: rgba(234, 179, 8, 0.14);
+    --hatim-claimed-border: rgba(234, 179, 8, 0.3);
+    --hatim-claimed-fg: #eab308;
+    --hatim-done-bg: rgba(16, 185, 129, 0.14);
+    --hatim-done-border: rgba(16, 185, 129, 0.3);
+    --hatim-done-fg: #10b981;
 }
 
 html[data-theme="black"] .premium-hero {

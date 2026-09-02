@@ -54,13 +54,21 @@
         <div id="homeView" class="view active">
             <header class="glass-header">
                 <div class="header-left">
-                    <h1 data-i18n="nav.folders">Klasörlerim</h1>
+                    <h1 data-i18n="nav.foldersCommunity">Klasörlerim / Topluluk</h1>
                 </div>
                 <div class="header-spacer" aria-hidden="true"></div>
             </header>
             <p class="drag-hint" id="folderHomeDragHint" data-i18n="home.folderDragHint">Silmek için klasöre uzun basın. Sıralamak için en soldaki üç çizgiyi tutup sürükleyin.</p>
 
             <section class="main-content scrollable">
+                <button type="button" class="community-card" id="communityCard" data-i18n="community.cardAria" data-i18n-attr="aria-label" aria-label="Topluluk — hatim grupları">
+                    <span class="community-card__header">
+                        <span class="community-card__icon" aria-hidden="true"><span class="material-icons-outlined">groups</span></span>
+                        <span class="community-card__title" data-i18n="community.title">Topluluk</span>
+                        <span class="community-card__chevron material-icons-outlined" aria-hidden="true">chevron_right</span>
+                    </span>
+                    <span class="community-card__body" id="communityCardBody"></span>
+                </button>
                 <div class="folder-grid" id="folderGrid">
                     <!-- Folders Injected via JS -->
                 </div>
@@ -84,6 +92,73 @@
             </footer>
         </div>
 
+
+        <!-- =================== COMMUNITY VIEW =================== -->
+        <div id="communityView" class="view hidden">
+            <header class="glass-header">
+                <button class="icon-btn backBtn" data-target="homeView"><span class="material-icons-outlined">arrow_back</span></button>
+                <h1 data-i18n="community.title">Topluluk</h1>
+                <div class="header-spacer" aria-hidden="true"></div>
+            </header>
+
+            <section class="main-content scrollable">
+                <div class="hatim-mine" id="hatimMineBlock" hidden>
+                    <h2 class="hatim-section-title" data-i18n="community.myJuzTitle">Cüzlerim</h2>
+                    <div class="hatim-mine__list" id="hatimMineList"></div>
+                </div>
+
+                <h2 class="hatim-section-title" id="hatimGroupsTitle" data-i18n="community.groupsTitle">Hatim gruplarım</h2>
+                <div class="hatim-group-list" id="hatimGroupList"></div>
+                <p class="hatim-empty" id="hatimEmptyHint" data-i18n="community.emptyHint">Henüz hatim grubun yok. Yeni bir grup oluştur ya da sana verilen kodla var olan bir gruba katıl.</p>
+
+                <button class="primary-btn" id="newHatimGroupBtn" style="margin-top: 1rem;">
+                    <span class="material-icons-outlined">add</span> <span data-i18n="community.newGroup">Hatim Grubu Oluştur</span>
+                </button>
+                <button class="secondary-btn" id="joinHatimGroupBtn" style="margin-top: 0.6rem;">
+                    <span class="material-icons-outlined">tag</span> <span data-i18n="community.joinByCode">Kod ile Katıl</span>
+                </button>
+                <div class="limit-warning" id="hatimLimitWarning" data-i18n="community.groupLimitWarning">Grup sınırına ulaşıldı. Yeni bir gruba katılmak için önce bir gruptan ayrıl.</div>
+            </section>
+        </div>
+
+
+        <!-- =================== HATIM GROUP VIEW =================== -->
+        <div id="hatimGroupView" class="view hidden">
+            <header class="glass-header">
+                <button class="icon-btn backBtn" data-target="communityView"><span class="material-icons-outlined">arrow_back</span></button>
+                <h1 id="hatimGroupTitle">Hatim</h1>
+                <div class="header-spacer" aria-hidden="true"></div>
+            </header>
+
+            <section class="main-content scrollable">
+                <div class="hatim-summary">
+                    <div class="hatim-summary__bar" id="hatimSummaryBar" role="progressbar" aria-valuemin="0" aria-valuemax="30" aria-valuenow="0">
+                        <span class="hatim-summary__fill" id="hatimSummaryFill"></span>
+                    </div>
+                    <p class="hatim-summary__text" id="hatimSummaryText"></p>
+                </div>
+
+                <button type="button" class="hatim-code" id="hatimShareBtn">
+                    <span class="hatim-code__text">
+                        <span class="hatim-code__label" data-i18n="community.inviteCode">Katılma kodu</span>
+                        <span class="hatim-code__value" id="hatimCodeValue">------</span>
+                    </span>
+                    <span class="material-icons-outlined" aria-hidden="true">share</span>
+                </button>
+
+                <div class="hatim-grid" id="hatimJuzGrid"></div>
+
+                <ul class="hatim-legend" aria-hidden="true">
+                    <li><span class="hatim-legend__dot hatim-legend__dot--free"></span><span data-i18n="community.legendFree">Boş</span></li>
+                    <li><span class="hatim-legend__dot hatim-legend__dot--claimed"></span><span data-i18n="community.legendClaimed">Alındı</span></li>
+                    <li><span class="hatim-legend__dot hatim-legend__dot--done"></span><span data-i18n="community.legendDone">Bitti</span></li>
+                </ul>
+
+                <button type="button" class="secondary-btn hatim-delete-btn" id="hatimDeleteGroupBtn">
+                    <span class="material-icons-outlined">delete_outline</span> <span data-i18n="community.deleteGroup">Grubu Sil</span>
+                </button>
+            </section>
+        </div>
 
         <!-- =================== FOLDER DETAIL VIEW =================== -->
         <div id="folderDetailView" class="view hidden">
@@ -1710,6 +1785,22 @@
             <div class="modal-footer">
                 <button class="primary-btn full-width" id="confirmLibraryAddBtn" data-i18n="library.addBtn">Ekle</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Hatim cüz detayı -->
+    <div class="modal-overlay" id="hatimJuzOverlay" role="dialog" aria-modal="true" aria-labelledby="hatimJuzTitle">
+        <div class="modal glass-modal">
+            <div class="modal-header">
+                <h2 id="hatimJuzTitle">Cüz</h2>
+                <button class="icon-btn closeModalBtn" data-modal="hatimJuzOverlay" data-i18n="community.close" data-i18n-attr="aria-label" aria-label="Kapat"><span class="material-icons-outlined">close</span></button>
+            </div>
+            <div class="modal-body">
+                <p class="hatim-juz-state" id="hatimJuzState"></p>
+                <dl class="hatim-juz-facts" id="hatimJuzFacts"></dl>
+                <div class="hatim-juz-surahs" id="hatimJuzSurahs"></div>
+            </div>
+            <div class="modal-footer hatim-juz-actions" id="hatimJuzActions"></div>
         </div>
     </div>
 
