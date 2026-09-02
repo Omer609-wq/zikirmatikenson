@@ -155,7 +155,7 @@
     "chartMonthDays": "Bu ay — günlük",
     "chartPage": "Sayfa {page} / {total}",
     "todayTitle": "Bugün",
-    "todayTop": "En çok: {name}",
+    "todayTop": "En çok: {name} — {count}",
     "todayTotal": "Bugün: {count}"
   },
   "library": {

@@ -155,7 +155,7 @@
     "chartMonthDays": "یہ مہینہ — روزانہ",
     "chartPage": "{total} میں سے {page} صفحہ",
     "todayTitle": "آج",
-    "todayTop": "سب سے زیادہ: {name}",
+    "todayTop": "سب سے زیادہ: {name} — {count}",
     "todayTotal": "آج: {count}"
   },
   "library": {

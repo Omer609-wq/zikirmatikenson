@@ -155,7 +155,7 @@
     "chartMonthDays": "هذا الشهر — يوميًا",
     "chartPage": "صفحة {page} من {total}",
     "todayTitle": "اليوم",
-    "todayTop": "الأكثر: {name}",
+    "todayTop": "الأكثر: {name} — {count}",
     "todayTotal": "اليوم: {count}"
   },
   "library": {

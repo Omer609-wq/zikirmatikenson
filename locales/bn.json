@@ -155,7 +155,7 @@
     "chartMonthDays": "এই মাস — দৈনিক",
     "chartPage": "{total}-এর {page} নম্বর পাতা",
     "todayTitle": "আজ",
-    "todayTop": "সর্বাধিক: {name}",
+    "todayTop": "সর্বাধিক: {name} — {count}",
     "todayTotal": "আজ: {count}"
   },
   "library": {

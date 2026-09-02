@@ -155,7 +155,7 @@
     "chartMonthDays": "This month — daily",
     "chartPage": "Page {page} of {total}",
     "todayTitle": "Today",
-    "todayTop": "Most: {name}",
+    "todayTop": "Most: {name} — {count}",
     "todayTotal": "Today: {count}"
   },
   "library": {

@@ -155,7 +155,7 @@
     "chartMonthDays": "Bulan ini — harian",
     "chartPage": "Halaman {page} daripada {total}",
     "todayTitle": "Hari ini",
-    "todayTop": "Terbanyak: {name}",
+    "todayTop": "Terbanyak: {name} — {count}",
     "todayTotal": "Hari ini: {count}"
   },
   "library": {

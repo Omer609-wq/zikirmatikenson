@@ -7536,7 +7536,8 @@ function renderTodayCard() {
     const z = zikirs.find((x) => x.id === topId);
     topEl.hidden = false;
     topEl.textContent = t('stats.todayTop', {
-        name: z ? getZikirDisplayName(z) : t('stats.unknown')
+        name: z ? getZikirDisplayName(z) : t('stats.unknown'),
+        count: topCount.toLocaleString(locale)
     });
 }
 
