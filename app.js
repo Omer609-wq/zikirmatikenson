@@ -256,9 +256,9 @@ const ESMA_LIST = [
     // Meanings: https://www.esmaulhusna.gen.tr/esmaul-husna.html
     // Targets (ebced/zikir adedi): https://www.esmaulhusna.gen.tr/ebced-hesabi-esmaul-husna.html
     { name: "Yâ Allah", target: 66, meaning: "Eşi benzeri olmayan, Tek ilah, isimlerin sultanı" },
-    { name: "Yâ Rahman", target: 298, meaning: "Tüm yaratılanlara merhamet eden" },
+    { name: "Yâ Rahmân", target: 298, meaning: "Tüm yaratılanlara merhamet eden" },
     { name: "Yâ Rahîm", target: 258, meaning: "Ahirette inananlara sonsuz ihsan, ikram ve lütufta bulunan" },
-    { name: "Yâ Melik", target: 91, meaning: "Tüm evrenin sahibi, saltanatı ve mülkü sürekli olan" },
+    { name: "Yâ Melik", target: 90, meaning: "Tüm evrenin sahibi, saltanatı ve mülkü sürekli olan" },
     { name: "Yâ Kuddûs", target: 170, meaning: "Tüm eksikliklerden uzak" },
     { name: "Yâ Selâm", target: 131, meaning: "Tüm tehlikelerden selamete çıkaran" },
     { name: "Yâ Mü'min", target: 137, meaning: "Koruyan, Güvenilen" },
@@ -271,7 +271,7 @@ const ESMA_LIST = [
     { name: "Yâ Musavvir", target: 336, meaning: "Tüm varlıklara şekil veren" },
     { name: "Yâ Gaffâr", target: 1281, meaning: "Mağfireti bol olan" },
     { name: "Yâ Kahhâr", target: 306, meaning: "Her şeye hâkim olan" },
-    { name: "Yâ Vehhâb", target: 196, meaning: "Karşılıksız veren" },
+    { name: "Yâ Vehhâb", target: 14, meaning: "Karşılıksız veren" },
     { name: "Yâ Rezzâk", target: 308, meaning: "Rızık veren" },
     { name: "Yâ Fettâh", target: 489, meaning: "Dardan kurtaran" },
     { name: "Yâ Alîm", target: 150, meaning: "Her şeyi bilen ve gören" },
@@ -282,11 +282,11 @@ const ESMA_LIST = [
     { name: "Yâ Mu'izz", target: 117, meaning: "Aziz kılan, dilediğini yücelten" },
     { name: "Yâ Müzill", target: 770, meaning: "Dilediğini değersiz kılan" },
     { name: "Yâ Semî'", target: 180, meaning: "Her şeyi duyan" },
-    { name: "Yâ Basîr", target: 112, meaning: "Her şeyi gören" },
+    { name: "Yâ Basîr", target: 302, meaning: "Her şeyi gören" },
     { name: "Yâ Hakem", target: 68, meaning: "Mutlak hakimiyete sahip olan" },
     { name: "Yâ 'Adl", target: 104, meaning: "Adil olan" },
     { name: "Yâ Latîf", target: 129, meaning: "Kullarına değer veren" },
-    { name: "Yâ Habîr", target: 812, meaning: "Her şeyi bilen" },
+    { name: "Yâ Habîr", target: 812, meaning: "Her şeyin iç yüzünden haberdar olan, gizliyi bilen" },
     { name: "Yâ Halîm", target: 88, meaning: "Ceza verirken acele etmeyen" },
     { name: "Yâ Azîm", target: 1020, meaning: "Tek Yüce olan" },
     { name: "Yâ Gafûr", target: 1286, meaning: "Affedici olan" },
@@ -296,42 +296,42 @@ const ESMA_LIST = [
     { name: "Yâ Hafîz", target: 998, meaning: "Koruyan" },
     { name: "Yâ Mukît", target: 550, meaning: "Yaratılana rızkını veren" },
     { name: "Yâ Hasîb", target: 80, meaning: "Hesaba alan" },
-    { name: "Yâ Celîl", target: 5329, meaning: "Yüksek sıfatları olan" },
+    { name: "Yâ Celîl", target: 73, meaning: "Yüksek sıfatları olan" },
     { name: "Yâ Kerîm", target: 270, meaning: "İkram eden" },
     { name: "Yâ Rakîb", target: 312, meaning: "Gören ve gözeten" },
-    { name: "Yâ Mücîb", target: 3025, meaning: "Dualarını kabul eden" },
+    { name: "Yâ Mücîb", target: 55, meaning: "Dualarını kabul eden" },
     { name: "Yâ Vâsi'", target: 137, meaning: "Rahmeti ve ilmi bol olan" },
-    { name: "Yâ Hakîm", target: 6084, meaning: "Hikmetli" },
-    { name: "Yâ Vedûd", target: 400, meaning: "Kullarını seven" },
-    { name: "Yâ Mecîd", target: 3249, meaning: "Şerefi yüksek olan" },
+    { name: "Yâ Hakîm", target: 78, meaning: "Hikmetli" },
+    { name: "Yâ Vedûd", target: 20, meaning: "Kullarını seven" },
+    { name: "Yâ Mecîd", target: 57, meaning: "Şerefi yüksek olan" },
     { name: "Yâ Bâ'is", target: 573, meaning: "Ölmüş olanları dirilten" },
     { name: "Yâ Şehîd", target: 319, meaning: "Her zaman ve her yerde hazır olan" },
     { name: "Yâ Hakk", target: 108, meaning: "Hakkı gösteren" },
     { name: "Yâ Vekîl", target: 66, meaning: "Tevekkül edenlerin işlerini yoluna koyan" },
     { name: "Yâ Kaviyy", target: 116, meaning: "Kudretli" },
     { name: "Yâ Metîn", target: 500, meaning: "Güçlü olan" },
-    { name: "Yâ Veliyy", target: 2116, meaning: "İnananlara dost olan" },
-    { name: "Yâ Hamîd", target: 3844, meaning: "Övgüye layık olan" },
+    { name: "Yâ Veliyy", target: 46, meaning: "İnananlara dost olan" },
+    { name: "Yâ Hamîd", target: 62, meaning: "Övgüye layık olan" },
     { name: "Yâ Muhsî", target: 148, meaning: "Tüm varlıkların sayısını bilen" },
     { name: "Yâ Mübdî", target: 57, meaning: "Yoktan var eden" },
     { name: "Yâ Mu'îd", target: 124, meaning: "Öldüren ve sonrasında tekrar dirilten" },
     { name: "Yâ Muhyî", target: 68, meaning: "Dirilten, can veren" },
     { name: "Yâ Mümît", target: 490, meaning: "Öldüren" },
-    { name: "Yâ Hayy", target: 324, meaning: "Sonsuz hayata sahip olan" },
+    { name: "Yâ Hayy", target: 18, meaning: "Sonsuz hayata sahip olan" },
     { name: "Yâ Kayyûm", target: 156, meaning: "Varlıkları ayakta tutan" },
-    { name: "Yâ Vâcid", target: 196, meaning: "İstediğini her zaman bulan" },
-    { name: "Yâ Mâcid", target: 2304, meaning: "Şanı yüce olan" },
-    { name: "Yâ Vâhid", target: 3669, meaning: "Eşi benzeri olmayan" },
+    { name: "Yâ Vâcid", target: 14, meaning: "İstediğini her zaman bulan" },
+    { name: "Yâ Mâcid", target: 48, meaning: "Şanı yüce olan" },
+    { name: "Yâ Vâhid", target: 19, meaning: "Eşi benzeri olmayan" },
     { name: "Yâ Samed", target: 134, meaning: "Muhtaç olunan" },
     { name: "Yâ Kâdir", target: 305, meaning: "Kudretli" },
-    { name: "Yâ Muktedir", target: 774, meaning: "Her şeye gücü yeten" },
-    { name: "Yâ Mukaddim", target: 184, meaning: "İstediğini yükselten" },
+    { name: "Yâ Muktedir", target: 744, meaning: "Her şeye gücü yeten" },
+    { name: "Yâ Mukaddim", target: 184, meaning: "Dilediğini öne alan, ileri geçiren" },
     { name: "Yâ Mu'ahhir", target: 847, meaning: "Dilediğini geri bırakan" },
     { name: "Yâ Evvel", target: 37, meaning: "Ezeli" },
     { name: "Yâ Âhir", target: 801, meaning: "Ebedi" },
     { name: "Yâ Zâhir", target: 1106, meaning: "Varlığı açık olan" },
     { name: "Yâ Bâtın", target: 62, meaning: "Mahiyeti gizli olan" },
-    { name: "Yâ Vâlî", target: 47, meaning: "Sahip olan" },
+    { name: "Yâ Vâlî", target: 47, meaning: "Her şeyi yöneten, işleri idare eden" },
     { name: "Yâ Müteâlî", target: 551, meaning: "Yüce" },
     { name: "Yâ Berr", target: 202, meaning: "İyiliği bol olan" },
     { name: "Yâ Tevvâb", target: 409, meaning: "Günahları affeden" },
@@ -339,16 +339,16 @@ const ESMA_LIST = [
     { name: "Yâ Afüvv", target: 156, meaning: "Affeden" },
     { name: "Yâ Raûf", target: 287, meaning: "Merhametli olan" },
     { name: "Yâ Mâlikü'l-Mülk", target: 212, meaning: "Tüm varlıkların sahibi olan" },
-    { name: "Yâ Zü'l-Celâli ve'l-İkrâm", target: 1155, meaning: "Celal ve ikram sahibi" },
+    { name: "Yâ Zü'l-Celâli ve'l-İkrâm", target: 1100, meaning: "Celal ve ikram sahibi" },
     { name: "Yâ Muksit", target: 209, meaning: "Adaletli olan" },
     { name: "Yâ Câmi'", target: 114, meaning: "Mahşer günü bir araya toplayan" },
     { name: "Yâ Ganî", target: 1060, meaning: "Kimseye muhtaç olmayan" },
-    { name: "Yâ Muğnî", target: 1100, meaning: "Müstahni" },
+    { name: "Yâ Muğnî", target: 1100, meaning: "Dilediğini zengin kılan, ihtiyaçtan kurtaran" },
     { name: "Yâ Mâni'", target: 161, meaning: "İstediği bir şeye mâni olan" },
     { name: "Yâ Dârr", target: 1001, meaning: "İstediğine zarar veren" },
     { name: "Yâ Nâfi'", target: 201, meaning: "İstediğine fayda veren" },
     { name: "Yâ Nûr", target: 256, meaning: "Alemi aydınlatan" },
-    { name: "Yâ Hâdî", target: 400, meaning: "Hidayet sahibi" },
+    { name: "Yâ Hâdî", target: 20, meaning: "Hidayet sahibi" },
     { name: "Yâ Bedî'", target: 86, meaning: "Benzersiz yaratan" },
     { name: "Yâ Bâkî", target: 113, meaning: "Ebedi" },
     { name: "Yâ Vâris", target: 707, meaning: "Tüm her şeyin tek sahibi" },
@@ -358,7 +358,7 @@ const ESMA_LIST = [
 
 /** Esma sırası ESMA_LIST ile birebir aynı olmalı (99 adet). */
 const ESMA_ARABIC = [].concat(
-    ["يَا اللَّهُ", "يَا رَحْمَنُ", "يَا رَحِيمُ", "يَا مَلِكُ", "يَا قُدُّوسُ", "يَا سَلَامُ", "يَا مُؤْمِنُ", "يَا مُهَيْمِنُ", "يَا عَزِيزُ", "يَا جَبَّارُ", "يَا مُتَكَبِّرُ", "يَا خَالِقُ", "يَا بَارِئُ", "يَا مُصَوِّرُ", "يَا غَفَّارُ", "يَا قَهَّارُ", "يَا وَهَّابُ", "يَا رَزَّاقُ", "يَا فَتَّاحُ", "يَا عَلِيمُ"],
+    ["يَا اللَّهُ", "يَا رَحْمٰنُ", "يَا رَحِيمُ", "يَا مَلِكُ", "يَا قُدُّوسُ", "يَا سَلَامُ", "يَا مُؤْمِنُ", "يَا مُهَيْمِنُ", "يَا عَزِيزُ", "يَا جَبَّارُ", "يَا مُتَكَبِّرُ", "يَا خَالِقُ", "يَا بَارِئُ", "يَا مُصَوِّرُ", "يَا غَفَّارُ", "يَا قَهَّارُ", "يَا وَهَّابُ", "يَا رَزَّاقُ", "يَا فَتَّاحُ", "يَا عَلِيمُ"],
     ["يَا قَابِضُ", "يَا بَاسِطُ", "يَا خَافِضُ", "يَا رَافِعُ", "يَا مُعِزُّ", "يَا مُذِلُّ", "يَا سَمِيعُ", "يَا بَصِيرُ", "يَا حَكَمُ", "يَا عَدْلُ", "يَا لَطِيفُ", "يَا خَبِيرُ", "يَا حَلِيمُ", "يَا عَظِيمُ", "يَا غَفُورُ", "يَا شَكُورُ", "يَا عَلِيُّ", "يَا كَبِيرُ", "يَا حَفِيظُ", "يَا مُقِيتُ"],
     ["يَا حَسِيبُ", "يَا جَلِيلُ", "يَا كَرِيمُ", "يَا رَقِيبُ", "يَا مُجِيبُ", "يَا وَاسِعُ", "يَا حَكِيمُ", "يَا وَدُودُ", "يَا مَجِيدُ", "يَا بَاعِثُ", "يَا شَهِيدُ", "يَا حَقُّ", "يَا وَكِيلُ", "يَا قَوِيُّ", "يَا مَتِينُ", "يَا وَلِيُّ", "يَا حَمِيدُ", "يَا مُحْصِي", "يَا مُبْدِئُ", "يَا مُعِيدُ"],
     ["يَا مُحْيِي", "يَا مُمِيتُ", "يَا حَيُّ", "يَا قَيُّومُ", "يَا وَاجِدُ", "يَا مَاجِدُ", "يَا وَاحِدُ", "يَا صَمَدُ", "يَا قَادِرُ", "يَا مُقْتَدِرُ", "يَا مُقَدِّمُ", "يَا مُؤَخِّرُ", "يَا أَوَّلُ", "يَا آخِرُ", "يَا ظَاهِرُ", "يَا بَاطِنُ", "يَا وَالِي", "يَا مُتَعَالِي", "يَا بَرُّ", "يَا تَوَّابُ"],
@@ -489,14 +489,71 @@ function getLocalizedClassicZikirMeaning(zid) {
     return text !== key ? text : (tForLocale('tr', key) || '');
 }
 
+/**
+ * Emekliye ayrılan esma mealleri (ESMA_LIST sırası, 0 tabanlı).
+ *
+ * Esma zikirleri varsayılan klasörde herkeste kayıtlı. Meal düzeltilince
+ * kaydedilmiş kopya "bilinen" metinlerden düşer ve uygulama onu elle
+ * düzenlenmiş sanıp dokunmaz — yani eski yanlış meal kullanıcıda kalırdı.
+ * Eski metinler burada bilinen sayılır, bir sonraki açılışta kanona çekilir.
+ * Yeni bir düzeltmede eskisini silme, listeye ekle.
+ */
+const ESMA_MEANING_PREV = {
+    31: ['Her şeyi bilen', 'The All-Aware who knows everything'],          // Habîr ← Alîm'in meali
+    70: ['İstediğini yükselten', 'The Advancer who raises whom He wills'], // Mukaddim ← Râfi'nin meali
+    76: ['Sahip olan', 'The Master, Owner of all'],                        // Vâlî ← Mâlik'in meali
+    88: ['Müstahni']                                                       // Muğnî ← Ganî'nin meali
+};
+
+/**
+ * Düzeltilen esma hedefleri (ESMA_LIST sırası, 0 tabanlı) → eski hatalı değerler.
+ *
+ * `target` senkronlanmıyor; kullanıcı hedefi elle değiştirebildiği için doğrusu
+ * da bu. Ama bu iki değer dayanaksızdı: 3669 ne Vâhid'in ebcedi (19) ne de
+ * karesi (361); 91 ise Melik'in (ملك = 90) değil Mâlik'in (مالك) ebcedi.
+ * Kayıtlı hedef tam olarak eski hatalı değerse dokunulmamış sayılır ve
+ * düzeltilir; kullanıcı başka bir sayı seçtiyse ona dokunulmaz.
+ */
+const ESMA_TARGET_PREV = {
+    3: [91],     // Melik — Mâlik'in (مالك) ebcedi yazılmıştı; ملك = 90
+    16: [196],   // Vehhâb   ← 14²
+    27: [112],   // Basîr — dayanaksız; بصير = 302
+    41: [5329],  // Celîl    ← 73²
+    44: [3025],  // Mücîb    ← 55²
+    46: [6084],  // Hakîm    ← 78²
+    47: [400],   // Vedûd    ← 20²
+    48: [3249],  // Mecîd    ← 57²
+    55: [2116],  // Veliyy   ← 46²
+    56: [3844],  // Hamîd    ← 62²
+    62: [324],   // Hayy     ← 18²
+    64: [196],   // Vâcid    ← 14²
+    65: [2304],  // Mâcid    ← 48²
+    66: [3669],  // Vâhid — dayanaksız; واحد = 19
+    69: [774],   // Muktedir — rakam devrilmesi; مقتدر = 744
+    84: [1155],  // Zü'l-Celâli ve'l-İkrâm — dayanaksız; ebced ismin kendisinden
+                 // (ذو الجلال والإكرام = 1100), gösterilen nida hâlinden (ذا) değil
+    93: [400]    // Hâdî     ← 20²
+};
+
 function getKnownEsmaMeanings(index) {
     const known = new Set();
     const tr = ESMA_LIST[index] && ESMA_LIST[index].meaning;
     const en = ESMA_MEANING_EN[index];
     if (tr && String(tr).trim()) known.add(String(tr).trim());
     if (en && String(en).trim()) known.add(String(en).trim());
+    for (const prev of ESMA_MEANING_PREV[index] || []) known.add(prev);
     return known;
 }
+
+/**
+ * Emekliye ayrılan esma ad yazımları (ESMA_LIST sırası, 0 tabanlı): Türkçe ad ve
+ * Arapça metin. Kayıtlı kopyada eski yazım "bilinen" sayılır ve kanona çekilir;
+ * Arapça metin kaydın `arabic` alanında da saklandığı için o alan da güncellenir.
+ * Yeni bir düzeltmede eskisini silme, listeye ekle.
+ */
+const ESMA_NAME_PREV = {
+    1: ['Yâ Rahman', 'يَا رَحْمَنُ'] // Rahmân — uzun â işareti (hançer elif) eksikti
+};
 
 function getKnownEsmaNames(index) {
     const known = new Set();
@@ -508,6 +565,7 @@ function getKnownEsmaNames(index) {
     if (ar && String(ar).trim()) known.add(String(ar).trim());
     if (en && String(en).trim()) known.add(String(en).trim());
     if (bn && String(bn).trim()) known.add(String(bn).trim());
+    for (const prev of ESMA_NAME_PREV[index] || []) known.add(prev);
     return known;
 }
 
@@ -621,6 +679,20 @@ function syncLocalizedDefaults({ persist = false } = {}) {
         const curN = String(z.name || '').trim();
         if (!curN || getKnownEsmaNames(idx).has(curN)) {
             setField(z, 'name', getEsmaNameForLocale(idx));
+        }
+
+        // Arapça alt satır kaydın `arabic` alanından okunur ve yalnızca boşken
+        // doldurulur; yazım düzeltmesi buraya ulaşsın diye eski yazım onarılır.
+        // Kullanıcının elle yazdığı Arapça metin (bilinmeyen) korunur.
+        const curA = String(z.arabic || '').trim();
+        if (curA && (ESMA_NAME_PREV[idx] || []).includes(curA)) {
+            setField(z, 'arabic', ESMA_ARABIC[idx]);
+        }
+
+        const eskiHedefler = ESMA_TARGET_PREV[idx];
+        const kanonHedef = ESMA_LIST[idx] && ESMA_LIST[idx].target;
+        if (eskiHedefler && kanonHedef && eskiHedefler.includes(Number(z.target))) {
+            setField(z, 'target', kanonHedef);
         }
     }
 
