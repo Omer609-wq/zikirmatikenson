@@ -9,9 +9,17 @@ const LATIN_BY_N = new Map((latinSurahNames || []).map((row) => [row.n, row]));
 const REF_SUFFIX_RE =
     /(?:\.?\s*(?:ayet|âyet|verse|verses|ayah|ayat|verset|v\.?|آية|اية))\s*$/iu;
 
+/**
+ * NFD noktasız `ı`yı çözemez; katlanmazsa aşağıdaki `[^a-z0-9\s]` onu boşluğa
+ * çevirip kelimeyi ikiye böler ("Kıyâmet" → "k yamet"). Türkçe `I` de küçükken
+ * `ı` olduğu için mobil klavyenin otomatik büyük harfi aynı tuzağa düşer.
+ */
+const DOTLESS_I_RE = /ı/g;
+
 export function normalizeTrSearchText(value) {
     return String(value || '')
         .toLocaleLowerCase('tr')
+        .replace(DOTLESS_I_RE, 'i')
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .replace(/[''`´]/g, '')
@@ -23,6 +31,7 @@ export function normalizeTrSearchText(value) {
 export function normalizeLatinSearchText(value) {
     return String(value || '')
         .toLocaleLowerCase('en')
+        .replace(DOTLESS_I_RE, 'i')
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .replace(/[''`´]/g, '')
@@ -126,6 +135,39 @@ function scoreNameMatch(queryNorm, nameNorm) {
 }
 
 /**
+ * `scoreNameMatch` bu puana kadar "adı gerçekten tuttu" sayar (tam / ön ek /
+ * içerir); üstü yazım hatası katmanıdır.
+ */
+export const SOLID_NAME_SCORE_MAX = 4;
+
+/**
+ * Ad net eşleştiyse yazım hatası adaylarını ele. Sure adları her dilde
+ * arandığı için uzak bir dilin adı ("Marie" ↔ "tarik") iki harf farkla
+ * listeye sızabiliyor; net eşleşme varken bunların işi yok.
+ * @param {Array<{ score: number }>} rows puana göre sıralı olmalı
+ */
+export function dropWeakSurahMatches(rows) {
+    if (!rows.length || rows[0].score > SOLID_NAME_SCORE_MAX) return rows;
+    return rows.filter((row) => row.score <= SOLID_NAME_SCORE_MAX);
+}
+
+function normalizeSurahName(name, locale) {
+    return /[\u0600-\u06FF]/.test(name)
+        ? normalizeArabicSearchText(name)
+        : normalizeSearchText(name, locale);
+}
+
+/** Sorgunun bu surenin adlarından aldığı en iyi puan; eşleşme yoksa null. */
+function scoreSurahNames(surah, queryNorm, locale) {
+    let best = null;
+    for (const name of getSurahSearchNames(surah, locale)) {
+        const score = scoreNameMatch(queryNorm, normalizeSurahName(name, locale));
+        if (score != null && (best == null || score < best)) best = score;
+    }
+    return best;
+}
+
+/**
  * @param {string} namePart
  * @param {Array<{ n: number, nameTr?: string, nameAr?: string, ayahCount: number }>} surahIndex
  * @param {string} [locale]
@@ -136,14 +178,7 @@ export function findSurahByFuzzyName(namePart, surahIndex, locale = 'tr') {
 
     const scored = [];
     for (const surah of surahIndex || []) {
-        let best = null;
-        for (const name of getSurahSearchNames(surah, locale)) {
-            const norm = /[\u0600-\u06FF]/.test(name)
-                ? normalizeArabicSearchText(name)
-                : normalizeSearchText(name, locale);
-            const score = scoreNameMatch(nq, norm);
-            if (score != null && (best == null || score < best)) best = score;
-        }
+        const best = scoreSurahNames(surah, nq, locale);
         if (best != null) scored.push({ surah, score: best });
     }
 
@@ -200,7 +235,9 @@ export function resolveQuranRefSuggestions(raw, surahIndex, locale = 'tr') {
         const hit = (surahIndex || []).find((s) => s.n === parsed.surahHint);
         if (hit) candidates = [{ surah: hit, score: 0 }];
     } else if (parsed.namePart) {
-        candidates = findSurahByFuzzyName(parsed.namePart, surahIndex, locale);
+        // Eleme ayet sayısı süzgecinden ÖNCE: "tarik 45"te Târık'ın 45. ayeti
+        // olmadığı için sıradaki uzak adaya (Meryem) düşmek yanlış sonuç üretiyordu.
+        candidates = dropWeakSurahMatches(findSurahByFuzzyName(parsed.namePart, surahIndex, locale));
     }
 
     const out = [];
@@ -287,21 +324,35 @@ export function parseScopedMealSearchQuery(raw, surahIndex, locale = 'tr') {
     return null;
 }
 
-export function surahMatchesRefSearch(surah, rawQuery, locale = 'tr') {
+/** Ad dışı eşleşme (sure numarası, ayet sayısı, çok parçalı sorgu) puanı. */
+const SURAH_TOKEN_MATCH_SCORE = 6;
+
+/**
+ * Sure listesi filtresi + sıralaması.
+ * @returns {number|null} alaka puanı (küçük = daha iyi); eşleşme yoksa `null`
+ */
+export function scoreSurahRefSearch(surah, rawQuery, locale = 'tr') {
     const q = (rawQuery || '').trim();
-    if (!q) return true;
+    if (!q) return 0;
+
     const hay = [
         String(surah.n),
-        ...getSurahSearchNames(surah, locale).flatMap((name) => {
-            if (/[\u0600-\u06FF]/.test(name)) return [normalizeArabicSearchText(name)];
-            return [normalizeSearchText(name, locale)];
-        }),
+        ...getSurahSearchNames(surah, locale).map((name) => normalizeSurahName(name, locale)),
         String(surah.ayahCount)
     ].join(' ');
-    const tokens = normalizeSearchText(q, locale).split(/\s+/).filter(Boolean);
-    if (!tokens.length && /[\u0600-\u06FF]/.test(q)) {
-        const arTokens = normalizeArabicSearchText(q).split(/\s+/).filter(Boolean);
-        return arTokens.every((tok) => hay.includes(tok));
-    }
-    return tokens.every((tok) => hay.includes(tok));
+    const nq = normalizeSearchText(q, locale);
+    const tokens = nq.split(/\s+/).filter(Boolean);
+
+    // Öneri satırıyla aynı puanlayıcı: aynı sorgu için liste ile öneriler
+    // ayrışmasın ("bakra" önerilerde çıkıp listede kaybolmasın).
+    const nameScore = scoreSurahNames(surah, nq, locale);
+    if (nameScore != null) return nameScore;
+
+    // Boş token listesi eskiden beri "eşleşti" sayılır: sadeleşince hiçbir şey
+    // kalmayan sorguda liste daralmadan durur.
+    return tokens.every((tok) => hay.includes(tok)) ? SURAH_TOKEN_MATCH_SCORE : null;
+}
+
+export function surahMatchesRefSearch(surah, rawQuery, locale = 'tr') {
+    return scoreSurahRefSearch(surah, rawQuery, locale) != null;
 }

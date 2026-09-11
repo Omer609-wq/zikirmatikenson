@@ -11,7 +11,9 @@ import {
     getSurahRefDisplayName,
     parseScopedMealSearchQuery,
     resolveQuranRefSuggestions,
+    dropWeakSurahMatches,
     resolveSurahNameQuery,
+    scoreSurahRefSearch,
     surahMatchesRefSearch
 } from './quran-ref-search.js';
 import {
@@ -2711,7 +2713,15 @@ export function renderQuranSurahList() {
     renderQuranSearchSuggestions(q);
 
     list.innerHTML = '';
-    const filtered = (surahIndex || []).filter((s) => surahMatchesSearch(s, q));
+    // Arama açıkken alaka sırası; boş sorguda mushaf sırası korunur.
+    const filtered = q
+        ? dropWeakSurahMatches(
+              (surahIndex || [])
+                  .map((s) => ({ s, score: scoreSurahRefSearch(s, q, getLocale()) }))
+                  .filter((row) => row.score != null)
+                  .sort((a, b) => a.score - b.score || a.s.n - b.s.n)
+          ).map((row) => row.s)
+        : (surahIndex || []).filter((s) => surahMatchesSearch(s, q));
 
     if (!filtered.length) {
         if (!suggestionHits.length) {
