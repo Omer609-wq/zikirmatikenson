@@ -25,7 +25,7 @@
     "selectNone": "No selection",
     "selectedFolders": "{count} folders selected",
     "selectedZikirs": "{count} zikir selected",
-    "seasonalZikirCount": "{count} dhikr",
+    "folderZikirCount": "{count} dhikr",
     "quoteExpandAria": "Show full verse",
     "quoteCollapseAria": "Collapse verse",
     "folderLimitWarning": "Folder limit reached. Go Premium for unlimited folders.",

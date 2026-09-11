@@ -25,7 +25,7 @@
     "selectNone": "Seçim yok",
     "selectedFolders": "{count} klasör seçili",
     "selectedZikirs": "{count} zikir seçili",
-    "seasonalZikirCount": "{count} zikir",
+    "folderZikirCount": "{count} Zikir",
     "quoteExpandAria": "Ayeti tam göster",
     "quoteCollapseAria": "Ayeti daralt",
     "folderLimitWarning": "Klasör sınırına ulaşıldı. Premium ile sınırsız klasör oluşturabilirsin.",

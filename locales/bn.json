@@ -25,7 +25,7 @@
     "selectNone": "কিছু নির্বাচিত নয়",
     "selectedFolders": "{count}টি ফোল্ডার নির্বাচিত",
     "selectedZikirs": "{count}টি জিকির নির্বাচিত",
-    "seasonalZikirCount": "{count} জিকির",
+    "folderZikirCount": "{count} জিকির",
     "quoteExpandAria": "আয়াত সম্পূর্ণ দেখান",
     "quoteCollapseAria": "আয়াত সংকুচিত করুন",
     "folderLimitWarning": "ফোল্ডার সীমায় পৌঁছেছে। প্রিমিয়ামে সীমাহীন ফোল্ডার।",

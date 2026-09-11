@@ -25,7 +25,7 @@
     "selectNone": "Tidak ada pilihan",
     "selectedFolders": "{count} folder dipilih",
     "selectedZikirs": "{count} zikir dipilih",
-    "seasonalZikirCount": "{count} zikir",
+    "folderZikirCount": "{count} zikir",
     "quoteExpandAria": "Tampilkan ayat lengkap",
     "quoteCollapseAria": "Ciutkan ayat",
     "folderLimitWarning": "Batas folder tercapai. Premium untuk folder tanpa batas.",

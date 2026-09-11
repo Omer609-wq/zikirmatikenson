@@ -25,7 +25,7 @@
     "selectNone": "لا يوجد تحديد",
     "selectedFolders": "{count} مجلدات محددة",
     "selectedZikirs": "{count} أذكار محددة",
-    "seasonalZikirCount": "{count} ذكر",
+    "folderZikirCount": "{count} ذكر",
     "quoteExpandAria": "عرض الآية كاملة",
     "quoteCollapseAria": "طي الآية",
     "folderLimitWarning": "تم الوصول إلى حد المجلدات. بريميوم للمجلدات غير المحدودة.",

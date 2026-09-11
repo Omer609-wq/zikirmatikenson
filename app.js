@@ -5952,9 +5952,7 @@ function renderFolders() {
         const seasonalIcon = seasonalMeta
             ? `<span class="folder-card__seasonal-icon material-icons-outlined" aria-hidden="true">auto_awesome</span>`
             : '';
-        const countLine = seasonalMeta
-            ? (seasonalMeta.subtitle || t('home.seasonalZikirCount', { count }))
-            : `${count} Zikir`;
+        const countLine = (seasonalMeta && seasonalMeta.subtitle) || t('home.folderZikirCount', { count });
         card.innerHTML = `
             <button type="button" class="row-drag-handle icon-btn" aria-label="${escapeAttr(t('zikir.dragAria'))}">
                 ${GRIP_3LINES_HTML}
