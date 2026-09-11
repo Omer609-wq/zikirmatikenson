@@ -16,6 +16,7 @@ import {
     MONTH_CHART_PAGE_COUNT,
     YEAR_CHART_PAGE_COUNT
 } from './lib/chart-pages.js';
+import { chartAxisLabels, chartScaleMax, formatChartAxisValue } from './lib/chart-scale.js';
 import {
     markExactAlarmPrompted,
     readExactAlarmPromptState,
@@ -7495,17 +7496,6 @@ function buildChartBuckets(tab, zid) {
     };
 }
 
-/** Sol eksen üst sınırı: veriye göre yukarı yuvarla (6849 → 6900). */
-function ceilToChartTop(n) {
-    const v = Number(n) || 0;
-    if (v <= 0) return 100;
-    return Math.ceil(v / 100) * 100;
-}
-
-function chartScaleMax(values) {
-    return ceilToChartTop(Math.max(...values, 0));
-}
-
 function computeBarHeightPx(val, scaleMax) {
     if (!val || val <= 0) return 4;
     const max = scaleMax > 0 ? scaleMax : 100;
@@ -7514,28 +7504,22 @@ function computeBarHeightPx(val, scaleMax) {
     return Math.max(floorPx, Math.round(floorPx + t * (CHART_INNER_HEIGHT_PX - floorPx)));
 }
 
-function chartYAxisLabels(values, scaleMax) {
-    const top = scaleMax > 0 ? scaleMax : chartScaleMax(values);
-    if (top <= 0) return { top: 100, mid: 50, bottom: 0 };
-    const mid = Math.max(50, Math.round(top / 2 / 100) * 100);
-    return { top, mid, bottom: 0 };
-}
-
 /**
- * @param {number} [scaleMaxOverride] Sayfalı grafikte AYIN TAMAMINA göre ölçek.
+ * @param {number} [scaleMaxOverride] Sayfalı grafikte DÖNEMİN TAMAMINA (ay / yıl) göre ölçek.
  * Her sayfa kendi maksimumuna göre ölçeklenseydi, 20 çekilen bir gün ikinci
  * sayfada 200 çekilen bir gün kadar yüksek görünür ve grafik yalan söylerdi.
  */
 function renderBarChart(chartEl, yAxisEl, buckets, density, scaleMaxOverride) {
     const values = buckets.map((b) => b.val);
     const scaleMax = scaleMaxOverride > 0 ? scaleMaxOverride : chartScaleMax(values);
-    const axis = chartYAxisLabels(values, scaleMax);
+    const axis = chartAxisLabels(scaleMax);
 
     if (yAxisEl) {
+        const locale = getLocaleTag();
         yAxisEl.innerHTML = `
-            <span>${axis.top}</span>
-            <span>${axis.mid}</span>
-            <span>${axis.bottom}</span>
+            <span>${formatChartAxisValue(axis.top, locale)}</span>
+            <span>${formatChartAxisValue(axis.mid, locale)}</span>
+            <span>${formatChartAxisValue(axis.bottom, locale)}</span>
         `;
     }
     if (!chartEl) return;
