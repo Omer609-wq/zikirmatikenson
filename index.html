@@ -54,7 +54,15 @@
         <div id="homeView" class="view active">
             <header class="glass-header">
                 <div class="header-left">
-                    <h1 data-i18n="nav.foldersCommunity">Klasörlerim / Topluluk</h1>
+                    <h1 id="homeTitle" data-i18n="nav.foldersCommunity">Klasörlerim / Topluluk</h1>
+                    <!-- Dini günlerde başlığın yerine geçer (yalnızca Türkçe); basınca yılın listesi -->
+                    <button type="button" class="home-special-day" id="homeSpecialDayBtn" aria-haspopup="dialog" hidden>
+                        <span class="home-special-day__hijri" id="homeSpecialDayHijri"></span>
+                        <span class="home-special-day__name">
+                            <span class="home-special-day__name-text" id="homeSpecialDayName"></span>
+                            <span class="home-special-day__icon material-icons-outlined" aria-hidden="true">auto_awesome</span>
+                        </span>
+                    </button>
                 </div>
                 <div class="header-spacer" aria-hidden="true"></div>
             </header>
@@ -1711,6 +1719,21 @@
                     </div>
                     <div class="chart-pager" id="zikirStatsChartPager" hidden></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dini günler listesi (yalnızca Türkçe; ana ekran başlığındaki dini güne basınca) -->
+    <div class="modal-overlay" id="specialDaysOverlay">
+        <div class="modal glass-modal special-days-modal">
+            <div class="modal-header">
+                <h2>Dini Günler</h2>
+                <button type="button" class="icon-btn closeModalBtn" data-modal="specialDaysOverlay" aria-label="Kapat"><span class="material-icons-outlined">close</span></button>
+            </div>
+            <div class="stats-tabs stats-tabs--period special-days-years" id="specialDaysYears" role="tablist" aria-label="Yıl"></div>
+            <div class="modal-body">
+                <ol class="special-days-list" id="specialDaysList"></ol>
+                <p class="special-days-source">Kaynak: Diyanet İşleri Başkanlığı</p>
             </div>
         </div>
     </div>

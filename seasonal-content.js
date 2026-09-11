@@ -61,6 +61,8 @@ const PREVIEW_PAYLOAD = {
 };
 
 let cachedConfig = null;
+/** Son okunan ham dosya (uzak, yerel ya da önbellek); "specialDays" buradan okunur. */
+let lastPayload = null;
 const folderMetaById = new Map();
 
 export function isSeasonalFolderId(id) {
@@ -226,6 +228,16 @@ export function getActiveSeasonalEvents() {
     return cachedConfig?.events || [];
 }
 
+/**
+ * Uzaktan eklenen dini günler (lib/special-days.js mergeSpecialDays). İlk
+ * açılışta indirme bitmeden de önbellekteki son dosyadan okunur.
+ */
+export function getSeasonalSpecialDays() {
+    if (SEASONAL_CONTENT_DISABLED) return [];
+    const payload = lastPayload || readRemoteCache();
+    return Array.isArray(payload?.specialDays) ? payload.specialDays : [];
+}
+
 export function getSeasonalFolderMeta(folderId) {
     return folderMetaById.get(folderId) || null;
 }
@@ -250,6 +262,7 @@ export async function refreshSeasonalContent(locale = 'tr') {
     await loadRuntimeFlags();
 
     if (getRuntimeFlags().seasonalContentPreview) {
+        lastPayload = PREVIEW_PAYLOAD;
         const events = normalizeEvents(PREVIEW_PAYLOAD, locale);
         setCachedEvents(events);
         purgeSeasonalCountsExcept(events.map((e) => e.id));
@@ -269,7 +282,10 @@ export async function refreshSeasonalContent(locale = 'tr') {
             const res = await fetch(url, { cache: 'no-store' });
             if (!res.ok) continue;
             const raw = await res.json();
-            if (raw && typeof raw === 'object') writeRemoteCache(raw);
+            if (raw && typeof raw === 'object') {
+                writeRemoteCache(raw);
+                lastPayload = raw;
+            }
             const events = normalizeEvents(raw, locale);
             setCachedEvents(events);
             purgeSeasonalCountsExcept(events.map((e) => e.id));
@@ -281,6 +297,7 @@ export async function refreshSeasonalContent(locale = 'tr') {
 
     const saved = readRemoteCache();
     if (saved) {
+        lastPayload = saved;
         const events = normalizeEvents(saved, locale);
         setCachedEvents(events);
         purgeSeasonalCountsExcept(events.map((e) => e.id));

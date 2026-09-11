@@ -32,11 +32,25 @@ import {
 import {
     applySeasonalContentToAppState,
     getSeasonalFolderMeta,
+    getSeasonalSpecialDays,
     isSeasonalFolderId,
     isSeasonalZikirId,
     persistSeasonalCountsFromZikirs,
     refreshSeasonalContent
 } from './seasonal-content.js';
+import specialDaysData from './data/special-days.json';
+import {
+    activeSpecialDay,
+    defaultSpecialDaysYear,
+    formatHijriTr,
+    mergeSpecialDays,
+    specialDayName,
+    specialDayPartLabel,
+    specialDayStatus,
+    specialDayStatusLabel,
+    specialDayYears,
+    specialDaysForYear
+} from './lib/special-days.js';
 import { escapeHtml, escapeAttr } from './lib/html.js';
 import { isBaseLibraryItemPremiumLocked } from './lib/library-access.js';
 import { getFoldersForLibraryItem, formatFolderNames } from './lib/library-folders.js';
@@ -5148,6 +5162,7 @@ function closeAllOverlays() {
 
 const SCROLLABLE_OVERLAY_IDS = new Set([
     'trashOverlay',
+    'specialDaysOverlay',
     'smartReminderEditOverlay',
     'reviseQuranDisplayOverlay',
     'hatimJuzOverlay'
@@ -5923,7 +5938,114 @@ function attachLongPressSelect(el, id, { onEnter }) {
     );
 }
 
+// ===================== DİNİ GÜNLER (yalnızca Türkçe) =====================
+// Operatörlerin bayramda adlarını değiştirmesi gibi: dini günlerde ana ekran
+// başlığı o günün adına döner (üstte küçük hicri tarih). Ayrıntı: lib/special-days.js
+
+/** Listede gösterilen yıl; null = açılışta sıradaki dini günün yılı. */
+let specialDaysListYear = null;
+
+function specialDaysEnabled() {
+    return normalizeAppLocale(appSettings.locale) === 'tr';
+}
+
+function getSpecialDays() {
+    return mergeSpecialDays(specialDaysData.days, getSeasonalSpecialDays());
+}
+
+function renderHomeSpecialDay() {
+    const title = document.getElementById('homeTitle');
+    const btn = document.getElementById('homeSpecialDayBtn');
+    if (!title || !btn) return;
+    const entry = specialDaysEnabled() ? activeSpecialDay(getSpecialDays()) : null;
+    title.hidden = !!entry;
+    btn.hidden = !entry;
+    if (!entry) return;
+    const name = specialDayName(entry);
+    const hijri = formatHijriTr(entry.hijri);
+    document.getElementById('homeSpecialDayName').textContent = name;
+    document.getElementById('homeSpecialDayHijri').textContent = hijri;
+    btn.setAttribute('aria-label', `${name}, ${hijri}. Dini günler listesini aç`);
+}
+
+function openSpecialDaysList() {
+    specialDaysListYear = null;
+    openOverlay('specialDaysOverlay', { onOpen: () => renderSpecialDaysList({ scrollToCurrent: true }) });
+}
+
+function renderSpecialDaysList({ scrollToCurrent = false } = {}) {
+    const yearsEl = document.getElementById('specialDaysYears');
+    const listEl = document.getElementById('specialDaysList');
+    if (!yearsEl || !listEl) return;
+    const now = new Date();
+    const all = getSpecialDays();
+    const years = specialDayYears(all);
+    if (specialDaysListYear == null || !years.includes(specialDaysListYear)) {
+        specialDaysListYear = defaultSpecialDaysYear(all, now);
+    }
+
+    yearsEl.replaceChildren(
+        ...years.map((year) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'tab-btn';
+            b.dataset.year = String(year);
+            b.setAttribute('role', 'tab');
+            const on = year === specialDaysListYear;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-selected', on ? 'true' : 'false');
+            b.textContent = String(year);
+            return b;
+        })
+    );
+    yearsEl.hidden = years.length < 2;
+
+    let nextMarked = false;
+    let focusRow = null;
+    listEl.replaceChildren(
+        ...specialDaysForYear(all, specialDaysListYear).map((entry) => {
+            const status = specialDayStatus(entry, now);
+            const li = document.createElement('li');
+            li.className = 'special-days-row';
+            if (status.state === 'past') li.classList.add('special-days-row--past');
+            if (status.state === 'active') {
+                li.classList.add('special-days-row--active');
+                focusRow = focusRow || li;
+            } else if (status.state === 'upcoming' && !nextMarked) {
+                li.classList.add('special-days-row--next');
+                focusRow = focusRow || li;
+            }
+            if (status.state !== 'past') nextMarked = true;
+
+            const [y, m, d] = entry.date.split('-').map(Number);
+            const gregorian = new Date(y, m - 1, d).toLocaleDateString('tr-TR', {
+                day: 'numeric',
+                month: 'long',
+                weekday: 'long'
+            });
+            const part = specialDayPartLabel(entry);
+            li.innerHTML =
+                `<span class="special-days-row__main">` +
+                `<span class="special-days-row__name">${escapeHtml(specialDayName(entry))}` +
+                `${part ? ` <span class="special-days-row__part">${escapeHtml(part)}</span>` : ''}</span>` +
+                // Sığmazsa ayırıcıda kırılsın, hicri tarihin ortasında değil.
+                `<span class="special-days-row__date"><span>${escapeHtml(gregorian)} ·</span> <span>${escapeHtml(formatHijriTr(entry.hijri))}</span></span>` +
+                `</span>` +
+                `<span class="special-days-row__status">${escapeHtml(specialDayStatusLabel(status))}</span>`;
+            return li;
+        })
+    );
+
+    const body = listEl.closest('.modal-body');
+    if (body) {
+        body.scrollTop = 0;
+        // Geçmiş günler üstte kalır; açılışta bugüne / sıradakine kaydır.
+        if (scrollToCurrent && focusRow) body.scrollTop = Math.max(0, focusRow.offsetTop - body.offsetTop - 8);
+    }
+}
+
 function renderFolders() {
+    renderHomeSpecialDay();
     if (!folderSelectMode) folderSelectBarVisible = false;
     folderGrid.innerHTML = '';
     if (folderSelectMode) {
@@ -8006,6 +8128,22 @@ function setupEventListeners() {
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.premium-lock-star')) closeAllPremiumLockHints();
             if (!e.target.closest('.library-card__added')) closeAllLibraryAddedHints();
+        });
+    }
+
+    const homeSpecialDayBtn = document.getElementById('homeSpecialDayBtn');
+    if (homeSpecialDayBtn && homeSpecialDayBtn.dataset.bound !== '1') {
+        homeSpecialDayBtn.dataset.bound = '1';
+        homeSpecialDayBtn.addEventListener('click', () => openSpecialDaysList());
+    }
+    const specialDaysYears = document.getElementById('specialDaysYears');
+    if (specialDaysYears && specialDaysYears.dataset.bound !== '1') {
+        specialDaysYears.dataset.bound = '1';
+        specialDaysYears.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-year]');
+            if (!btn) return;
+            specialDaysListYear = Number(btn.dataset.year);
+            renderSpecialDaysList();
         });
     }
 

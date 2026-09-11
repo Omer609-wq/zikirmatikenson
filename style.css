@@ -307,6 +307,143 @@ body {
     font-weight: 700;
     text-shadow: var(--header-home-shadow, 0 1px 2px rgba(2, 6, 23, 0.55));
 }
+#homeView .header-left {
+    min-width: 0;
+}
+#homeView .header-left h1[hidden] {
+    display: none;
+}
+
+/* Dini günde başlığın yerine (yalnızca Türkçe): üstte küçük hicri tarih, altta
+   günün adı. Mevsimlik klasördeki yıldız ikonuyla aynı dil; basınca yılın listesi. */
+.home-special-day {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.05rem;
+    max-width: 100%;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+.home-special-day[hidden] {
+    display: none;
+}
+.home-special-day__hijri {
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+    color: color-mix(in srgb, var(--primary-green) 70%, var(--text-gray));
+}
+.home-special-day__name {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    max-width: 100%;
+    min-width: 0;
+    font-size: clamp(1rem, 4vw, 1.1875rem);
+    font-weight: 700;
+    line-height: var(--leading-tight);
+    letter-spacing: -0.01em;
+    color: var(--header-home-title, #f8fafc);
+    text-shadow: var(--header-home-shadow, 0 1px 2px rgba(2, 6, 23, 0.55));
+}
+.home-special-day__name-text {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.home-special-day__icon {
+    flex-shrink: 0;
+    font-size: 1.05rem;
+    color: var(--primary-green);
+    filter: drop-shadow(0 0 5px var(--primary-green-glow));
+    text-shadow: none;
+}
+
+/* Dini günler listesi: yıl sekmeleri sabit, liste kendi içinde kayar. */
+.special-days-modal .special-days-years {
+    margin: 0.9rem 1.25rem 0;
+}
+.special-days-years[hidden] {
+    display: none;
+}
+.special-days-modal .modal-body {
+    max-height: min(62vh, 520px);
+    overflow-y: auto;
+    position: relative;
+}
+.special-days-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+.special-days-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.55rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 12px;
+    border: 1px solid var(--surface-border);
+    background: var(--alpha-04);
+}
+.special-days-row__main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+.special-days-row__name {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--text-white);
+}
+.special-days-row__date {
+    font-size: 0.74rem;
+    color: var(--text-gray);
+}
+.special-days-row__date > span,
+.special-days-row__part {
+    white-space: nowrap;
+}
+.special-days-row__status {
+    flex-shrink: 0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-gray);
+    white-space: nowrap;
+}
+.special-days-row--past {
+    opacity: 0.5;
+}
+.special-days-row--next,
+.special-days-row--active {
+    border-color: color-mix(in srgb, var(--primary-green) 45%, transparent);
+}
+.special-days-row--active {
+    background: color-mix(in srgb, var(--primary-green) 14%, transparent);
+}
+.special-days-row--next .special-days-row__status,
+.special-days-row--active .special-days-row__status {
+    color: var(--primary-green);
+}
+.special-days-source {
+    margin: 0.9rem 0 0;
+    font-size: 0.7rem;
+    color: var(--text-gray);
+    text-align: center;
+}
 
 .icon-btn {
     background: transparent;
