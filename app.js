@@ -275,12 +275,12 @@ const ESMA_LIST = [
     { name: "Yâ Rezzâk", target: 308, meaning: "Rızık veren" },
     { name: "Yâ Fettâh", target: 489, meaning: "Dardan kurtaran" },
     { name: "Yâ Alîm", target: 150, meaning: "Her şeyi bilen, ilmi her şeyi kuşatan" },
-    { name: "Yâ Kâbıd", target: 903, meaning: "Dilediğine darlık verme gücü olan" },
-    { name: "Yâ Bâsıt", target: 72, meaning: "İstediğine bolluk veren" },
-    { name: "Yâ Hâfıd", target: 1481, meaning: "Kafirleri alçaltan" },
-    { name: "Yâ Râfi'", target: 351, meaning: "İnananları yükselten" },
-    { name: "Yâ Mu'izz", target: 117, meaning: "Aziz kılan, dilediğini yücelten" },
-    { name: "Yâ Müzill", target: 770, meaning: "Dilediğini değersiz kılan" },
+    { name: "Yâ Kâbıd", target: 903, meaning: "Dilediğine darlık veren, daraltan" },
+    { name: "Yâ Bâsıt", target: 72, meaning: "Dilediğine bolluk veren, genişleten" },
+    { name: "Yâ Hâfıd", target: 1481, meaning: "Dilediğini alçaltan" },
+    { name: "Yâ Râfi'", target: 351, meaning: "Dilediğini yükselten" },
+    { name: "Yâ Mu'izz", target: 117, meaning: "Dilediğini aziz kılan" },
+    { name: "Yâ Müzill", target: 770, meaning: "Dilediğini zelil kılan" },
     { name: "Yâ Semî'", target: 180, meaning: "Her şeyi duyan" },
     { name: "Yâ Basîr", target: 302, meaning: "Her şeyi gören" },
     { name: "Yâ Hakem", target: 68, meaning: "Mutlak hakimiyete sahip olan" },
@@ -335,7 +335,7 @@ const ESMA_LIST = [
     { name: "Yâ Müteâlî", target: 551, meaning: "Yüce" },
     { name: "Yâ Berr", target: 202, meaning: "İyiliği bol olan" },
     { name: "Yâ Tevvâb", target: 409, meaning: "Günahları affeden" },
-    { name: "Yâ Müntekim", target: 630, meaning: "İntikam alan" },
+    { name: "Yâ Müntekim", target: 630, meaning: "Suçluları adaletle cezalandıran" },
     { name: "Yâ Afüvv", target: 156, meaning: "Affeden" },
     { name: "Yâ Raûf", target: 287, meaning: "Merhametli olan" },
     { name: "Yâ Mâlikü'l-Mülk", target: 212, meaning: "Tüm varlıkların sahibi olan" },
@@ -345,8 +345,8 @@ const ESMA_LIST = [
     { name: "Yâ Ganiyy", target: 1060, meaning: "Kimseye muhtaç olmayan" },
     { name: "Yâ Muğnî", target: 1100, meaning: "Dilediğini zengin kılan, ihtiyaçtan kurtaran" },
     { name: "Yâ Mâni'", target: 161, meaning: "İstediği bir şeye mâni olan" },
-    { name: "Yâ Dârr", target: 1001, meaning: "İstediğine zarar veren" },
-    { name: "Yâ Nâfi'", target: 201, meaning: "İstediğine fayda veren" },
+    { name: "Yâ Dârr", target: 1001, meaning: "Zarar verecek şeyleri de yaratan" },
+    { name: "Yâ Nâfi'", target: 201, meaning: "Fayda verecek şeyleri yaratan" },
     { name: "Yâ Nûr", target: 256, meaning: "Alemi aydınlatan" },
     { name: "Yâ Hâdî", target: 20, meaning: "Hidayet sahibi" },
     { name: "Yâ Bedî'", target: 86, meaning: "Benzersiz yaratan" },
@@ -500,12 +500,22 @@ function getLocalizedClassicZikirMeaning(zid) {
  */
 const ESMA_MEANING_PREV = {
     19: ['Her şeyi bilen ve gören', 'The All-Knowing who sees all things'], // Alîm — "görmek" Basîr'in anlamı
+    // Çift isimler simetrik ve Arapçaya sadık yazıldı; açıklama fazilette (2:245, 56:3, 3:26, 10:107, 32:22)
+    20: ['Dilediğine darlık verme gücü olan'],                              // Kâbıd — "gücü olan" eylemi değil yeteneği anlatıyordu
+    21: ['İstediğine bolluk veren'],                                        // Bâsıt — Kâbıd ile simetri
+    22: ['Kafirleri alçaltan', 'The One who abases the rebellious'],        // Hâfıd — isimde nesne yok, daraltıyordu
+    23: ['İnananları yükselten', 'The One who raises the believers'],       // Râfi' — Hâfıd ile simetri
+    24: ['Aziz kılan, dilediğini yücelten'],                                // Mu'izz — Müzill ile simetri (3:26)
+    25: ['Dilediğini değersiz kılan'],                                      // Müzill — zillet alçalmadır, değersizlik değil
     31: ['Her şeyi bilen', 'The All-Aware who knows everything'],          // Habîr ← Alîm'in meali
     44: ['Dualarını kabul eden'],                                           // Mücîb — iyelik eki sarkıyordu
     46: ['Hikmetli'],                                                      // Hakîm — tek kelime, sıfat gibiydi
     70: ['İstediğini yükselten', 'The Advancer who raises whom He wills'], // Mukaddim ← Râfi'nin meali
     76: ['Sahip olan', 'The Master, Owner of all'],                        // Vâlî ← Mâlik'in meali
-    88: ['Müstahni']                                                       // Muğnî ← Ganî'nin meali
+    80: ['İntikam alan', 'The Avenger'],                                   // Müntekim — "intikam" öç çağrıştırıyordu
+    88: ['Müstahni'],                                                      // Muğnî ← Ganî'nin meali
+    90: ['İstediğine zarar veren', 'The One who brings harm to whom He wills'],       // Dârr — keyfî zarar çağrışımı
+    91: ['İstediğine fayda veren', 'The Benefiter who brings good to whom He wills'] // Nâfi' — Dârr ile simetri
 };
 
 /**

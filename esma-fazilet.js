@@ -25,7 +25,7 @@ export const ESMA_DEFAULT_FAZILET = [
     "Dilediğine darlık verebilen güç olduğunu hatırlatır; israf ve taşkınlıktan sakınmayı güçlendirir.",
     "Genişlik ve bolluk veren olduğunu hatırlatır; cömertlik ve infâkı canlı tutar.",
     "Alçaltan ve yükseltenin Allah olduğunu hatırlatır; tevazu ve adaleti pekiştirir.",
-    "İmanlıları yükselten dilediğini yücelten olduğunu hatırlatır.",
+    'İmanlıları yükselten, dilediğini yücelten olduğunu hatırlatır.',
     "İzzet ve şeref veren olduğunu düşünmek kalbi O’na yönlendirir.",
     "Dilediğini alçaltan olduğunu hatırlatır; kibre ve zulme karşı Allah’a sığınmayı artırır.",
     "Duaları işiten olduğunu hatırlatır; içten niyaz ve yalvarmayı canlı tutar.",
