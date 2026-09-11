@@ -139,6 +139,7 @@ import { maybeRequestAppReview, recordCompletedRound } from './lib/app-review.js
 import {
     downloadBackupPayload,
     getCloudBackupAvailability,
+    hasRestorableCloudBackup,
     resolveCloudBackupSignInErrorKey,
     maybeUploadCloudBackup,
     normalizeCloudBackupMeta,
@@ -3896,6 +3897,54 @@ async function handleCloudBackupConnect() {
     try {
         const account = await signInWithGoogleForBackup();
         const now = Date.now();
+
+        /*
+         * Bu hesapta zaten yedek varsa sormadan yükleme YAPMA: yeni telefonda boş
+         * veriyle bağlanan kullanıcının gerçek yedeği ezilirdi. İki yönde de veri
+         * silen seçim açık uyarıyla onay istiyor ve çıkmaz sokak yok:
+         *   1) Buluttakini geri yükle  → bu cihazdaki veri değişir
+         *   2) Cihazdakini kullan      → ikinci onay: buluttaki yedek silinir
+         *   Vazgeç                     → hiçbir şey değişmez, bağlanılmaz
+         */
+        const remote = await downloadBackupPayload(account.uid);
+        if (hasRestorableCloudBackup(remote)) {
+            setCloudBackupBusy(false);
+            const date = formatCloudBackupTimestamp(remote.updatedAtMs) || t('cloudBackup.dateUnknown');
+            const restore = await showAppConfirm(t('cloudBackup.existingBackupRestore', { date }), {
+                title: t('cloudBackup.existingBackupTitle'),
+                confirmLabel: t('cloudBackup.restoreBtn'),
+                cancelLabel: t('cloudBackup.existingBackupUseDevice')
+            });
+
+            if (restore) {
+                patchCloudBackupMeta({
+                    uid: account.uid,
+                    email: account.email,
+                    linkedAt: now,
+                    lastBackupAt: remote.updatedAtMs || 0
+                });
+                setCloudBackupBusy(true, t('cloudBackup.restoring'));
+                applySanitizedBackupToApp(sanitizeLoadedData(remote.payload));
+                await showAppAlert(t('cloudBackup.restoreSuccess'));
+                await renderBackupView();
+                return;
+            }
+
+            const overwrite = await showAppConfirm(t('cloudBackup.existingBackupOverwrite'), {
+                title: t('cloudBackup.existingBackupOverwriteTitle'),
+                confirmLabel: t('cloudBackup.existingBackupOverwriteBtn')
+            });
+            if (!overwrite) {
+                // Oturumu da kapat: bağlı görünüp yedek almayan yarım durum kalmasın.
+                await signOutCloudBackup();
+                clearCloudBackupMeta();
+                await showAppAlert(t('cloudBackup.existingBackupKept'));
+                await renderBackupView();
+                return;
+            }
+            // Kullanıcı açıkça onayladı: aşağıdaki normal ilk yüklemeye devam.
+        }
+
         patchCloudBackupMeta({
             uid: account.uid,
             email: account.email,

@@ -667,7 +667,15 @@
     "errorBackup": "Échec de la sauvegarde. Vérifiez votre connexion internet.",
     "errorRestore": "Impossible de restaurer la sauvegarde.",
     "errorNotFound": "Aucune sauvegarde cloud trouvée. Sauvegardez d'abord depuis cet appareil.",
-    "autoBackupNote": "Sauvegarde automatique une fois par semaine lorsque l'application est ouverte."
+    "autoBackupNote": "Sauvegarde automatique une fois par semaine lorsque l'application est ouverte.",
+    "existingBackupTitle": "Sauvegarde cloud trouvée",
+    "existingBackupRestore": "Ce compte Google possède déjà une sauvegarde cloud (dernière mise à jour : {date}).\n\nSi vous la restaurez, les dhikr, réglages et historique de cet appareil seront remplacés par ceux de la sauvegarde.",
+    "existingBackupUseDevice": "Garder cet appareil",
+    "existingBackupOverwriteTitle": "Supprimer la sauvegarde cloud ?",
+    "existingBackupOverwrite": "Les données de cet appareil seront envoyées et remplaceront la sauvegarde cloud. L’ancienne sauvegarde sera définitivement supprimée, sans retour possible.",
+    "existingBackupOverwriteBtn": "Remplacer",
+    "existingBackupKept": "Rien n’a changé : les données de cet appareil et la sauvegarde cloud sont intactes.",
+    "dateUnknown": "inconnue"
   },
   "defaults": {
     "folderDefault": "Dhikr par défaut",

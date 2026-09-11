@@ -667,7 +667,15 @@
     "errorBackup": "Backup failed. Check your internet connection.",
     "errorRestore": "Could not restore backup.",
     "errorNotFound": "No cloud backup found. Back up from this device first.",
-    "autoBackupNote": "Automatic backup runs once a week while the app is open."
+    "autoBackupNote": "Automatic backup runs once a week while the app is open.",
+    "existingBackupTitle": "Cloud backup found",
+    "existingBackupRestore": "This Google account already has a cloud backup (last updated: {date}).\n\nIf you restore it, the dhikr, settings and history on this device will be replaced with the backup.",
+    "existingBackupUseDevice": "Keep this device",
+    "existingBackupOverwriteTitle": "Delete the cloud backup?",
+    "existingBackupOverwrite": "The data on this device will be uploaded and will replace the cloud backup. The old backup will be permanently deleted and cannot be recovered.",
+    "existingBackupOverwriteBtn": "Overwrite",
+    "existingBackupKept": "Nothing changed: the data on this device and the cloud backup are both untouched.",
+    "dateUnknown": "unknown"
   },
   "defaults": {
     "folderDefault": "Default dhikr",

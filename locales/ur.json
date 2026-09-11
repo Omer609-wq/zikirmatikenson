@@ -667,7 +667,15 @@
     "errorBackup": "بیک اپ ناکام۔ انٹرنیٹ چیک کریں۔",
     "errorRestore": "بیک اپ بحال نہیں ہو سکا۔",
     "errorNotFound": "کلاؤڈ بیک اپ نہیں ملا۔ پہلے اس آلہ سے بیک اپ لیں۔",
-    "autoBackupNote": "ایپ کھلی ہو تو ہفتے میں ایک بار خودکار بیک اپ۔"
+    "autoBackupNote": "ایپ کھلی ہو تو ہفتے میں ایک بار خودکار بیک اپ۔",
+    "existingBackupTitle": "کلاؤڈ بیک اپ ملا",
+    "existingBackupRestore": "اس Google اکاؤنٹ میں پہلے سے ایک کلاؤڈ بیک اپ موجود ہے (آخری اپ ڈیٹ: {date})۔\n\nاگر آپ اسے بحال کریں تو اس آلہ پر موجود ذکر، ترتیبات اور تاریخچہ بیک اپ سے بدل جائیں گے۔",
+    "existingBackupUseDevice": "اس آلہ کا ڈیٹا رکھیں",
+    "existingBackupOverwriteTitle": "کلاؤڈ بیک اپ حذف کریں؟",
+    "existingBackupOverwrite": "اس آلہ کا ڈیٹا اپ لوڈ ہو کر کلاؤڈ بیک اپ کی جگہ لے لے گا۔ پرانا بیک اپ مستقل طور پر حذف ہو جائے گا اور واپس نہیں آ سکے گا۔",
+    "existingBackupOverwriteBtn": "بدل دیں",
+    "existingBackupKept": "کچھ نہیں بدلا: اس آلہ کا ڈیٹا اور کلاؤڈ بیک اپ دونوں جوں کے توں ہیں۔",
+    "dateUnknown": "نامعلوم"
   },
   "defaults": {
     "folderDefault": "ڈیفالٹ ذکر",

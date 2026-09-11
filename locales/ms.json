@@ -667,7 +667,15 @@
     "errorBackup": "Sandaran gagal. Semak sambungan internet.",
     "errorRestore": "Tidak dapat memulihkan sandaran.",
     "errorNotFound": "Tiada sandaran awan dijumpai. Sandar dari peranti ini dahulu.",
-    "autoBackupNote": "Sandaran automatik seminggu sekali semasa aplikasi dibuka."
+    "autoBackupNote": "Sandaran automatik seminggu sekali semasa aplikasi dibuka.",
+    "existingBackupTitle": "Sandaran awan ditemui",
+    "existingBackupRestore": "Akaun Google ini sudah mempunyai sandaran awan (kemas kini terakhir: {date}).\n\nJika dipulihkan, zikir, tetapan dan sejarah pada peranti ini akan digantikan dengan kandungan sandaran.",
+    "existingBackupUseDevice": "Kekalkan peranti ini",
+    "existingBackupOverwriteTitle": "Padam sandaran awan?",
+    "existingBackupOverwrite": "Data pada peranti ini akan dimuat naik dan menggantikan sandaran awan. Sandaran lama akan dipadam secara kekal dan tidak boleh dipulihkan.",
+    "existingBackupOverwriteBtn": "Tulis ganti",
+    "existingBackupKept": "Tiada apa-apa berubah: data pada peranti ini dan sandaran awan kekal seperti asal.",
+    "dateUnknown": "tidak diketahui"
   },
   "defaults": {
     "folderDefault": "Zikir lalai",

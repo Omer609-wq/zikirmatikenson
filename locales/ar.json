@@ -668,7 +668,15 @@
     "errorBackup": "فشل النسخ. تحقق من اتصال الإنترنت.",
     "errorRestore": "تعذّرت استعادة النسخة.",
     "errorNotFound": "لا توجد نسخة سحابية. انسخ من هذا الجهاز أولاً.",
-    "autoBackupNote": "نسخ تلقائي مرة أسبوعياً عند فتح التطبيق."
+    "autoBackupNote": "نسخ تلقائي مرة أسبوعياً عند فتح التطبيق.",
+    "existingBackupTitle": "تم العثور على نسخة سحابية",
+    "existingBackupRestore": "يوجد بالفعل نسخة سحابية لحساب Google هذا (آخر تحديث: {date}).\n\nإذا استعدتها، فسيُستبدل الذكر والإعدادات والسجل على هذا الجهاز بما في النسخة السحابية.",
+    "existingBackupUseDevice": "الإبقاء على هذا الجهاز",
+    "existingBackupOverwriteTitle": "حذف النسخة السحابية؟",
+    "existingBackupOverwrite": "ستُرفع بيانات هذا الجهاز لتحل محل النسخة السحابية. ستُحذف النسخة القديمة نهائيًا ولا يمكن استرجاعها.",
+    "existingBackupOverwriteBtn": "استبدال",
+    "existingBackupKept": "لم يتغير شيء: بيانات هذا الجهاز والنسخة السحابية كلاهما كما هما.",
+    "dateUnknown": "غير معروف"
   },
   "defaults": {
     "folderDefault": "أذكار افتراضية",

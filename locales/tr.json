@@ -667,7 +667,15 @@
     "errorBackup": "Yedek alınamadı. İnternet bağlantını kontrol et.",
     "errorRestore": "Yedek geri yüklenemedi.",
     "errorNotFound": "Bulutta yedek bulunamadı. Önce bu cihazda yedek al.",
-    "autoBackupNote": "Haftada bir otomatik yedek alınır (uygulama açıkken)."
+    "autoBackupNote": "Haftada bir otomatik yedek alınır (uygulama açıkken).",
+    "existingBackupTitle": "Bulutta yedek bulundu",
+    "existingBackupRestore": "Bu Google hesabında zaten bir bulut yedeği var (son güncelleme: {date}).\n\nGeri yüklersen bu cihazdaki zikirler, ayarlar ve geçmiş buluttakiyle değiştirilir.",
+    "existingBackupUseDevice": "Cihazdakini kullan",
+    "existingBackupOverwriteTitle": "Buluttaki yedek silinsin mi?",
+    "existingBackupOverwrite": "Bu cihazdaki veriler buluta yüklenip buluttaki yedeğin yerine geçecek. Eski yedek kalıcı olarak silinir, geri alınamaz.",
+    "existingBackupOverwriteBtn": "Üzerine yaz",
+    "existingBackupKept": "Hiçbir şey değişmedi: bu cihazdaki veriler de buluttaki yedek de olduğu gibi duruyor.",
+    "dateUnknown": "bilinmiyor"
   },
   "defaults": {
     "folderDefault": "Varsayılan Zikirler",

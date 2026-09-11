@@ -667,7 +667,15 @@
     "errorBackup": "Cadangan gagal. Periksa koneksi internet.",
     "errorRestore": "Tidak dapat memulihkan cadangan.",
     "errorNotFound": "Cadangan cloud tidak ditemukan. Cadangkan dari perangkat ini terlebih dahulu.",
-    "autoBackupNote": "Cadangan otomatis seminggu sekali saat aplikasi terbuka."
+    "autoBackupNote": "Cadangan otomatis seminggu sekali saat aplikasi terbuka.",
+    "existingBackupTitle": "Cadangan cloud ditemukan",
+    "existingBackupRestore": "Akun Google ini sudah punya cadangan cloud (terakhir diperbarui: {date}).\n\nJika dipulihkan, zikir, pengaturan, dan riwayat di perangkat ini akan diganti dengan isi cadangan.",
+    "existingBackupUseDevice": "Pakai perangkat ini",
+    "existingBackupOverwriteTitle": "Hapus cadangan cloud?",
+    "existingBackupOverwrite": "Data di perangkat ini akan diunggah dan menggantikan cadangan cloud. Cadangan lama akan dihapus permanen dan tidak bisa dikembalikan.",
+    "existingBackupOverwriteBtn": "Timpa",
+    "existingBackupKept": "Tidak ada yang berubah: data di perangkat ini dan cadangan cloud tetap seperti semula.",
+    "dateUnknown": "tidak diketahui"
   },
   "defaults": {
     "folderDefault": "Zikir default",
