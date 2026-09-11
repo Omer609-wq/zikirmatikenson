@@ -8,6 +8,7 @@ import {
     syncNativeDailyReminder,
     syncNativeSmartReminders
 } from './native-reminders.js';
+import { IN_APP_OVERLAY_IDS } from './lib/overlay-registry.js';
 import {
     clampPageIndex,
     findPageIndex,
@@ -5114,20 +5115,10 @@ function isOverlayActive(el) {
 
 function closeAllOverlays() {
     closeLocaleWelcomeIfOpen();
-    [
-        document.getElementById('appDialogOverlay'),
-        copyModalOverlay,
-        editModalOverlay,
-        addModalOverlay,
-        trashOverlay,
-        document.getElementById('premiumUpsellOverlay'),
-        libraryFolderSelectOverlay,
-        libraryDetailOverlay,
-        zikirStatsOverlay,
-        document.getElementById('smartReminderEditOverlay')
-    ].forEach((el) => {
-        if (el) el.classList.remove('active');
-    });
+    // Liste lib/overlay-registry.js'te: burası ile Geri tuşu aynı kaynaktan okur.
+    for (const id of IN_APP_OVERLAY_IDS) {
+        document.getElementById(id)?.classList.remove('active');
+    }
 }
 
 const SCROLLABLE_OVERLAY_IDS = new Set([
@@ -5142,9 +5133,9 @@ function openOverlay(overlayId, { onOpen } = {}) {
     if (!el) return;
     ensureInitialHistoryState();
     try {
-        const cur = history && history.state ? history.state : null;
+        const cur = window.history && window.history.state ? window.history.state : null;
         const next = getOverlayState(overlayId);
-        if (!isOverlayState(cur) || cur.overlayId !== next.overlayId) history.pushState(next, '');
+        if (!isOverlayState(cur) || cur.overlayId !== next.overlayId) window.history.pushState(next, '');
     } catch (_) {
         // ignore
     }
@@ -5160,9 +5151,9 @@ function closeOverlayPreferHistory(overlayId) {
     if (!el) return false;
     if (!isOverlayActive(el)) return false;
     try {
-        const st = history && history.state ? history.state : null;
+        const st = window.history && window.history.state ? window.history.state : null;
         if (isOverlayState(st) && st.overlayId === overlayId) {
-            history.back();
+            window.history.back();
             return true;
         }
     } catch (_) {
@@ -5174,13 +5165,13 @@ function closeOverlayPreferHistory(overlayId) {
 
 function ensureInitialHistoryState() {
     try {
-        const st = history && history.state ? history.state : null;
+        const st = window.history && window.history.state ? window.history.state : null;
         // If we already have an in-app state (view or overlay), don't clobber it.
         if (st && typeof st === 'object') {
             if (typeof st.viewId === 'string') return;
             if (typeof st.overlayId === 'string') return;
         }
-        history.replaceState(getViewState('homeView', null), '');
+        window.history.replaceState(getViewState('homeView', null), '');
     } catch (_) {
         // ignore: some WebViews may block history state
     }
@@ -5207,16 +5198,7 @@ function syncInAppStackToHistoryState(st) {
     else inAppViewStack = [st];
 }
 
-const IN_APP_BACK_OVERLAY_IDS = [
-    'appDialogOverlay',
-    'copyModalOverlay',
-    'editModalOverlay',
-    'addModalOverlay',
-    'trashOverlay',
-    'libraryFolderSelectOverlay',
-    'libraryDetailOverlay',
-    'zikirStatsOverlay'
-];
+const IN_APP_BACK_OVERLAY_IDS = IN_APP_OVERLAY_IDS;
 
 function canNavigateBackInApp() {
     const ayahExpand = document.getElementById('quranAyahExpandOverlay');
@@ -5232,14 +5214,11 @@ function canNavigateBackInApp() {
         if (isOverlayActive(document.getElementById(oid))) return true;
     }
 
-    if (inAppViewStack.length >= 2) return true;
-
-    try {
-        if (history.length > 1) return true;
-    } catch (_) {
-        /* ignore */
-    }
-    return false;
+    // Yalnızca uygulamanın kendi yığınına bak. window.history.length uygulama
+    // öncesi sayfaları ve ileri kayıtları da sayar: ana ekrana bir kez dönmek
+    // bile onu 2 yapar ve Android'de Geri uygulamayı kapatmaz, hiçbir şey
+    // yapmaz hale gelirdi. (Bu dal History gölgelenmişken hep false'tu.)
+    return inAppViewStack.length >= 2;
 }
 
 function goBackInApp({ fallbackViewId = 'homeView' } = {}) {
@@ -5271,7 +5250,7 @@ function goBackInApp({ fallbackViewId = 'homeView' } = {}) {
 
     if (inAppViewStack.length >= 2) {
         try {
-            history.back();
+            window.history.back();
             return;
         } catch (_) {
             inAppViewStack.pop();
@@ -5281,15 +5260,8 @@ function goBackInApp({ fallbackViewId = 'homeView' } = {}) {
         }
     }
 
-    try {
-        if (history.length > 1 && history.state && typeof history.state.viewId === 'string') {
-            history.back();
-            return;
-        }
-    } catch (_) {
-        /* ignore */
-    }
-
+    // Yığında geri gidilecek ekran yok. Burada window.history.back() ÇAĞIRMA:
+    // tarayıcıda uygulamadan önceki sayfaya çıkar, WebView'da hiçbir şey yapmaz.
     const fallback = fallbackViewId || 'homeView';
     setInAppStackTo(getViewState(fallback, null));
     showView(fallback, null, { push: false });
@@ -5319,9 +5291,9 @@ function showView(viewId, param = null, options = {}) {
     // Push new state BEFORE UI switch so Android back always has an entry.
     if (push) {
         try {
-            const cur = history && history.state ? history.state : null;
+            const cur = window.history && window.history.state ? window.history.state : null;
             // Avoid pushing duplicates (e.g., tapping the same bottom tab).
-            if (!viewStateEquals(cur, nextState)) history.pushState(nextState, '');
+            if (!viewStateEquals(cur, nextState)) window.history.pushState(nextState, '');
         } catch (_) {
             // ignore
         }
