@@ -20,6 +20,7 @@ import {
     resolveLocaleFromTag
 } from './lib/app-locale.js';
 import { LIBRARY_OVERRIDE_LAYERS } from './lib/library-overrides.js';
+import { pluralVariantKey } from './lib/i18n-plural.js';
 
 export { DEFAULT_APP_LOCALE, normalizeAppLocale, resolveLocaleFromSystem, resolveLocaleFromTag };
 
@@ -192,9 +193,14 @@ export function getLocaleDir() {
 /**
  * @param {string} key — örn. "nav.folders"
  * @param {Record<string, string|number>} [vars]
+ *   `count` sayıysa (ya da biçimli metinse yanında `pluralCount` sayısı
+ *   verildiyse) dilin o sayıya özel biçimi ("key_few" gibi) varsa o seçilir.
+ *   Ayrıntı: lib/i18n-plural.js
  */
 export function t(key, vars) {
-    let str = nestedGet(uiStrings, key);
+    const variantKey = pluralVariantKey(key, getLocaleTag(), vars);
+    let str = variantKey ? nestedGet(uiStrings, variantKey) : undefined;
+    if (str == null) str = nestedGet(uiStrings, key);
     if (str == null) str = nestedGet(fallbackUi, key);
     if (str == null) return key;
     if (!vars) return String(str);

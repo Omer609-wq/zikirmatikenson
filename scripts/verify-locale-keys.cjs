@@ -18,6 +18,13 @@ const ALLOWED_EXTRA_KEYS = {
 
 const SUPPORTED_UI_LOCALES = ['tr', 'ar', 'id', 'ms', 'en', 'fr', 'bn', 'ur'];
 
+/**
+ * Sayıya göre biçim: temel anahtar + CLDR kategorisi ("home.folderZikirCount_few",
+ * bkz. lib/i18n-plural.js). Bir dil yalnızca kendi dilbilgisinin gerektirdiği
+ * biçimleri yazar; bu yüzden en.json ile karşılaştırmaya girmez, ayrıca doğrulanır.
+ */
+const PLURAL_KEY_RE = /^(.+)_(zero|one|two|few|many)$/;
+
 function flattenKeys(obj, prefix = '') {
     const out = [];
     if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return out;
@@ -30,6 +37,46 @@ function flattenKeys(obj, prefix = '') {
         }
     }
     return out;
+}
+
+function getPath(obj, key) {
+    return key.split('.').reduce((o, k) => (o && o[k] != null ? o[k] : undefined), obj);
+}
+
+function placeholders(str) {
+    return new Set([...String(str ?? '').matchAll(/\{(\w+)\}/g)].map((m) => m[1]));
+}
+
+/**
+ * Çoğul biçim anahtarlarını ayırır ve doğrular: temel anahtar var mı, kategori
+ * bu dilde geçerli mi ("fewer" gibi yazım hatası sessizce hiç seçilmezdi),
+ * yer tutucular temel metinle uyumlu mu ({count} dışında hiçbiri düşmemeli).
+ */
+function checkPluralKeys(code, loc) {
+    const categories = new Set(new Intl.PluralRules(code).resolvedOptions().pluralCategories);
+    const errors = [];
+    const variants = [];
+    for (const key of loc.keys) {
+        const m = PLURAL_KEY_RE.exec(key);
+        if (!m) continue;
+        const [, base, category] = m;
+        variants.push(key);
+        if (!loc.keys.has(base)) {
+            errors.push(`${key}: temel anahtar yok (${base})`);
+            continue;
+        }
+        if (!categories.has(category)) {
+            errors.push(`${key}: "${category}" bu dilde çoğul kategorisi değil (${[...categories].join(', ')})`);
+        }
+        const vars = placeholders(getPath(loc.data, key));
+        const baseVars = placeholders(getPath(loc.data, base));
+        const unknown = [...vars].filter((v) => !baseVars.has(v));
+        const lost = [...baseVars].filter((v) => v !== 'count' && !vars.has(v));
+        if (unknown.length) errors.push(`${key}: temel metinde olmayan yer tutucu: ${unknown.join(', ')}`);
+        if (lost.length) errors.push(`${key}: temel metindeki yer tutucu düşmüş: ${lost.join(', ')}`);
+    }
+    variants.forEach((k) => loc.keys.delete(k));
+    return { errors, count: variants.length };
 }
 
 function loadLocale(code) {
@@ -51,14 +98,25 @@ function main() {
         console.error('FAIL:', ref.error);
         process.exit(1);
     }
+    const refPlural = checkPluralKeys('en', ref);
 
     const tr = loadLocale('tr');
     if (!tr.ok) {
         console.error('FAIL:', tr.error);
         process.exit(1);
     }
+    // Hataları aşağıdaki dil döngüsü raporlar; burada yalnızca karşılaştırmadan ayrılır.
+    checkPluralKeys('tr', tr);
 
     let failed = false;
+
+    const reportPluralErrors = (code, plural) => {
+        if (!plural.errors.length) return;
+        console.error(`FAIL locales/${code}.json: çoğul biçim hataları:`);
+        plural.errors.forEach((e) => console.error(`  - ${e}`));
+        failed = true;
+    };
+    reportPluralErrors('en', refPlural);
 
     const enOnly = [...ref.keys].filter((k) => !tr.keys.has(k)).sort();
     const trOnly = [...tr.keys].filter((k) => !ref.keys.has(k)).sort();
@@ -81,6 +139,8 @@ function main() {
             failed = true;
             continue;
         }
+        const plural = checkPluralKeys(code, loc);
+        reportPluralErrors(code, plural);
 
         const missing = [...ref.keys].filter((k) => !loc.keys.has(k)).sort();
         const allowedExtra = ALLOWED_EXTRA_KEYS[code] || new Set();
@@ -98,9 +158,10 @@ function main() {
         }
 
         const allowedOnly = [...loc.keys].filter((k) => allowedExtra.has(k)).sort();
-        if (!missing.length && !extra.length) {
+        if (!missing.length && !extra.length && !plural.errors.length) {
             const note =
-                allowedOnly.length > 0 ? ` (+${allowedOnly.length} locale-özel)` : '';
+                (allowedOnly.length > 0 ? ` (+${allowedOnly.length} locale-özel)` : '') +
+                (plural.count > 0 ? ` (+${plural.count} çoğul biçim)` : '');
             console.log(`OK locales/${code}.json: ${loc.keys.size} anahtar${note}`);
         }
     }

@@ -7669,8 +7669,10 @@ function renderTodayCard() {
 
     const valueEl = document.getElementById('statsTodayValue');
     if (valueEl) {
+        const todayTotal = dayHistoryTotal(today);
         valueEl.textContent = t('stats.dayTotal', {
-            count: dayHistoryTotal(today).toLocaleString(locale)
+            count: todayTotal.toLocaleString(locale),
+            pluralCount: todayTotal
         });
     }
 
@@ -7776,7 +7778,8 @@ function renderStats() {
                 year: 'numeric'
             });
             statBestDayCount.textContent = t('stats.dayTotal', {
-                count: bestDayTotal.toLocaleString(getLocaleTag())
+                count: bestDayTotal.toLocaleString(getLocaleTag()),
+                pluralCount: bestDayTotal
             });
         } else {
             statBestDayDate.textContent = '-';
@@ -7821,10 +7824,16 @@ function renderAllTimeStats() {
                 : '';
     }
     if (allTimeDaysEl) {
-        allTimeDaysEl.textContent = t('stats.allTimeDays', { count: days.toLocaleString(locale) });
+        allTimeDaysEl.textContent = t('stats.allTimeDays', {
+            count: days.toLocaleString(locale),
+            pluralCount: days
+        });
     }
     if (allTimeAvgEl) {
-        allTimeAvgEl.textContent = t('stats.allTimeAvg', { count: avg.toLocaleString(locale) });
+        allTimeAvgEl.textContent = t('stats.allTimeAvg', {
+            count: avg.toLocaleString(locale),
+            pluralCount: avg
+        });
     }
 
     const slices = buildLifetimeSlices(ctx.byZikir);
@@ -7848,7 +7857,10 @@ function renderAllTimeStats() {
             svg.setAttribute('viewBox', '0 0 100 100');
             svg.setAttribute('class', 'all-time-donut__svg');
             svg.setAttribute('role', 'img');
-            svg.setAttribute('aria-label', t('stats.allTimeDonutAria', { count: total.toLocaleString(locale) }));
+            svg.setAttribute(
+                'aria-label',
+                t('stats.allTimeDonutAria', { count: total.toLocaleString(locale), pluralCount: total })
+            );
 
             const cx = 50;
             const cy = 50;
