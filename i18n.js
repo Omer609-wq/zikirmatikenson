@@ -118,6 +118,9 @@ let libraryPremiumTr = null;
 let libraryPremiumId = null;
 let premiumLibraryLoadPromise = null;
 
+/** inferLibraryIdForZikir ad dizini; kütüphane veya uzak düzeltme değişince sıfırlanır. */
+let libraryNameIndex = null;
+
 function mergePremiumLibraryIntoMaps() {
     if (!libraryPremiumTr) return;
     for (const item of libraryPremiumTr) {
@@ -126,6 +129,7 @@ function mergePremiumLibraryIntoMaps() {
     for (const item of libraryPremiumId || []) {
         libraryPremiumEnById.set(item.id, item);
     }
+    libraryNameIndex = null;
 }
 
 /** Premium kütüphane JSON (~65KB); ilk ihtiyaçta veya arka planda yüklenir. */
@@ -219,6 +223,7 @@ let libraryOverridesById = null;
 /** @param {ReturnType<import('./lib/library-overrides.js').normalizeLibraryOverrides>} normalized */
 export function setLibraryOverrides(normalized) {
     libraryOverridesById = normalized && normalized.items ? normalized.items : null;
+    libraryNameIndex = null;
 }
 
 function getLibraryOverrideEntry(id) {
@@ -438,18 +443,56 @@ export function getKnownLibraryFaziletTexts(id) {
     return known;
 }
 
-/** Eski kayıtlar: kütüphaneden eklenmiş ama libraryId yoksa isim/Arapça ile eşleştir. */
-export function inferLibraryIdForZikir(z) {
+function libraryNameKey(text) {
+    return String(text || '').trim().toLocaleLowerCase('tr-TR');
+}
+
+/**
+ * Ad → madde id dizini (açılışta her kayıt için kütüphaneyi baştan taramamak için).
+ * `tr`: TR kanon ad; `known`: tüm dillerin adları, Arapça metin ve düzeltmelerin eski adları.
+ * @returns {{ tr: Map<string, string[]>, known: Map<string, string[]> }}
+ */
+function getLibraryNameIndex() {
+    if (libraryNameIndex) return libraryNameIndex;
+    const tr = new Map();
+    const known = new Map();
+    const add = (map, key, id) => {
+        if (!key) return;
+        const ids = map.get(key);
+        if (!ids) map.set(key, [id]);
+        else if (!ids.includes(id)) ids.push(id);
+    };
+    for (const item of libraryTrById.values()) {
+        add(tr, libraryNameKey(item.name), item.id);
+        for (const text of getKnownLibraryNameTexts(item.id)) add(known, libraryNameKey(text), item.id);
+    }
+    libraryNameIndex = { tr, known };
+    return libraryNameIndex;
+}
+
+/**
+ * Eski kayıtlar: kütüphaneden eklenmiş ama libraryId yoksa isim/Arapça ile eşleştir.
+ * Önce TR kanon ad denenir; `matchKnownNames` açıksa diğer dillerin adları ve uzak
+ * düzeltmelerin eski adları da (başka dilde eklenmiş veya adı sonradan düzeltilmiş kayıt).
+ */
+export function inferLibraryIdForZikir(z, { matchKnownNames = false } = {}) {
     if (!z || z.libraryId) return z?.libraryId || null;
-    const nameKey = String(z.name || '').trim().toLocaleLowerCase('tr-TR');
+    const nameKey = libraryNameKey(z.name);
     if (!nameKey) return null;
     const ar = String(z.arabic || '').trim();
-    for (const item of libraryTrById.values()) {
-        if (String(item.name || '').trim().toLocaleLowerCase('tr-TR') !== nameKey) continue;
-        if (ar && item.arabic && String(item.arabic).trim() !== ar) continue;
-        return item.id;
-    }
-    return null;
+    const pick = (ids) => {
+        for (const id of ids || []) {
+            const item = libraryTrById.get(id);
+            if (!item) continue;
+            const itemAr = String(item.arabic || '').trim();
+            // Aynı adlı maddeleri Arapça ayırır; eski Arapça yazım da o maddeye aittir.
+            if (ar && itemAr && itemAr !== ar && !getKnownLibraryNameTexts(id).has(ar)) continue;
+            return id;
+        }
+        return null;
+    };
+    const index = getLibraryNameIndex();
+    return pick(index.tr.get(nameKey)) || (matchKnownNames ? pick(index.known.get(nameKey)) : null);
 }
 
 export function applyLocaleToDocument(locale) {

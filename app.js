@@ -73,6 +73,7 @@ import {
 } from './lib/usage-areas.js';
 import { syncNativeWeeklyReport } from './lib/weekly-report-notify.js';
 import { getRuntimeFlags, loadRuntimeFlags } from './lib/runtime-flags.js';
+import { migrateKnownTextPrefix } from './lib/text-sync.js';
 import { hideNativeSplashWhenReady } from './lib/native-splash.js';
 import { buildWeeklyReportPreviewPatch } from './lib/weekly-report-preview.js';
 import {
@@ -627,6 +628,16 @@ function parseEsmaZikirIndex(z) {
     return m ? parseInt(m[1], 10) : -1;
 }
 
+/**
+ * Eski kayda kütüphane maddesi bul. Varsayılan ve esma zikirleri yalnızca TR kanon adla
+ * eşleşir (önceki davranış): adları kütüphane maddeleriyle aynı olduğu için diğer dillerin
+ * adlarıyla eşleşselerdi kütüphane senkronu onları sessizce kütüphane metnine çevirirdi.
+ */
+function inferLibraryIdForSavedZikir(z) {
+    const builtIn = CLASSIC_ZIKIR_IDS.includes(z.id) || parseEsmaZikirIndex(z) >= 0;
+    return inferLibraryIdForZikir(z, { matchKnownNames: !builtIn });
+}
+
 function resolveLibraryBackedMeaning(z) {
     if (!z || !z.libraryId) return null;
     const cur = String(z.meaning || '').trim();
@@ -667,6 +678,11 @@ function getZikirDisplayMeaning(z) {
  * Fazilet bunun dışında — düzenleme penceresi "boş bırakırsan uygulama önerisini
  * kullanır" dediği için orada boş hâlâ "varsayılana dön" anlamına gelir.
  *
+ * Anlam ve fazilette bilinen metnin sonuna eklenmiş kullanıcı notu korunur: eski metin
+ * güncellenir, not kalır (lib/text-sync.js). Adlarda yalnızca birebir eşleşme: adı
+ * uzatmak ("Estağfirullah" → "Estağfirullah el-azîm") başka bir zikir yazmaktır; önek
+ * güncellemesi dil değişince yarısı Arapça, yarısı Latin bir ad üretir.
+ *
  * @param {{ persist?: boolean }} [opts] persist: yalnızca gerçekten değişiklik olduysa yazar.
  */
 function syncLocalizedDefaults({ persist = false } = {}) {
@@ -692,9 +708,9 @@ function syncLocalizedDefaults({ persist = false } = {}) {
         const z = zikirs.find((x) => x.id === zid);
         if (!z) continue;
         const curM = String(z.meaning || '').trim();
-        if (curM && getKnownClassicZikirMeanings(zid).has(curM)) {
-            setField(z, 'meaning', getLocalizedClassicZikirMeaning(zid));
-        }
+        const nextM = migrateKnownTextPrefix(curM, getKnownClassicZikirMeanings(zid), getLocalizedClassicZikirMeaning(zid));
+        if (nextM != null) setField(z, 'meaning', nextM);
+
         const curN = String(z.name || '').trim();
         if (!curN || getKnownClassicZikirNames(zid).has(curN)) {
             setField(z, 'name', getLocalizedClassicZikirName(zid));
@@ -705,9 +721,9 @@ function syncLocalizedDefaults({ persist = false } = {}) {
         const idx = parseEsmaZikirIndex(z);
         if (idx < 0) continue;
         const curM = String(z.meaning || '').trim();
-        if (curM && getKnownEsmaMeanings(idx).has(curM)) {
-            setField(z, 'meaning', getEsmaMeaningForLocale(idx));
-        }
+        const nextM = migrateKnownTextPrefix(curM, getKnownEsmaMeanings(idx), getEsmaMeaningForLocale(idx));
+        if (nextM != null) setField(z, 'meaning', nextM);
+
         const curN = String(z.name || '').trim();
         if (!curN || getKnownEsmaNames(idx).has(curN)) {
             setField(z, 'name', getEsmaNameForLocale(idx));
@@ -731,9 +747,8 @@ function syncLocalizedDefaults({ persist = false } = {}) {
     for (const z of zikirs) {
         if (!z.libraryId) continue;
         const curM = String(z.meaning || '').trim();
-        if (curM && getKnownLibraryMeaningTexts(z.libraryId).has(curM)) {
-            setField(z, 'meaning', getLibraryMeaningForLocale(z.libraryId, appSettings.locale));
-        }
+        const nextM = migrateKnownTextPrefix(curM, getKnownLibraryMeaningTexts(z.libraryId), getLibraryMeaningForLocale(z.libraryId, appSettings.locale));
+        if (nextM != null) setField(z, 'meaning', nextM);
 
         const curN = String(z.name || '').trim();
         const knownN = getKnownLibraryNameTexts(z.libraryId);
@@ -756,7 +771,14 @@ function syncLocalizedDefaults({ persist = false } = {}) {
         const nextF = localeIsTr ? getLibraryFaziletForLocale(z.libraryId) : '';
         const curF = z.fazilet != null ? String(z.fazilet).trim() : '';
         if (localeIsTr) {
-            if (nextF && (!curF || knownF.has(curF))) setField(z, 'fazilet', nextF);
+            if (nextF) {
+                if (!curF) {
+                    setField(z, 'fazilet', nextF);
+                } else {
+                    const nextFaz = migrateKnownTextPrefix(curF, knownF, nextF);
+                    if (nextFaz != null) setField(z, 'fazilet', nextFaz);
+                }
+            }
         } else if (curF && knownF.has(curF)) {
             delete z.fazilet;
             changed = true;
@@ -2497,7 +2519,7 @@ function loadData() {
         folders = sanitized.folders.length ? sanitized.folders : [...getDefaultFolders()];
         zikirs = sanitized.zikirs.length ? sanitized.zikirs : [...DEFAULT_ZIKIRS];
         zikirs.forEach((z) => {
-            const inferred = inferLibraryIdForZikir(z);
+            const inferred = inferLibraryIdForSavedZikir(z);
             if (inferred) z.libraryId = inferred;
         });
         history = sanitized.history || {};
@@ -3974,7 +3996,7 @@ function applySanitizedBackupToApp(sanitized) {
     folders = sanitized.folders.length ? sanitized.folders : [...getDefaultFolders()];
     zikirs = sanitized.zikirs.length ? sanitized.zikirs : [...DEFAULT_ZIKIRS];
     zikirs.forEach((z) => {
-        const inferred = inferLibraryIdForZikir(z);
+        const inferred = inferLibraryIdForSavedZikir(z);
         if (inferred) z.libraryId = inferred;
     });
     history = sanitized.history || {};

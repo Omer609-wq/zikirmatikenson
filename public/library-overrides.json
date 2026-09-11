@@ -173,6 +173,50 @@
                 "name": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ عَدَدَ خَلْقِهِ وَرِضَا نَفْسِهِ وَزِنَةَ عَرْشِهِ وَمِدَادَ كَلِمَاتِهِ"
             }
         },
+        "lib_21": {
+            "prev": {
+                "name": [
+                    "Lâ ilâhe illallâhü'l-melikü'l-hakkü'l-mübîn",
+                    "La ilaha illallahu'l-Malikul-Haqqul-Mubin",
+                    "La İlahe İllallahu'l-Melikü'l-Hakkü'l-Mübin",
+                    "La İlahe İllalahul Melükul Hakkul Mübin",
+                    "La ilahe illallahul Melikul Hakkul Mubin",
+                    "لَا إِلَٰهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ",
+                    "লা ইলাহা ইল্লাল্লাহুল মালিকুল হাক্কুল মুবীন",
+                    "لا إلہ إلا اللہ الملک الحق المبین"
+                ],
+                "meaning": [
+                    "Allah'tan başka ilah yoktur; O, mülkün gerçek sahibi (Melik), hak ve adaletle hükmeden (Hakk), birliği ve hakkı apaçık olan (Mübîn) Allah'tır.",
+                    "Allah'tan başka ilah yoktur, O, mülkün gerçek sahibi (Melik), hak ve adaletle hükmeden (Hakk), birliği ve hakkı apaçık olan (Mübîn) Allah'tır.",
+                    "There is no god but Allah, the King, the Truth, the Clear."
+                ],
+                "fazilet": [
+                    "Hz. Ali (r.a.)'dan rivayet edilen bir hadiste günde yüz defa okuyanın fakirlikten emin olacağı, kabirde yoldaş bulacağı ve tevhid sevabına vesile olacağı bildirilir; bazı kaynaklarda Cuma günü iki yüz defa okunması da zikredilir. Bu rivayetin senedi zayıf görüldüğünden tam itikadi sonuçlar için âlim görüşüne başvurulmalıdır; tevhid ve Allah'ı anma niyetiyle okunması caiz görülür.",
+                    "Hz. Ali (r.a.) tarikiyle rivayet edilen hadiste: günde yüz defa okuyanın fakirlikten emin olacağı, kabirde yoldaş bulacağı, zenginlik ve cennet kapısına vesile olacağı bildirilir."
+                ]
+            },
+            "tr": {
+                "name": "Lâ ilâhe illallâhü'l-melikü'l-hakkü'l-mübîn",
+                "meaning": "Allah'tan başka ilah yoktur; O, mülkün gerçek sahibi (Melik), hak ve adaletle hükmeden (Hakk), birliği ve hakkı apaçık olan (Mübîn) Allah'tır.",
+                "context": "Hz. Ali (r.a.) tarikiyle rivayet edilen hadiste: günde yüz defa okuyanın fakirlikten emin olacağı, kabirde yoldaş bulacağı, zenginlik ve cennet kapısına vesile olacağı bildirilir. Bu rivayetin senedi zayıf bulunmuştur; zikrin kendisi okunabilir.",
+                "source": "Hz. Ali (r.a.) rivayeti (Kenzü'l-Ummâl; senedi tenkit edilmiş)",
+                "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ",
+                "target": 100
+            },
+            "en": {
+                "name": "La ilaha illallahu'l-Malikul-Haqqul-Mubin",
+                "meaning": "There is no god but Allah, the King, the Truth, the Clear."
+            },
+            "bn": {
+                "name": "লা ইলাহা ইল্লাল্লাহুল মালিকুল হাক্কুল মুবীন"
+            },
+            "ur": {
+                "name": "لا إلہ إلا اللہ الملک الحق المبین"
+            },
+            "ar": {
+                "name": "لَا إِلَٰهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ"
+            }
+        },
         "lib_19": {
             "prev": {
                 "name": [
