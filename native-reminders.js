@@ -1,5 +1,6 @@
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
+import { createAsyncSerial } from './lib/async-serial.js';
 import { getReminderQuoteNotificationPayload } from './lib/reminder-quote.js';
 import { SystemChrome } from './system-chrome.js';
 
@@ -15,6 +16,15 @@ const REMINDER_CANCEL_COUNT = 40;
 const REMINDER_NOTIFICATION_EXTRA = { openApp: true, view: 'homeView' };
 
 let reminderNotificationLaunchBound = false;
+
+/*
+ * Senkronlar "iptal → izin bekle → kur" adımlarından oluşuyor; üst üste gelen iki
+ * çağrı araya girerse eski "aç", yeni "kapat"tan sonra bitip alarm kurabiliyor.
+ * Çağrı noktası çok: her görünür oluş, pageshow, ayar değişikliği, exact-alarm
+ * izninden dönüş. Sıraya dizince son niyet her zaman kazanır (bkz. lib/async-serial.js).
+ */
+const enqueueDailyReminderSync = createAsyncSerial();
+const enqueueSmartReminderSync = createAsyncSerial();
 
 /** Android bildirim ikonları — res/drawable altında */
 const ANDROID_NOTIFICATION_ICONS = {
@@ -225,7 +235,11 @@ export async function openExactAlarmSettings() {
     }
 }
 
-export async function syncNativeDailyReminder(enabled, timeStr, locale = 'tr') {
+export function syncNativeDailyReminder(enabled, timeStr, locale = 'tr') {
+    return enqueueDailyReminderSync(() => syncNativeDailyReminderNow(enabled, timeStr, locale));
+}
+
+async function syncNativeDailyReminderNow(enabled, timeStr, locale) {
     if (!isCapacitorNative()) return { ok: true, exact: 'unsupported' };
 
     await cancelReminderSlots();
@@ -334,7 +348,13 @@ async function ensureReminderChannels() {
  * @param {{ at: Date, body: string, vibrate?: boolean, extra?: object }[]} slots
  * @returns {Promise<{ ok: boolean, reason?: string }>}
  */
-export async function syncNativeSmartReminders(slots) {
+export function syncNativeSmartReminders(slots) {
+    // Kuyrukta beklerken çağıranın diziyi değiştirmesi sonucu etkilemesin.
+    const snapshot = Array.isArray(slots) ? slots.slice() : [];
+    return enqueueSmartReminderSync(() => syncNativeSmartRemindersNow(snapshot));
+}
+
+async function syncNativeSmartRemindersNow(slots) {
     if (!isCapacitorNative()) return { ok: true };
 
     await cancelSmartReminderSlots();
