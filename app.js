@@ -274,7 +274,7 @@ const ESMA_LIST = [
     { name: "Yâ Vehhâb", target: 14, meaning: "Karşılıksız veren" },
     { name: "Yâ Rezzâk", target: 308, meaning: "Rızık veren" },
     { name: "Yâ Fettâh", target: 489, meaning: "Dardan kurtaran" },
-    { name: "Yâ Alîm", target: 150, meaning: "Her şeyi bilen ve gören" },
+    { name: "Yâ Alîm", target: 150, meaning: "Her şeyi bilen, ilmi her şeyi kuşatan" },
     { name: "Yâ Kâbıd", target: 903, meaning: "Dilediğine darlık verme gücü olan" },
     { name: "Yâ Bâsıt", target: 72, meaning: "İstediğine bolluk veren" },
     { name: "Yâ Hâfıd", target: 1481, meaning: "Kafirleri alçaltan" },
@@ -299,9 +299,9 @@ const ESMA_LIST = [
     { name: "Yâ Celîl", target: 73, meaning: "Yüksek sıfatları olan" },
     { name: "Yâ Kerîm", target: 270, meaning: "İkram eden" },
     { name: "Yâ Rakîb", target: 312, meaning: "Gören ve gözeten" },
-    { name: "Yâ Mücîb", target: 55, meaning: "Dualarını kabul eden" },
+    { name: "Yâ Mücîb", target: 55, meaning: "Duaları kabul eden" },
     { name: "Yâ Vâsi'", target: 137, meaning: "Rahmeti ve ilmi bol olan" },
-    { name: "Yâ Hakîm", target: 78, meaning: "Hikmetli" },
+    { name: "Yâ Hakîm", target: 78, meaning: "Her işinde hikmet sahibi olan" },
     { name: "Yâ Vedûd", target: 20, meaning: "Kullarını seven" },
     { name: "Yâ Mecîd", target: 57, meaning: "Şerefi yüksek olan" },
     { name: "Yâ Bâ'is", target: 573, meaning: "Ölmüş olanları dirilten" },
@@ -499,7 +499,10 @@ function getLocalizedClassicZikirMeaning(zid) {
  * Yeni bir düzeltmede eskisini silme, listeye ekle.
  */
 const ESMA_MEANING_PREV = {
+    19: ['Her şeyi bilen ve gören', 'The All-Knowing who sees all things'], // Alîm — "görmek" Basîr'in anlamı
     31: ['Her şeyi bilen', 'The All-Aware who knows everything'],          // Habîr ← Alîm'in meali
+    44: ['Dualarını kabul eden'],                                           // Mücîb — iyelik eki sarkıyordu
+    46: ['Hikmetli'],                                                      // Hakîm — tek kelime, sıfat gibiydi
     70: ['İstediğini yükselten', 'The Advancer who raises whom He wills'], // Mukaddim ← Râfi'nin meali
     76: ['Sahip olan', 'The Master, Owner of all'],                        // Vâlî ← Mâlik'in meali
     88: ['Müstahni']                                                       // Muğnî ← Ganî'nin meali

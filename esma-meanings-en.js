@@ -19,7 +19,7 @@ export const ESMA_MEANING_EN = [
     'The Bestower who gives without return',
     'The Provider of sustenance',
     'The Opener who relieves from distress',
-    'The All-Knowing who sees all things',
+    'The All-Knowing whose knowledge encompasses all things',
     'The One who can restrict whomever He wills',
     'The One who grants abundance to whom He wills',
     'The One who abases the rebellious',
