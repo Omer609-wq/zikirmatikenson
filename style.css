@@ -4133,8 +4133,8 @@ html[data-counter-show-round="false"] .round-badge { display: none !important; }
     max-width: 14%;
     height: 100%; 
 }
-/* Aylık (ayın 15–16 günü): 12 aylıktan biraz daha sıkışık ama etiketler
-   gün numarası (1–2 hane), ay kısaltmasından dar olduğu için rahat sığar. */
+/* Aylık (ayın 15–16 günü): sıkışık ama etiketler gün numarası (1–2 hane),
+   ay adından dar olduğu için rahat sığar. */
 .css-chart--dense {
     gap: 0.1rem;
     justify-content: space-between;
@@ -4193,18 +4193,39 @@ html[data-counter-show-round="false"] .round-badge { display: none !important; }
 .stat-card--today .stat-value {
     font-size: clamp(1rem, 3.6vw, 1.125rem);
 }
-/* Aylık (12 ay): küçük ay etiketi; sütun kalınlığı haftalık ile aynı (max-width: 14%) */
+/* Yıl (sayfa başına 6 ay): haftalık gibi sütunlar alanı eşit paylaşır. */
 .css-chart--months {
-    gap: 0.12rem;
-    justify-content: space-between;
+    --months-col-gap: 0.28rem;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    column-gap: var(--months-col-gap);
     padding: 0;
+    align-items: flex-end;
+    min-width: 0;
 }
+.css-chart--months .chart-bar-group {
+    max-width: none;
+    width: 100%;
+    min-width: 0;
+}
+.css-chart--months .chart-bar {
+    border-radius: 5px 5px 0 0;
+}
+/* Arapça/Urduca ay adının kısa biçimi yok ("أغسطس"). Etiket kutusu sütun +
+   aralık genişliğinde: komşusuna değmeden aralığı da kullanır. Boyut, 360px
+   telefonda zikir penceresinde 8 dilin tamamı sığacak şekilde seçildi; yine de
+   sığmayan olursa grafiği pencereden taşırmak yerine "…" ile kırpılır. */
 .css-chart--months .chart-label {
-    font-size: 0.54rem;
+    width: calc(100% + var(--months-col-gap));
+    margin-inline: calc(var(--months-col-gap) / -2);
+    font-size: 0.56rem;
     line-height: 1.1;
     margin-top: 0.4rem;
     letter-spacing: -0.02em;
-    word-break: keep-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .css-chart--years .chart-label {
     font-size: 0.58rem;

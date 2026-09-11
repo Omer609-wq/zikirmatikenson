@@ -13,7 +13,8 @@ import {
     clampPageIndex,
     findPageIndex,
     splitIntoBalancedPages,
-    MONTH_CHART_PAGE_COUNT
+    MONTH_CHART_PAGE_COUNT,
+    YEAR_CHART_PAGE_COUNT
 } from './lib/chart-pages.js';
 import {
     markExactAlarmPrompted,
@@ -985,7 +986,7 @@ function refreshViewsAfterLocalizedZikirSync() {
 let activeStatTab = 'weekly';
 let activeZikirStatTab = 'weekly';
 /**
- * Aylık grafikte gösterilen sayfa (0 = ayın ilk yarısı).
+ * Aylık / yıl grafiğinde gösterilen sayfa (0 = ayın ilk yarısı / ocak–haziran).
  * -1 = "otomatik": sekmeye ilk girişte bugünün bulunduğu sayfa açılır.
  */
 let statMonthPage = -1;
@@ -7463,19 +7464,21 @@ function buildChartBuckets(tab, zid) {
         };
     }
     if (tab === 'year') {
-        const months = getYearMonthKeys();
+        // 12 ay iki sayfada (6+6): Arapça/Urduca ay adları tek sırada sığmıyor.
         const curMonth = today.slice(0, 7);
+        const buckets = getYearMonthKeys().map((ym) => {
+            const d = new Date(`${ym}-01T12:00:00`);
+            return {
+                label: d.toLocaleDateString(locale, { month: 'short' }),
+                val: totalClicksForMonth(ym, zid),
+                highlight: ym === curMonth
+            };
+        });
         return {
             density: 'months',
             headingKey: 'stats.chartYearMonths',
-            buckets: months.map((ym) => {
-                const d = new Date(`${ym}-01T12:00:00`);
-                return {
-                    label: d.toLocaleDateString(locale, { month: 'short' }),
-                    val: totalClicksForMonth(ym, zid),
-                    highlight: ym === curMonth
-                };
-            })
+            buckets,
+            pages: splitIntoBalancedPages(buckets, YEAR_CHART_PAGE_COUNT)
         };
     }
 
@@ -7649,7 +7652,7 @@ function renderChartWithPager({ chartEl, yAxisEl, pagerEl, pack, pageIndex, onPa
 
     const pages = pack.pages;
     const idx = pageIndex < 0 ? findPageIndex(pages, (b) => b.highlight) : clampPageIndex(pageIndex, pages.length);
-    // Ölçek ayın tamamından: sayfalar birbiriyle karşılaştırılabilir kalsın.
+    // Ölçek dönemin tamamından (ayın / yılın): sayfalar karşılaştırılabilir kalsın.
     const scaleMax = chartScaleMax(pack.buckets.map((b) => b.val));
 
     renderBarChart(chartEl, yAxisEl, pages[idx], pack.density, scaleMax);
@@ -8485,7 +8488,7 @@ function setupEventListeners() {
             zikirStatTabBtns.forEach((b) => b.classList.remove('active'));
             btn.classList.add('active');
             activeZikirStatTab = tab;
-            // Aya her girişte bugünün sayfasından başla.
+            // Aya / yıla her girişte bugünün sayfasından başla.
             zikirStatMonthPage = -1;
             renderZikirStats();
         });
