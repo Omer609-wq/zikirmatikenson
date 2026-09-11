@@ -33,17 +33,6 @@
     "keywords": "elbise kıyafet yeni giyinmek gömlek sarık ridâ libas"
   },
   {
-    "id": "plib_11",
-    "category": "dua",
-    "name": "Elhamdülillâhillezî kesânî hâzâs-sevbe ve rezekanîhi min gayri havlin minnî ve lâ kuvveh",
-    "arabic": "الْحَمْدُ لِلَّهِ الَّذِي كَسَانِي هَذَا الثَّوْبَ وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
-    "meaning": "Bunu bana giydiren ve tarafımdan hiçbir güç ve kuvvet olmaksızın rızık olarak veren Allah'a hamd olsun.",
-    "context": "Muaz b. Enes'ten (r.a.) rivayet edildiğine göre kim elbise giyip bunu okursa geçmiş ve gelecek günahları affedilir. Elbise giyildiğinde (yeni veya günlük).",
-    "source": "Ebu Davud 4023 (hasen); Tirmizi",
-    "target": 1,
-    "keywords": "elbise kıyafet giyinmek hamd şükür istiğfar libas"
-  },
-  {
     "id": "plib_12",
     "category": "dua",
     "name": "Elhamdülillâhillezî kesânî mâ ûrî bihi avretî ve etecemmelu bihi fî hayâtî",
@@ -75,17 +64,6 @@
     "source": "İbnü's-Sünni, Amelü'l-Yevm ve'l-Layle 273; Taberânî; Nevevî, El-Ezkar — destek: Tirmizi 606 (Bismillah, garîb)",
     "target": 1,
     "keywords": "elbise çıkarmak yıkanmak banyo uyku avret libas bismillah"
-  },
-  {
-    "id": "plib_15",
-    "category": "dua",
-    "name": "Allahümme innî es'elüke hayrel mevlic ve hayrel mahrec. Bismillâhi velecna ve bismillâhi haracna ve alallâhi rabbina tevekkelna",
-    "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ الْمَوْلِجِ وَخَيْرَ الْمَخْرَجِ بِسْمِ اللَّهِ وَلَجْنَا وَبِسْمِ اللَّهِ خَرَجْنَا وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا",
-    "meaning": "Allah'ım! Senden girişin hayrını ve çıkışın hayrını dilerim. Allah'ın adıyla girdik; Allah'ın adıyla çıktık; Rabbimiz Allah'a tevekkül ettik.",
-    "context": "Ebu Mâlik el-Eş'arî'den (r.a.) rivayet edildiğine göre kişi evine girerken bunu okur, sonra ailesine selam verir. Eve girerken.",
-    "source": "Ebu Davud 5096 (hasen); Nevevî, El-Ezkar",
-    "target": 1,
-    "keywords": "ev eve girmek giriş kapı aile selam tevekkül bismillah"
   },
   {
     "id": "plib_16",
@@ -262,17 +240,6 @@
     "source": "Ebu Davud 5095; Tirmizi 3427 (sahih)",
     "target": 1,
     "keywords": "ev çıkış kapı yol iş tevekkül günlük bismillah"
-  },
-  {
-    "id": "plib_33",
-    "category": "dua",
-    "name": "Sübhânellezî sehhara lenâ hâzâ ve mâ kunnâ lehu mukrinîn. Ve innâ ilâ rabbina le munkalibûn",
-    "arabic": "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنقَلِبُونَ",
-    "meaning": "Bunu bizim hizmetimize veren Allah'ı tesbih ederim; biz buna güç yetiremezdik. Şüphesiz biz Rabbimize döneceğiz.",
-    "context": "Abdullah b. Ömer'den (r.a.) rivayet edildiğine göre Hz. Peygamber bineğe veya araca binince bunu okurdu. Araç, at, deve veya bineğe binilince.",
-    "source": "Müslim 1342 (sahih)",
-    "target": 1,
-    "keywords": "araç araba otobüs yolculuk binek seyahat uçak"
   },
   {
     "id": "plib_34",

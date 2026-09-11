@@ -1,19 +1,25 @@
 # Premium kütüphane — taslak (çalışma dosyası)
 
-Kaynak: `premium-tr.draft.json` · **Sıradaki id:** `plib_64` · **Taslak toplam:** 49 dua
+Kaynak: `premium-tr.draft.json` · **Sıradaki id:** `plib_64` · **Taslak toplam:** 46 dua
 
-**Shipped:** `premium-tr.json` ← 49 madde.
+**Shipped:** `premium-tr.json` ← 46 madde.
 
-**EN overlay:** `premium-id.json` ← 49 madde (`name` Latin + `meaning`/`context` EN).
+**EN overlay:** `premium-id.json` ← 46 madde (`name` Latin + `meaning`/`context` EN).
 
-**BN / UR okunuş:** `bn.json` / `ur.json` ← 49 premium `name`.
+**BN / UR okunuş:** `bn.json` / `ur.json` ← 46 premium `name`.
 
-**AR okunuş:** `ar.json` ← 49 premium `name`.
+**AR okunuş:** `ar.json` ← 46 premium `name`.
 
 **`plib_21` ücretsize alındı:** Seyyidü'l-istiğfar, Tövbe ve İstiğfar grubu için `tr.json`'a
 `lib_d_tovbe_seyyidul_istigfar` id'siyle taşındı (`plib_` öneki premium kilidinin kendisi olduğu için
 id değişmek zorundaydı). EN metni `premium-id.json` → `en.json`; `bn`/`ur`/`ar` satırları yeni id ile
 korundu. `plib_21` id'si yeniden kullanılmaz.
+
+**`plib_11`, `plib_15`, `plib_33` ücretsize alındı:** Ücretsizdeki `lib_d_yeni_elbise`,
+`lib_d_eve_giris` ve `lib_d_arac` kısa ya da rivayette olmayan metinler taşıyordu; bu premium maddelerin
+doğru ve tam hâli ücretsiz id'lerin üzerine yazıldı (aynı dua iki yerde durmasın diye). EN/BN/UR/AR
+satırları ücretsiz id'lere geçti, premium kopyalar silindi. Kayıtlı kopyalar
+`public/library-overrides.json` `prev` ile onarılır. Bu üç id yeniden kullanılmaz.
 
 **Mükerrer:** Yalnızca **aynı okunuş** (`name`); meal/bağlam/fazilet aynı olabilir.
 
@@ -30,13 +36,13 @@ korundu. `plib_21` id'si yeniden kullanılmaz.
 | id (ücretsiz) | Metin | Not |
 |---------------|--------|-----|
 | `lib_d_uyaninca` | *Elhamdülillâhillezî ahyânâ ba'de mâ emâtenâ…* | Buhari/Müslim (sahih) |
-| `lib_d_uyku` | *Bismike Allahümme ehya ve emût* | **Çözüldü:** yalnız ücretsizde; `plib_08` premium’dan kaldırıldı |
-| `lib_d_yeni_elbise` | *Elhamdülillâhillezî kezâni hâzâ ve mâ kuntu muahhıran…* | **plib_11 ile yakın** (farklı rivayet); ücretsizde kalsın, premium’da 4023 metni |
-| `lib_d_evden_cikis` | *Bismillâhi tevekkeltü alallâhi…* | Evden **çıkış**; `plib_15` eve **giriş** |
-| `lib_d_tuvalet_cikis` | *Ğufreâneke* | Tuvalet **çıkışı** (Aişe, sahih); `plib_16` hamd duası — ikisi birlikte okunabilir |
+| `lib_d_uyku` | *Bismike Allâhümme ahyâ ve emût* | **Çözüldü:** yalnız ücretsizde; `plib_08` premium’dan kaldırıldı |
+| `lib_d_yeni_elbise` | *Elhamdülillâhillezî kesânî hâze's-sevbe…* | **Çözüldü:** eski ücretsiz metin rivayette yoktu; `plib_11` (Ebu Davud 4023) ücretsize taşındı, premium’dan kaldırıldı |
+| `lib_d_evden_cikis` | *Bismillâhi tevekkeltü alallâhi…* | Evden **çıkış**; eve **giriş** `lib_d_eve_giris` (eski `plib_15`) |
+| `lib_d_tuvalet_cikis` | *Ğufrâneke* | Tuvalet **çıkışı** (Aişe, sahih); `plib_16` hamd duası — ikisi birlikte okunabilir |
 | `lib_d_yemek_once` | *Bismillâh* | **plib_29** yemek önünde bereket; **plib_28** besmele unutulunca |
-| `lib_d_yemek_sonra` | *Elhamdülillâhillezî et'amenâ…* (kısa) | **plib_31** tam form (mağfiret rivayeti, hasen) |
-| `lib_d_arac` | *Sübhânellezî sehhara lenâ hâzâ* (kısa) | **plib_33** tam form + dönüş cümlesi |
+| `lib_d_yemek_sonra` | *Elhamdülillâhillezî et'amenâ ve sekânâ ve ce'alenâ müslimîn* | **plib_31** farklı metin (mağfiret rivayeti, hasen) |
+| `lib_d_arac` | *Sübhânellezî sehhara lenâ hâzâ…* (tam) | **Çözüldü:** `plib_33` tam formu ücretsize taşındı, premium’dan kaldırıldı |
 | `lib_d_evden_cikis` | *Bismillâhi tevekkeltü…* (kısa) | **plib_32** tam form (sığınma duası ekli) |
 | `lib_d_cami_cikis` | *Allâhümme innî es'elüke min fadlik* | **plib_41 kaldırıldı** — aynı metin; `plib_19` (farklı metin, aynı bağlam) duruyor |
 
@@ -49,17 +55,14 @@ korundu. `plib_21` id'si yeniden kullanılmaz.
 | 1 | `plib_07` | dua | Uyanınca hamd (afiyet, ruh) | Tirmizi 3401 (hasen) | Uykudan uyanınca |
 | 2 | `plib_09` | dua | La ilâhe illâ ente… (gece uyanınca) | Ebu Davud 5061 (hasen) | Gece uykudan uyanınca |
 | 4 | `plib_10` | dua | Allahümme lekel hamdü ente kesevtenîhi… | Ebu Davud 4020; Tirmizi 1767 | Yeni elbise giyince |
-| 5 | `plib_11` | dua | Elhamdülillâh… kesânî hâzâs-sevbe… | Ebu Davud 4023 (hasen) | Elbise giyince (günlük/yeni) |
 | 6 | `plib_12` | dua | Elhamdülillâh… mâ ûrî bihi avretî… | Tirmizi 3560 (hasen garîb) | Yeni elbise giyince |
 | 7 | `plib_13` | dua | Tüblî ve yuhlifullâhu teâlâ | Ebu Davud 4020; Tirmizi 1767 | Yeni elbise giyene **karşı** söylenir |
 | 8 | `plib_14` | dua | Bismillâhillezî lâ ilâhe illâ Hû | İbnü's-Sünni 273; El-Ezkar | Elbise çıkarırken (yıkanma/uyku) |
-| 9 | `plib_15` | dua | Allahümme innî es'elüke hayrel mevlic… | Ebu Davud 5096 (hasen) | Eve girerken |
 | 10 | `plib_16` | dua | Elhamdülillâhillezî ezhebe anniel-ezâ… | İbn Mace 301; El-Ezkar | Tuvalet/heladan çıkarken |
 | 11 | `plib_17` | dua | Allahümme'c'al fî kalbî nûran… | Buhari 6316; Müslim; Ebu Davud 1353 | Mescide giderken |
 | 12 | `plib_18` | dua | Bismillâh… salli alâ Muhammed… rahmetik | İbn Mace 771 (sahih) | Mescide girerken |
 | 13 | `plib_19` | dua | Bismillâh… salli alâ Muhammed… fadlik | İbn Mace 771 (sahih) | Mescidden çıkarken |
 | 14 | `plib_20` | dua | Estağfirullah… Hayyul-Kayyûm… | Tirmizi 3397 (hasen); El-Ezkar | Yatarken ×3 |
-| 15 | `plib_21` | dua | Seyyidü'l-istiğfar | Buhari 6306; Müslim (sahih) | Sabah / yatarken |
 | 16 | `plib_22` | dua | Hammi vel hazen… | Buhari 6369; Müslim (sahih) | Kaygı, sıkıntı |
 | 17 | `plib_23` | dua | Abdest sonrası şehadet | Müslim 559 (sahih) | Abdest bitince |
 | 18 | `plib_24` | dua | Zehebez-zama'… | Ebu Davud 2357; İbn Mace (sahih) | İftar |
@@ -71,7 +74,6 @@ korundu. `plib_21` id'si yeniden kullanılmaz.
 | 24 | `plib_31` | dua | Elhamdülillâh… et'amani hadha… | Tirmizi 3458 (hasen) | Yemekten sonra (mağfiret) |
 | 25 | `plib_30` | dua | Allahümme ecirnî minen-nâr ×3 | Tirmizi 2572 (sahih) | Gün içinde (ateşten sığınma) |
 | 26 | `plib_32` | dua | Evden çıkış (tam form) | Ebu Davud 5095 (sahih) | Evden çıkarken |
-| 27 | `plib_33` | dua | Sübhânellezî sehhara… (tam) | Müslim 1342 (sahih) | Araca binince |
 | 28 | `plib_34` | dua | Yolculuk duası | Müslim 1342 (sahih) | Seyahat başlarken |
 | 29 | `plib_35` | dua | Gök gürültüsü tesbihi | Buhari 611 (sahih) | Gök gürleyince |
 | 30 | `plib_36` | dua | Af ve afiyet duası | İbn Mace 3845 (hasen sahih) | Sabah-akşam / gün içi |
@@ -126,11 +128,10 @@ Yatağa girince duası (`Bismike Allahümme ehya ve emût`) **ücretsiz** `lib_d
 - **Bağlam:** Ebu Saîd el-Hudrî (r.a.) → yeni elbise giyince önce adını söyler (gömlek/sarık/ridâ), sonra okurdu.
 - **Kaynak:** Ebu Davud 4020; Tirmizi 1767, hasen.
 
-### plib_11 — elbise giyince (magfire)
+### plib_11 — (ücretsize taşındı)
 
-- **Okunuş:** Elhamdülillâhillezî kesânî hâzâs-sevbe ve rezekanîhi min gayri havlin minnî ve lâ kuvveh
-- **Bağlam:** Muaz b. Enes (r.a.) → okuyanın günahları affedilir.
-- **Not:** Ücretsiz `lib_d_yeni_elbise` benzer ama farklı rivayet metni.
+Elbise giyince duası (Ebu Davud 4023, Muaz b. Enes) artık **ücretsiz** `lib_d_yeni_elbise`; oradaki eski
+metin (*kezâni hâzâ ve mâ kuntu…*) rivayette yoktu. `id` boş (yeniden kullanılmaz).
 
 ### plib_12 — yeni elbise (avret örtüsü)
 
@@ -152,19 +153,17 @@ Yatağa girince duası (`Bismike Allahümme ehya ve emût`) **ücretsiz** `lib_d
 - **Bağlam:** Enes (r.a.) → çıkarmadan önce okuyanın avreti ile cin arasında perde olur. Yıkanma, uyku, elbise çıkarma.
 - **Kaynak:** İbnü's-Sünni 273; Taberânî; Nevevî El-Ezkar. Kısa metin: *Bismillah* — Tirmizi 606.
 
-### plib_15 — eve girerken
+### plib_15 — (ücretsize taşındı)
 
-- **Okunuş:** Allahümme innî es'elüke hayrel mevlic ve hayrel mahrec. Bismillâhi velecna ve bismillâhi haracna ve alallâhi rabbina tevekkelna
-- **Arapça:** اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ الْمَوْلِجِ وَخَيْرَ الْمَخْرَجِ بِسْمِ اللَّهِ وَلَجْنَا وَبِسْمِ اللَّهِ خَرَجْنَا وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا
-- **Bağlam:** Ebu Mâlik el-Eş'arî (r.a.) → eve girince okur, sonra ailesine selam verir.
-- **Kaynak:** Ebu Davud 5096, hasen; El-Ezkar.
+Eve giriş duası (Ebu Davud 5096) artık **ücretsiz** `lib_d_eve_giris`; oradaki eski metin yarımdı,
+okunuşu bozuktu (*mühlı / mahrı*) ve kaynağı yanlıştı. `id` boş (yeniden kullanılmaz).
 
 ### plib_16 — tuvalet/heladan çıkarken
 
 - **Okunuş:** Elhamdülillâhillezî ezhebe anniel-ezâ ve âfânî
 - **Arapça:** الْحَمْدُ لِلَّهِ الَّذِي أَذْهَبَ عَنِّي الأَذَى وَعَافَانِي
 - **Bağlam:** Enes (r.a.) → heladan çıkınca okurdu.
-- **Not:** Ücretsiz `lib_d_tuvalet_cikis` (*Ğufreâneke*, Aişe rivayeti) ile birlikte okunabilir.
+- **Not:** Ücretsiz `lib_d_tuvalet_cikis` (*Ğufrâneke*, Aişe rivayeti) ile birlikte okunabilir.
 
 ### plib_17 — mescide giderken (nur duası)
 
@@ -195,9 +194,9 @@ Yatağa girince duası (`Bismike Allahümme ehya ve emût`) **ücretsiz** `lib_d
 - **Kaynak:** Tirmizi 3397; Nevevî, El-Ezkar.
 - **Hedef:** `target: 3` (hadis: yatarken üç kez)
 
-### plib_21 — seyyidü'l-istiğfar
+### plib_21 — (ücretsize taşındı)
 
-- **Kaynak:** Buhari 6306; Müslim 2702 (sahih). Sabah veya yatarken.
+Seyyidü'l-istiğfar artık **ücretsiz** `lib_d_tovbe_seyyidul_istigfar` (Tövbe ve İstiğfar grubu). `id` boş.
 
 ### plib_22 — kaygı ve keder
 
@@ -243,21 +242,21 @@ Yatağa girince duası (`Bismike Allahümme ehya ve emût`) **ücretsiz** `lib_d
 
 ### plib_31 — yemekten sonra (mağfiret)
 
-- **Kaynak:** Tirmizi 3458 (hasen garîb); Muaz b. Enes rivayeti. Ücretsiz `lib_d_yemek_sonra` kısa metin.
+- **Kaynak:** Tirmizi 3458 (hasen garîb); Muaz b. Enes rivayeti. Ücretsiz `lib_d_yemek_sonra` farklı metin (*…ve ce'alenâ müslimîn*).
 
 ### plib_32 — evden çıkış (tam)
 
 - **Not:** Ücretsiz `lib_d_evden_cikis` kısa form; bu hadisin tam duası (sığınma cümleleri ekli).
 - **Kaynak:** Ebu Davud 5095; Tirmizi 3427 (sahih).
 
-### plib_33 — araca binince (tam)
+### plib_33 — (ücretsize taşındı)
 
-- **Not:** Ücretsiz `lib_d_arac` yalnızca ilk cümle; bu tam form (*ve innâ ilâ rabbina le munkalibûn*).
-- **Kaynak:** Müslim 1342 (sahih).
+Araca binme duasının tam hâli (Müslim 1342) artık **ücretsiz** `lib_d_arac`; orada yalnızca ilk cümle
+vardı. `id` boş (yeniden kullanılmaz).
 
 ### plib_34 — yolculuk duası
 
-- **Bağlam:** plib_33'ten sonra veya seyahat başında; birlikte okunur.
+- **Bağlam:** Araca binme duasından (`lib_d_arac`) sonra veya seyahat başında; birlikte okunur.
 - **Kaynak:** Müslim 1342 (sahih).
 
 ### plib_35 — gök gürültüsü

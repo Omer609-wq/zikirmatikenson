@@ -15,10 +15,10 @@
   },
   {
     "id": "lib_d_eve_giris",
-    "name": "Allahumma inni as'aluka khayral-mawliji wa khayral-makhraji",
-    "meaning": "O Allah, I ask You for the good of entering and the good of leaving.",
-    "context": "Recite when entering home, work, or as a guest through the door; asking good for entry and exit is a sunnah.",
-    "keywords": "home door entering guest workplace"
+    "name": "Allahumma inni as'aluka khayral-mawliji wa khayral-makhraji. Bismillahi walajna wa bismillahi kharajna wa 'ala Allahi rabbina tawakkalna",
+    "meaning": "O Allah, I ask You for the best of entering and the best of leaving. In Allah's name we enter; in Allah's name we leave; and upon our Lord we rely.",
+    "context": "From Abu Malik al-Ash'ari (r.a.): say this when you enter your home, then greet your family. Say it at the door when coming in.",
+    "keywords": "home entering door family greeting tawakkul bismillah"
   },
   {
     "id": "lib_d_yemek_once",
@@ -29,17 +29,17 @@
   },
   {
     "id": "lib_d_yemek_sonra",
-    "name": "Alhamdulillahil-ladhi at'amana wa saqana",
-    "meaning": "Praise be to Allah who fed us and gave us drink.",
+    "name": "Alhamdulillahil-ladhi at'amana wa saqana wa ja'alana muslimin",
+    "meaning": "Praise be to Allah who fed us, gave us drink and made us Muslims.",
     "context": "Recite after finishing a meal; thanking Allah who provided food and drink is a sunnah.",
     "keywords": "food meal after thanks gratitude hamd"
   },
   {
     "id": "lib_d_arac",
-    "name": "Subhanalladhi sakhkhara lana hadha",
-    "meaning": "Glory be to Him who subjected this to us.",
-    "context": "Recite when boarding a ride or vehicle (car, bus, etc.); remembering Allah on a journey is recommended.",
-    "keywords": "vehicle car bus travel journey ride transport"
+    "name": "Subhanalladhi sakhkhara lana hadha wa ma kunna lahu muqrinin. Wa inna ila rabbina la munqalibun",
+    "meaning": "Glory be to Allah who has made this serve us, though we could never have tamed it ourselves. To our Lord we shall return.",
+    "context": "From Abdullah ibn Umar (r.a.): the Prophet would say this when mounting a ride. Say it when you board a car, horse, camel, or any transport.",
+    "keywords": "vehicle car bus travel journey mount ride airplane"
   },
   {
     "id": "lib_d_uyku",
@@ -64,10 +64,10 @@
   },
   {
     "id": "lib_d_yeni_elbise",
-    "name": "Alhamdulillahil-ladhi kasani hadha wa ma kunna muqtadirin",
-    "meaning": "Praise be to Allah who clothed me with this though I was unable to do it.",
-    "context": "Recite when wearing new clothes or a garment; gratitude for the blessing and mindfulness against waste.",
-    "keywords": "clothes clothing new garment dress wearing"
+    "name": "Alhamdulillahil-ladhi kasani hadhath-thawba wa razaqanihi min ghayri hawlin minni wa la quwwah",
+    "meaning": "All praise is for Allah who clothed me in this garment and gave it to me without any power or strength of my own.",
+    "context": "From Mu'adh ibn Anas (r.a.): whoever puts on clothes and says this will have past and future sins forgiven. Say it when dressing—new clothes or everyday wear.",
+    "keywords": "clothes clothing wearing gratitude praise istighfar"
   },
   {
     "id": "lib_d_ayna",
@@ -92,37 +92,37 @@
   },
   {
     "id": "lib_d_kabir",
-    "name": "Assalamu 'alaykum ahla di-yarin minal-mu'minina wal-muslimin",
+    "name": "Assalamu 'alaykum ahlad-diyari minal-mu'minina wal-muslimin",
     "meaning": "Peace be upon you, O people of this abode, believers and Muslims.",
     "context": "Recite when entering a graveyard; greeting the deceased and remembering the hereafter.",
     "keywords": "grave cemetery burial death visit hereafter"
   },
   {
     "id": "lib_d_kotu_ruya",
-    "name": "Na'udhu billahi min sharri hadha wa min sharri ma fihi",
-    "meaning": "I seek refuge in Allah from the evil of this and what it contains.",
-    "context": "Recite after waking from a disturbing dream; seeking refuge in Allah from evil.",
+    "name": "A'udhu billahi minash-shaytanir-rajim wa min sharri hadhihir-ru'ya",
+    "meaning": "I seek refuge in Allah from the accursed Satan and from the evil of this dream.",
+    "context": "The Prophet (peace be upon him) advised whoever sees a disliked dream to spit lightly to the left three times, seek refuge in Allah from Satan and from the evil of the dream, turn onto the other side and tell no one; it will then do them no harm. Recite after a bad dream.",
     "keywords": "dream nightmare sleep fear refuge"
   },
   {
     "id": "lib_d_olum_haberi",
-    "name": "Inna lillahi wa inna ilayhi raji'un. Allahumma'jurni fi musibati wa-khluf li khayran minha",
+    "name": "Inna lillahi wa inna ilayhi raji'un. Allahumma'jurni fi musibati wa akhlif li khayran minha",
     "meaning": "We belong to Allah and to Him we return. O Allah, reward me in my affliction and replace it with something better.",
-    "context": "Recite upon hearing of death or a great loss; patience and asking reward and good outcome (verse and supplication together).",
+    "context": "Narrated by Umm Salama (may Allah be pleased with her): the Prophet (peace be upon him) said that whoever is afflicted and says this, Allah gives them something better in its place. Recite on hearing news of a death or great loss.",
     "keywords": "death loss grief patience calamity condolence"
   },
   {
     "id": "lib_d_yagmur_isteme",
-    "name": "Allahumma asqina ghaythan nafi'an",
-    "meaning": "O Allah, send down upon us a beneficial rain.",
-    "context": "Recite when rain is needed; traditionally made facing the qibla when asking for beneficial rain (according to sunnah etiquette).",
+    "name": "Allahummasqina ghaythan mughithan mari'an mari'an, nafi'an ghayra darrin, 'ajilan ghayra ajil",
+    "meaning": "O Allah, send us rain that brings relief, wholesome and abundant, beneficial and not harmful, soon and not delayed.",
+    "context": "Narrated by Jabir: when people came to the Prophet (peace be upon him) weeping over drought, he said this and the sky filled with clouds. Recite when asking for rain in drought (istisqa).",
     "keywords": "rain drought prayer istisqa water farm"
   },
   {
     "id": "lib_d_yagmur_yagarken",
-    "name": "Allahumma sayyiban mubarakan",
-    "meaning": "O Allah, send upon us a blessed rain.",
-    "context": "Recite when rain begins to fall; gratitude for the blessing and asking for barakah.",
+    "name": "Allahumma sayyiban nafi'an",
+    "meaning": "O Allah, make it a beneficial rain.",
+    "context": "Narrated by Aisha: when the Prophet (peace be upon him) saw rain he would say this. Recite when rain begins.",
     "keywords": "rain falling sky gratitude blessing"
   },
   {
@@ -134,9 +134,9 @@
   },
   {
     "id": "lib_d_ilim",
-    "name": "Rabbi zidni 'ilman nafi'an wa fahman wasi'an",
-    "meaning": "My Lord, increase me in beneficial knowledge and broad understanding.",
-    "context": "Recite before study, Qur'an reading, or beginning work; asking for beneficial knowledge and understanding.",
+    "name": "Allahumman-fa'ni bima 'allamtani wa 'allimni ma yanfa'uni wa zidni 'ilma",
+    "meaning": "O Allah, benefit me through what You have taught me, teach me what will benefit me, and increase me in knowledge.",
+    "context": "Narrated by Abu Hurayra, the Prophet (peace be upon him) used to make this supplication. Recite before study, reading the Qur'an or seeking knowledge.",
     "keywords": "knowledge study school quran learning wisdom"
   },
   {

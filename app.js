@@ -170,6 +170,7 @@ import {
     getKnownLibraryFaziletTexts,
     getKnownLibraryMeaningTexts,
     getKnownLibraryNameTexts,
+    getLibraryCanonItem,
     getLibraryFaziletForLocale,
     getLibraryMeaningForLocale,
     getLibraryNameForLocale,
@@ -739,6 +740,16 @@ function syncLocalizedDefaults({ persist = false } = {}) {
         // Kırpılmış ad da "bozuk durum"dur, kullanıcı tercihi değil: onarılır.
         if (!curN || knownN.has(curN) || isLegacyTruncatedZikirName(curN, knownN)) {
             setField(z, 'name', getLibraryNameForLocale(z.libraryId, appSettings.locale));
+        }
+
+        // Arapça alt satır kayıttaki kopyadan okunur; uygulamanın yazdığı eski Arapça
+        // (bilinen metin) kanona çekilir, kullanıcının elle yazdığı Arapça korunur.
+        const curA = String(z.arabic || '').trim();
+        if (curA && knownN.has(curA)) {
+            const canon = getLibraryCanonItem(z.libraryId, 'tr');
+            const nextA = (canon && canon.arabic && String(canon.arabic).trim())
+                || getLibraryNameForLocale(z.libraryId, 'ar');
+            if (nextA) setField(z, 'arabic', nextA);
         }
 
         const knownF = getKnownLibraryFaziletTexts(z.libraryId);

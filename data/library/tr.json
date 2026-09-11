@@ -12,7 +12,7 @@
   {
     "id": "lib_d_tuvalet_cikis",
     "category": "dua",
-    "name": "Ğufreâneke",
+    "name": "Ğufrâneke",
     "meaning": "Affını dilerim.",
     "context": "Tuvaletten veya heladan çıkarken okunur; kulun affını dilemesi edeptir.",
     "source": "Ebu Davud, Taharet 7; Tirmizi, Daavat 22",
@@ -22,12 +22,13 @@
   {
     "id": "lib_d_eve_giris",
     "category": "dua",
-    "name": "Allahümme inni esa'elüke hayral mühlı ve hayral mahrı",
-    "meaning": "Ya Allah, gireceğim yerin hayrını ve çıkacağım yerin hayrını Senden dilerim.",
-    "context": "Eve, iş yerine veya misafirliğe kapıdan girerken; giriş ve çıkışın hayrını dilemek sünnettir.",
-    "source": "Müslim, Salat 65; Ebu Davud, Edeb 101",
+    "name": "Allâhümme innî es'elüke hayre'l-mevlici ve hayre'l-mahreci. Bismillâhi velecnâ ve bismillâhi haracnâ ve alallâhi rabbinâ tevekkelnâ",
+    "meaning": "Allah'ım! Senden girişin hayrını ve çıkışın hayrını dilerim. Allah'ın adıyla girdik; Allah'ın adıyla çıktık; Rabbimiz Allah'a tevekkül ettik.",
+    "context": "Ebu Mâlik el-Eş'arî'den (r.a.) rivayet edildiğine göre kişi evine girerken bunu okur, sonra ailesine selam verir. Eve girerken.",
+    "source": "Ebu Davud 5096 (hasen); Nevevî, El-Ezkar",
     "target": 1,
-    "keywords": "ev kapı giriş misafir iş yeri besmele"
+    "keywords": "ev eve girmek giriş kapı aile selam tevekkül bismillah",
+    "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ الْمَوْلِجِ وَخَيْرَ الْمَخْرَجِ؛ بِسْمِ اللَّهِ وَلَجْنَا، وَبِسْمِ اللَّهِ خَرَجْنَا، وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا"
   },
   {
     "id": "lib_d_yemek_once",
@@ -42,27 +43,29 @@
   {
     "id": "lib_d_yemek_sonra",
     "category": "dua",
-    "name": "Elhamdülillâhillezî et'amenâ ve sekânâ",
-    "meaning": "Bizi yediren ve içiren Allah'a hamd olsun.",
+    "name": "Elhamdülillâhillezî et'amenâ ve sekânâ ve ce'alenâ müslimîn",
+    "meaning": "Bizi yediren, içiren ve bizi Müslüman kılan Allah'a hamd olsun.",
     "context": "Yemek bitince şükür ve hamd için; nimeti veren Allah'a hamdetmek sünnettir.",
     "source": "Tirmizi, Daavat 11; Ebu Davud, At'ime 13",
     "target": 1,
-    "keywords": "yemek sofra bitiş şükür hamd"
+    "keywords": "yemek sofra bitiş şükür hamd",
+    "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ"
   },
   {
     "id": "lib_d_arac",
     "category": "dua",
-    "name": "Sübhânellezî sehhara lenâ hâzâ",
-    "meaning": "Bunu bizim emrimize veren Allah'ı tesbih ederim.",
-    "context": "Binek veya araca (otobüs, araba vb.) binildiğinde; yolculukta Allah'ı anmak tavsiye edilir.",
-    "source": "Müslim, Hac 15",
+    "name": "Sübhânellezî sehhara lenâ hâzâ ve mâ künnâ lehû mukrinîn. Ve innâ ilâ rabbinâ le munkalibûn",
+    "meaning": "Bunu bizim hizmetimize veren Allah'ı tesbih ederim; biz buna güç yetiremezdik. Şüphesiz biz Rabbimize döneceğiz.",
+    "context": "Abdullah b. Ömer'den (r.a.) rivayet edildiğine göre Hz. Peygamber bineğe veya araca binince bunu okurdu. Araç, at, deve veya bineğe binilince.",
+    "source": "Müslim 1342 (sahih)",
     "target": 1,
-    "keywords": "araç araba otobüs yolculuk binek seyahat"
+    "keywords": "araç araba otobüs yolculuk binek seyahat uçak",
+    "arabic": "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ؛ وَإِنَّا إِلَى رَبِّنَا لَمُنقَلِبُونَ"
   },
   {
     "id": "lib_d_uyku",
     "category": "dua",
-    "name": "Bismike Allahümme ehya ve emût",
+    "name": "Bismike Allâhümme ahyâ ve emût",
     "meaning": "Ey Allah'ım! Senin adınla yaşarım ve ölürüm (uyurum).",
     "context": "Uyumadan önce yatağa yatınca; geceyi Allah'a emanet etmek sünnettir.",
     "source": "Buhari, Daavat 11",
@@ -92,17 +95,18 @@
   {
     "id": "lib_d_yeni_elbise",
     "category": "dua",
-    "name": "Elhamdülillâhillezî kezâni hâzâ ve mâ kuntu muahhıran bi hâzâ",
-    "meaning": "Bunu bana giydiren ve onsuz güç yetiremeyeceğim şeyi bana veren Allah'a hamd olsun.",
-    "context": "Yeni elbise veya örtü giyildiğinde; nimete şükür ve israf etmemeyi hatırlamak için.",
-    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "name": "Elhamdülillâhillezî kesânî hâze's-sevbe ve rezakanîhi min ğayri havlin minnî ve lâ kuvveh",
+    "meaning": "Bunu bana giydiren ve tarafımdan hiçbir güç ve kuvvet olmaksızın rızık olarak veren Allah'a hamd olsun.",
+    "context": "Muaz b. Enes'ten (r.a.) rivayet edildiğine göre kim elbise giyip bunu okursa geçmiş ve gelecek günahları affedilir. Elbise giyildiğinde (yeni veya günlük).",
+    "source": "Ebu Davud 4023 (hasen); Tirmizi",
     "target": 1,
-    "keywords": "elbise kıyafet giyinmek yeni örtü"
+    "keywords": "elbise kıyafet giyinmek hamd şükür istiğfar libas",
+    "arabic": "الْحَمْدُ لِلَّهِ الَّذِي كَسَانِي هَذَا الثَّوْبَ وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ"
   },
   {
     "id": "lib_d_ayna",
     "category": "dua",
-    "name": "Allâhümme kemâ hassente halkî fehassin hulûkî",
+    "name": "Allâhümme kemâ hassente halkî fe hassin hulukî",
     "meaning": "Ya Allah, dış görünüşümü güzel yaptığın gibi ahlâkımı da güzelleştir.",
     "context": "Aynaya bakıldığında; suret nimetine şükür ve iç güzelliği dilemek için.",
     "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
@@ -132,7 +136,7 @@
   {
     "id": "lib_d_kabir",
     "category": "dua",
-    "name": "Esselâmu aleykum ehle diyârin minel mü'minîne vel müslimîn",
+    "name": "Esselâmü aleyküm ehle'd-diyâri mine'l-mü'minîne ve'l-müslimîn",
     "meaning": "Ey bu diyarın mümin ve Müslüman halkı, size selâm olsun.",
     "context": "Kabristana girildiğinde veya mezarlıkta; ölülere selâm ve ahiret hatırlatması için.",
     "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
@@ -142,52 +146,57 @@
   {
     "id": "lib_d_kotu_ruya",
     "category": "dua",
-    "name": "Na'ûzü billâhi min şerri hâzâ ve min şerri mâ fîh",
-    "meaning": "Bunun şerrinden ve içindeki şeylerin şerrinden Allah'a sığınırım.",
-    "context": "Rüyada kötü bir şey görülüp uyanınca; şer ve vesveseden Allah'a sığınmak için.",
-    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "name": "Eûzü billâhi mine'ş-şeytâni'r-racîm ve min şerri hâzihi'r-rü'yâ",
+    "meaning": "Kovulmuş şeytandan ve bu rüyanın şerrinden Allah'a sığınırım.",
+    "context": "Hz. Peygamber, hoşa gitmeyen bir rüya görenin sol tarafına üç kez hafifçe tükürür gibi yapmasını, şeytandan ve rüyanın şerrinden Allah'a sığınmasını, yattığı yanı değiştirmesini ve rüyayı kimseye anlatmamasını tavsiye etmiş; böyle yapana rüyanın zarar vermeyeceğini bildirmiştir. Kötü rüya görülünce okunur.",
+    "source": "Buhârî 3292; Müslim 2261-2263 (sahih). Metin, hadislerde emredilen sığınmanın ifadesidir; lafzen rivayet edilmiş bir dua değildir.",
     "target": 1,
-    "keywords": "rüya uyku korku şer sığınma"
+    "keywords": "rüya kötü rüya kâbus uyku korku şeytan sığınma",
+    "arabic": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ وَمِنْ شَرِّ هَذِهِ الرُّؤْيَا"
   },
   {
     "id": "lib_d_olum_haberi",
     "category": "dua",
-    "name": "İnnâ lillâhi ve innâ ileyhi râciûn, Allâhümme'curnî fî musîbetî ve'hturni hayren minhâ",
-    "meaning": "Biz Allah'a aidiz ve O'na döneceğiz. Ya Allah, musibetimde bana mükâfat yaz ve ondan hayırlı bir çıkış nasip et.",
-    "context": "Ölüm veya büyük kayıp haberi işitilince; sabır ve karşılık dilemek için (ayet ve dua birlikte anılır).",
-    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "name": "İnnâ lillâhi ve innâ ileyhi râciûn, Allâhümme'cürnî fî musîbetî ve ahlif lî hayran minhâ",
+    "meaning": "Biz Allah'a aidiz ve O'na döneceğiz. Allah'ım, musibetimden dolayı beni ecirlendir ve bana onun yerine daha hayırlısını ver.",
+    "context": "Ümmü Seleme'den (r.anhâ) rivayet edildiğine göre Hz. Peygamber, musibete uğrayıp bunu okuyana Allah'ın onun yerine daha hayırlısını vereceğini bildirmiştir. Ölüm veya büyük kayıp haberi işitilince okunur.",
+    "source": "Müslim 918 (sahih); Kur'an-ı Kerim, Bakara 2/156",
     "target": 1,
-    "keywords": "ölüm musibet kayıp sabır taziye"
+    "keywords": "ölüm musibet kayıp sabır taziye",
+    "arabic": "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ، اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي وَأَخْلِفْ لِي خَيْرًا مِنْهَا"
   },
   {
     "id": "lib_d_yagmur_isteme",
     "category": "dua",
-    "name": "Allâhümme eskıb seyyiban nâfi'an",
-    "meaning": "Ya Allah, bize faydalı bir yağmur yağdır.",
-    "context": "Kuraklık veya yağmura ihtiyaç duyulduğunda çıplak veya hafif örtülü kıbleye dönerek dua edilir (sünnet adabına göre).",
-    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "name": "Allâhümme'skınâ ğaysen muğîsen merî'en merî'an, nâfi'an ğayra dârrin, âcilen ğayra âcil",
+    "meaning": "Allah'ım! Bize imdada yetişen, sıhhatli ve bol ürün veren, faydalı olup zarar vermeyen, gecikmeden hemen gelen bir yağmur ver.",
+    "context": "Câbir b. Abdullah'tan (r.a.) rivayet edildiğine göre kuraklıktan şikâyetle ağlayarak gelenler üzerine Hz. Peygamber bu duayı okudu ve gökyüzü bulutla kaplandı. Kuraklıkta yağmur istemek (istiskâ) için okunur.",
+    "source": "Ebû Dâvûd 1169 (sahih); Nevevî, El-Ezkar",
     "target": 1,
-    "keywords": "yağmur kuraklık tarla çiftçi su isteme"
+    "keywords": "yağmur kuraklık istiskâ susuzluk bereket dua",
+    "arabic": "اللَّهُمَّ اسْقِنَا غَيْثًا مُغِيثًا مَرِيئًا مَرِيعًا، نَافِعًا غَيْرَ ضَارٍّ، عَاجِلًا غَيْرَ آجِلٍ"
   },
   {
     "id": "lib_d_yagmur_yagarken",
     "category": "dua",
-    "name": "Allâhümme sevvibenâ mâren mübâreken",
-    "meaning": "Ya Allah, bize bereketli bir yağmur yağdır.",
-    "context": "Yağmur yağmaya başlayınca; nimete şükür ve bereket dilemek için.",
-    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "name": "Allâhümme sayyiben nâfi'an",
+    "meaning": "Allah'ım, bunu faydalı bir yağmur kıl.",
+    "context": "Hz. Âişe'den (r.anhâ) rivayet edildiğine göre Hz. Peygamber yağmuru görünce bunu söylerdi. Yağmur yağmaya başlayınca okunur.",
+    "source": "Buhârî 1032 (sahih)",
     "target": 1,
-    "keywords": "yağmur gök yağış şükür bereket"
+    "keywords": "yağmur gök yağış şükür bereket",
+    "arabic": "اللَّهُمَّ صَيِّبًا نَافِعًا"
   },
   {
     "id": "lib_d_ilim",
     "category": "dua",
-    "name": "Rabbi zidnî ilmen nâfi'an ve fehmen vâsian",
-    "meaning": "Rabbim, bana faydalı ilim ve geniş bir anlayış artır.",
-    "context": "Ders, Kur'an okuma veya işe başlarken; ilim ve hikmet dilemek için.",
-    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "name": "Allâhümme'nfa'nî bimâ allemtenî ve allimnî mâ yenfa'unî ve zidnî ilmâ",
+    "meaning": "Allah'ım! Bana öğrettiklerinle beni faydalandır, bana fayda verecek şeyleri öğret ve ilmimi artır.",
+    "context": "Ebû Hüreyre'den (r.a.) rivayet edildiğine göre Hz. Peygamber bu duayı okurdu. Ders, Kur'an okuma veya ilme başlarken; faydalı ilim istemek için okunur.",
+    "source": "Tirmizî 3599 (hasen garîb); İbn Mâce 251",
     "target": 1,
-    "keywords": "ilim ders okul Kuran çalışma hikmet"
+    "keywords": "ilim ders okul Kuran çalışma faydalı ilim öğrenme",
+    "arabic": "اللَّهُمَّ انْفَعْنِي بِمَا عَلَّمْتَنِي، وَعَلِّمْنِي مَا يَنْفَعُنِي، وَزِدْنِي عِلْمًا"
   },
   {
     "id": "lib_d_tovbe_tesbihat",
@@ -205,7 +214,7 @@
     "id": "lib_d_tovbe_seyyidul_istigfar",
     "category": "dua",
     "name": "Allahümme ente rabbî lâ ilâhe illâ ente, halaktanî ve ene abduke ve ene alâ ahdike ve va'dike mâ estaata't, eûzü bike min şerri mâ sana't, ebû'u leke bi ni'metike aleyye ve ebû'u bi zenbî fağfir lî fe innehû lâ yağfiruz-zünûbe illâ ent",
-    "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+    "arabic": "اللَّهُمَّ أَنْتَ رَبِّي، لَا إِلَهَ إِلَّا أَنْتَ؛ خَلَقْتَنِي وَأَنَا عَبْدُكَ؛ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ؛ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ؛ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي؛ فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
     "meaning": "Allah'ım! Sen benim Rabbimsin; Senden başka ilah yoktur. Beni Sen yarattın, ben Senin kulunum. Gücüm yettiğince ahdine ve vaadine bağlıyım. Yaptıklarımın şerrinden Sana sığınırım; nimetini itiraf eder, günahımı itiraf ederim. Beni bağışla; günahları ancak Sen affedersin.",
     "context": "Şeddâd b. Evs'ten (r.a.) rivayet edildiğine göre Hz. Peygamber bunu seyyidü'l-istiğfar (istiğfarın en faziletlisi) diye öğretti. Sabah veya yatarken okunur.",
     "source": "Buhari 6306; Müslim 2702 (sahih)",
@@ -246,7 +255,7 @@
     "source": "Kur'an-ı Kerim, Enbiyâ sûresi 21/87; Tirmizi 3505 (hasen)",
     "target": 1,
     "keywords": "tövbe sıkıntı darlık kurtuluş zalim itiraf yunus balık dua",
-    "arabic": "لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ",
+    "arabic": "لَا إِلَٰهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ",
     "group": "tovbe"
   },
   {

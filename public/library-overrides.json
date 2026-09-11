@@ -1,7 +1,7 @@
 {
     "_note": "Kütüphane metin düzeltmeleri; mağaza güncellemesi gerekmeden yayınlanır. Şema ve kurallar: docs/I18N.md → 'Uzaktan kütüphane düzeltmesi'. Katmanlar: tr (kanon), en (TR dışı ortak meal/bağlam), ar/bn/ur (yalnızca okunuş adı). Bir metni ikinci kez değiştirirken önceki metni prev içine yaz.",
     "_pushSonrasi": "PUSH TEK BASINA YETMEZ: jsDelivr @main etiketini saatlerce onbellekte tutar ve ?t= gibi parametreleri yok sayar. Her push'tan sonra purge adresini cagir, yoksa kullanicilar eski dosyayi almaya devam eder: https://purge.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/library-overrides.json",
-    "_arKatmaniTuzagi": "Bir maddede en.name yaziyorsan ar.name'i de yaz (degismemis olsa bile). overridePatchForLocale once en katmanini uygular; ar yamasi yoksa Arapca kullaniciya Latin okunus duser.",
+    "_arKatmaniTuzagi": "Bir maddede en.name yaziyorsan ar, bn ve ur name'lerini de yaz (degismemis olsa bile). overridePatchForLocale once en katmanini uygular; o dilin yamasi yoksa Arapca/Bengalce/Urduca kullaniciya Latin okunus duser.",
     "version": 1,
     "items": {
         "lib_12": {
@@ -209,6 +209,404 @@
             },
             "ar": {
                 "name": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ، وَهُوَ حَيٌّ لَا يَمُوتُ، بِيَدِهِ الْخَيْرُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ"
+            }
+        },
+        "lib_d_eve_giris": {
+            "prev": {
+                "name": [
+                    "Allahümme inni esa'elüke hayral mühlı ve hayral mahrı",
+                    "Allahumma inni as'aluka khayral-mawliji wa khayral-makhraji",
+                    "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ الْمَوْلِجِ وَخَيْرَ الْمَخْرَجِ",
+                    "اللہم انی اسألک خیر المولج وخیر المخرج",
+                    "আল্লাহুম্মা ইন্নী আসআলুকা খাইরাল মাওলিজি ওয়া খাইরাল মাখরাজি"
+                ],
+                "meaning": [
+                    "Ya Allah, gireceğim yerin hayrını ve çıkacağım yerin hayrını Senden dilerim.",
+                    "O Allah, I ask You for the good of entering and the good of leaving."
+                ]
+            },
+            "tr": {
+                "name": "Allâhümme innî es'elüke hayre'l-mevlici ve hayre'l-mahreci. Bismillâhi velecnâ ve bismillâhi haracnâ ve alallâhi rabbinâ tevekkelnâ",
+                "meaning": "Allah'ım! Senden girişin hayrını ve çıkışın hayrını dilerim. Allah'ın adıyla girdik; Allah'ın adıyla çıktık; Rabbimiz Allah'a tevekkül ettik.",
+                "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ الْمَوْلِجِ وَخَيْرَ الْمَخْرَجِ؛ بِسْمِ اللَّهِ وَلَجْنَا، وَبِسْمِ اللَّهِ خَرَجْنَا، وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا",
+                "context": "Ebu Mâlik el-Eş'arî'den (r.a.) rivayet edildiğine göre kişi evine girerken bunu okur, sonra ailesine selam verir. Eve girerken.",
+                "source": "Ebu Davud 5096 (hasen); Nevevî, El-Ezkar",
+                "keywords": "ev eve girmek giriş kapı aile selam tevekkül bismillah"
+            },
+            "en": {
+                "name": "Allahumma inni as'aluka khayral-mawliji wa khayral-makhraji. Bismillahi walajna wa bismillahi kharajna wa 'ala Allahi rabbina tawakkalna",
+                "meaning": "O Allah, I ask You for the best of entering and the best of leaving. In Allah's name we enter; in Allah's name we leave; and upon our Lord we rely.",
+                "context": "From Abu Malik al-Ash'ari (r.a.): say this when you enter your home, then greet your family. Say it at the door when coming in."
+            },
+            "ar": {
+                "name": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ الْمَوْلِجِ وَخَيْرَ الْمَخْرَجِ؛ بِسْمِ اللَّهِ وَلَجْنَا، وَبِسْمِ اللَّهِ خَرَجْنَا، وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا"
+            },
+            "ur": {
+                "name": "اللہم إنی أسألک خیر المولج وخیر المخرج؛ بسم اللہ ولجنا، وبسم اللہ خرجنا، وعلی اللہ ربنا توکلنا"
+            },
+            "bn": {
+                "name": "আল্লাহুম্মা ইন্নী আসআলুকা খাইরাল মাওলিজি ওয়া খাইরাল মাখরাজি। বিসমিল্লাহি ওয়ালাজনা, ওয়া বিসমিল্লাহি খারাজনা, ওয়া আলাল্লাহি রাব্বিনা তাওয়াক্কালনা"
+            }
+        },
+        "lib_d_yeni_elbise": {
+            "prev": {
+                "name": [
+                    "Elhamdülillâhillezî kezâni hâzâ ve mâ kuntu muahhıran bi hâzâ",
+                    "Alhamdulillahil-ladhi kasani hadha wa ma kunna muqtadirin",
+                    "الْحَمْدُ لِلَّهِ الَّذِي كَسَانِي هَذَا وَمَا كُنْتُ أَقْدِرُ عَلَيْهِ",
+                    "الحمد للہ الذی کسانی هذا وما کنت مقتدرا علیہ",
+                    "আলহামদুলিল্লাহিল্লাযী কাযানী হাযা ওয়া মা কুন্না মুকতাদিরীন"
+                ],
+                "meaning": [
+                    "Bunu bana giydiren ve onsuz güç yetiremeyeceğim şeyi bana veren Allah'a hamd olsun.",
+                    "Praise be to Allah who clothed me with this though I was unable to do it."
+                ]
+            },
+            "tr": {
+                "name": "Elhamdülillâhillezî kesânî hâze's-sevbe ve rezakanîhi min ğayri havlin minnî ve lâ kuvveh",
+                "meaning": "Bunu bana giydiren ve tarafımdan hiçbir güç ve kuvvet olmaksızın rızık olarak veren Allah'a hamd olsun.",
+                "arabic": "الْحَمْدُ لِلَّهِ الَّذِي كَسَانِي هَذَا الثَّوْبَ وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
+                "context": "Muaz b. Enes'ten (r.a.) rivayet edildiğine göre kim elbise giyip bunu okursa geçmiş ve gelecek günahları affedilir. Elbise giyildiğinde (yeni veya günlük).",
+                "source": "Ebu Davud 4023 (hasen); Tirmizi",
+                "keywords": "elbise kıyafet giyinmek hamd şükür istiğfar libas"
+            },
+            "en": {
+                "name": "Alhamdulillahil-ladhi kasani hadhath-thawba wa razaqanihi min ghayri hawlin minni wa la quwwah",
+                "meaning": "All praise is for Allah who clothed me in this garment and gave it to me without any power or strength of my own.",
+                "context": "From Mu'adh ibn Anas (r.a.): whoever puts on clothes and says this will have past and future sins forgiven. Say it when dressing—new clothes or everyday wear."
+            },
+            "ar": {
+                "name": "الْحَمْدُ لِلَّهِ الَّذِي كَسَانِي هَذَا الثَّوْبَ وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ"
+            },
+            "ur": {
+                "name": "الحمد للہ الذی کسانی ھذا الثوب ورزقنیہ من غیر حول منی ولا قوة"
+            },
+            "bn": {
+                "name": "আলহামদুলিল্লাহিল্লাযী কাসানী হাযাস ছাওবা ওয়া রাযাকানীহি মিন গাইরি হাওলিন মিন্নী ওয়া লা কুওয়াহ"
+            }
+        },
+        "lib_d_arac": {
+            "prev": {
+                "name": [
+                    "Sübhânellezî sehhara lenâ hâzâ",
+                    "Subhanalladhi sakhkhara lana hadha",
+                    "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا",
+                    "سبحان الذی سخر لنا هذا",
+                    "সুবহানাল্লাযী সাখখারা লানা হাযা"
+                ],
+                "meaning": [
+                    "Bunu bizim emrimize veren Allah'ı tesbih ederim.",
+                    "Glory be to Him who subjected this to us."
+                ]
+            },
+            "tr": {
+                "name": "Sübhânellezî sehhara lenâ hâzâ ve mâ künnâ lehû mukrinîn. Ve innâ ilâ rabbinâ le munkalibûn",
+                "meaning": "Bunu bizim hizmetimize veren Allah'ı tesbih ederim; biz buna güç yetiremezdik. Şüphesiz biz Rabbimize döneceğiz.",
+                "arabic": "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ؛ وَإِنَّا إِلَى رَبِّنَا لَمُنقَلِبُونَ",
+                "context": "Abdullah b. Ömer'den (r.a.) rivayet edildiğine göre Hz. Peygamber bineğe veya araca binince bunu okurdu. Araç, at, deve veya bineğe binilince.",
+                "source": "Müslim 1342 (sahih)",
+                "keywords": "araç araba otobüs yolculuk binek seyahat uçak"
+            },
+            "en": {
+                "name": "Subhanalladhi sakhkhara lana hadha wa ma kunna lahu muqrinin. Wa inna ila rabbina la munqalibun",
+                "meaning": "Glory be to Allah who has made this serve us, though we could never have tamed it ourselves. To our Lord we shall return.",
+                "context": "From Abdullah ibn Umar (r.a.): the Prophet would say this when mounting a ride. Say it when you board a car, horse, camel, or any transport."
+            },
+            "ar": {
+                "name": "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ؛ وَإِنَّا إِلَى رَبِّنَا لَمُنقَلِبُونَ"
+            },
+            "ur": {
+                "name": "سبحان الذی سخر لنا ھذا وما کنا لہ مقرنین؛ وإنا إلی ربنا لمنقلبون"
+            },
+            "bn": {
+                "name": "সুবহানাল্লাযী সাখখারা লানা হাযা, ওয়া মা কুন্না লাহু মুকরিনীন; ওয়া ইন্না ইলা রাব্বিনা লামুনকালিবূন"
+            }
+        },
+        "lib_d_olum_haberi": {
+            "prev": {
+                "name": [
+                    "İnnâ lillâhi ve innâ ileyhi râciûn, Allâhümme'curnî fî musîbetî ve'hturni hayren minhâ",
+                    "Inna lillahi wa inna ilayhi raji'un. Allahumma'jurni fi musibati wa-khluf li khayran minha",
+                    "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ، اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي وَاخْلُفْ لِي خَيْرًا مِنْهَا",
+                    "إنا للہ وإنا إلیہ راجعون، اللہم أجرنی فی مصیبتی واخلف لی خیرا منہا",
+                    "ইন্না লিল্লাহি ওয়া ইন্না ইলাইহি রাজিউন। আল্লাহুম্মাজুরনী ফী মুসীবাতী ওয়াখলুফ লী খাইরান মিনহা"
+                ],
+                "meaning": [
+                    "Biz Allah'a aidiz ve O'na döneceğiz. Ya Allah, musibetimde bana mükâfat yaz ve ondan hayırlı bir çıkış nasip et."
+                ]
+            },
+            "tr": {
+                "name": "İnnâ lillâhi ve innâ ileyhi râciûn, Allâhümme'cürnî fî musîbetî ve ahlif lî hayran minhâ",
+                "meaning": "Biz Allah'a aidiz ve O'na döneceğiz. Allah'ım, musibetimden dolayı beni ecirlendir ve bana onun yerine daha hayırlısını ver.",
+                "arabic": "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ، اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي وَأَخْلِفْ لِي خَيْرًا مِنْهَا",
+                "context": "Ümmü Seleme'den (r.anhâ) rivayet edildiğine göre Hz. Peygamber, musibete uğrayıp bunu okuyana Allah'ın onun yerine daha hayırlısını vereceğini bildirmiştir. Ölüm veya büyük kayıp haberi işitilince okunur.",
+                "source": "Müslim 918 (sahih); Kur'an-ı Kerim, Bakara 2/156"
+            },
+            "en": {
+                "name": "Inna lillahi wa inna ilayhi raji'un. Allahumma'jurni fi musibati wa akhlif li khayran minha",
+                "context": "Narrated by Umm Salama (may Allah be pleased with her): the Prophet (peace be upon him) said that whoever is afflicted and says this, Allah gives them something better in its place. Recite on hearing news of a death or great loss."
+            },
+            "ar": {
+                "name": "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ، اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي وَأَخْلِفْ لِي خَيْرًا مِنْهَا"
+            },
+            "ur": {
+                "name": "إنا للہ وإنا إلیہ راجعون، اللہم أجرنی فی مصیبتی وأخلف لی خیرا منہا"
+            },
+            "bn": {
+                "name": "ইন্না লিল্লাহি ওয়া ইন্না ইলাইহি রাজিউন। আল্লাহুম্মাজুরনী ফী মুসীবাতী ওয়া আখলিফ লী খাইরান মিনহা"
+            }
+        },
+        "lib_d_yagmur_isteme": {
+            "prev": {
+                "name": [
+                    "Allâhümme eskıb seyyiban nâfi'an",
+                    "Allahumma asqina ghaythan nafi'an",
+                    "اللَّهُمَّ أَسْقِنَا غَيْثًا نَافِعًا",
+                    "اللہم أسقنا غیثا نافعا",
+                    "আল্লাহুম্মা আসকিনা গাইসান নাফিআন"
+                ],
+                "meaning": [
+                    "Ya Allah, bize faydalı bir yağmur yağdır.",
+                    "O Allah, send down upon us a beneficial rain."
+                ]
+            },
+            "tr": {
+                "name": "Allâhümme'skınâ ğaysen muğîsen merî'en merî'an, nâfi'an ğayra dârrin, âcilen ğayra âcil",
+                "meaning": "Allah'ım! Bize imdada yetişen, sıhhatli ve bol ürün veren, faydalı olup zarar vermeyen, gecikmeden hemen gelen bir yağmur ver.",
+                "arabic": "اللَّهُمَّ اسْقِنَا غَيْثًا مُغِيثًا مَرِيئًا مَرِيعًا، نَافِعًا غَيْرَ ضَارٍّ، عَاجِلًا غَيْرَ آجِلٍ",
+                "context": "Câbir b. Abdullah'tan (r.a.) rivayet edildiğine göre kuraklıktan şikâyetle ağlayarak gelenler üzerine Hz. Peygamber bu duayı okudu ve gökyüzü bulutla kaplandı. Kuraklıkta yağmur istemek (istiskâ) için okunur.",
+                "source": "Ebû Dâvûd 1169 (sahih); Nevevî, El-Ezkar",
+                "keywords": "yağmur kuraklık istiskâ susuzluk bereket dua"
+            },
+            "en": {
+                "name": "Allahummasqina ghaythan mughithan mari'an mari'an, nafi'an ghayra darrin, 'ajilan ghayra ajil",
+                "meaning": "O Allah, send us rain that brings relief, wholesome and abundant, beneficial and not harmful, soon and not delayed.",
+                "context": "Narrated by Jabir: when people came to the Prophet (peace be upon him) weeping over drought, he said this and the sky filled with clouds. Recite when asking for rain in drought (istisqa)."
+            },
+            "ar": {
+                "name": "اللَّهُمَّ اسْقِنَا غَيْثًا مُغِيثًا مَرِيئًا مَرِيعًا، نَافِعًا غَيْرَ ضَارٍّ، عَاجِلًا غَيْرَ آجِلٍ"
+            },
+            "ur": {
+                "name": "اللہم اسقنا غیثا مغیثا مریئا مریعا، نافعا غیر ضار، عاجلا غیر آجل"
+            },
+            "bn": {
+                "name": "আল্লাহুম্মাসকিনা গাইসান মুগীসান মারীআন মারীআন, নাফিআন গাইরা দাররিন, আজিলান গাইরা আজিল"
+            }
+        },
+        "lib_d_yagmur_yagarken": {
+            "prev": {
+                "name": [
+                    "Allâhümme sevvibenâ mâren mübâreken",
+                    "Allahumma sayyiban mubarakan",
+                    "اللہم صیبا مبارکا",
+                    "আল্লাহুম্মা সাইয়িবান মুবারাকান"
+                ],
+                "meaning": [
+                    "Ya Allah, bize bereketli bir yağmur yağdır.",
+                    "O Allah, send upon us a blessed rain."
+                ]
+            },
+            "tr": {
+                "name": "Allâhümme sayyiben nâfi'an",
+                "meaning": "Allah'ım, bunu faydalı bir yağmur kıl.",
+                "arabic": "اللَّهُمَّ صَيِّبًا نَافِعًا",
+                "context": "Hz. Âişe'den (r.anhâ) rivayet edildiğine göre Hz. Peygamber yağmuru görünce bunu söylerdi. Yağmur yağmaya başlayınca okunur.",
+                "source": "Buhârî 1032 (sahih)"
+            },
+            "en": {
+                "name": "Allahumma sayyiban nafi'an",
+                "meaning": "O Allah, make it a beneficial rain.",
+                "context": "Narrated by Aisha: when the Prophet (peace be upon him) saw rain he would say this. Recite when rain begins."
+            },
+            "ar": {
+                "name": "اللَّهُمَّ صَيِّبًا نَافِعًا"
+            },
+            "ur": {
+                "name": "اللہم صیبا نافعا"
+            },
+            "bn": {
+                "name": "আল্লাহুম্মা সাইয়িবান নাফিআন"
+            }
+        },
+        "lib_d_ilim": {
+            "prev": {
+                "name": [
+                    "Rabbi zidnî ilmen nâfi'an ve fehmen vâsian",
+                    "Rabbi zidni 'ilman nafi'an wa fahman wasi'an",
+                    "رَبِّ زِدْنِي عِلْمًا نَافِعًا وَفَهْمًا وَاسِعًا",
+                    "رب زدنی علما نافعا وفهما واسعا",
+                    "রাব্বি জিদনী ইলমান নাফিআন ওয়া ফাহমান ওয়াসিআন"
+                ],
+                "meaning": [
+                    "Rabbim, bana faydalı ilim ve geniş bir anlayış artır.",
+                    "My Lord, increase me in beneficial knowledge and broad understanding."
+                ]
+            },
+            "tr": {
+                "name": "Allâhümme'nfa'nî bimâ allemtenî ve allimnî mâ yenfa'unî ve zidnî ilmâ",
+                "meaning": "Allah'ım! Bana öğrettiklerinle beni faydalandır, bana fayda verecek şeyleri öğret ve ilmimi artır.",
+                "arabic": "اللَّهُمَّ انْفَعْنِي بِمَا عَلَّمْتَنِي، وَعَلِّمْنِي مَا يَنْفَعُنِي، وَزِدْنِي عِلْمًا",
+                "context": "Ebû Hüreyre'den (r.a.) rivayet edildiğine göre Hz. Peygamber bu duayı okurdu. Ders, Kur'an okuma veya ilme başlarken; faydalı ilim istemek için okunur.",
+                "source": "Tirmizî 3599 (hasen garîb); İbn Mâce 251",
+                "keywords": "ilim ders okul Kuran çalışma faydalı ilim öğrenme"
+            },
+            "en": {
+                "name": "Allahumman-fa'ni bima 'allamtani wa 'allimni ma yanfa'uni wa zidni 'ilma",
+                "meaning": "O Allah, benefit me through what You have taught me, teach me what will benefit me, and increase me in knowledge.",
+                "context": "Narrated by Abu Hurayra, the Prophet (peace be upon him) used to make this supplication. Recite before study, reading the Qur'an or seeking knowledge."
+            },
+            "ar": {
+                "name": "اللَّهُمَّ انْفَعْنِي بِمَا عَلَّمْتَنِي، وَعَلِّمْنِي مَا يَنْفَعُنِي، وَزِدْنِي عِلْمًا"
+            },
+            "ur": {
+                "name": "اللہم انفعنی بما علمتنی، وعلمنی ما ینفعنی، وزدنی علما"
+            },
+            "bn": {
+                "name": "আল্লাহুম্মানফা'নী বিমা আল্লামতানী ওয়া আল্লিমনী মা ইয়ানফাউনী ওয়া জিদনী ইলমা"
+            }
+        },
+        "lib_d_kotu_ruya": {
+            "prev": {
+                "name": [
+                    "Na'ûzü billâhi min şerri hâzâ ve min şerri mâ fîh",
+                    "Na'udhu billahi min sharri hadha wa min sharri ma fihi",
+                    "أَعُوذُ بِاللَّهِ مِنْ شَرِّ هَذَا وَشَرِّ مَا فِيهِ",
+                    "نعوذ باللہ من شر هذا ومن شر ما فیہ",
+                    "নাঊযু বিল্লাহি মিন শাররি হাযা ওয়া মিন শাররি মা ফীহি"
+                ],
+                "meaning": [
+                    "Bunun şerrinden ve içindeki şeylerin şerrinden Allah'a sığınırım.",
+                    "I seek refuge in Allah from the evil of this and what it contains."
+                ]
+            },
+            "tr": {
+                "name": "Eûzü billâhi mine'ş-şeytâni'r-racîm ve min şerri hâzihi'r-rü'yâ",
+                "meaning": "Kovulmuş şeytandan ve bu rüyanın şerrinden Allah'a sığınırım.",
+                "arabic": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ وَمِنْ شَرِّ هَذِهِ الرُّؤْيَا",
+                "context": "Hz. Peygamber, hoşa gitmeyen bir rüya görenin sol tarafına üç kez hafifçe tükürür gibi yapmasını, şeytandan ve rüyanın şerrinden Allah'a sığınmasını, yattığı yanı değiştirmesini ve rüyayı kimseye anlatmamasını tavsiye etmiş; böyle yapana rüyanın zarar vermeyeceğini bildirmiştir. Kötü rüya görülünce okunur.",
+                "source": "Buhârî 3292; Müslim 2261-2263 (sahih). Metin, hadislerde emredilen sığınmanın ifadesidir; lafzen rivayet edilmiş bir dua değildir.",
+                "keywords": "rüya kötü rüya kâbus uyku korku şeytan sığınma"
+            },
+            "en": {
+                "name": "A'udhu billahi minash-shaytanir-rajim wa min sharri hadhihir-ru'ya",
+                "meaning": "I seek refuge in Allah from the accursed Satan and from the evil of this dream.",
+                "context": "The Prophet (peace be upon him) advised whoever sees a disliked dream to spit lightly to the left three times, seek refuge in Allah from Satan and from the evil of the dream, turn onto the other side and tell no one; it will then do them no harm. Recite after a bad dream."
+            },
+            "ar": {
+                "name": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ وَمِنْ شَرِّ هَذِهِ الرُّؤْيَا"
+            },
+            "ur": {
+                "name": "أعوذ باللہ من الشیطان الرجیم ومن شر ہذہ الرؤیا"
+            },
+            "bn": {
+                "name": "আউযু বিল্লাহি মিনাশ শাইতানির রাজীম ওয়া মিন শাররি হাযিহির রুইয়া"
+            }
+        },
+        "lib_d_yemek_sonra": {
+            "prev": {
+                "name": [
+                    "Elhamdülillâhillezî et'amenâ ve sekânâ",
+                    "Alhamdulillahil-ladhi at'amana wa saqana",
+                    "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا",
+                    "الحمد للہ الذی أطعمنا وسقانا",
+                    "আলহামদুলিল্লাহিল্লাযী আতআমানা ওয়া সাকানা"
+                ],
+                "meaning": [
+                    "Bizi yediren ve içiren Allah'a hamd olsun.",
+                    "Praise be to Allah who fed us and gave us drink."
+                ]
+            },
+            "tr": {
+                "name": "Elhamdülillâhillezî et'amenâ ve sekânâ ve ce'alenâ müslimîn",
+                "meaning": "Bizi yediren, içiren ve bizi Müslüman kılan Allah'a hamd olsun.",
+                "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ"
+            },
+            "en": {
+                "name": "Alhamdulillahil-ladhi at'amana wa saqana wa ja'alana muslimin",
+                "meaning": "Praise be to Allah who fed us, gave us drink and made us Muslims."
+            },
+            "ar": {
+                "name": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ"
+            },
+            "ur": {
+                "name": "الحمد للہ الذی أطعمنا وسقانا وجعلنا مسلمین"
+            },
+            "bn": {
+                "name": "আলহামদুলিল্লাহিল্লাযী আতআমানা ওয়া সাকানা ওয়া জাআলানা মুসলিমীন"
+            }
+        },
+        "lib_d_kabir": {
+            "prev": {
+                "name": [
+                    "Esselâmu aleykum ehle diyârin minel mü'minîne vel müslimîn",
+                    "Assalamu 'alaykum ahla di-yarin minal-mu'minina wal-muslimin",
+                    "আসসালামু আলাইকুম আহলা দিয়ারিন মিনাল মুমিনীনা ওয়াল মুসলিমীন"
+                ]
+            },
+            "tr": {
+                "name": "Esselâmü aleyküm ehle'd-diyâri mine'l-mü'minîne ve'l-müslimîn"
+            },
+            "en": {
+                "name": "Assalamu 'alaykum ahlad-diyari minal-mu'minina wal-muslimin"
+            },
+            "ar": {
+                "name": "السَّلَامُ عَلَيْكُمْ أَهْلَ الدِّيَارِ مِنَ الْمُؤْمِنِينَ وَالْمُسْلِمِينَ"
+            },
+            "ur": {
+                "name": "السلام علیکم أهل الدیار من المؤمنین والمسلمین"
+            },
+            "bn": {
+                "name": "আসসালামু আলাইকুম আহলাদ দিয়ারি মিনাল মুমিনীনা ওয়াল মুসলিমীন"
+            }
+        },
+        "lib_d_tuvalet_cikis": {
+            "prev": {
+                "name": [
+                    "Ğufreâneke"
+                ]
+            },
+            "tr": {
+                "name": "Ğufrâneke"
+            }
+        },
+        "lib_d_ayna": {
+            "prev": {
+                "name": [
+                    "Allâhümme kemâ hassente halkî fehassin hulûkî"
+                ]
+            },
+            "tr": {
+                "name": "Allâhümme kemâ hassente halkî fe hassin hulukî"
+            }
+        },
+        "lib_d_uyku": {
+            "prev": {
+                "name": [
+                    "Bismike Allahümme ehya ve emût"
+                ]
+            },
+            "tr": {
+                "name": "Bismike Allâhümme ahyâ ve emût"
+            }
+        },
+        "lib_d_tovbe_seyyidul_istigfar": {
+            "prev": {
+                "name": [
+                    "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ"
+                ]
+            },
+            "tr": {
+                "arabic": "اللَّهُمَّ أَنْتَ رَبِّي، لَا إِلَهَ إِلَّا أَنْتَ؛ خَلَقْتَنِي وَأَنَا عَبْدُكَ؛ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ؛ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ؛ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي؛ فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ"
+            }
+        },
+        "lib_d_sikinti_yunus": {
+            "prev": {
+                "name": [
+                    "لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ"
+                ]
+            },
+            "tr": {
+                "arabic": "لَا إِلَٰهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ"
             }
         }
     }
