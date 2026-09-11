@@ -232,20 +232,37 @@ import {
     getSurahLocalizedName,
     resolveQuranSurahInput,
     syncQuranAyahFavoriteButtons,
-    syncQuranTabVisibility
+    syncQuranTabVisibility,
+    getMushafCurrentPage,
+    getReaderVisibleAyah,
+    getVisibleSurahNumber,
+    setQuranVisibleSurahChangeHandler
 } from './quran.js';
+import { getPageStartAyah } from './lib/quran-pages.js';
+import {
+    getMushafNavOptsForRerender,
+    getNavOptsForSurahOpen,
+    resolveMushafTargetEnteringFromList,
+    resolveQuranReaderSurahId,
+    resolveScrollTargetLeavingMushaf
+} from './lib/quran-reader-place.js';
 
 function mushafNavOptsForRerender() {
-    return appSettings.quranReaderLayout === 'mushaf' ? { preferSaved: true } : {};
+    return getMushafNavOptsForRerender(appSettings.quranReaderLayout, !!appSettings.quranMushafRememberPage);
 }
 
 /** Sure listesinden veya sure numarasıyla açılış (belirli ayet hariç). */
 function mushafNavOptsForSurahOpen(scrollAyah) {
-    if (scrollAyah != null && Number.isFinite(Number(scrollAyah))) return {};
-    if (appSettings.quranReaderLayout === 'mushaf' && appSettings.quranMushafRememberPage) {
-        return { preferSaved: true };
-    }
-    return {};
+    return getNavOptsForSurahOpen({
+        scrollAyah,
+        readerLayout: appSettings.quranReaderLayout,
+        rememberPage: !!appSettings.quranMushafRememberPage
+    });
+}
+
+/** Okunan sure: listede ekranda görünen (oklarla/kaydırarak gelinen), yoksa açılan. */
+function getActiveQuranSurahId() {
+    return resolveQuranReaderSurahId(currentQuranSurahId, getVisibleSurahNumber());
 }
 
 // ===================== DATA MODELS =====================
@@ -2372,6 +2389,7 @@ function applyAppLocale(locale) {
     }
     const qsv = document.getElementById('quranSurahView');
     if (qsv && qsv.classList.contains('active') && currentQuranSurahId != null) {
+        currentQuranSurahId = getActiveQuranSurahId();
         void renderQuranSurahDetail(
             currentQuranSurahId,
             appSettings.quranMeal,
@@ -8226,10 +8244,28 @@ function setupEventListeners() {
         }
         showView('quranSurahView', n);
     });
+    setQuranVisibleSurahChangeHandler((surahN) => {
+        currentQuranSurahId = surahN;
+        // Geçmiş kaydı ve uygulama yığını da okunan sureyi göstersin; yoksa başka
+        // ekrana gidip Geri'ye basınca açılıştaki sureye dönülür.
+        if (currentViewId !== 'quranSurahView') return;
+        const next = getViewState('quranSurahView', surahN);
+        try {
+            const cur = window.history.state;
+            if (cur && cur.viewId === 'quranSurahView' && !viewStateEquals(cur, next)) {
+                window.history.replaceState(next, '');
+            }
+        } catch (_) {
+            /* bazı WebView'lar geçmişi kısıtlayabilir */
+        }
+        const top = inAppViewStack[inAppViewStack.length - 1];
+        if (top && top.viewId === 'quranSurahView') inAppViewStack[inAppViewStack.length - 1] = next;
+    });
     setQuranMealChangeHandler((mealId) => {
         appSettings.quranMeal = normalizeQuranMeal(mealId, appSettings.locale);
         saveData();
         if (currentQuranSurahId != null) {
+            currentQuranSurahId = getActiveQuranSurahId();
             void renderQuranSurahDetail(
                 currentQuranSurahId,
                 appSettings.quranMeal,
@@ -8245,6 +8281,7 @@ function setupEventListeners() {
         appSettings.quranReadMode = normalizeQuranReadModeForLocale(readMode, appSettings.locale);
         saveData();
         if (currentQuranSurahId != null) {
+            currentQuranSurahId = getActiveQuranSurahId();
             void renderQuranSurahDetail(
                 currentQuranSurahId,
                 appSettings.quranMeal,
@@ -8264,16 +8301,26 @@ function setupEventListeners() {
         const qsv = document.getElementById('quranSurahView');
         if (!qsv || qsv.classList.contains('hidden')) return;
 
-        let surahN = currentQuranSurahId ?? 1;
+        let surahN = getActiveQuranSurahId();
         let scrollAyah = null;
         let mushafNav = nextLayout === 'mushaf' ? mushafNavOptsForRerender() : {};
 
-        if (nextLayout === 'scroll' && wasMushaf) {
-            surahN = 1;
-            scrollAyah = 1;
-            currentQuranSurahId = 1;
+        if (nextLayout === 'mushaf' && !wasMushaf) {
+            // Listeden mushaf'a: ekrandaki ayetin sayfası açılsın. Eskiden kayıtlı
+            // sayfaya (varsayılan 1) açılıp kullanıcıyı Fatiha'ya atıyordu.
+            const here = resolveMushafTargetEnteringFromList(getReaderVisibleAyah());
+            if (here) {
+                surahN = here.surah;
+                scrollAyah = here.ayah;
+            }
+        } else if (nextLayout === 'scroll' && wasMushaf) {
+            // Mushaf'tan listeye: açık sayfanın ilk ayeti (eskiden sabit Fatiha 1).
+            const target = resolveScrollTargetLeavingMushaf(getPageStartAyah(getMushafCurrentPage()), surahN);
+            surahN = target.surah;
+            scrollAyah = target.ayah;
             mushafNav = { leavingMushaf: true };
         }
+        currentQuranSurahId = surahN;
 
         void renderQuranSurahDetail(
             surahN,

@@ -28,6 +28,7 @@ import {
     searchAyahTextHits
 } from './quran-ayah-text-search.js';
 import { getSurahLocalizedName } from './quran-surah-names.js';
+import { resolveScrollPlaceRestore } from './lib/quran-reader-place.js';
 
 export { getSurahLocalizedName } from './quran-surah-names.js';
 import { t, getLocale, normalizeAppLocale } from './i18n.js';
@@ -78,6 +79,9 @@ let navigateToSurah = null;
 let onMealChange = null;
 let onReadModeChange = null;
 let onReaderLayoutChange = null;
+/** Kaydırma / sure atlama sonrası okunan sure (uygulama durumu ile hizalamak için). */
+let onVisibleSurahChange = null;
+let lastNotifiedVisibleSurah = null;
 let renderGeneration = 0;
 const surahContentCache = new Map();
 let lazyObserver = null;
@@ -247,6 +251,24 @@ export function setQuranReadModeChangeHandler(fn) {
 
 export function setQuranReaderLayoutChangeHandler(fn) {
     onReaderLayoutChange = typeof fn === 'function' ? fn : null;
+}
+
+/**
+ * Okunan sure değişince çağrılır. Kaydırma ve sure okları showView çağırmaz;
+ * uygulama durumu açılıştaki surede kalırsa meal/mod/düzen değişimi ve Geri
+ * ile dönüş kullanıcıyı başka sureye atar.
+ */
+export function setQuranVisibleSurahChangeHandler(fn) {
+    onVisibleSurahChange = typeof fn === 'function' ? fn : null;
+}
+
+function notifyVisibleSurahChange(surahN) {
+    const n = Math.trunc(Number(surahN));
+    if (!Number.isFinite(n) || n < 1 || n > 114) return;
+    // Kaydırmada her karede değil, yalnızca sure gerçekten değişince.
+    if (n === lastNotifiedVisibleSurah) return;
+    lastNotifiedVisibleSurah = n;
+    if (onVisibleSurahChange) onVisibleSurahChange(n);
 }
 
 /** Sağ panelden düzen seçimi — dokunmatikte güvenilir giriş noktası. */
@@ -1134,7 +1156,8 @@ function captureReaderAyahAnchor(scroller) {
             return {
                 surah: el.getAttribute('data-surah') || '',
                 ayah: el.getAttribute('data-ayah') || '',
-                offset: r.top - scTop
+                offset: r.top - scTop,
+                height: r.height
             };
         }
     }
@@ -1150,13 +1173,30 @@ function restoreReaderAyahAnchor(scroller, anchor) {
     if (!el) return false;
     const apply = () => {
         const scTop = scroller.getBoundingClientRect().top;
-        const delta = el.getBoundingClientRect().top - scTop - anchor.offset;
+        const r = el.getBoundingClientRect();
+        // Ofseti orantıla: ayetin ne kadarı geçildiyse o kadarı geçilmiş kalsın.
+        // Ham piksel kullanılırsa meal/mod ayet bloğunu kısalttığında blok tümüyle
+        // ekranın üstüne itilir ve ilk görünen ayet bir sonrakine kayar.
+        const offset =
+            anchor.height > 0 && r.height > 0 ? anchor.offset * (r.height / anchor.height) : anchor.offset;
+        const delta = r.top - scTop - offset;
         if (Math.abs(delta) > 0.5) scroller.scrollTop += delta;
     };
     apply();
     // Yazı tipi/görsel yerleşimi oturunca bir kez daha düzelt.
     requestAnimationFrame(apply);
     return true;
+}
+
+/**
+ * Liste düzeninde ekranın üstündeki ayet; mushaf'ta ya da liste boşken null.
+ * Listeden mushaf'a geçerken hangi sayfanın açılacağını belirler — yoksa mushaf
+ * kayıtlı sayfaya (varsayılan 1) açılıp kullanıcıyı Fatiha'ya atıyordu.
+ * @returns {{ surah: string, ayah: string } | null}
+ */
+export function getReaderVisibleAyah() {
+    if (isQuranMushafDomActive()) return null;
+    return captureReaderAyahAnchor(getQuranReaderScroller());
 }
 
 function isReaderDrawerOpen() {
@@ -2405,6 +2445,9 @@ export async function renderQuranSurahDetail(
 ) {
     const n = Number(surahN);
     if (!Number.isFinite(n) || n < 1 || n > 114) return;
+    // Uygulama durumu artık bu sure; kaydırmayla başka sureye geçilince yeniden
+    // bildirilsin (önceki okumadan kalan değer bildirimi yutmasın).
+    lastNotifiedVisibleSurah = n;
 
     const locale = getLocale();
     const meal = normalizeQuranMeal(mealId, locale);
@@ -2414,8 +2457,11 @@ export async function renderQuranSurahDetail(
     const leavingMushaf = !!mushafNav.leavingMushaf;
     const targetIsMushaf = layout === 'mushaf';
     const forceShell = wasMushafAtStart !== targetIsMushaf || leavingMushaf;
-    const savedReaderScrollTop =
-        !targetIsMushaf && !leavingMushaf ? getQuranReaderScroller()?.scrollTop ?? null : null;
+    // Yerinde yeniden çizimde (meal / dil) konum ayete bağlanır: meal ayet blok
+    // yüksekliklerini değiştirir, aynı piksel başka ayete denk gelir.
+    const placeScroller = !targetIsMushaf && !leavingMushaf ? getQuranReaderScroller() : null;
+    const savedReaderAyahAnchor = placeScroller ? captureReaderAyahAnchor(placeScroller) : null;
+    const savedReaderScrollTop = placeScroller ? placeScroller.scrollTop ?? null : null;
     const gen = ++renderGeneration;
     syncMealSelect(meal, locale);
     syncReaderTitle();
@@ -2467,16 +2513,44 @@ export async function renderQuranSurahDetail(
     };
 
     const finishScroll = async () => {
-        if (scrollAyah != null && Number.isFinite(Number(scrollAyah))) {
+        if (isMushaf) {
+            if (scrollAyah != null && Number.isFinite(Number(scrollAyah))) {
+                await scrollToAyah(n, Number(scrollAyah), meal, mode, gen, layout);
+            } else {
+                await scrollToMushafPage(resolveMushafStartPage(n, scrollAyah, mushafOpts), meal, mode, gen);
+            }
+            updateSurahJumpNav();
+            return;
+        }
+
+        const place = resolveScrollPlaceRestore({
+            scrollAyah,
+            forceSurahStart: !!mushafNav.forceSurahStart,
+            savedAnchor: savedReaderAyahAnchor,
+            savedReaderScrollTop
+        });
+        if (place === 'ayah') {
             await scrollToAyah(n, Number(scrollAyah), meal, mode, gen, layout);
-        } else if (isMushaf) {
-            await scrollToMushafPage(
-                resolveMushafStartPage(n, scrollAyah, mushafOpts),
+        } else if (place === 'anchor') {
+            // Çapa kaydırarak ilerlenen başka bir surede olabilir; yeniden çizimden
+            // sonra o bölüm henüz yüklenmemiş olabilir — önce onu getir.
+            await prefetchReaderSections(
                 meal,
                 mode,
+                layout,
+                Number(savedReaderAyahAnchor.surah),
+                Number(savedReaderAyahAnchor.ayah),
                 gen
             );
-        } else if (savedReaderScrollTop != null && savedReaderScrollTop > 0) {
+            if (gen !== renderGeneration) return;
+            if (!restoreReaderAyahAnchor(getQuranReaderScroller(), savedReaderAyahAnchor)) {
+                if (savedReaderScrollTop != null && savedReaderScrollTop > 0) {
+                    restoreQuranReaderScrollTop(getQuranReaderScroller(), savedReaderScrollTop);
+                } else {
+                    await scrollToSurahSection(n, layout, meal, mode, gen);
+                }
+            }
+        } else if (place === 'pixel') {
             restoreQuranReaderScrollTop(getQuranReaderScroller(), savedReaderScrollTop);
         } else {
             await scrollToSurahSection(n, layout, meal, mode, gen);
@@ -2624,10 +2698,12 @@ function ensureSurahScrollNavBound() {
  */
 
 /** Ekranın üstünde duran sure bölümünün numarası. */
-function getVisibleSurahNumber() {
+export function getVisibleSurahNumber() {
     const list = document.getElementById('quranAyahList');
     const scroller = getQuranReaderScroller();
-    if (!list || !scroller) return null;
+    // Mushaf'ta liste gizli: kutular 0 ölçülür ve aşağıdaki döngü "ilk bölümü"
+    // yedek diye döndürür — okunan sure sanılırdı.
+    if (!list || !scroller || list.hidden) return null;
     const scTop = scroller.getBoundingClientRect().top;
     let fallback = null;
     for (const sec of list.querySelectorAll('.quran-surah-section[data-surah]')) {
@@ -2662,6 +2738,7 @@ function ensureSurahJumpNavBound() {
             nextBtn.hidden = true;
             return;
         }
+        notifyVisibleSurahChange(n);
         // Uçlarda ilgili ok gizlenir (Fatiha'da önceki, Nâs'ta sonraki yok)
         prevBtn.hidden = n <= 1;
         nextBtn.hidden = n >= 114;
@@ -2686,6 +2763,8 @@ function ensureSurahJumpNavBound() {
         const list = document.getElementById('quranAyahList');
         const meal = getQuranReaderMealId();
         const mode = normalizeQuranReadMode(list?.dataset.readMode ?? '');
+        // Kaydırma bitmeden meal/mod değişirse eski sureye dönülmesin: hedefi hemen bildir.
+        notifyVisibleSurahChange(target);
         void (async () => {
             await scrollToSurahSection(target, 'scroll', meal, mode, renderGeneration);
             scheduleVisibleSurahLoad();
