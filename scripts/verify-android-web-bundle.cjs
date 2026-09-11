@@ -41,6 +41,31 @@ if (/^\s*VITE_PREMIUM_PREVIEW\s*=\s*1\s*$/m.test(envLocal)) {
     failed = true;
 }
 
+// Güvenlik ağı: yayın paketindeki debug-flags.json'da test bayrağı açık olmamalı.
+// (Açılabilecekleri yer Android debug derlemesi: android/app/src/debug/assets.
+// Ör. "specialDayPreview" açık kalırsa herkes her gün kandil başlığı görür.)
+for (const [label, flagsPath] of [
+    ['www', path.join(ROOT, 'www', 'debug-flags.json')],
+    ['android assets', path.join(ROOT, 'android', 'app', 'src', 'main', 'assets', 'public', 'debug-flags.json')]
+]) {
+    const raw = read(flagsPath);
+    if (!raw) continue;
+    let flags = {};
+    try {
+        flags = JSON.parse(raw);
+    } catch {
+        console.error(`FAIL ${label}: debug-flags.json okunamadı`);
+        failed = true;
+        continue;
+    }
+    const on = Object.entries(flags).filter(([, v]) => v !== false && v != null).map(([k]) => k);
+    if (on.length) {
+        console.error(`FAIL ${label}: debug-flags.json içinde açık test bayrağı: ${on.join(', ')}`);
+        console.error('Yayından önce public/debug-flags.json içinde hepsini false yapın.');
+        failed = true;
+    }
+}
+
 for (const [label, indexPath, baseDir] of [
     ['www', wwwIndex, path.join(ROOT, 'www')],
     ['android assets', androidIndex, path.join(ROOT, 'android', 'app', 'src', 'main', 'assets', 'public')]

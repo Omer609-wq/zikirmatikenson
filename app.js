@@ -41,15 +41,18 @@ import {
 import specialDaysData from './data/special-days.json';
 import {
     activeSpecialDay,
-    defaultSpecialDaysYear,
+    defaultSpecialDaysHijriYear,
+    formatHijriDayMonthTr,
     formatHijriTr,
+    isHijriYearIncomplete,
     mergeSpecialDays,
     specialDayName,
     specialDayPartLabel,
+    specialDayPreviewNow,
     specialDayStatus,
     specialDayStatusLabel,
-    specialDayYears,
-    specialDaysForYear
+    specialDaysForHijriYear,
+    specialDaysHijriYears
 } from './lib/special-days.js';
 import { escapeHtml, escapeAttr } from './lib/html.js';
 import { isBaseLibraryItemPremiumLocked } from './lib/library-access.js';
@@ -5942,7 +5945,7 @@ function attachLongPressSelect(el, id, { onEnter }) {
 // Operatörlerin bayramda adlarını değiştirmesi gibi: dini günlerde ana ekran
 // başlığı o günün adına döner (üstte küçük hicri tarih). Ayrıntı: lib/special-days.js
 
-/** Listede gösterilen yıl; null = açılışta sıradaki dini günün yılı. */
+/** Listede gösterilen hicri yıl; null = açılışta sıradaki dini günün yılı. */
 let specialDaysListYear = null;
 
 function specialDaysEnabled() {
@@ -5953,11 +5956,17 @@ function getSpecialDays() {
     return mergeSpecialDays(specialDaysData.days, getSeasonalSpecialDays());
 }
 
+/** Gerçek saat; debug-flags.json "specialDayPreview" açıksa o dini günün akşamı. */
+function specialDaysNow() {
+    const preview = getRuntimeFlags().specialDayPreview;
+    return (preview && specialDayPreviewNow(getSpecialDays(), preview)) || new Date();
+}
+
 function renderHomeSpecialDay() {
     const title = document.getElementById('homeTitle');
     const btn = document.getElementById('homeSpecialDayBtn');
     if (!title || !btn) return;
-    const entry = specialDaysEnabled() ? activeSpecialDay(getSpecialDays()) : null;
+    const entry = specialDaysEnabled() ? activeSpecialDay(getSpecialDays(), specialDaysNow()) : null;
     title.hidden = !!entry;
     btn.hidden = !entry;
     if (!entry) return;
@@ -5977,11 +5986,12 @@ function renderSpecialDaysList({ scrollToCurrent = false } = {}) {
     const yearsEl = document.getElementById('specialDaysYears');
     const listEl = document.getElementById('specialDaysList');
     if (!yearsEl || !listEl) return;
-    const now = new Date();
+    const now = specialDaysNow();
     const all = getSpecialDays();
-    const years = specialDayYears(all);
+    // Uygulamada yalnızca hicri takvim: sekmeler hicri yıl, satırda hicri gün.
+    const years = specialDaysHijriYears(all, now);
     if (specialDaysListYear == null || !years.includes(specialDaysListYear)) {
-        specialDaysListYear = defaultSpecialDaysYear(all, now);
+        specialDaysListYear = defaultSpecialDaysHijriYear(all, now);
     }
 
     yearsEl.replaceChildren(
@@ -6003,7 +6013,7 @@ function renderSpecialDaysList({ scrollToCurrent = false } = {}) {
     let nextMarked = false;
     let focusRow = null;
     listEl.replaceChildren(
-        ...specialDaysForYear(all, specialDaysListYear).map((entry) => {
+        ...specialDaysForHijriYear(all, specialDaysListYear).map((entry) => {
             const status = specialDayStatus(entry, now);
             const li = document.createElement('li');
             li.className = 'special-days-row';
@@ -6017,24 +6027,23 @@ function renderSpecialDaysList({ scrollToCurrent = false } = {}) {
             }
             if (status.state !== 'past') nextMarked = true;
 
+            // Haftanın günü takvimden bağımsız; "Perşembe akşamı" diye plan yapmaya yarar.
             const [y, m, d] = entry.date.split('-').map(Number);
-            const gregorian = new Date(y, m - 1, d).toLocaleDateString('tr-TR', {
-                day: 'numeric',
-                month: 'long',
-                weekday: 'long'
-            });
+            const weekday = new Date(y, m - 1, d).toLocaleDateString('tr-TR', { weekday: 'long' });
             const part = specialDayPartLabel(entry);
             li.innerHTML =
                 `<span class="special-days-row__main">` +
                 `<span class="special-days-row__name">${escapeHtml(specialDayName(entry))}` +
                 `${part ? ` <span class="special-days-row__part">${escapeHtml(part)}</span>` : ''}</span>` +
-                // Sığmazsa ayırıcıda kırılsın, hicri tarihin ortasında değil.
-                `<span class="special-days-row__date"><span>${escapeHtml(gregorian)} ·</span> <span>${escapeHtml(formatHijriTr(entry.hijri))}</span></span>` +
+                `<span class="special-days-row__date">${escapeHtml(`${formatHijriDayMonthTr(entry.hijri)} · ${weekday}`)}</span>` +
                 `</span>` +
                 `<span class="special-days-row__status">${escapeHtml(specialDayStatusLabel(status))}</span>`;
             return li;
         })
     );
+
+    const incompleteEl = document.getElementById('specialDaysIncomplete');
+    if (incompleteEl) incompleteEl.hidden = !isHijriYearIncomplete(all, specialDaysListYear);
 
     const body = listEl.closest('.modal-body');
     if (body) {

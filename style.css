@@ -413,7 +413,6 @@ body {
     font-size: 0.74rem;
     color: var(--text-gray);
 }
-.special-days-row__date > span,
 .special-days-row__part {
     white-space: nowrap;
 }
@@ -437,6 +436,15 @@ body {
 .special-days-row--next .special-days-row__status,
 .special-days-row--active .special-days-row__status {
     color: var(--primary-green);
+}
+.special-days-note {
+    margin: 0.75rem 0 0;
+    font-size: 0.74rem;
+    color: var(--text-gray);
+    text-align: center;
+}
+.special-days-note[hidden] {
+    display: none;
 }
 .special-days-source {
     margin: 0.9rem 0 0;

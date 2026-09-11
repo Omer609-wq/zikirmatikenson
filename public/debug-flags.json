@@ -3,5 +3,6 @@
   "counterBgPreviewUnlock": false,
   "weeklyReportPreviewSample": false,
   "updateBannerPreview": false,
-  "seasonalContentPreview": false
+  "seasonalContentPreview": false,
+  "specialDayPreview": false
 }
