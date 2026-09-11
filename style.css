@@ -1728,7 +1728,7 @@ button.premium-card.premium-card--action:active {
 .smart-reminder-weekday {
     min-width: 0;
     width: 100%;
-    padding: 0.5rem 0.2rem;
+    padding: 0.5rem 0;
     border-radius: 10px;
     border: 1px solid var(--surface-border);
     background: var(--alpha-04);
@@ -1737,6 +1737,13 @@ button.premium-card.premium-card--action:active {
     font-weight: 600;
     cursor: pointer;
     text-align: center;
+}
+/* Arapça, Bengalce ve Urducada gün adının iki harflik kısaltması yok
+   ("جمعرات", "মঙ্গল"); 360px telefonda 7 sütuna sığsın diye biraz küçük. */
+html[lang='ar'] .smart-reminder-weekday,
+html[lang='bn'] .smart-reminder-weekday,
+html[lang='ur'] .smart-reminder-weekday {
+    font-size: 0.7rem;
 }
 .smart-reminder-weekday.is-active {
     border-color: rgba(46, 204, 113, 0.45);

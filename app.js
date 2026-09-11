@@ -4620,7 +4620,7 @@ async function saveSmartReminderFromEditor() {
     normalizeSmartReminderTitleOnBlur();
     const isNew = !smartReminderEditId;
     if (isNew && smartReminders.length >= MAX_SMART_REMINDERS) {
-        await showAppAlert(t('smartReminders.maxReached', { max: MAX_SMART_REMINDERS }), { title: t('premium.cardRemindersTitle') });
+        await showAppAlert(t('smartReminders.maxReached', { max: MAX_SMART_REMINDERS, pluralCount: MAX_SMART_REMINDERS }), { title: t('premium.cardRemindersTitle') });
         return;
     }
 
@@ -4762,7 +4762,7 @@ function setupSmartRemindersUI() {
         addBtn.dataset.bound = '1';
         addBtn.addEventListener('click', () => {
             if (smartReminders.length >= MAX_SMART_REMINDERS) {
-                void showAppAlert(t('smartReminders.maxReached', { max: MAX_SMART_REMINDERS }), { title: t('premium.cardRemindersTitle') });
+                void showAppAlert(t('smartReminders.maxReached', { max: MAX_SMART_REMINDERS, pluralCount: MAX_SMART_REMINDERS }), { title: t('premium.cardRemindersTitle') });
                 return;
             }
             openSmartReminderEditor(null);
@@ -5011,7 +5011,12 @@ async function deleteSelectedFolders() {
     );
     const nFolders = ids.length;
     const nZikirs = zikirIdsToRemove.size;
-    const msg = t('confirm.deleteFoldersMsg', { folderCount: nFolders, zikirCount: nZikirs });
+    // İki sayı var; tekil/çoğul klasör sayısına göre ("1 folder … inside it").
+    const msg = t('confirm.deleteFoldersMsg', {
+        folderCount: nFolders,
+        zikirCount: nZikirs,
+        pluralCount: nFolders
+    });
     if (!(await showAppConfirm(msg, {
         title: t('confirm.deleteFoldersTitle'),
         confirmLabel: t('confirm.deleteLabel')
@@ -6128,9 +6133,9 @@ function renderCommunityCardSummary() {
     const primary = next ? next.group : hatimGroups[0];
     const progress = getHatimProgress(primary);
     const summary = next
-        ? t('community.cardSummary', { groups: hatimGroups.length, juz: next.juz.n })
+        ? t('community.cardSummary', { count: hatimGroups.length, juz: next.juz.n })
         : t('community.cardSummaryDone', {
-              groups: hatimGroups.length,
+              count: hatimGroups.length,
               done: progress.done,
               total: progress.total
           });
@@ -7897,6 +7902,7 @@ function renderAllTimeStats() {
                 `<span class="all-time-donut-focus__meta">${escapeHtml(
                     t('stats.allTimeSliceMeta', {
                         count: selectedSlice.count.toLocaleString(locale),
+                        pluralCount: selectedSlice.count,
                         pct: pctStr
                     })
                 )}</span>`;
