@@ -3437,11 +3437,15 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
 .arabic-font-setting__preview {
     font-size: var(--arabic-subline-font);
 }
-/* Arapça arayüz: okunuş zaten Arapça olduğu için "Arapça yazı boyutu" ayarı
-   sayaç başlığını ölçekler. Seçici, uzunluğa göre otomatik punto kademesinden
-   (zikir-name--long/xlong) daha güçlü — Arapçada boyutu kullanıcı belirler. */
+/* Arapça ve Urduca arayüz: okunuş Arap harfli olduğu için "Arapça yazı boyutu"
+   ayarı sayaç başlığını ölçekler (esmada başlıkla aynı olan Arapça alt satır
+   gizlendiğinden ayarın etki edeceği yer başlıktır). Seçici, uzunluğa göre
+   otomatik punto kademesinden (zikir-name--long/xlong) daha güçlü — bu dillerde
+   boyutu kullanıcı belirler. */
 html[lang='ar'] #counterView .header-titles h1,
-html[lang='ar'] .arabic-font-setting__preview {
+html[lang='ar'] .arabic-font-setting__preview,
+html[lang='ur'] #counterView .header-titles h1,
+html[lang='ur'] .arabic-font-setting__preview {
     font-size: var(--arabic-title-font);
 }
 .zikir-list .zikir-arabic {

@@ -267,7 +267,7 @@ const ESMA_LIST = [
     { name: "Yâ Cebbâr", target: 206, meaning: "Kudret sahibi olan" },
     { name: "Yâ Mütekebbir", target: 662, meaning: "Eşi benzeri olmayan büyüklükte olan" },
     { name: "Yâ Hâlik", target: 731, meaning: "Yaratan" },
-    { name: "Yâ Bârî", target: 214, meaning: "Kusursuz ve eksiksiz yaratan" },
+    { name: "Yâ Bâri'", target: 214, meaning: "Kusursuz ve eksiksiz yaratan" },
     { name: "Yâ Musavvir", target: 336, meaning: "Tüm varlıklara şekil veren" },
     { name: "Yâ Gaffâr", target: 1281, meaning: "Mağfireti bol olan" },
     { name: "Yâ Kahhâr", target: 306, meaning: "Her şeye hâkim olan" },
@@ -284,7 +284,7 @@ const ESMA_LIST = [
     { name: "Yâ Semî'", target: 180, meaning: "Her şeyi duyan" },
     { name: "Yâ Basîr", target: 302, meaning: "Her şeyi gören" },
     { name: "Yâ Hakem", target: 68, meaning: "Mutlak hakimiyete sahip olan" },
-    { name: "Yâ 'Adl", target: 104, meaning: "Adil olan" },
+    { name: "Yâ Adl", target: 104, meaning: "Adil olan" },
     { name: "Yâ Latîf", target: 129, meaning: "Kullarına değer veren" },
     { name: "Yâ Habîr", target: 812, meaning: "Her şeyin iç yüzünden haberdar olan, gizliyi bilen" },
     { name: "Yâ Halîm", target: 88, meaning: "Ceza verirken acele etmeyen" },
@@ -313,7 +313,7 @@ const ESMA_LIST = [
     { name: "Yâ Veliyy", target: 46, meaning: "İnananlara dost olan" },
     { name: "Yâ Hamîd", target: 62, meaning: "Övgüye layık olan" },
     { name: "Yâ Muhsî", target: 148, meaning: "Tüm varlıkların sayısını bilen" },
-    { name: "Yâ Mübdî", target: 57, meaning: "Yoktan var eden" },
+    { name: "Yâ Mübdi'", target: 57, meaning: "Yoktan var eden" },
     { name: "Yâ Mu'îd", target: 124, meaning: "Öldüren ve sonrasında tekrar dirilten" },
     { name: "Yâ Muhyî", target: 68, meaning: "Dirilten, can veren" },
     { name: "Yâ Mümît", target: 490, meaning: "Öldüren" },
@@ -335,14 +335,14 @@ const ESMA_LIST = [
     { name: "Yâ Müteâlî", target: 551, meaning: "Yüce" },
     { name: "Yâ Berr", target: 202, meaning: "İyiliği bol olan" },
     { name: "Yâ Tevvâb", target: 409, meaning: "Günahları affeden" },
-    { name: "Yâ Müntekîm", target: 630, meaning: "İntikam alan" },
+    { name: "Yâ Müntekim", target: 630, meaning: "İntikam alan" },
     { name: "Yâ Afüvv", target: 156, meaning: "Affeden" },
     { name: "Yâ Raûf", target: 287, meaning: "Merhametli olan" },
     { name: "Yâ Mâlikü'l-Mülk", target: 212, meaning: "Tüm varlıkların sahibi olan" },
     { name: "Yâ Zü'l-Celâli ve'l-İkrâm", target: 1100, meaning: "Celal ve ikram sahibi" },
     { name: "Yâ Muksit", target: 209, meaning: "Adaletli olan" },
     { name: "Yâ Câmi'", target: 114, meaning: "Mahşer günü bir araya toplayan" },
-    { name: "Yâ Ganî", target: 1060, meaning: "Kimseye muhtaç olmayan" },
+    { name: "Yâ Ganiyy", target: 1060, meaning: "Kimseye muhtaç olmayan" },
     { name: "Yâ Muğnî", target: 1100, meaning: "Dilediğini zengin kılan, ihtiyaçtan kurtaran" },
     { name: "Yâ Mâni'", target: 161, meaning: "İstediği bir şeye mâni olan" },
     { name: "Yâ Dârr", target: 1001, meaning: "İstediğine zarar veren" },
@@ -552,7 +552,21 @@ function getKnownEsmaMeanings(index) {
  * Yeni bir düzeltmede eskisini silme, listeye ekle.
  */
 const ESMA_NAME_PREV = {
-    1: ['Yâ Rahman', 'يَا رَحْمَنُ'] // Rahmân — uzun â işareti (hançer elif) eksikti
+    1: ['Yâ Rahman', 'يَا رَحْمَنُ'], // Rahmân — uzun â işareti (hançer elif) eksikti
+    4: ['ইয়া কুদ্দুস'], // Kuddûs (BN) — uzun û
+    12: ['Yâ Bârî', 'Ya Bari'], // Bâri' — sonu kısa i + hemze
+    25: ['Ya Muzill'], // Mudhill (EN) — ذ = dh
+    26: ['ইয়া সামিউ'], // Semî' (BN) — uzun î
+    29: ["Yâ 'Adl", "Ya 'Adl"], // Adl — baştaki ayına kesme konmuyor
+    31: ['Ya Habir'], // Khabir (EN) — خ = kh
+    36: ['Ya Ali', 'ইয়া আলী'], // Aliyy (EN/BN) — şedde; "Ya Ali" Hz. Ali ile karışıyordu
+    48: ['Ya Majid'], // Majeed (EN) — Mâcid (65) ile aynı yazılıyordu
+    49: ["Ya Ba'is"], // Ba'ith (EN) — ث = th
+    58: ['Yâ Mübdî', 'Ya Mubdi'], // Mübdi' — sonu kısa i + hemze
+    63: ['ইয়া কাইয়্যুম'], // Kayyûm (BN) — uzun û
+    80: ['Yâ Müntekîm'], // Müntekim — uzun ünlü yok
+    82: ['ইয়া রাউফ'], // Raûf (BN) — uzun û
+    87: ['Yâ Ganî', 'Ya Ghani', 'ইয়া গানী'] // Ganiyy — şedde (Aliyy/Kaviyy/Veliyy ile tutarlı)
 };
 
 function getKnownEsmaNames(index) {
@@ -581,7 +595,11 @@ function getEsmaNameForLocale(index, locale) {
     if (code === 'tr') {
         return (ESMA_LIST[index] && ESMA_LIST[index].name) || '';
     }
-    if (code === 'ar') {
+    /* Urduca da Arapça adı kullanır: esma Arapça isimlerdir ve Urduca dini
+       metinlerde Arap harfleriyle yazılır; harekeler telaffuzu gösterir.
+       Arama Urduca harfleri (ی ک ہ) Arapçayla eşleştirdiği için Urduca
+       klavyeyle yazılan arama da bulur. Eskiden Latin (EN) okunuş gösteriliyordu. */
+    if (code === 'ar' || code === 'ur') {
         return ESMA_ARABIC[index] || '';
     }
     if (code === 'bn') {
