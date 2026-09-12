@@ -145,6 +145,7 @@ import {
     JUZ_CLAIMED,
     JUZ_DONE,
     JUZ_FREE,
+    buildMemberJuzStrip,
     claimJuz,
     completeJuz,
     createHatimGroup,
@@ -6286,6 +6287,7 @@ function renderCommunityCardSummary() {
         return;
     }
 
+    const me = getLocalMemberId();
     const next = getHatimNextForMember();
     // Kişisel hatim varsa kart onu gösterir; çoğu kullanıcı için ana iş o.
     const personal = listHatimsByKind(HATIM_KIND_PERSONAL);
@@ -6309,8 +6311,14 @@ function renderCommunityCardSummary() {
         });
     }
 
-    const strip = primary.juz
-        .map((jz) => `<span class="community-card__dot community-card__dot--${hatimJuzStateClass(jz)}"></span>`)
+    // Şerit tek bir hatmi değil, kullanıcının bütün hatimlerini toplar: aynı cüz
+    // birden çok hatimde üstlenilebiliyor ve tek hatmin şeridi bunu gösteremiyordu.
+    // Bekleyen sayısı arttıkça nokta koyulaşır, hepsi bitince yeşile döner.
+    const strip = buildMemberJuzStrip(hatimGroups, me)
+        .map((cell) => {
+            const tone = cell.level > 1 ? ` community-card__dot--load${cell.level}` : '';
+            return `<span class="community-card__dot community-card__dot--${cell.state}${tone}"></span>`;
+        })
         .join('');
 
     body.innerHTML = `

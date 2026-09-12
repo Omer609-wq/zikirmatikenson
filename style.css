@@ -59,7 +59,13 @@
     --hatim-done-bg: rgba(16, 185, 129, 0.16);
     --hatim-done-border: rgba(16, 185, 129, 0.34);
     --hatim-done-fg: #34d399;
-    
+    /* Ana ekran şeridinin yük rampası: aynı cüzü kaç hatimde okumayı beklediğin.
+       Bekleyen azaldıkça açılır, bitince yeşile döner. Cüz tablosundan ayrı token,
+       çünkü şerit kartın koyu gradyanı üstünde, tablo ise sayfa zemininde durur. */
+    --hatim-load1-fg: #fce056;
+    --hatim-load2-fg: #f19b05;
+    --hatim-load3-fg: #c85f04;
+
     /* Tipografi — mobil öncelikli ölçek */
     --font-main: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
     --text-xs: 0.6875rem;   /* 11px */
@@ -2461,7 +2467,10 @@ html[lang='ur'] .smart-reminder-weekday {
     border-radius: 2px;
     background: rgba(255, 255, 255, 0.16);
 }
-.community-card__dot--claimed { background: var(--hatim-claimed-fg); }
+/* Bekleyen cüz: aynı numarayı kaç hatimde okumayı beklediğine göre koyulaşır. */
+.community-card__dot--claimed { background: var(--hatim-load1-fg); }
+.community-card__dot--claimed.community-card__dot--load2 { background: var(--hatim-load2-fg); }
+.community-card__dot--claimed.community-card__dot--load3 { background: var(--hatim-load3-fg); }
 .community-card__dot--done { background: var(--hatim-done-fg); }
 .community-card__hint {
     font-size: var(--text-xs);

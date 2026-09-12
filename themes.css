@@ -119,6 +119,11 @@ html[data-theme="light"] {
     --hatim-done-bg: rgba(4, 120, 87, 0.12);
     --hatim-done-border: rgba(4, 120, 87, 0.3);
     --hatim-done-fg: #047857;
+    /* Yük rampası — kart burada açık mavi-yeşil bir zemin, o yüzden rampa koyu
+       uçta kurulu: en açık kademe bile zemine 3:1 kontrast bırakacak kadar koyu. */
+    --hatim-load1-fg: #a2570c;
+    --hatim-load2-fg: #793809;
+    --hatim-load3-fg: #4d1e06;
 }
 
 html[data-theme="light"] .quran-surah-section__frame {
@@ -409,6 +414,10 @@ html[data-theme="black"] {
     --hatim-done-bg: rgba(16, 185, 129, 0.14);
     --hatim-done-border: rgba(16, 185, 129, 0.3);
     --hatim-done-fg: #10b981;
+    /* Yük rampası — AMOLED siyahta bir tık kısık */
+    --hatim-load1-fg: #f7e16f;
+    --hatim-load2-fg: #ea990c;
+    --hatim-load3-fg: #bb5c0a;
 }
 
 html[data-theme="black"] .premium-hero {
