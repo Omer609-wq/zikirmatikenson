@@ -61,10 +61,14 @@
     --hatim-done-fg: #34d399;
     /* Ana ekran şeridinin yük rampası: aynı cüzü kaç hatimde okumayı beklediğin.
        Bekleyen azaldıkça açılır, bitince yeşile döner. Cüz tablosundan ayrı token,
-       çünkü şerit kartın koyu gradyanı üstünde, tablo ise sayfa zemininde durur. */
+       çünkü şerit kartın koyu gradyanı üstünde, tablo ise sayfa zemininde durur.
+       Koyu kırmızının alt sınırı boş nokta: daha koyusu (#991b1b) kartta boş
+       noktayla aynı açıklığa düşüp "hiç almadım" gibi okunuyor. */
     --hatim-load1-fg: #fce056;
-    --hatim-load2-fg: #f19b05;
-    --hatim-load3-fg: #c85f04;
+    --hatim-load2-fg: #ea580c;
+    --hatim-load3-fg: #b91c1c;
+    /* Boş nokta kısık tutulur — koyu kırmızıya açıklık farkı bırakması gerekiyor. */
+    --hatim-strip-empty: rgba(255, 255, 255, 0.08);
 
     /* Tipografi — mobil öncelikli ölçek */
     --font-main: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -2465,7 +2469,7 @@ html[lang='ur'] .smart-reminder-weekday {
 .community-card__dot {
     height: 6px;
     border-radius: 2px;
-    background: rgba(255, 255, 255, 0.16);
+    background: var(--hatim-strip-empty);
 }
 /* Bekleyen cüz: aynı numarayı kaç hatimde okumayı beklediğine göre koyulaşır. */
 .community-card__dot--claimed { background: var(--hatim-load1-fg); }
