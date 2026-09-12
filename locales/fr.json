@@ -58,7 +58,6 @@
     "cardSummaryDone_one": "{count} groupe · {done}/{total} juz",
     "close": "Fermer",
     "myJuzTitle": "Mes juz",
-    "myJuzEmpty": "Tu n’as pas encore pris de juz.",
     "groupsTitle": "Mes groupes de khatm",
     "emptyHint": "Tu n’as pas encore de groupe de khatm. Crées-en un, ou rejoins un groupe existant avec le code qu’on t’a donné.",
     "newGroup": "Créer un groupe de khatm",

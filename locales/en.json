@@ -57,7 +57,6 @@
     "cardSummaryDone_one": "{count} group · {done}/{total} juz",
     "close": "Close",
     "myJuzTitle": "My juz",
-    "myJuzEmpty": "You have not taken a juz yet.",
     "groupsTitle": "My hatim groups",
     "emptyHint": "You have no hatim group yet. Create one, or join an existing group with the code you were given.",
     "newGroup": "Create Hatim Group",
