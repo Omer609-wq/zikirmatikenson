@@ -120,12 +120,14 @@ html[data-theme="light"] {
     --hatim-done-border: rgba(4, 120, 87, 0.3);
     --hatim-done-fg: #047857;
     /* Yük rampası — kart burada açık mavi-yeşil bir zemin (ölçüldü: rgb(178,206,202)),
-       o yüzden rampanın tamamı koyu uçta: en açık kademe bile zemine 3:1 kontrast
-       bırakacak kadar koyu. Koyu temadaki amber → turuncu → koyu kırmızı yolculuğu
-       burada da korunuyor, sadece tamamı bir oktav aşağıda. */
-    --hatim-load1-fg: #a35b09;
-    --hatim-load2-fg: #8d2c09;
-    --hatim-load3-fg: #630e0b;
+       o yüzden rampanın tamamı koyu uçta. Koyu temadaki amber → turuncu → koyu
+       kırmızı yolculuğu burada da korunuyor, sadece tamamı bir oktav aşağıda.
+       Amber 3:1 tabanının bir tık altında (2.51:1): tabana yapıştırıldığında
+       1 cüz ile 2 cüz gözle ayrılmıyordu. Koyu temada kırmızı ucu da aynı
+       gerekçeyle 2.00:1'de; bu şerit için tutarlı olan taviz bu yönde. */
+    --hatim-load1-fg: #b76802;
+    --hatim-load2-fg: #963302;
+    --hatim-load3-fg: #650801;
     /* Açık kartta rampa koyu tarafta olduğu için boş nokta kısılmasına gerek yok. */
     --hatim-strip-empty: rgba(255, 255, 255, 0.16);
 }
