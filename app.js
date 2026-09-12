@@ -159,7 +159,7 @@ import {
     uncompleteJuz
 } from './lib/hatim-groups.js';
 import { getJuzDetail } from './lib/hatim-juz.js';
-import { getHatimDua } from './lib/hatim-dua.js';
+import { HATIM_DUA_PERSONAL, HATIM_DUA_SHARED, getHatimDua } from './lib/hatim-dua.js';
 import { maybeRequestAppReview, recordCompletedRound } from './lib/app-review.js';
 import {
     downloadBackupPayload,
@@ -6522,7 +6522,11 @@ function renderHatimCompleteCard(group) {
         stats.textContent = lines.join(' ');
     }
 
-    const dua = getHatimDua(appSettings.locale);
+    // Kişisel hatimde birinci tekil dua, ortak hatimde öznesi "biz" olan dua.
+    const dua = getHatimDua(
+        appSettings.locale,
+        personal ? HATIM_DUA_PERSONAL : HATIM_DUA_SHARED
+    );
     const arabicEl = document.getElementById('hatimDuaArabic');
     const translitEl = document.getElementById('hatimDuaTranslit');
     const meaningEl = document.getElementById('hatimDuaMeaning');
