@@ -6531,9 +6531,11 @@ function renderHatimCompleteCard(group) {
     const translitEl = document.getElementById('hatimDuaTranslit');
     const meaningEl = document.getElementById('hatimDuaMeaning');
     const toggle = document.getElementById('hatimDuaMealToggle');
-    if (arabicEl) arabicEl.textContent = dua.arabic;
-    if (translitEl) translitEl.textContent = dua.translit;
-    if (meaningEl) meaningEl.textContent = dua.meaning;
+    // Paragraflar ayri ogelere bolunur: tek ogede pre-line ile basilinca
+    // on paragraf birbirine yapisik okunuyordu.
+    setHatimDuaText(arabicEl, dua.arabic);
+    setHatimDuaText(translitEl, dua.translit);
+    setHatimDuaText(meaningEl, dua.meaning);
 
     // Meal katlı gelir; Arapça+okunuş sade kalsın diye.
     if (toggle) {
@@ -6543,6 +6545,19 @@ function renderHatimCompleteCard(group) {
         if (label) label.textContent = t('community.duaShowMeaning');
     }
     if (meaningEl) meaningEl.hidden = true;
+}
+
+/** Metni paragraf paragraf basar; bos ogede sinif da temizlenir. */
+function setHatimDuaText(el, text) {
+    if (!el) return;
+    el.textContent = '';
+    const lines = String(text || '').split('\n').filter((l) => l.trim());
+    for (const line of lines) {
+        const p = document.createElement('span');
+        p.className = 'hatim-dua__line';
+        p.textContent = line;
+        el.appendChild(p);
+    }
 }
 
 function toggleHatimDuaMeaning() {

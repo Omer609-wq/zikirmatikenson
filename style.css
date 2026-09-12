@@ -2823,6 +2823,14 @@ html[lang='ur'] .smart-reminder-weekday {
     display: none;
 }
 
+/* Her paragraf ayri satir; aralarinda nefes payi. */
+.hatim-dua__line {
+    display: block;
+}
+.hatim-dua__line + .hatim-dua__line {
+    margin-top: 0.5rem;
+}
+
 .hatim-dua__toggle {
     display: flex;
     align-items: center;
