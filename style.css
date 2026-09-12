@@ -60,11 +60,12 @@
     --hatim-done-border: rgba(16, 185, 129, 0.34);
     --hatim-done-fg: #34d399;
     /* Ana ekran şeridinin yük rampası: aynı cüzü kaç hatimde okumayı beklediğin.
-       Bekleyen azaldıkça açılır, bitince yeşile döner. Cüz tablosundan ayrı token,
-       çünkü şerit kartın koyu gradyanı üstünde, tablo ise sayfa zemininde durur.
-       Koyu kırmızının alt sınırı boş nokta: daha koyusu (#991b1b) kartta boş
-       noktayla aynı açıklığa düşüp "hiç almadım" gibi okunuyor. */
-    --hatim-load1-fg: #fce056;
+       1 cüz sarı, 2 cüz turuncu, 3 ve üstü koyu kırmızı; bitince yeşil.
+       Cüz tablosundan ayrı token, çünkü şerit kartın koyu gradyanı üstünde,
+       tablo ise sayfa zemininde durur. Koyu kırmızının alt sınırı boş nokta:
+       daha koyusu (#991b1b) kartta boş noktayla aynı açıklığa düşüp
+       "hiç almadım" gibi okunuyor. */
+    --hatim-load1-fg: #fbbf24;
     --hatim-load2-fg: #ea580c;
     --hatim-load3-fg: #b91c1c;
     /* Boş nokta kısık tutulur — koyu kırmızıya açıklık farkı bırakması gerekiyor. */

@@ -418,7 +418,7 @@ html[data-theme="black"] {
     --hatim-done-border: rgba(16, 185, 129, 0.3);
     --hatim-done-fg: #10b981;
     /* Yük rampası — AMOLED siyahta bir tık kısık */
-    --hatim-load1-fg: #f7e16f;
+    --hatim-load1-fg: #eab308;
     --hatim-load2-fg: #e2570d;
     --hatim-load3-fg: #ab1a1a;
     --hatim-strip-empty: rgba(255, 255, 255, 0.08);
