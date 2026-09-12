@@ -2483,6 +2483,11 @@ html[lang='ur'] .smart-reminder-weekday {
     color: var(--text-gray);
     margin: 0.25rem 0 0.55rem;
 }
+.hatim-join-top {
+    /* Katılma kodu listenin üstünde durur; grup sayısı arttıkça kaymaz. */
+    margin-bottom: 1.4rem;
+}
+
 .hatim-mine {
     margin-bottom: 1.4rem;
 }

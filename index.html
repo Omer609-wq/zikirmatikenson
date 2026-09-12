@@ -128,6 +128,11 @@
 
                 <!-- GRUPLA: ortak hatim grupları -->
                 <div id="hatimSharedPanel" hidden>
+                    <!-- Katılma kodu en üstte: liste uzadıkça aşağı kaymasın. -->
+                    <button class="secondary-btn hatim-join-top" id="joinHatimGroupBtn">
+                        <span class="material-icons-outlined">tag</span> <span data-i18n="community.joinByCode">Kod ile Katıl</span>
+                    </button>
+
                     <div class="hatim-mine" id="hatimMineBlock" hidden>
                         <h2 class="hatim-section-title" data-i18n="community.myJuzTitle">Cüzlerim</h2>
                         <div class="hatim-mine__list" id="hatimMineList"></div>
@@ -139,9 +144,6 @@
 
                     <button class="primary-btn" id="newHatimGroupBtn" style="margin-top: 1rem;">
                         <span class="material-icons-outlined">add</span> <span data-i18n="community.newGroup">Hatim Grubu Oluştur</span>
-                    </button>
-                    <button class="secondary-btn" id="joinHatimGroupBtn" style="margin-top: 0.6rem;">
-                        <span class="material-icons-outlined">tag</span> <span data-i18n="community.joinByCode">Kod ile Katıl</span>
                     </button>
                     <div class="limit-warning" id="hatimLimitWarning" data-i18n="community.groupLimitWarning">Grup sınırına ulaşıldı. Yeni bir gruba katılmak için önce bir gruptan ayrıl.</div>
                 </div>
