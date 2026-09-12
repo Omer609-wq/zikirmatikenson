@@ -5,9 +5,13 @@
  * https://purge.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/seasonal-content.json
  * Tarih aralığı: start ≤ now < end (ISO 8601, örn. Europe/Istanbul +03:00)
  * Test: `debug-flags.json` içinden `seasonalContentPreview: true`
+ *
+ * Dosyayı güncellerken "updatedAt" alanını da güncelle: internet yokken
+ * uygulama, indirdiği son kopya ile içine paketlenmiş kopyadan hangisinin yeni
+ * olduğunu buna bakarak seçer (lib/seasonal-payload.js).
  */
-import { Capacitor } from '@capacitor/core';
 import { getRuntimeFlags, loadRuntimeFlags } from './lib/runtime-flags.js';
+import { pickNewerPayload } from './lib/seasonal-payload.js';
 
 export const SEASONAL_CONTENT_URL =
     'https://cdn.jsdelivr.net/gh/Omer609-wq/zikirmatikenson@main/public/seasonal-content.json';
@@ -254,6 +258,27 @@ function setCachedEvents(events) {
     });
 }
 
+/** Dosyayı indirir; ulaşılamazsa ya da bozuksa null. */
+async function fetchPayload(url) {
+    try {
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) return null;
+        const raw = await res.json();
+        return raw && typeof raw === 'object' ? raw : null;
+    } catch (e) {
+        console.warn('seasonal-content fetch', url, e);
+        return null;
+    }
+}
+
+function usePayload(raw, locale) {
+    lastPayload = raw;
+    const events = normalizeEvents(raw, locale);
+    setCachedEvents(events);
+    purgeSeasonalCountsExcept(events.map((e) => e.id));
+    return events;
+}
+
 export async function refreshSeasonalContent(locale = 'tr') {
     if (SEASONAL_CONTENT_DISABLED) {
         setCachedEvents([]);
@@ -269,39 +294,24 @@ export async function refreshSeasonalContent(locale = 'tr') {
         return events;
     }
 
-    const urls = [];
+    // 1) Uzaktaki dosya: ulaşılabiliyorsa her zaman en güncel olan.
     if (SEASONAL_CONTENT_URL) {
-        urls.push(`${SEASONAL_CONTENT_URL}?t=${Date.now()}`);
-    }
-    if (Capacitor.isNativePlatform()) {
-        urls.push(`./seasonal-content.json?t=${Date.now()}`);
-    }
-
-    for (const url of urls) {
-        try {
-            const res = await fetch(url, { cache: 'no-store' });
-            if (!res.ok) continue;
-            const raw = await res.json();
-            if (raw && typeof raw === 'object') {
-                writeRemoteCache(raw);
-                lastPayload = raw;
-            }
-            const events = normalizeEvents(raw, locale);
-            setCachedEvents(events);
-            purgeSeasonalCountsExcept(events.map((e) => e.id));
-            return events;
-        } catch (e) {
-            console.warn('seasonal-content fetch', url, e);
+        const fresh = await fetchPayload(`${SEASONAL_CONTENT_URL}?t=${Date.now()}`);
+        if (fresh) {
+            writeRemoteCache(fresh);
+            return usePayload(fresh, locale);
         }
     }
 
-    const saved = readRemoteCache();
-    if (saved) {
-        lastPayload = saved;
-        const events = normalizeEvents(saved, locale);
-        setCachedEvents(events);
-        purgeSeasonalCountsExcept(events.map((e) => e.id));
-        return events;
+    // 2) İnternet yoksa: en son indirilen ile uygulamanın içindeki kopyadan hangisi
+    //    yeniyse o (lib/seasonal-payload.js). Eskiden telefonda paketteki kopya her
+    //    zaman kazanıyordu: kullanıcı dosyanın yenisini daha önce indirmiş olsa bile
+    //    çevrimdışı açılışta eski içeriği görüyordu.
+    const bundled = await fetchPayload(`./seasonal-content.json?t=${Date.now()}`);
+    const best = pickNewerPayload(readRemoteCache(), bundled);
+    if (best) {
+        if (best === bundled) writeRemoteCache(bundled);
+        return usePayload(best, locale);
     }
 
     setCachedEvents([]);
