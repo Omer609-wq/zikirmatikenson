@@ -107,6 +107,13 @@
     "juzReading": "En cours",
     "juzDoneShort": "Terminé",
     "hatimComplete": "Le khatm est achevé. Qu’Allah l’accepte.",
+    "completeTitle": "Khatm achevé",
+    "completeStatsPersonal": "Tu as lu les 30 juz. Qu'Allah l'accepte.",
+    "completeStatsShared": "Les 30 juz ont été lus ensemble. Qu'Allah l'accepte.",
+    "completeStatsMine": "Ta part : {count}/30",
+    "duaTitle": "Invocation du khatm",
+    "duaShowMeaning": "Afficher la traduction",
+    "duaHideMeaning": "Masquer la traduction",
     "claimTaken": "Quelqu’un d’autre a pris ce juz."
   },
   "folder": {

@@ -103,6 +103,13 @@
     "juzReading": "Dibaca",
     "juzDoneShort": "Selesai",
     "hatimComplete": "Khatam selesai. Semoga Allah menerimanya.",
+    "completeTitle": "Khatam selesai",
+    "completeStatsPersonal": "Kamu membaca seluruh 30 juz. Semoga Allah menerimanya.",
+    "completeStatsShared": "Ke-30 juz dibaca bersama. Semoga Allah menerimanya.",
+    "completeStatsMine": "Bagianmu: {count}/30",
+    "duaTitle": "Doa khatam",
+    "duaShowMeaning": "Tampilkan arti",
+    "duaHideMeaning": "Sembunyikan arti",
     "claimTaken": "Juz ini sudah diambil orang lain."
   },
   "folder": {

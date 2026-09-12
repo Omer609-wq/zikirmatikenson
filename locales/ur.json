@@ -103,6 +103,13 @@
     "juzReading": "زیرِ مطالعہ",
     "juzDoneShort": "مکمل",
     "hatimComplete": "ختم مکمل ہو گیا۔ اللہ قبول فرمائے۔",
+    "completeTitle": "ختم مکمل",
+    "completeStatsPersonal": "آپ نے تیسوں پارے پڑھ لیے۔ اللہ قبول فرمائے۔",
+    "completeStatsShared": "تیس پارے مل کر پڑھے گئے۔ اللہ قبول فرمائے۔",
+    "completeStatsMine": "آپ کا حصہ: {count}/30",
+    "duaTitle": "ختم قرآن کی دعا",
+    "duaShowMeaning": "معنی دکھائیں",
+    "duaHideMeaning": "معنی چھپائیں",
     "claimTaken": "یہ پارہ کسی اور نے لے لیا ہے۔"
   },
   "folder": {

@@ -103,6 +103,13 @@
     "juzReading": "Okunuyor",
     "juzDoneShort": "Bitti",
     "hatimComplete": "Hatim tamamlandı. Allah kabul etsin.",
+    "completeTitle": "Hatim tamamlandı",
+    "completeStatsPersonal": "30 cüzün tamamını okudun. Allah kabul etsin.",
+    "completeStatsShared": "30 cüz birlikte okundu. Allah kabul etsin.",
+    "completeStatsMine": "Senin payın: {count}/30",
+    "duaTitle": "Hatim duası",
+    "duaShowMeaning": "Anlamını göster",
+    "duaHideMeaning": "Anlamını gizle",
     "claimTaken": "Bu cüzü başkası almış."
   },
   "folder": {

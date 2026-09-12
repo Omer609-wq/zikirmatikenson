@@ -122,6 +122,13 @@
     "juzReading": "قيد القراءة",
     "juzDoneShort": "منتهٍ",
     "hatimComplete": "تمَّت الختمة. تقبَّل الله.",
+    "completeTitle": "تمَّت الختمة",
+    "completeStatsPersonal": "قرأت الأجزاء الثلاثين كلها. تقبَّل الله.",
+    "completeStatsShared": "قُرئت الأجزاء الثلاثون معًا. تقبَّل الله.",
+    "completeStatsMine": "نصيبك: {count}/30",
+    "duaTitle": "دعاء ختم القرآن",
+    "duaShowMeaning": "إظهار المعنى",
+    "duaHideMeaning": "إخفاء المعنى",
     "claimTaken": "أخذ هذا الجزء شخص آخر."
   },
   "folder": {

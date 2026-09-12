@@ -106,6 +106,13 @@
     "juzReading": "Reading",
     "juzDoneShort": "Done",
     "hatimComplete": "The hatim is complete. May Allah accept it.",
+    "completeTitle": "Hatim complete",
+    "completeStatsPersonal": "You read all 30 juz. May Allah accept it.",
+    "completeStatsShared": "All 30 juz were read together. May Allah accept it.",
+    "completeStatsMine": "Your share: {count}/30",
+    "duaTitle": "Hatim supplication",
+    "duaShowMeaning": "Show meaning",
+    "duaHideMeaning": "Hide meaning",
     "claimTaken": "Someone else has taken this juz."
   },
   "folder": {

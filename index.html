@@ -181,6 +181,24 @@
                     <li><span class="hatim-legend__dot hatim-legend__dot--done"></span><span data-i18n="community.legendDone">Bitti</span></li>
                 </ul>
 
+                <!-- Hatim tamamlanınca açılır; öncesinde gizlidir. -->
+                <section class="hatim-complete" id="hatimCompleteCard" hidden>
+                    <div class="hatim-complete__head">
+                        <span class="material-icons-outlined" aria-hidden="true">auto_awesome</span>
+                        <h2 class="hatim-complete__title" data-i18n="community.completeTitle">Hatim tamamlandı</h2>
+                    </div>
+                    <p class="hatim-complete__stats" id="hatimCompleteStats"></p>
+
+                    <h3 class="hatim-dua__title" data-i18n="community.duaTitle">Hatim duası</h3>
+                    <p class="hatim-dua__ar" id="hatimDuaArabic" dir="rtl" lang="ar"></p>
+                    <p class="hatim-dua__lat" id="hatimDuaTranslit"></p>
+                    <button type="button" class="hatim-dua__toggle" id="hatimDuaMealToggle" aria-expanded="false" aria-controls="hatimDuaMeaning">
+                        <span class="material-icons-outlined" aria-hidden="true">expand_more</span>
+                        <span id="hatimDuaMealToggleLabel" data-i18n="community.duaShowMeaning">Anlamını göster</span>
+                    </button>
+                    <p class="hatim-dua__meal" id="hatimDuaMeaning" hidden></p>
+                </section>
+
                 <button type="button" class="secondary-btn hatim-delete-btn" id="hatimDeleteGroupBtn">
                     <span class="material-icons-outlined">delete_outline</span> <span id="hatimDeleteGroupLabel">Grubu Sil</span>
                 </button>

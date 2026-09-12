@@ -159,6 +159,7 @@ import {
     uncompleteJuz
 } from './lib/hatim-groups.js';
 import { getJuzDetail } from './lib/hatim-juz.js';
+import { getHatimDua } from './lib/hatim-dua.js';
 import { maybeRequestAppReview, recordCompletedRound } from './lib/app-review.js';
 import {
     downloadBackupPayload,
@@ -6456,6 +6457,8 @@ function renderHatimGroupView() {
             : t('community.groupProgress', { done: progress.done, total: progress.total });
     }
 
+    renderHatimCompleteCard(group);
+
     const grid = document.getElementById('hatimJuzGrid');
     if (!grid) return;
     grid.innerHTML = group.juz
@@ -6489,6 +6492,66 @@ function renderHatimGroupView() {
             `;
         })
         .join('');
+}
+
+/**
+ * Hatim tamamlandığında açılan kart: tebrik + hatim duası.
+ * Tek seferlik bir uyarı değil; tamamlanmış hatmin ekranında kalıcı durur,
+ * böylece kullanıcı meclis günü tekrar açıp okuyabilir.
+ */
+function renderHatimCompleteCard(group) {
+    const card = document.getElementById('hatimCompleteCard');
+    if (!card) return;
+
+    if (!isHatimComplete(group)) {
+        card.hidden = true;
+        return;
+    }
+    card.hidden = false;
+
+    const personal = isPersonalHatim(group);
+    const stats = document.getElementById('hatimCompleteStats');
+    if (stats) {
+        const lines = [
+            personal ? t('community.completeStatsPersonal') : t('community.completeStatsShared')
+        ];
+        if (!personal) {
+            const mine = listMemberJuz(group, getLocalMemberId()).length;
+            if (mine > 0) lines.push(t('community.completeStatsMine', { count: mine }));
+        }
+        stats.textContent = lines.join(' ');
+    }
+
+    const dua = getHatimDua(appSettings.locale);
+    const arabicEl = document.getElementById('hatimDuaArabic');
+    const translitEl = document.getElementById('hatimDuaTranslit');
+    const meaningEl = document.getElementById('hatimDuaMeaning');
+    const toggle = document.getElementById('hatimDuaMealToggle');
+    if (arabicEl) arabicEl.textContent = dua.arabic;
+    if (translitEl) translitEl.textContent = dua.translit;
+    if (meaningEl) meaningEl.textContent = dua.meaning;
+
+    // Meal katlı gelir; Arapça+okunuş sade kalsın diye.
+    if (toggle) {
+        toggle.hidden = !dua.meaning;
+        toggle.setAttribute('aria-expanded', 'false');
+        const label = document.getElementById('hatimDuaMealToggleLabel');
+        if (label) label.textContent = t('community.duaShowMeaning');
+    }
+    if (meaningEl) meaningEl.hidden = true;
+}
+
+function toggleHatimDuaMeaning() {
+    const toggle = document.getElementById('hatimDuaMealToggle');
+    const meaningEl = document.getElementById('hatimDuaMeaning');
+    const label = document.getElementById('hatimDuaMealToggleLabel');
+    if (!toggle || !meaningEl) return;
+    const open = meaningEl.hidden;
+    meaningEl.hidden = !open;
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (label) {
+        label.textContent = open ? t('community.duaHideMeaning') : t('community.duaShowMeaning');
+    }
 }
 
 /* ---------- Cüz detayı ---------- */
@@ -6639,8 +6702,14 @@ async function handleHatimJuzAction(action) {
     renderCommunityCardSummary();
 
     if (action === 'complete' && isHatimComplete(res.group)) {
+        // Tek seferlik uyarı yerine kart: kalıcı ve duayı da taşıyor.
         closeHatimJuzDetail();
-        await showAppAlert(t('community.hatimComplete'));
+        requestAnimationFrame(() => {
+            document.getElementById('hatimCompleteCard')?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        });
     }
 }
 
@@ -6750,6 +6819,7 @@ function setupHatimListeners() {
     document.getElementById('hatimShareBtn')?.addEventListener('click', () => {
         void handleShareHatimGroup();
     });
+    document.getElementById('hatimDuaMealToggle')?.addEventListener('click', toggleHatimDuaMeaning);
     document.getElementById('hatimDeleteGroupBtn')?.addEventListener('click', () => {
         void handleDeleteHatimGroup();
     });

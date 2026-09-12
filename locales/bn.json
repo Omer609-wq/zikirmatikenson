@@ -103,6 +103,13 @@
     "juzReading": "পড়া হচ্ছে",
     "juzDoneShort": "শেষ",
     "hatimComplete": "খতম সম্পন্ন হয়েছে। আল্লাহ কবুল করুন।",
+    "completeTitle": "খতম সম্পন্ন",
+    "completeStatsPersonal": "তুমি ৩০ পারাই পড়েছ। আল্লাহ কবুল করুন।",
+    "completeStatsShared": "৩০ পারা একসাথে পড়া হয়েছে। আল্লাহ কবুল করুন।",
+    "completeStatsMine": "তোমার অংশ: {count}/30",
+    "duaTitle": "খতমের দোয়া",
+    "duaShowMeaning": "অর্থ দেখাও",
+    "duaHideMeaning": "অর্থ লুকাও",
     "claimTaken": "এই পারা অন্য কেউ নিয়েছে।"
   },
   "folder": {

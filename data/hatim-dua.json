@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "source": "Yaygın hatim duası. Benzer lafızlarla Beyhakî, Şuabü'l-îmân'da nakledilir.",
+    "review": "unverified",
+    "note": "Arapça harekeler ve sekiz dildeki mealler yayına çıkmadan önce güvenilir bir kaynakla (ör. Diyanet) karşılaştırılmalı. Okunuş yalnızca tr ve en için verilir; id/ms/fr/bn en okunuşuna düşer, ar/ur Arapça harfleri zaten okuduğu için okunuş gösterilmez."
+  },
+  "arabic": "اللَّهُمَّ ارْحَمْنِي بِالْقُرْآنِ وَاجْعَلْهُ لِي إِمَامًا وَنُورًا وَهُدًى وَرَحْمَةً\nاللَّهُمَّ ذَكِّرْنِي مِنْهُ مَا نَسِيتُ وَعَلِّمْنِي مِنْهُ مَا جَهِلْتُ\nوَارْزُقْنِي تِلَاوَتَهُ آنَاءَ اللَّيْلِ وَأَطْرَافَ النَّهَارِ\nوَاجْعَلْهُ لِي حُجَّةً يَا رَبَّ الْعَالَمِينَ",
+  "translit": {
+    "tr": "Allâhümme'rhamnî bi'l-Kur'ân, vec'alhü lî imâmen ve nûran ve hüden ve rahmeh.\nAllâhümme zekkirnî minhü mâ nesîtü ve allimnî minhü mâ cehiltü,\nverzuknî tilâvetehû ânâe'l-leyli ve etrâfe'n-nehâr,\nvec'alhü lî hücceten yâ Rabbe'l-âlemîn.",
+    "en": "Allahumma-rhamni bil-Qur'an, waj'alhu li imaman wa nuran wa hudan wa rahmah.\nAllahumma dhakkirni minhu ma nasitu wa 'allimni minhu ma jahiltu,\nwarzuqni tilawatahu ana'al-layli wa atrafa'n-nahar,\nwaj'alhu li hujjatan ya Rabba'l-'alamin."
+  },
+  "meaning": {
+    "tr": "Allah'ım! Kur'an ile bana merhamet et; onu benim için rehber, nur, hidayet ve rahmet kıl. Allah'ım! Ondan unuttuklarımı bana hatırlat, bilmediklerimi bana öğret. Gecenin ve gündüzün her vaktinde onu okumayı bana nasip et. Onu benim için bir delil kıl, ey âlemlerin Rabbi!",
+    "en": "O Allah, have mercy on me through the Qur'an; make it for me a guide, a light, guidance and mercy. O Allah, remind me of what I have forgotten of it and teach me what I do not know of it. Grant me its recitation through the hours of the night and the ends of the day, and make it a proof for me, O Lord of the worlds.",
+    "id": "Ya Allah, rahmatilah aku dengan Al-Qur'an; jadikanlah ia bagiku sebagai pemimpin, cahaya, petunjuk dan rahmat. Ya Allah, ingatkanlah aku apa yang kulupa darinya dan ajarkanlah kepadaku apa yang tidak kuketahui darinya. Karuniakanlah aku membacanya di sepanjang malam dan siang, dan jadikanlah ia hujjah bagiku, wahai Tuhan semesta alam!",
+    "ms": "Ya Allah, rahmatilah aku dengan al-Quran; jadikanlah ia bagiku pemimpin, cahaya, petunjuk dan rahmat. Ya Allah, ingatkanlah aku apa yang aku lupa daripadanya dan ajarkanlah kepadaku apa yang aku tidak tahu daripadanya. Kurniakanlah aku membacanya sepanjang malam dan siang, dan jadikanlah ia hujah bagiku, wahai Tuhan sekalian alam!",
+    "fr": "Ô Allah, fais-moi miséricorde par le Coran ; fais qu'il soit pour moi un guide, une lumière, une direction et une miséricorde. Ô Allah, rappelle-moi ce que j'en ai oublié et enseigne-moi ce que j'en ignore. Accorde-moi de le réciter aux heures de la nuit et aux extrémités du jour, et fais qu'il soit une preuve en ma faveur, ô Seigneur des mondes !",
+    "bn": "হে আল্লাহ! কুরআনের মাধ্যমে আমার প্রতি রহম করুন; একে আমার জন্য পথপ্রদর্শক, আলো, হিদায়াত ও রহমত বানান। হে আল্লাহ! এর যা আমি ভুলে গেছি তা আমাকে স্মরণ করিয়ে দিন এবং যা আমি জানি না তা আমাকে শেখান। রাতের প্রহরে ও দিনের প্রান্তে এর তিলাওয়াত আমাকে নসিব করুন, এবং একে আমার পক্ষে দলিল বানান, হে বিশ্বজগতের প্রতিপালক!",
+    "ur": "اے اللہ! قرآن کے ذریعے مجھ پر رحم فرما؛ اسے میرے لیے رہنما، نور، ہدایت اور رحمت بنا۔ اے اللہ! اس میں سے جو میں بھول گیا ہوں مجھے یاد دلا اور جو میں نہیں جانتا وہ مجھے سکھا۔ رات کے اوقات اور دن کے کناروں میں اس کی تلاوت مجھے نصیب فرما، اور اسے میرے حق میں دلیل بنا، اے جہانوں کے رب!"
+  }
+}
