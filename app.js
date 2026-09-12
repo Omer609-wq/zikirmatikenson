@@ -1059,6 +1059,19 @@ const PREMIUM_LIVE = _premiumPreviewFlags.mode ? _premiumPreviewFlags.live : fal
 /** Premium sekmesi + ayarlardaki çöp kutusu. Preview kapalıyken gizli. */
 const PREMIUM_UI_VISIBLE = _premiumPreviewFlags.mode ? _premiumPreviewFlags.uiVisible : false;
 
+/**
+ * Topluluk kartı + hatim ekranları. Kod eksiksiz ve testli, ama paylaşımlı hatim
+ * buluta bağlanana kadar yayında gizli: "Topluluk" adı yalnız kişisel sekmeyle
+ * yalan olur, ve sekme yayınlanırsa kullanıcılar buluta hiç ulaşmamış yerel
+ * gruplar oluşturup geri dönülmesi gereken bir göç problemi doğurur.
+ * Backend hazır olunca tek başına `true` yapılır.
+ * Tasarım notu: docs/HATIM_GROUPS_DESIGN.md §1.
+ */
+const COMMUNITY_UI_VISIBLE = false;
+
+/** Bayrak kapalıyken ana ekrana düşürülecek ekranlar. */
+const COMMUNITY_VIEW_IDS = new Set(['communityView', 'hatimGroupView']);
+
 /** Premium sekmesinden açılan özellikler → düzenleme ekranı / yönlendirme (PREMIUM_LIVE iken) */
 const PREMIUM_FEATURE_VIEW_IDS = new Set([
     'premiumFeatureThemeView',
@@ -2397,6 +2410,8 @@ function syncTickSoundSettingVisibility() {
 
 function applyAppLocale(locale) {
     appSettings.locale = normalizeAppLocale(locale);
+    // Başlık anahtarı çeviriden önce ayarlanmalı; sonra yapılırsa eski metin kalır.
+    syncCommunityUI();
     applyLocaleToDocument(appSettings.locale);
     syncLocalizedDefaults({ persist: true });
     syncQuranSettingsForLocale(appSettings);
@@ -3066,6 +3081,23 @@ function syncPremiumNavUI() {
     if (premiumNavBtn) {
         premiumNavBtn.hidden = !PREMIUM_UI_VISIBLE;
         premiumNavBtn.classList.toggle('hidden', !PREMIUM_UI_VISIBLE);
+    }
+}
+
+/**
+ * Topluluk kartını ve ana ekran başlığını bayrağa göre ayarlar. Başlık anahtarı
+ * değiştirilir, metin doğrudan yazılmaz: dil değişince applyLocaleToDocument
+ * doğru karşılığı kendi getirir.
+ */
+function syncCommunityUI() {
+    const card = document.getElementById('communityCard');
+    if (card) {
+        card.hidden = !COMMUNITY_UI_VISIBLE;
+        card.classList.toggle('hidden', !COMMUNITY_UI_VISIBLE);
+    }
+    const title = document.getElementById('homeTitle');
+    if (title) {
+        title.setAttribute('data-i18n', COMMUNITY_UI_VISIBLE ? 'nav.foldersCommunity' : 'nav.folders');
     }
 }
 
@@ -5326,6 +5358,11 @@ function showView(viewId, param = null, options = {}) {
         viewId = 'homeView';
         param = null;
     }
+    // Geçmişten geri dönüş ya da eski bir durum kaydı gizli ekrana düşürmesin.
+    if (COMMUNITY_VIEW_IDS.has(viewId) && !COMMUNITY_UI_VISIBLE) {
+        viewId = 'homeView';
+        param = null;
+    }
     if (PREMIUM_FEATURE_VIEW_IDS.has(viewId) && !PREMIUM_LIVE) {
         viewId = 'premiumView';
         param = null;
@@ -6279,6 +6316,7 @@ function getHatimNextForMember() {
 /* ---------- Ana ekrandaki Topluluk kartı ---------- */
 
 function renderCommunityCardSummary() {
+    if (!COMMUNITY_UI_VISIBLE) return;
     const body = document.getElementById('communityCardBody');
     if (!body) return;
 

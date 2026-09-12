@@ -2483,6 +2483,11 @@ html[lang='ur'] .smart-reminder-weekday {
     opacity: 0.85;
 }
 
+/* display: flex, [hidden]'ı ezer — bayrak kapalıyken kart gizlenmeliydi. */
+.community-card[hidden] {
+    display: none;
+}
+
 /* Çoklu seçim modunda ana ekran yalnızca klasörlere odaklanır */
 #homeView.home-view--select-mode .community-card {
     display: none;
