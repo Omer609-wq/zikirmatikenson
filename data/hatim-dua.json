@@ -1,8 +1,8 @@
 {
   "meta": {
-    "source": "Yaygın hatim duası. Benzer lafızlarla Beyhakî, Şuabü'l-îmân'da nakledilir.",
+    "source": "Hatim duası olarak yaygın kullanılan metin. Kaynağı doğrulanamadı: Diyanet yayınlarında ve TDV İslâm Ansiklopedisi'nin HATİM maddesinde bu lafızlarla bulunamadı. Ansiklopedi hatim duası için İbnü'l-Cezerî (en-Neşr), Heysemî (Mecmau'z-zevâid) ve Münâvî'yi kaynak gösteriyor.",
     "review": "unverified",
-    "note": "Arapça harekeler ve sekiz dildeki mealler yayına çıkmadan önce güvenilir bir kaynakla (ör. Diyanet) karşılaştırılmalı. Okunuş yalnızca tr ve en için verilir; id/ms/fr/bn en okunuşuna düşer, ar/ur Arapça harfleri zaten okuduğu için okunuş gösterilmez."
+    "note": "Metin yayına çıkmadan önce Diyanet'in yayımladığı bir hatim duası metniyle değiştirilmeli ya da karşılaştırılmalı; Arapça harekeler ve sekiz dildeki mealler de o kaynakla doğrulanmalı. Okunuş yalnızca tr ve en için verilir; id/ms/fr/bn en okunuşuna düşer, ar/ur Arapça harfleri zaten okuduğu için okunuş gösterilmez."
   },
   "arabic": "اللَّهُمَّ ارْحَمْنِي بِالْقُرْآنِ وَاجْعَلْهُ لِي إِمَامًا وَنُورًا وَهُدًى وَرَحْمَةً\nاللَّهُمَّ ذَكِّرْنِي مِنْهُ مَا نَسِيتُ وَعَلِّمْنِي مِنْهُ مَا جَهِلْتُ\nوَارْزُقْنِي تِلَاوَتَهُ آنَاءَ اللَّيْلِ وَأَطْرَافَ النَّهَارِ\nوَاجْعَلْهُ لِي حُجَّةً يَا رَبَّ الْعَالَمِينَ",
   "translit": {
