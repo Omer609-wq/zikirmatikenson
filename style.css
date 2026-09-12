@@ -2640,6 +2640,11 @@ html[lang='ur'] .smart-reminder-weekday {
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 }
+/* display:flex, [hidden] varsayilanini eziyor; kisisel hatimde gizlenmesi icin gerekli. */
+.hatim-code[hidden] {
+    display: none;
+}
+
 .hatim-code__text {
     flex: 1;
     min-width: 0;

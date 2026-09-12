@@ -138,6 +138,8 @@ import { setupCrashReporting } from './lib/crash-reporting.js';
 import {
     HATIM_GROUP_LIMIT,
     HATIM_GROUP_NAME_MAX,
+    HATIM_KIND_PERSONAL,
+    HATIM_KIND_SHARED,
     HATIM_MEMBER_NAME_MAX,
     HATIM_JUZ_COUNT,
     JUZ_CLAIMED,
@@ -147,8 +149,10 @@ import {
     completeJuz,
     createHatimGroup,
     getHatimProgress,
+    getNextJuzToRead,
     getNextMemberJuz,
     isHatimComplete,
+    isPersonalHatim,
     isValidHatimCode,
     listMemberJuz,
     releaseJuz,
@@ -911,6 +915,9 @@ let currentLibraryGroupId = null;
 let hatimGroups = [];
 let currentHatimGroupId = null;
 let currentHatimJuzN = null;
+/** Topluluk ekranındaki sekme: 'personal' | 'shared'. Çoğu kullanıcının
+    grubu olmayacağı için kişisel sekme varsayılan. */
+let currentHatimTab = HATIM_KIND_PERSONAL;
 let quranAyahFavorites = [];
 import { QURAN_COUNTER_LAYOUTS, normalizeQuranCounterLayout } from './lib/quran-counter-layout.js';
 
@@ -6208,6 +6215,24 @@ function setLocalMemberName(name) {
     appMeta.memberName = String(name || '').trim().slice(0, HATIM_MEMBER_NAME_MAX);
 }
 
+function listHatimsByKind(kind) {
+    return hatimGroups.filter((g) =>
+        kind === HATIM_KIND_PERSONAL ? isPersonalHatim(g) : !isPersonalHatim(g)
+    );
+}
+
+/** Kişisel hatimde ad sorulmaz; "Hatmim", "Hatmim 2"… diye kendiliğinden adlanır. */
+function nextPersonalHatimName() {
+    const base = t('community.personalHatimName');
+    const used = new Set(listHatimsByKind(HATIM_KIND_PERSONAL).map((g) => g.name));
+    if (!used.has(base)) return base;
+    for (let i = 2; i < 100; i += 1) {
+        const candidate = `${base} ${i}`;
+        if (!used.has(candidate)) return candidate;
+    }
+    return base;
+}
+
 function findHatimGroup(id) {
     return hatimGroups.find((g) => g.id === id) || null;
 }
@@ -6261,15 +6286,27 @@ function renderCommunityCardSummary() {
     }
 
     const next = getHatimNextForMember();
-    const primary = next ? next.group : hatimGroups[0];
+    // Kişisel hatim varsa kart onu gösterir; çoğu kullanıcı için ana iş o.
+    const personal = listHatimsByKind(HATIM_KIND_PERSONAL);
+    const primary = personal[0] || (next ? next.group : hatimGroups[0]);
     const progress = getHatimProgress(primary);
-    const summary = next
-        ? t('community.cardSummary', { count: hatimGroups.length, juz: next.juz.n })
-        : t('community.cardSummaryDone', {
-              count: hatimGroups.length,
-              done: progress.done,
-              total: progress.total
-          });
+    const personalNext = personal.length ? getNextJuzToRead(primary) : null;
+
+    let summary;
+    if (personal.length && personalNext) {
+        summary = t('community.cardSummaryPersonal', { juz: personalNext.n });
+    } else if (personal.length) {
+        // Kişisel hatim bitti.
+        summary = t('community.hatimComplete');
+    } else if (next) {
+        summary = t('community.cardSummary', { count: hatimGroups.length, juz: next.juz.n });
+    } else {
+        summary = t('community.cardSummaryDone', {
+            count: hatimGroups.length,
+            done: progress.done,
+            total: progress.total
+        });
+    }
 
     const strip = primary.juz
         .map((jz) => `<span class="community-card__dot community-card__dot--${hatimJuzStateClass(jz)}"></span>`)
@@ -6283,6 +6320,37 @@ function renderCommunityCardSummary() {
 
 /* ---------- Topluluk ekranı ---------- */
 
+/** Sekme düğmelerini ve panelleri seçili kipe göre ayarlar. */
+function syncHatimTabs() {
+    document.querySelectorAll('#hatimTabs .tab-btn').forEach((btn) => {
+        const active = btn.dataset.hatimTab === currentHatimTab;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    const personalPanel = document.getElementById('hatimPersonalPanel');
+    const sharedPanel = document.getElementById('hatimSharedPanel');
+    if (personalPanel) personalPanel.hidden = currentHatimTab !== HATIM_KIND_PERSONAL;
+    if (sharedPanel) sharedPanel.hidden = currentHatimTab === HATIM_KIND_PERSONAL;
+}
+
+/** Hatim satırı — hem kişisel hem grup listesinde aynı görünüm. */
+function hatimRowHtml(group) {
+    const progress = getHatimProgress(group);
+    const percent = Math.round(((progress.done + progress.claimed) / progress.total) * 100);
+    return `
+        <button type="button" class="hatim-group-row" data-group-id="${escapeAttr(group.id)}">
+            <span class="hatim-group-row__text">
+                <span class="hatim-group-row__name">${escapeHtml(group.name)}</span>
+                <span class="hatim-group-row__meta">${escapeHtml(
+                    t('community.groupProgress', { done: progress.done, total: progress.total })
+                )}</span>
+                <span class="hatim-group-row__bar"><span class="hatim-group-row__fill" style="width:${percent}%"></span></span>
+            </span>
+            <span class="material-icons-outlined hatim-group-row__chevron" aria-hidden="true">chevron_right</span>
+        </button>
+    `;
+}
+
 function renderCommunityView() {
     const me = getLocalMemberId();
     const list = document.getElementById('hatimGroupList');
@@ -6295,8 +6363,13 @@ function renderCommunityView() {
 
     if (!list) return;
 
-    // Cüzlerim — tüm grupları tek listede toplar, hangi cüzün nerede olduğu görünür.
-    const mine = hatimGroups.flatMap((g) =>
+    syncHatimTabs();
+    const shared = listHatimsByKind(HATIM_KIND_SHARED);
+    const personal = listHatimsByKind(HATIM_KIND_PERSONAL);
+
+    // Cüzlerim — grupları tek listede toplar. Kişisel hatimde bütün cüzler
+    // zaten kullanıcının olduğu için orada anlamı yok.
+    const mine = shared.flatMap((g) =>
         listMemberJuz(g, me).map((juz) => ({ group: g, juz }))
     );
     if (mineBlock) mineBlock.hidden = mine.length === 0;
@@ -6318,31 +6391,23 @@ function renderCommunityView() {
             .join('');
     }
 
-    if (groupsTitle) groupsTitle.hidden = hatimGroups.length === 0;
-    if (emptyHint) emptyHint.hidden = hatimGroups.length > 0;
+    if (groupsTitle) groupsTitle.hidden = shared.length === 0;
+    if (emptyHint) emptyHint.hidden = shared.length > 0;
+    list.innerHTML = shared.map(hatimRowHtml).join('');
 
-    list.innerHTML = hatimGroups
-        .map((group) => {
-            const progress = getHatimProgress(group);
-            const percent = Math.round(((progress.done + progress.claimed) / progress.total) * 100);
-            return `
-                <button type="button" class="hatim-group-row" data-group-id="${escapeAttr(group.id)}">
-                    <span class="hatim-group-row__text">
-                        <span class="hatim-group-row__name">${escapeHtml(group.name)}</span>
-                        <span class="hatim-group-row__meta">${escapeHtml(
-                            t('community.groupProgress', { done: progress.done, total: progress.total })
-                        )}</span>
-                        <span class="hatim-group-row__bar"><span class="hatim-group-row__fill" style="width:${percent}%"></span></span>
-                    </span>
-                    <span class="material-icons-outlined hatim-group-row__chevron" aria-hidden="true">chevron_right</span>
-                </button>
-            `;
-        })
-        .join('');
+    const personalList = document.getElementById('hatimPersonalList');
+    const personalEmpty = document.getElementById('hatimPersonalEmpty');
+    const personalLimit = document.getElementById('hatimPersonalLimitWarning');
+    const newPersonalBtn = document.getElementById('newPersonalHatimBtn');
+    if (personalList) personalList.innerHTML = personal.map(hatimRowHtml).join('');
+    if (personalEmpty) personalEmpty.hidden = personal.length > 0;
 
+    // Sınır toplam hatim sayısına göre; iki sekme aynı havuzu paylaşır.
     const atLimit = hatimGroups.length >= HATIM_GROUP_LIMIT;
     if (limitWarning) limitWarning.classList.toggle('visible', atLimit);
     if (newBtn) newBtn.style.display = atLimit ? 'none' : 'flex';
+    if (personalLimit) personalLimit.classList.toggle('visible', atLimit);
+    if (newPersonalBtn) newPersonalBtn.style.display = atLimit ? 'none' : 'flex';
 }
 
 /* ---------- Hatim grubu ekranı ---------- */
@@ -6358,8 +6423,26 @@ function renderHatimGroupView() {
     const title = document.getElementById('hatimGroupTitle');
     if (title) title.textContent = group.name;
 
+    const personal = isPersonalHatim(group);
+
+    // Kişisel hatimde katılma kodu ve paylaşım anlamsız.
+    const shareBtn = document.getElementById('hatimShareBtn');
+    if (shareBtn) shareBtn.hidden = personal;
     const codeValue = document.getElementById('hatimCodeValue');
     if (codeValue) codeValue.textContent = group.code;
+
+    // Kişisel hatimde cüz "alınmaz", okunmaya başlanır.
+    const legendClaimed = document.getElementById('hatimLegendClaimed');
+    if (legendClaimed) {
+        legendClaimed.textContent = personal
+            ? t('community.juzReading')
+            : t('community.legendClaimed');
+    }
+
+    const deleteLabel = document.getElementById('hatimDeleteGroupLabel');
+    if (deleteLabel) {
+        deleteLabel.textContent = personal ? t('community.deleteHatim') : t('community.deleteGroup');
+    }
 
     const progress = getHatimProgress(group);
     const fill = document.getElementById('hatimSummaryFill');
@@ -6391,7 +6474,9 @@ function renderHatimGroupView() {
                     : juz.state === JUZ_CLAIMED
                       ? t('community.legendClaimed')
                       : t('community.legendFree');
-            const who = juz.state === JUZ_FREE ? '' : juz.byName || t('community.someone');
+            // Kişisel hatimde bütün cüzler kullanıcının; isim yazmak gürültü olur.
+            const who =
+                personal || juz.state === JUZ_FREE ? '' : juz.byName || t('community.someone');
             return `
                 <button type="button"
                     class="hatim-cell hatim-cell--${cls}${isMine ? ' hatim-cell--mine' : ''}"
@@ -6419,11 +6504,20 @@ function renderHatimJuzDetail() {
     const title = document.getElementById('hatimJuzTitle');
     if (title) title.textContent = hatimJuzLabel(detail.juz);
 
+    const personal = isPersonalHatim(group);
     const stateEl = document.getElementById('hatimJuzState');
     if (stateEl) {
         const who = juz.byName || t('community.someone');
         let key = 'community.juzStateFree';
-        if (juz.state === JUZ_CLAIMED) key = juz.by === me ? 'community.juzStateClaimedMine' : 'community.juzStateClaimedOther';
+        if (personal) {
+            // Kişisel hatimde "kim aldı" sorusu yok; durum kullanıcının kendi ilerlemesi.
+            key =
+                juz.state === JUZ_DONE
+                    ? 'community.juzStatePersonalDone'
+                    : juz.state === JUZ_CLAIMED
+                      ? 'community.juzStatePersonalReading'
+                      : 'community.juzStatePersonalFree';
+        } else if (juz.state === JUZ_CLAIMED) key = juz.by === me ? 'community.juzStateClaimedMine' : 'community.juzStateClaimedOther';
         else if (juz.state === JUZ_DONE) key = juz.by === me ? 'community.juzStateDoneMine' : 'community.juzStateDoneOther';
         stateEl.textContent = t(key, { name: who });
         stateEl.className = `hatim-juz-state hatim-juz-state--${hatimJuzStateClass(juz)}`;
@@ -6466,7 +6560,8 @@ function renderHatimJuzDetail() {
     if (!actions) return;
     const buttons = [];
     if (juz.state === JUZ_FREE) {
-        buttons.push(`<button type="button" class="primary-btn full-width" data-hatim-action="claim">${escapeHtml(t('community.claimJuz'))}</button>`);
+        const claimLabel = personal ? t('community.claimJuzPersonal') : t('community.claimJuz');
+        buttons.push(`<button type="button" class="primary-btn full-width" data-hatim-action="claim">${escapeHtml(claimLabel)}</button>`);
     } else if (juz.by === me && juz.state === JUZ_CLAIMED) {
         buttons.push(`<button type="button" class="primary-btn full-width" data-hatim-action="complete">${escapeHtml(t('community.completeJuz'))}</button>`);
         buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="release">${escapeHtml(t('community.releaseJuz'))}</button>`);
@@ -6509,7 +6604,10 @@ async function handleHatimJuzAction(action) {
     }
 
     let res = null;
-    if (action === 'claim') {
+    if (action === 'claim' && isPersonalHatim(group)) {
+        // Kişisel hatimde ad sorulmaz: bütün cüzler zaten kullanıcının.
+        res = claimJuz(group, currentHatimJuzN, me);
+    } else if (action === 'claim') {
         // Cüzü kimin aldığı grupta görüneceği için ad burada sorulur.
         const name = await showAppPrompt(t('community.claimNamePrompt'), getLocalMemberName(), {
             title: t('community.claimNameTitle'),
@@ -6556,6 +6654,22 @@ async function handleCreateHatimGroup() {
 
     const group = createHatimGroup({
         name: name.trim().slice(0, HATIM_GROUP_NAME_MAX),
+        kind: HATIM_KIND_SHARED,
+        ownerId: getLocalMemberId(),
+        order: hatimGroups.length
+    });
+    hatimGroups.push(group);
+    saveData();
+    renderCommunityCardSummary();
+    showView('hatimGroupView', group.id);
+}
+
+/** Kişisel hatim: ad sorulmaz, kod gösterilmez — tek dokunuşla başlar. */
+async function handleCreatePersonalHatim() {
+    if (hatimGroups.length >= HATIM_GROUP_LIMIT) return;
+    const group = createHatimGroup({
+        name: nextPersonalHatimName(),
+        kind: HATIM_KIND_PERSONAL,
         ownerId: getLocalMemberId(),
         order: hatimGroups.length
     });
@@ -6602,7 +6716,10 @@ async function handleShareHatimGroup() {
 async function handleDeleteHatimGroup() {
     const group = findHatimGroup(currentHatimGroupId);
     if (!group) return;
-    const ok = await showAppConfirm(t('community.deleteConfirm', { name: group.name }));
+    const confirmKey = isPersonalHatim(group)
+        ? 'community.deleteHatimConfirm'
+        : 'community.deleteConfirm';
+    const ok = await showAppConfirm(t(confirmKey, { name: group.name }));
     if (!ok) return;
     hatimGroups = hatimGroups.filter((g) => g.id !== group.id);
     saveData();
@@ -6614,6 +6731,15 @@ async function handleDeleteHatimGroup() {
 function setupHatimListeners() {
     document.getElementById('communityCard')?.addEventListener('click', () => {
         showView('communityView');
+    });
+    document.getElementById('hatimTabs')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-hatim-tab]');
+        if (!btn || btn.dataset.hatimTab === currentHatimTab) return;
+        currentHatimTab = btn.dataset.hatimTab;
+        renderCommunityView();
+    });
+    document.getElementById('newPersonalHatimBtn')?.addEventListener('click', () => {
+        void handleCreatePersonalHatim();
     });
     document.getElementById('newHatimGroupBtn')?.addEventListener('click', () => {
         void handleCreateHatimGroup();
@@ -6628,9 +6754,11 @@ function setupHatimListeners() {
         void handleDeleteHatimGroup();
     });
 
-    document.getElementById('hatimGroupList')?.addEventListener('click', (e) => {
-        const row = e.target.closest('.hatim-group-row');
-        if (row) showView('hatimGroupView', row.dataset.groupId);
+    ['hatimGroupList', 'hatimPersonalList'].forEach((id) => {
+        document.getElementById(id)?.addEventListener('click', (e) => {
+            const row = e.target.closest('.hatim-group-row');
+            if (row) showView('hatimGroupView', row.dataset.groupId);
+        });
     });
 
     document.getElementById('hatimMineList')?.addEventListener('click', (e) => {

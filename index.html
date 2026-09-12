@@ -110,22 +110,41 @@
             </header>
 
             <section class="main-content scrollable">
-                <div class="hatim-mine" id="hatimMineBlock" hidden>
-                    <h2 class="hatim-section-title" data-i18n="community.myJuzTitle">Cüzlerim</h2>
-                    <div class="hatim-mine__list" id="hatimMineList"></div>
+                <div class="stats-tabs" id="hatimTabs" role="tablist">
+                    <button type="button" class="tab-btn active" data-hatim-tab="personal" role="tab" aria-selected="true" data-i18n="community.tabPersonal">Kendim</button>
+                    <button type="button" class="tab-btn" data-hatim-tab="shared" role="tab" aria-selected="false" data-i18n="community.tabShared">Grupla</button>
                 </div>
 
-                <h2 class="hatim-section-title" id="hatimGroupsTitle" data-i18n="community.groupsTitle">Hatim gruplarım</h2>
-                <div class="hatim-group-list" id="hatimGroupList"></div>
-                <p class="hatim-empty" id="hatimEmptyHint" data-i18n="community.emptyHint">Henüz hatim grubun yok. Yeni bir grup oluştur ya da sana verilen kodla var olan bir gruba katıl.</p>
+                <!-- KENDİM: kişisel hatim. Ad, kod ve paylaşım yok. -->
+                <div id="hatimPersonalPanel">
+                    <div class="hatim-group-list" id="hatimPersonalList"></div>
+                    <p class="hatim-empty" id="hatimPersonalEmpty" data-i18n="community.personalEmptyHint">Kendi hatmini başlat. 30 cüz otomatik eklenir, okudukça işaretlersin.</p>
 
-                <button class="primary-btn" id="newHatimGroupBtn" style="margin-top: 1rem;">
-                    <span class="material-icons-outlined">add</span> <span data-i18n="community.newGroup">Hatim Grubu Oluştur</span>
-                </button>
-                <button class="secondary-btn" id="joinHatimGroupBtn" style="margin-top: 0.6rem;">
-                    <span class="material-icons-outlined">tag</span> <span data-i18n="community.joinByCode">Kod ile Katıl</span>
-                </button>
-                <div class="limit-warning" id="hatimLimitWarning" data-i18n="community.groupLimitWarning">Grup sınırına ulaşıldı. Yeni bir gruba katılmak için önce bir gruptan ayrıl.</div>
+                    <button class="primary-btn" id="newPersonalHatimBtn" style="margin-top: 1rem;">
+                        <span class="material-icons-outlined">add</span> <span data-i18n="community.newPersonalHatim">Hatim Başlat</span>
+                    </button>
+                    <div class="limit-warning" id="hatimPersonalLimitWarning" data-i18n="community.personalLimitWarning">Hatim sınırına ulaşıldı. Yeni bir hatim başlatmak için önce birini sil.</div>
+                </div>
+
+                <!-- GRUPLA: ortak hatim grupları -->
+                <div id="hatimSharedPanel" hidden>
+                    <div class="hatim-mine" id="hatimMineBlock" hidden>
+                        <h2 class="hatim-section-title" data-i18n="community.myJuzTitle">Cüzlerim</h2>
+                        <div class="hatim-mine__list" id="hatimMineList"></div>
+                    </div>
+
+                    <h2 class="hatim-section-title" id="hatimGroupsTitle" data-i18n="community.groupsTitle">Hatim gruplarım</h2>
+                    <div class="hatim-group-list" id="hatimGroupList"></div>
+                    <p class="hatim-empty" id="hatimEmptyHint" data-i18n="community.emptyHint">Henüz hatim grubun yok. Yeni bir grup oluştur ya da sana verilen kodla var olan bir gruba katıl.</p>
+
+                    <button class="primary-btn" id="newHatimGroupBtn" style="margin-top: 1rem;">
+                        <span class="material-icons-outlined">add</span> <span data-i18n="community.newGroup">Hatim Grubu Oluştur</span>
+                    </button>
+                    <button class="secondary-btn" id="joinHatimGroupBtn" style="margin-top: 0.6rem;">
+                        <span class="material-icons-outlined">tag</span> <span data-i18n="community.joinByCode">Kod ile Katıl</span>
+                    </button>
+                    <div class="limit-warning" id="hatimLimitWarning" data-i18n="community.groupLimitWarning">Grup sınırına ulaşıldı. Yeni bir gruba katılmak için önce bir gruptan ayrıl.</div>
+                </div>
             </section>
         </div>
 
@@ -158,12 +177,12 @@
 
                 <ul class="hatim-legend" aria-hidden="true">
                     <li><span class="hatim-legend__dot hatim-legend__dot--free"></span><span data-i18n="community.legendFree">Boş</span></li>
-                    <li><span class="hatim-legend__dot hatim-legend__dot--claimed"></span><span data-i18n="community.legendClaimed">Alındı</span></li>
+                    <li><span class="hatim-legend__dot hatim-legend__dot--claimed"></span><span id="hatimLegendClaimed">Alındı</span></li>
                     <li><span class="hatim-legend__dot hatim-legend__dot--done"></span><span data-i18n="community.legendDone">Bitti</span></li>
                 </ul>
 
                 <button type="button" class="secondary-btn hatim-delete-btn" id="hatimDeleteGroupBtn">
-                    <span class="material-icons-outlined">delete_outline</span> <span data-i18n="community.deleteGroup">Grubu Sil</span>
+                    <span class="material-icons-outlined">delete_outline</span> <span id="hatimDeleteGroupLabel">Grubu Sil</span>
                 </button>
             </section>
         </div>
