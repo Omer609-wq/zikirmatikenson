@@ -917,9 +917,9 @@ let currentLibraryGroupId = null;
 let hatimGroups = [];
 let currentHatimGroupId = null;
 let currentHatimJuzN = null;
-/** Topluluk ekranındaki sekme: 'personal' | 'shared'. Çoğu kullanıcının
-    grubu olmayacağı için kişisel sekme varsayılan. */
-let currentHatimTab = HATIM_KIND_PERSONAL;
+/** Topluluk ekranındaki sekme: 'personal' | 'shared'. Ekranın adı Topluluk
+    olduğu için grup sekmesi önde ve varsayılan. */
+let currentHatimTab = HATIM_KIND_SHARED;
 let quranAyahFavorites = [];
 import { QURAN_COUNTER_LAYOUTS, normalizeQuranCounterLayout } from './lib/quran-counter-layout.js';
 
