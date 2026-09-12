@@ -136,7 +136,6 @@ import { applyNativeStatusBarTheme } from './status-bar-theme.js';
 import { runCounterVibration, runDragReorderNudge } from './haptics.js';
 import { setupCrashReporting } from './lib/crash-reporting.js';
 import {
-    HATIM_GROUP_LIMIT,
     HATIM_GROUP_NAME_MAX,
     HATIM_KIND_PERSONAL,
     HATIM_KIND_SHARED,
@@ -153,6 +152,7 @@ import {
     getNextJuzToRead,
     getNextMemberJuz,
     isHatimComplete,
+    isHatimLimitReached,
     isPersonalHatim,
     isValidHatimCode,
     listMemberJuz,
@@ -6411,12 +6411,13 @@ function renderCommunityView() {
     if (personalList) personalList.innerHTML = personal.map(hatimRowHtml).join('');
     if (personalEmpty) personalEmpty.hidden = personal.length > 0;
 
-    // Sınır toplam hatim sayısına göre; iki sekme aynı havuzu paylaşır.
-    const atLimit = hatimGroups.length >= HATIM_GROUP_LIMIT;
-    if (limitWarning) limitWarning.classList.toggle('visible', atLimit);
-    if (newBtn) newBtn.style.display = atLimit ? 'none' : 'flex';
-    if (personalLimit) personalLimit.classList.toggle('visible', atLimit);
-    if (newPersonalBtn) newPersonalBtn.style.display = atLimit ? 'none' : 'flex';
+    // Sınır kip başına: bir sekmenin dolması diğerini kapatmaz.
+    const sharedFull = isHatimLimitReached(hatimGroups, HATIM_KIND_SHARED);
+    const personalFull = isHatimLimitReached(hatimGroups, HATIM_KIND_PERSONAL);
+    if (limitWarning) limitWarning.classList.toggle('visible', sharedFull);
+    if (newBtn) newBtn.style.display = sharedFull ? 'none' : 'flex';
+    if (personalLimit) personalLimit.classList.toggle('visible', personalFull);
+    if (newPersonalBtn) newPersonalBtn.style.display = personalFull ? 'none' : 'flex';
 }
 
 /* ---------- Hatim grubu ekranı ---------- */
@@ -6741,7 +6742,7 @@ async function handleHatimJuzAction(action) {
 }
 
 async function handleCreateHatimGroup() {
-    if (hatimGroups.length >= HATIM_GROUP_LIMIT) return;
+    if (isHatimLimitReached(hatimGroups, HATIM_KIND_SHARED)) return;
     const name = await showAppPrompt(t('community.newGroupPrompt'), '', {
         title: t('community.newGroupTitle'),
         inputLabel: t('community.groupNameLabel')
@@ -6762,7 +6763,7 @@ async function handleCreateHatimGroup() {
 
 /** Kişisel hatim: ad sorulmaz, kod gösterilmez — tek dokunuşla başlar. */
 async function handleCreatePersonalHatim() {
-    if (hatimGroups.length >= HATIM_GROUP_LIMIT) return;
+    if (isHatimLimitReached(hatimGroups, HATIM_KIND_PERSONAL)) return;
     const group = createHatimGroup({
         name: nextPersonalHatimName(),
         kind: HATIM_KIND_PERSONAL,
