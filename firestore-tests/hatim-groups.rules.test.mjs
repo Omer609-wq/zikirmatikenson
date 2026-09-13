@@ -180,6 +180,13 @@ test('okuma: üye cüzleri ve üyeleri okur', async () => {
     await assertSucceeds(getDoc(doc(s, 'hatims', HATIM, 'members', OWNER)));
 });
 
+test('okuma: herkes kendi (henüz olmayan) üyelik kaydını okur, başkasınınkini okuyamaz', async () => {
+    await seedGroup({ withMember: false });
+    const s = db(OUTSIDER);
+    await assertSucceeds(getDoc(doc(s, 'hatims', HATIM, 'members', OUTSIDER)));
+    await assertFails(getDoc(doc(s, 'hatims', HATIM, 'members', OWNER)));
+});
+
 /* ------------------------------------------------------------------ */
 /* Katılma                                                             */
 /* ------------------------------------------------------------------ */

@@ -185,7 +185,10 @@ service cloud.firestore {
       // Üyelik
       // -------------------------------------------------------------------
       match /members/{uid} {
-        allow read: if isMember(hatimId);
+        // Üyeler listeyi okur. Herkes kendi kaydını okur (yoksa da): katılmadan
+        // önce "zaten üye miyim", açılışta "çıkarıldım mı" sorusu için
+        // (lib/hatim-remote.js joinHatim, fetchHatim).
+        allow read: if isMember(hatimId) || (signedIn() && uid == request.auth.uid);
 
         allow create: if signedIn()
           && uid == request.auth.uid
