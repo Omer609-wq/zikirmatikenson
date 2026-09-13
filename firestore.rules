@@ -1,0 +1,332 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // =====================================================================
+    // Bulut yedekleme — CANLI KULLANICI VERİSİ.
+    // docs/FIREBASE_BACKUP_SETUP.md'deki kuralla birebir aynı.
+    //
+    // Bu dosya deploy edildiğinde konsoldaki kuralların TAMAMININ yerine
+    // geçer. Deploy etmeden önce Firebase Console → Firestore → Kurallar
+    // sekmesindeki metinle karşılaştır; fark varsa önce buraya taşı.
+    // =====================================================================
+    match /users/{userId}/backups/{docId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // =====================================================================
+    // Paylaşımlı hatim grupları — docs/HATIM_GROUPS_DESIGN.md §3, §5, §7, §10
+    //
+    // hatimCodes/{code}               kod → hatimId
+    // hatims/{hatimId}                name, code, ownerUid, createdAt, rev, memberCount
+    // hatims/{hatimId}/members/{uid}  name, joinedAt
+    // hatims/{hatimId}/juz/{n}        n, state, by, byName, claimedAt, completedAt
+    // reports/{reportId}              şikâyet (§7), yalnızca yazılır
+    //
+    // Zaman alanları istemcide serverTimestamp() ile yazılır; kurallar
+    // request.time ile eşitliği arar.
+    // =====================================================================
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function hatimPath(hatimId) {
+      return /databases/$(database)/documents/hatims/$(hatimId);
+    }
+
+    function memberPath(hatimId, uid) {
+      return /databases/$(database)/documents/hatims/$(hatimId)/members/$(uid);
+    }
+
+    function codePath(code) {
+      return /databases/$(database)/documents/hatimCodes/$(code);
+    }
+
+    function isMember(hatimId) {
+      return signedIn() && exists(memberPath(hatimId, request.auth.uid));
+    }
+
+    function isOwner(hatimId) {
+      return signedIn() && get(hatimPath(hatimId)).data.ownerUid == request.auth.uid;
+    }
+
+    // Aynı toplu yazmada hatim belgesi siliniyor mu? (grup silme)
+    function hatimDeletedInBatch(hatimId) {
+      return exists(hatimPath(hatimId)) && !existsAfter(hatimPath(hatimId));
+    }
+
+    // Cüz tablosu değiştiyse rev tam 1 artmalı: istemci önbelleği (§3) buna güvenir.
+    function revBumped(hatimId) {
+      return getAfter(hatimPath(hatimId)).data.rev == get(hatimPath(hatimId)).data.rev + 1;
+    }
+
+    // Boş olmayan, yalnızca boşluktan oluşmayan, üst sınırlı metin.
+    function validName(value, max) {
+      return value is string
+        && value.size() > 0
+        && value.size() <= max
+        && value.matches('.*[^ ].*');
+    }
+
+    // lib/hatim-groups.js HATIM_CODE_ALPHABET: 2-9 ve I, L, O dışındaki büyük harfler.
+    function validCode(code) {
+      return code is string && code.matches('[2-9A-HJKMNP-Z]{6}');
+    }
+
+    // ---------------------------------------------------------------------
+    // Kod araması. Kodu bilen, giriş yapmış herkes okur; listelenemez.
+    // ---------------------------------------------------------------------
+    match /hatimCodes/{code} {
+      allow get: if signedIn();
+      allow list: if false;
+
+      // Yalnızca grup kurulurken, aynı toplu yazmada kurulan ve isteği yapana
+      // ait hatimi gösterecek şekilde. Kod doluysa create güncellemeye döner
+      // ve reddedilir — istemci yeni kodla tekrar dener.
+      allow create: if signedIn()
+        && validCode(code)
+        && request.resource.data.keys().hasOnly(['hatimId'])
+        && request.resource.data.hatimId is string
+        && !exists(hatimPath(request.resource.data.hatimId))
+        && getAfter(hatimPath(request.resource.data.hatimId)).data.ownerUid == request.auth.uid
+        && getAfter(hatimPath(request.resource.data.hatimId)).data.code == code;
+
+      allow update: if false;
+
+      allow delete: if isOwner(resource.data.hatimId)
+        && hatimDeletedInBatch(resource.data.hatimId);
+    }
+
+    // ---------------------------------------------------------------------
+    // Hatim belgesi
+    // ---------------------------------------------------------------------
+    match /hatims/{hatimId} {
+
+      function changedKeys() {
+        return request.resource.data.diff(resource.data).affectedKeys();
+      }
+
+      // Yönetici grubun adını değiştirir.
+      function renameByOwner() {
+        return resource.data.ownerUid == request.auth.uid
+          && changedKeys().hasOnly(['name'])
+          && validName(request.resource.data.name, 40);
+      }
+
+      // Cüz kapma / bitirme / bırakma: yalnızca rev, tam 1 artar.
+      function tableChange() {
+        return exists(memberPath(hatimId, request.auth.uid))
+          && changedKeys().hasOnly(['rev'])
+          && request.resource.data.rev == resource.data.rev + 1;
+      }
+
+      // Kodla katılma: üyelik kaydı aynı yazmada oluşur, sayaç 1 artar.
+      function joining() {
+        return !exists(memberPath(hatimId, request.auth.uid))
+          && existsAfter(memberPath(hatimId, request.auth.uid))
+          && changedKeys().hasOnly(['memberCount'])
+          && request.resource.data.memberCount == resource.data.memberCount + 1;
+      }
+
+      // Katılımcı ayrılır (§10). Yönetici ayrılamaz, yalnızca grubu siler.
+      // Bitmemiş cüzlerini bırakıyorsa aynı yazmada rev de 1 artar.
+      function leaving() {
+        return exists(memberPath(hatimId, request.auth.uid))
+          && !existsAfter(memberPath(hatimId, request.auth.uid))
+          && resource.data.ownerUid != request.auth.uid
+          && changedKeys().hasOnly(['memberCount', 'rev'])
+          && request.resource.data.memberCount == resource.data.memberCount - 1
+          && request.resource.data.memberCount >= 1
+          && request.resource.data.rev >= resource.data.rev
+          && request.resource.data.rev <= resource.data.rev + 1;
+      }
+
+      // Yönetici bir üyeyi çıkarır (§7 engelleme). Çıkarılan kaydın silinmesi
+      // üyelik kuralında sayaçla eşleştirilir; hangi üyenin silindiğini bu
+      // belgenin kuralı göremez, sayacı yalnızca yönetici kaydırabilir.
+      function removingMember() {
+        return resource.data.ownerUid == request.auth.uid
+          && changedKeys().hasOnly(['memberCount', 'rev'])
+          && request.resource.data.memberCount == resource.data.memberCount - 1
+          && request.resource.data.memberCount >= 1
+          && request.resource.data.rev >= resource.data.rev
+          && request.resource.data.rev <= resource.data.rev + 1;
+      }
+
+      // Kodu bilen giriş yapmış kişi, katılmadan önce adı ve kişi sayısını
+      // görebilir. hatimId rastgeledir, yalnızca kod üzerinden bulunur.
+      allow get: if signedIn();
+      allow list: if false;
+
+      // Kod ve yöneticinin üyelik kaydı aynı toplu yazmada oluşmalı.
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['name', 'code', 'ownerUid', 'createdAt', 'rev', 'memberCount'])
+        && validName(request.resource.data.name, 40)
+        && validCode(request.resource.data.code)
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.rev == 0
+        && request.resource.data.memberCount == 1
+        && getAfter(codePath(request.resource.data.code)).data.hatimId == hatimId
+        && existsAfter(memberPath(hatimId, request.auth.uid));
+
+      allow update: if signedIn()
+        && (renameByOwner() || tableChange() || joining() || leaving() || removingMember());
+
+      // Yalnızca yönetici; kod belgesi aynı yazmada silinmeli ki başıboş kod kalmasın.
+      // Alt koleksiyonlar da aynı yazmada silinmeli — silinmezse istemci onları
+      // bir daha silemez (kurallar hatimin varlığına bakar), 12 ay temizliği toplar.
+      allow delete: if isOwner(hatimId)
+        && !existsAfter(codePath(resource.data.code));
+
+      // -------------------------------------------------------------------
+      // Üyelik
+      // -------------------------------------------------------------------
+      match /members/{uid} {
+        allow read: if isMember(hatimId);
+
+        allow create: if signedIn()
+          && uid == request.auth.uid
+          && request.resource.data.keys().hasOnly(['name', 'joinedAt'])
+          && validName(request.resource.data.name, 20)
+          && request.resource.data.joinedAt == request.time
+          && (
+            // Grup kurulurken yöneticinin kendi kaydı
+            (!exists(hatimPath(hatimId))
+              && getAfter(hatimPath(hatimId)).data.ownerUid == uid)
+            ||
+            // Kodu bilen biri katılıyor: sayaç aynı yazmada 1 artmalı
+            (exists(hatimPath(hatimId))
+              && getAfter(hatimPath(hatimId)).data.memberCount
+                 == get(hatimPath(hatimId)).data.memberCount + 1)
+          );
+
+        // Katılımcı yalnızca kendi görünen adını değiştirir.
+        allow update: if signedIn()
+          && uid == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name'])
+          && validName(request.resource.data.name, 20);
+
+        allow delete: if signedIn() && (
+          // Grup siliniyor: yönetici bütün kayıtları siler
+          (isOwner(hatimId) && hatimDeletedInBatch(hatimId))
+          ||
+          // Katılımcı ayrılıyor — yönetici ayrılamaz (§10)
+          (uid == request.auth.uid
+            && get(hatimPath(hatimId)).data.ownerUid != uid
+            && getAfter(hatimPath(hatimId)).data.memberCount
+               == get(hatimPath(hatimId)).data.memberCount - 1)
+          ||
+          // Yönetici bir üyeyi çıkarıyor (§7)
+          (isOwner(hatimId)
+            && uid != request.auth.uid
+            && existsAfter(hatimPath(hatimId))
+            && getAfter(hatimPath(hatimId)).data.memberCount
+               == get(hatimPath(hatimId)).data.memberCount - 1)
+        );
+      }
+
+      // -------------------------------------------------------------------
+      // Cüzler — lib/hatim-groups.js'teki claim/complete/uncomplete/release
+      // sözleşmesinin sunucu tarafı.
+      // -------------------------------------------------------------------
+      match /juz/{n} {
+
+        function juzKeys() {
+          return request.resource.data.diff(resource.data).affectedKeys();
+        }
+
+        function becomesFree() {
+          return request.resource.data.state == 'free'
+            && request.resource.data.by == null
+            && request.resource.data.byName == null
+            && request.resource.data.claimedAt == null
+            && request.resource.data.completedAt == null;
+        }
+
+        // Boş cüzü kendi adına al. Dolu cüzde reddedilir: aynı cüzü iki kişinin
+        // almasını transaction ile birlikte bu engeller.
+        function claim() {
+          return resource.data.state == 'free'
+            && request.resource.data.state == 'claimed'
+            && request.resource.data.by == request.auth.uid
+            && validName(request.resource.data.byName, 20)
+            && request.resource.data.claimedAt == request.time
+            && request.resource.data.completedAt == null
+            && juzKeys().hasOnly(['state', 'by', 'byName', 'claimedAt']);
+        }
+
+        function complete() {
+          return resource.data.state == 'claimed'
+            && resource.data.by == request.auth.uid
+            && request.resource.data.state == 'done'
+            && request.resource.data.completedAt == request.time
+            && juzKeys().hasOnly(['state', 'completedAt']);
+        }
+
+        function uncomplete() {
+          return resource.data.state == 'done'
+            && resource.data.by == request.auth.uid
+            && request.resource.data.state == 'claimed'
+            && request.resource.data.completedAt == null
+            && juzKeys().hasOnly(['state', 'completedAt']);
+        }
+
+        // Kendi bitmemiş cüzünü bırak. Ayrılırken de bu yol kullanılır;
+        // bitmiş cüz bırakılmaz (§10) — okuma yapılmıştır.
+        function releaseOwn() {
+          return resource.data.state == 'claimed'
+            && resource.data.by == request.auth.uid
+            && becomesFree();
+        }
+
+        // Yönetici, kayıp ya da çıkarılan üyenin bitmemiş cüzünü boşaltır.
+        function forceRelease() {
+          return resource.data.state == 'claimed'
+            && get(hatimPath(hatimId)).data.ownerUid == request.auth.uid
+            && becomesFree();
+        }
+
+        allow read: if isMember(hatimId);
+
+        // Yalnızca grup kurulurken, boş olarak.
+        allow create: if signedIn()
+          && !exists(hatimPath(hatimId))
+          && getAfter(hatimPath(hatimId)).data.ownerUid == request.auth.uid
+          && n.matches('([1-9]|[12][0-9]|30)')
+          && request.resource.data.keys().hasOnly(['n', 'state', 'by', 'byName', 'claimedAt', 'completedAt'])
+          && request.resource.data.n == int(n)
+          && request.resource.data.state == 'free'
+          && request.resource.data.by == null
+          && request.resource.data.byName == null
+          && request.resource.data.claimedAt == null
+          && request.resource.data.completedAt == null;
+
+        allow update: if signedIn()
+          && exists(memberPath(hatimId, request.auth.uid))
+          && revBumped(hatimId)
+          && (claim() || complete() || uncomplete() || releaseOwn() || forceRelease());
+
+        allow delete: if isOwner(hatimId) && hatimDeletedInBatch(hatimId);
+      }
+    }
+
+    // ---------------------------------------------------------------------
+    // Şikâyet (§7). Yalnızca yazılır; okuma ve işlem konsoldan.
+    // Kodu görmüş ama katılmamış biri de grup adını şikâyet edebilsin diye
+    // üyelik aranmaz.
+    // ---------------------------------------------------------------------
+    match /reports/{reportId} {
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['hatimId', 'reason', 'reporterUid', 'createdAt'])
+        && request.resource.data.hatimId is string
+        && request.resource.data.reason is string
+        && request.resource.data.reason.size() <= 500
+        && request.resource.data.reporterUid == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if false;
+    }
+  }
+}
