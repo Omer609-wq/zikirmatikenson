@@ -17,3 +17,8 @@ android/keystore.properties
 # Kaynak kod değil; asıl yerleri YouTube ve Play Console. Git ikili dosyaların
 # her sürümünü kalıcı saklar — repoyu ~100 MB şişirmesin.
 promo/
+# Henüz yayına girmemiş tasarım/planlama notları — yerelde kalsın.
+docs/COMMUNITY_DESIGN.md
+docs/AI_USAGE.md
+# Claude Code'un kişisel izin listesi ve önizleme ayarları — repoya ait değil.
+.claude/
