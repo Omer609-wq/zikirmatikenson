@@ -25,8 +25,12 @@ async function applyNativeSystemBarsTheme(theme) {
     }
 }
 
+/** Son uygulanan tema; açılış ekranı kapanınca yeniden basmak için. */
+let lastTheme = null;
+
 export async function applyNativeStatusBarTheme(theme) {
     if (!Capacitor.isNativePlatform()) return;
+    lastTheme = theme;
 
     const key = themeKey(theme);
     const cfg = STATUS_BAR_BY_THEME[key];
@@ -52,4 +56,24 @@ export async function applyNativeStatusBarTheme(theme) {
 
     // Android: native WindowInsetsController ile ikon kontrastını kesinleştir
     await applyNativeSystemBarsTheme(theme);
+}
+
+/*
+ * Android 12+ açılış ekranı (androidx core-splashscreen) kapanırken
+ * applyAppSystemUiTheme() durum ve gezinme çubuğunu XML temasından
+ * (AppTheme.NoActionBar: koyu zemin, açık ikon) yeniden kuruyor. Tema splash
+ * kapanmadan uygulandığı için açık temada saat/şarj/bildirim ikonları beyaz
+ * kalıp açık zeminde kayboluyordu; Ayarlar'a girince tema tekrar basıldığı
+ * için düzeliyordu. Çıkış animasyonu (launchFadeOutDuration 120 ms) bittikten
+ * sonra son temayı yeniden uygula; ikinci deneme yavaş cihazlar için.
+ */
+const SPLASH_EXIT_REAPPLY_DELAYS_MS = [300, 1000];
+
+export function reapplyNativeStatusBarThemeAfterSplash() {
+    if (!Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'android') return;
+    for (const delay of SPLASH_EXIT_REAPPLY_DELAYS_MS) {
+        setTimeout(() => {
+            if (lastTheme != null) void applyNativeStatusBarTheme(lastTheme);
+        }, delay);
+    }
 }
