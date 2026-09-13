@@ -264,6 +264,7 @@ import {
     setQuranVisibleSurahChangeHandler
 } from './quran.js';
 import { getPageStartAyah } from './lib/quran-pages.js';
+import { mushafPageLabel } from './lib/mushaf-page-label.js';
 import {
     getMushafNavOptsForRerender,
     getNavOptsForSurahOpen,
@@ -6657,7 +6658,10 @@ function renderHatimJuzDetail() {
         const rows = [
             [t('community.factStart'), hatimAyahRef(detail.start)],
             [t('community.factEnd'), hatimAyahRef(detail.end)],
-            [t('community.factPages'), `${detail.startPage}–${detail.endPage}`],
+            [
+                t('community.factPages'),
+                `${mushafPageLabel(detail.startPage, appSettings.locale)}–${mushafPageLabel(detail.endPage, appSettings.locale)}`
+            ],
             [t('community.factAyahs'), String(detail.ayahCount)],
             [t('community.factSurahs'), String(detail.surahCount)]
         ];

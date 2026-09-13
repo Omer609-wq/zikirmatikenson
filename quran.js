@@ -29,6 +29,7 @@ import {
 } from './quran-ayah-text-search.js';
 import { getSurahLocalizedName } from './quran-surah-names.js';
 import { resolveScrollPlaceRestore } from './lib/quran-reader-place.js';
+import { mushafPageLabel } from './lib/mushaf-page-label.js';
 
 export { getSurahLocalizedName } from './quran-surah-names.js';
 import { t, getLocale, normalizeAppLocale } from './i18n.js';
@@ -1518,7 +1519,7 @@ function formatMushafMetaLine(pageNum) {
     const ayahs = listAyahsOnPage(page);
     const juz = ayahs.length ? getJuzForAyah(ayahs[0].s, ayahs[0].a) : 1;
     const juzPart = t('quran.mushafMetaJuz', { n: juz });
-    const pagePart = t('quran.mushafMetaPage', { n: page });
+    const pagePart = t('quran.mushafMetaPage', { n: mushafPageLabel(page, locale) });
     const surahPart = getPageSegments(page)
         .map((seg) => {
             const meta = surahMeta(seg.s);
@@ -1768,7 +1769,7 @@ async function populateMushafPageContent(parts, pageNum, meal, readMode) {
     parts.head.replaceChildren();
     parts.body.replaceChildren();
     parts.subs.replaceChildren();
-    if (parts.foot) parts.foot.textContent = toArabicIndicNumber(page);
+    if (parts.foot) parts.foot.textContent = toArabicIndicNumber(mushafPageLabel(page, locale));
 
     const firstSeg = segments[0];
     if (firstSeg) {
