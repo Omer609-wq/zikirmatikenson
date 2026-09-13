@@ -10,21 +10,27 @@ grupların cihazlar arasında paylaşılması.
 
 ---
 
-## 1. Kapsam kararı: v1 yalnızca Android
+## 1. Kapsam kararı: Android ve iOS birlikte, 1 Ekim 2026
 
 | | |
 |---|---|
 | Android | Kişisel + paylaşımlı hatim |
-| iOS | Yalnızca kişisel hatim, Grupla sekmesi gizli |
+| iOS | Kişisel + paylaşımlı hatim — **uygulamanın ilk App Store lansmanı** |
 
-Gerekçe: iOS henüz yayında değil (yalnızca geliştirici hesabı açıldı),
-`capacitor.config.json` içindeki iOS `includePlugins` listesinde Firebase yok, ve iOS'ta
-hesap gerekirse **Apple ile Giriş mağaza şartı** olur (Google girişi mevcut olduğu için).
-Bu üç iş v1'in en pahalı kalemi ve şu an hiçbir kullanıcıyı etkilemiyor.
+İlk taslak v1'i Android'e kesiyordu; 13 Eylül'de karar değişti, iki platform birlikte
+çıkar. iOS tarafı hatim kodundan bağımsız, kendi başına bir lansman işi ve takvimin
+kritik yolu orası:
 
-Emsal var: bulut yedekleme de `isCloudBackupPlatform()` ile Android'e özel.
+- Windows'tan build hattı (GitHub Actions macOS runner + imzalama) — şu an hiç CI yok
+- CocoaPods + Firebase iOS (`GoogleService-Info.plist`, `includePlugins`)
+- **Apple ile Giriş** — Google girişi olan uygulamada App Store şartı
+- **Uygulama içi hesap silme** — hesap açtıran uygulamada App Store şartı
+- İlk gönderim paketi (ekran görüntüleri, App Privacy, yaş derecelendirmesi) ve ilk inceleme
 
-> **Grupla sekmesi, backend hazır olana kadar yayınlanan sürümlerde gizli kalır.**
+İlk incelemede bir ret turu olağan; bu yüzden **gönderim en geç 26-27 Eylül.**
+
+> **Topluluk, backend hazır olana kadar yayınlanan sürümlerde gizli kalır**
+> (`COMMUNITY_UI_VISIBLE`, `app.js`).
 > Bu yalnızca kullanıcı deneyimi kararı değil: sekme yayınlanırsa kullanıcılar
 > buluta hiç ulaşmamış, cihaza gömülü "paylaşımlı" gruplar oluşturur ve backend
 > gelince elimizde bir **göç problemi** olur. Sekme hiç açılmazsa o problem hiç doğmaz.
@@ -36,8 +42,9 @@ Emsal var: bulut yedekleme de `isCloudBackupPlatform()` ile Android'e özel.
 Bugün `appMeta.memberId` cihaza özel rastgele bir dize (`app.js` → `getLocalMemberId`).
 Hesap değil: cihaz değişince kimlik kaybolur, kimse kimseye atfedilemez.
 
-**Karar:** paylaşımlı hatim **Google girişi ister**, `memberId` yerine Firebase `uid`
-kullanılır. Altyapı zaten var — `lib/cloud-backup.js` içindeki
+**Karar:** paylaşımlı hatim **hesap ister** — Android'de Google girişi, iOS'ta Google +
+**Apple ile Giriş** (App Store şartı). `memberId` yerine Firebase `uid` kullanılır.
+Android'de altyapı zaten var — `lib/cloud-backup.js` içindeki
 `signInWithGoogleForBackup()` ve `@capacitor-firebase/authentication`.
 
 Kişisel hatim girişsiz çalışmaya devam eder. Giriş yalnızca gruba girerken istenir;
@@ -184,18 +191,56 @@ Ramazan'da bile dakikada değil, günde birkaç kez değişir.
 - Mesajlaşma — ayrıca tartışıldı, serbest metin moderasyon yükü getiriyor
 - Sabit ifadeli tepkiler ("Allah kabul etsin")
 - Alınıp bitirilmeyen cüz için "hatırlat"
-- Derin bağlantı (App Links) — bkz. §10
+- Derin bağlantı (App Links) — v1'de düz kod + mağaza linki, ilk güncellemede
+- Yöneticiliği devretme — v1'de yönetici ayrılamaz, yalnızca siler (bkz. §10)
 
 ---
 
-## 10. Açık sorular
+## 10. Üyelik yaşam döngüsü
 
-1. **Davet bağlantısı.** Firebase Dynamic Links kapandı. Kendi alan adında açılış sayfası
-   + Android App Links gerekir. Olmadan huni şu: kodu paylaş → kur → kodu nereye
-   yazacağını ara. Kayıp yüksek. v1'e girsin mi, yoksa ilk turda düz kod mu?
-2. **Cloud Functions gerekir mi?** Bu tasarım gerektirmiyor (kurallar + transaction
+| Rol | Yapabildiği |
+|---|---|
+| Yönetici (grubu kuran) | Grubu siler. **Ayrılamaz.** |
+| Katılımcı | Gruptan ayrılır. Silemez. |
+
+**Sınır dolunca** yeni grup kurma ve katılma kapanır; kullanıcı önce bir gruptan ayrılır
+ya da yöneticisi olduğu bir grubu siler. Mevcut `groupLimitWarning` metni zaten bunu
+söylüyor.
+
+**Ayrılınca cüzler:** yalnızca *alınmış ama bitmemiş* cüzler boşa düşer. *Bitmiş* cüzler
+bitmiş kalır — okuma yapılmıştır, bir üyenin ayrılması hatmi geri götürmemeli.
+
+**Yönetici neden ayrılamaz:** ayrılırsa grubun sahibi kalmaz; kimse grubu silemez,
+kaybolan üyenin cüzünü `releaseJuz(force)` ile kimse boşaltamaz ve hatim kilitlenir.
+Bedeli: yönetici grubu başkasına devredip çıkamaz. Devretme v1 dışı.
+
+**Silme onayı diğer katılımcıları da söyler.** Grup herkesten gider. Mevcut `deleteConfirm`
+("…cüz kayıtların da silinir") yalnızca kişinin kendisini anıyor; paylaşımlı grup için
+katılımcı sayısını söyleyen yeni metin gerekir.
+
+**Hayalet grup — sınır kilitlenmesin diye şart.** Yönetici grubu silince katılımcının
+cihazında grup listede kalabilir: hem sınırı işgal eder hem de artık var olmayan bir
+gruptan ayrılmak mümkün olmaz. İstemci listeyi yenilerken sunucuda bulunmayan grubu
+yerelden kendisi siler ve yeri boşaltır.
+
+**12 ay kuralı sınırla ilgili değil.** Kimsenin dokunmadığı grup 12 ay sonra sunucudan
+silinir — bu Data Safety'deki veri saklama beyanı içindir. Kullanıcının sınırı hiçbir
+zaman 12 ay beklemez; her an ayrılarak yer açar.
+
+---
+
+## 11. Karara bağlananlar
+
+1. **Davet bağlantısı:** v1'de App Links yok; paylaşım metni kod + mağaza linki taşır.
+   Bedeli: davet edilen kişi kodu nereye yazacağını arar. İlk güncellemede eklenir.
+2. **Silme ve ayrılma:** §10.
+3. **Veri saklama:** 12 ay hareketsiz grup sunucudan silinir.
+4. **Giriş:** grup kurmak ve katılmak hesap ister (§2); kişisel hatim girişsiz.
+5. **Program:** Android + iOS birlikte 1 Ekim 2026. Halkaların yürüyen iskeleti bundan
+   sonraya kaydı; `COMMUNITY_DESIGN.md` §11 takvimi buna göre kayar.
+
+## 12. Açık sorular
+
+1. **Cloud Functions gerekir mi?** Bu tasarım gerektirmiyor (kurallar + transaction
    yetiyor). Gerekirse Firebase **Blaze planı** şart — kredi kartı ister.
-3. **Grup silinince ne olur?** Sahibi silince tüm üyelerden mi gider, yoksa terk mi
-   edilir? Veri saklama süresi (terk edilmiş gruplar) ayrıca kararlaştırılmalı.
-4. **Giriş zorunluluğu kullanıcıyı kaçırır mı?** Gruba katılmak için Google girişi
-   isteniyor; ölçmeden bilinmez.
+2. **Giriş zorunluluğu kullanıcıyı kaçırır mı?** Ölçmeden bilinmez.
