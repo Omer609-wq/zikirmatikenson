@@ -20,5 +20,6 @@ promo/
 # Henüz yayına girmemiş tasarım/planlama notları — yerelde kalsın.
 docs/COMMUNITY_DESIGN.md
 docs/AI_USAGE.md
+docs/HATIM_GROUPS_DESIGN.md
 # Claude Code'un kişisel izin listesi ve önizleme ayarları — repoya ait değil.
 .claude/
