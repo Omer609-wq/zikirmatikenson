@@ -25,7 +25,7 @@
     "name": "Allâhümme innî es'elüke hayre'l-mevlici ve hayre'l-mahreci. Bismillâhi velecnâ ve bismillâhi haracnâ ve alallâhi rabbinâ tevekkelnâ",
     "meaning": "Allah'ım! Senden girişin hayrını ve çıkışın hayrını dilerim. Allah'ın adıyla girdik; Allah'ın adıyla çıktık; Rabbimiz Allah'a tevekkül ettik.",
     "context": "Ebu Mâlik el-Eş'arî'den (r.a.) rivayet edildiğine göre kişi evine girerken bunu okur, sonra ailesine selam verir. Eve girerken.",
-    "source": "Ebu Davud 5096 (hasen); Nevevî, El-Ezkar",
+    "source": "Ebu Davud 5096 (senedi kopuk, zayıf); Nevevî, El-Ezkar",
     "target": 1,
     "keywords": "ev eve girmek giriş kapı aile selam tevekkül bismillah",
     "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ الْمَوْلِجِ وَخَيْرَ الْمَخْرَجِ؛ بِسْمِ اللَّهِ وَلَجْنَا، وَبِسْمِ اللَّهِ خَرَجْنَا، وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا"
@@ -97,7 +97,7 @@
     "category": "dua",
     "name": "Elhamdülillâhillezî kesânî hâze's-sevbe ve rezakanîhi min ğayri havlin minnî ve lâ kuvveh",
     "meaning": "Bunu bana giydiren ve tarafımdan hiçbir güç ve kuvvet olmaksızın rızık olarak veren Allah'a hamd olsun.",
-    "context": "Muaz b. Enes'ten (r.a.) rivayet edildiğine göre kim elbise giyip bunu okursa geçmiş ve gelecek günahları affedilir. Elbise giyildiğinde (yeni veya günlük).",
+    "context": "Muaz b. Enes'ten (r.a.) rivayet edildiğine göre kim elbise giyip bunu okursa geçmiş günahları affedilir. Elbise giyildiğinde (yeni veya günlük).",
     "source": "Ebu Davud 4023 (hasen); Tirmizi",
     "target": 1,
     "keywords": "elbise kıyafet giyinmek hamd şükür istiğfar libas",
@@ -217,7 +217,7 @@
     "arabic": "اللَّهُمَّ أَنْتَ رَبِّي، لَا إِلَهَ إِلَّا أَنْتَ؛ خَلَقْتَنِي وَأَنَا عَبْدُكَ؛ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ؛ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ؛ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي؛ فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
     "meaning": "Allah'ım! Sen benim Rabbimsin; Senden başka ilah yoktur. Beni Sen yarattın, ben Senin kulunum. Gücüm yettiğince ahdine ve vaadine bağlıyım. Yaptıklarımın şerrinden Sana sığınırım; nimetini itiraf eder, günahımı itiraf ederim. Beni bağışla; günahları ancak Sen affedersin.",
     "context": "Şeddâd b. Evs'ten (r.a.) rivayet edildiğine göre Hz. Peygamber bunu seyyidü'l-istiğfar (istiğfarın en faziletlisi) diye öğretti. Sabah veya yatarken okunur.",
-    "source": "Buhari 6306; Müslim 2702 (sahih)",
+    "source": "Buhari 6306 (sahih)",
     "target": 1,
     "keywords": "istiğfar seyyid tövbe mağfiret sabah yatmak gece",
     "group": "tovbe"
