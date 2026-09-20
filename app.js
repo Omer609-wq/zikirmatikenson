@@ -9101,8 +9101,7 @@ function setupEventListeners() {
 
     if(prepLibraryAddBtn) prepLibraryAddBtn.addEventListener('click', async () => {
         if(!selectedLibraryItem) return;
-        closeOverlayPreferHistory('libraryDetailOverlay');
-        
+
         libDestFolder.innerHTML = '';
         folders.forEach(f => {
             const opt = document.createElement('option');
@@ -9115,6 +9114,13 @@ function setupEventListeners() {
             await showAppAlert(t('library.noFolderMsg'), { title: t('library.noFolderTitle') });
             return;
         }
+        // Detay katmanini DOGRUDAN kapatiyoruz: closeOverlayPreferHistory()
+        // window.history.back() cagiriyor ve o asenkron. Hemen ardindan openOverlay()
+        // pushState yapinca gecikmeli popstate, closeAllOverlays() ile yeni acilan
+        // katmani da kapatiyordu -- "Klasorume Ekle"ye basinca hicbir sey
+        // olmamasinin sebebi buydu. Detayin history kaydi boylece yerinde kaliyor:
+        // secim ekranindan Geri tusu kutuphaneye degil detaya donuyor.
+        libraryDetailOverlay.classList.remove('active');
         openOverlay('libraryFolderSelectOverlay');
     });
 
