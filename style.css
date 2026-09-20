@@ -4457,6 +4457,84 @@ html[data-counter-show-round="false"] .round-badge { display: none !important; }
     transform: scale(1.25);
 }
 
+/* Aylık grafik: 30 günü tek şeritte tutan, parmakla yatay kaydırılan pencere.
+   15 gün görünür, kalanı taşar; kullanıcı istediği aralıkta (1-15, 3-17…) durur. */
+.css-chart--scroll {
+    display: block;
+    overflow-x: auto;
+    overflow-y: hidden;
+    /* Güne yumuşak yaslanma: yarım kesik çubuk kalmaz ama her günde durulabilir. */
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+}
+.css-chart--scroll::-webkit-scrollbar {
+    height: 0;
+    display: none;
+}
+.chart-scroll-strip {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 100%;
+    width: max-content;
+    min-width: 100%;
+}
+.css-chart--scroll .chart-bar-group {
+    flex: 0 0 var(--mday-col, 20px);
+    max-width: none;
+    min-width: 0;
+    scroll-snap-align: start;
+}
+.css-chart--scroll .chart-label {
+    font-size: 0.54rem;
+    line-height: 1.1;
+    margin-top: 0.4rem;
+    letter-spacing: -0.03em;
+    word-break: keep-all;
+    white-space: nowrap;
+}
+
+/* Aylık grafiğin alt göstergesi: uçlarda iki nokta, arada birleşip çizgi olur. */
+.chart-scrubber {
+    position: relative;
+    width: 56px;
+    height: 8px;
+}
+.chart-scrubber__dot {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 7px;
+    height: 7px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--text-gray);
+    opacity: 0.35;
+    cursor: pointer;
+}
+.chart-scrubber__dot--start { left: 0; }
+.chart-scrubber__dot--end { right: 0; }
+.chart-scrubber__dot::after {
+    /* Görsel 7px; dokunma hedefi büyütülür. */
+    content: '';
+    position: absolute;
+    inset: -9px;
+}
+.chart-scrubber__thumb {
+    position: absolute;
+    top: 50%;
+    left: 3.5px;
+    width: 7px;
+    height: 7px;
+    transform: translate(-50%, -50%);
+    border-radius: 4px;
+    background: var(--primary-green);
+    pointer-events: none;
+}
+
 /* Bugün kartı: diğer kartlarla aynı dil, biraz daha alçak — grafiğin hemen
    üstünde durduğu için sayfayı gereksiz uzatmasın. */
 .stat-card--today {

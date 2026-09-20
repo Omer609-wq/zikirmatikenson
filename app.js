@@ -13,7 +13,6 @@ import {
     clampPageIndex,
     findPageIndex,
     splitIntoBalancedPages,
-    MONTH_CHART_PAGE_COUNT,
     YEAR_CHART_PAGE_COUNT
 } from './lib/chart-pages.js';
 import { chartAxisLabels, chartScaleMax, formatChartAxisValue } from './lib/chart-scale.js';
@@ -8194,7 +8193,8 @@ function buildChartBuckets(tab, zid) {
         };
     }
     if (tab === 'monthly') {
-        // Ayın günleri iki sayfaya bölünür; etiket gün numarası (1–31).
+        // Ayın tüm günleri tek şeritte; parmakla yatay kaydırılıp istenen
+        // aralıkta durdurulur (1-15, 3-17, 8-22…). Etiket gün numarası (1–31).
         const buckets = getDaysInMonth().map((ds) => ({
             key: ds,
             label: String(parseInt(ds.slice(8), 10)),
@@ -8205,7 +8205,7 @@ function buildChartBuckets(tab, zid) {
             density: 'dense',
             headingKey: 'stats.chartMonthDays',
             buckets,
-            pages: splitIntoBalancedPages(buckets, MONTH_CHART_PAGE_COUNT)
+            scroll: { visibleDays: MONTH_SCROLL_VISIBLE_DAYS }
         };
     }
     if (tab === 'year') {
@@ -8248,6 +8248,38 @@ function computeBarHeightPx(val, scaleMax) {
     return Math.max(floorPx, Math.round(floorPx + t * (CHART_INNER_HEIGHT_PX - floorPx)));
 }
 
+/** Grafik ekseni (üst/orta/alt) etiketlerini yazar. */
+function writeChartYAxis(yAxisEl, scaleMax) {
+    if (!yAxisEl) return;
+    const axis = chartAxisLabels(scaleMax);
+    const locale = getLocaleTag();
+    yAxisEl.innerHTML = `
+        <span>${formatChartAxisValue(axis.top, locale)}</span>
+        <span>${formatChartAxisValue(axis.mid, locale)}</span>
+        <span>${formatChartAxisValue(axis.bottom, locale)}</span>
+    `;
+}
+
+/** Tek bir gün/dönem için çubuk + etiket öbeği üretir. */
+function buildChartBarGroup(dt, scaleMax) {
+    const group = document.createElement('div');
+    group.className = 'chart-bar-group';
+    const barH = computeBarHeightPx(dt.val, scaleMax);
+    const col = dt.val === 0 ? 'var(--glass-border)' : 'var(--primary-green)';
+    const bar = document.createElement('div');
+    bar.className = 'chart-bar';
+    bar.dataset.tooltip = t('stats.chartTooltip', { count: dt.val });
+    bar.style.height = `${barH}px`;
+    bar.style.background = col;
+    const lab = document.createElement('div');
+    lab.className = 'chart-label';
+    if (dt.highlight) lab.classList.add('chart-label--current');
+    lab.textContent = dt.label;
+    group.appendChild(bar);
+    group.appendChild(lab);
+    return group;
+}
+
 /**
  * @param {number} [scaleMaxOverride] Sayfalı grafikte DÖNEMİN TAMAMINA (ay / yıl) göre ölçek.
  * Her sayfa kendi maksimumuna göre ölçeklenseydi, 20 çekilen bir gün ikinci
@@ -8256,47 +8288,33 @@ function computeBarHeightPx(val, scaleMax) {
 function renderBarChart(chartEl, yAxisEl, buckets, density, scaleMaxOverride) {
     const values = buckets.map((b) => b.val);
     const scaleMax = scaleMaxOverride > 0 ? scaleMaxOverride : chartScaleMax(values);
-    const axis = chartAxisLabels(scaleMax);
 
-    if (yAxisEl) {
-        const locale = getLocaleTag();
-        yAxisEl.innerHTML = `
-            <span>${formatChartAxisValue(axis.top, locale)}</span>
-            <span>${formatChartAxisValue(axis.mid, locale)}</span>
-            <span>${formatChartAxisValue(axis.bottom, locale)}</span>
-        `;
-    }
+    writeChartYAxis(yAxisEl, scaleMax);
     if (!chartEl) return;
 
     chartEl.innerHTML = '';
-    chartEl.classList.remove('css-chart--dense', 'css-chart--months', 'css-chart--years', 'css-chart--week');
+    chartEl.classList.remove(
+        'css-chart--dense',
+        'css-chart--months',
+        'css-chart--years',
+        'css-chart--week',
+        'css-chart--scroll'
+    );
     if (density === 'dense') chartEl.classList.add('css-chart--dense');
     if (density === 'months') chartEl.classList.add('css-chart--months');
     if (density === 'years') chartEl.classList.add('css-chart--years');
     if (density === 'default') chartEl.classList.add('css-chart--week');
 
-    buckets.forEach((dt) => {
-        const group = document.createElement('div');
-        group.className = 'chart-bar-group';
-        const barH = computeBarHeightPx(dt.val, scaleMax);
-        const col = dt.val === 0 ? 'var(--glass-border)' : 'var(--primary-green)';
-        const bar = document.createElement('div');
-        bar.className = 'chart-bar';
-        bar.dataset.tooltip = t('stats.chartTooltip', { count: dt.val });
-        bar.style.height = `${barH}px`;
-        bar.style.background = col;
-        const lab = document.createElement('div');
-        lab.className = 'chart-label';
-        if (dt.highlight) lab.classList.add('chart-label--current');
-        lab.textContent = dt.label;
-        group.appendChild(bar);
-        group.appendChild(lab);
-        chartEl.appendChild(group);
-    });
+    buckets.forEach((dt) => chartEl.appendChild(buildChartBarGroup(dt, scaleMax)));
 }
 
 /** Kaydırmanın sayfa değiştirmesi için gereken en az yatay mesafe. */
 const CHART_SWIPE_COMMIT_PX = 40;
+
+/** Aylık kaydırılabilir grafikte pencereye sığan gün sayısı (eski 15'lik sayfa). */
+const MONTH_SCROLL_VISIBLE_DAYS = 15;
+/** Aylık şeritte çubuklar arası boşluk (px); sütun genişliği bununla hesaplanır. */
+const MONTH_SCROLL_GAP_PX = 3;
 
 /**
  * Grafiğe yatay kaydırma bağlar. Bir kez bağlanır; güncel davranış her
@@ -8364,19 +8382,209 @@ function renderChartPagerDots(pagerEl, pageCount, activeIndex, onPick) {
 }
 
 /**
+ * Aylık şeridin sütun genişliğini pencereye göre ayarlar: 15 gün tam sığsın,
+ * kalan günler taşıp yatay kaydırmayla gezilsin.
+ */
+function layoutMonthScrollStrip(chartEl) {
+    const strip = chartEl && chartEl.querySelector('.chart-scroll-strip');
+    if (!strip) return;
+    const w = chartEl.clientWidth;
+    if (!w) return;
+    const gaps = (MONTH_SCROLL_VISIBLE_DAYS - 1) * MONTH_SCROLL_GAP_PX;
+    const col = Math.max(7, (w - gaps) / MONTH_SCROLL_VISIBLE_DAYS);
+    strip.style.setProperty('--mday-col', `${col}px`);
+}
+
+/** scrollLeft'i 0..1 orana çevirir (kaydırma yoksa 0). */
+function chartScrollFraction(chartEl) {
+    const maxLeft = Math.max(0, chartEl.scrollWidth - chartEl.clientWidth);
+    return maxLeft > 0 ? chartEl.scrollLeft / maxLeft : 0;
+}
+
+/**
+ * Alttaki iki noktayı kaydırma konumuna göre günceller: uçlarda iki ayrı nokta,
+ * arada noktalar birleşip çizgi (hap) olur. `sin(π·oran)` uçlarda 0, ortada 1.
+ */
+function updateChartScrubber(chartEl) {
+    const thumb = chartEl && chartEl._scrubberThumb;
+    const track = chartEl && chartEl._scrubberTrack;
+    if (!thumb || !track) return;
+    const frac = Math.min(1, Math.max(0, chartScrollFraction(chartEl)));
+    const trackW = track.clientWidth || 0;
+    const dot = 7;
+    const centerX = dot / 2 + frac * (trackW - dot);
+    const hump = Math.sin(Math.PI * frac);
+    const width = Math.max(dot, Math.min(trackW, dot + (trackW - dot) * hump));
+    thumb.style.left = `${centerX}px`;
+    thumb.style.width = `${width}px`;
+    // Nokta yakınındaysak o uç sayfada; erişilebilirlik için işaretle.
+    track.dataset.pos = frac <= 0.02 ? 'start' : frac >= 0.98 ? 'end' : 'mid';
+}
+
+function smoothScrollChartToFraction(chartEl, frac) {
+    const maxLeft = Math.max(0, chartEl.scrollWidth - chartEl.clientWidth);
+    chartEl.scrollTo({ left: frac * maxLeft, behavior: 'smooth' });
+}
+
+/** Kaydırdıkça oranı saklar ve noktaları tazeler (bir kez bağlanır). */
+function bindChartScrollSync(chartEl) {
+    if (chartEl.dataset.scrollSyncBound === '1') return;
+    chartEl.dataset.scrollSyncBound = '1';
+    let raf = 0;
+    chartEl.addEventListener(
+        'scroll',
+        () => {
+            if (raf) return;
+            raf = requestAnimationFrame(() => {
+                raf = 0;
+                chartEl.dataset.scrollFrac = String(chartScrollFraction(chartEl));
+                updateChartScrubber(chartEl);
+            });
+        },
+        { passive: true }
+    );
+}
+
+/**
+ * Sütun genişliğini + kaydırma konumunu uygular. Idempotenttir: görünür olana
+ * (clientWidth > 0) kadar sessizce döner, bu yüzden hem senkron çağrıdan hem de
+ * rAF / ResizeObserver'dan güvenle çağrılabilir. İlk konumlama `_monthScrollInit`
+ * içindeki bayrakla bir kez yapılır; sonraki çağrılar mevcut oranı korur.
+ */
+function applyMonthScrollLayout(chartEl) {
+    const strip = chartEl && chartEl.querySelector('.chart-scroll-strip');
+    if (!strip || !chartEl.clientWidth) return;
+    layoutMonthScrollStrip(chartEl);
+    const maxLeft = Math.max(0, chartEl.scrollWidth - chartEl.clientWidth);
+    const init = chartEl._monthScrollInit;
+    if (init && !init.done) {
+        let targetLeft;
+        if (init.hasStored) {
+            targetLeft = init.storedFrac * maxLeft;
+        } else if (init.todayIdx >= 0) {
+            // Bugünü pencerenin sağına yakın göster (aya kadarki günler görünür).
+            const colW = parseFloat(getComputedStyle(strip).getPropertyValue('--mday-col')) || 0;
+            const unit = colW + MONTH_SCROLL_GAP_PX;
+            const leftIdx = Math.max(0, init.todayIdx - (MONTH_SCROLL_VISIBLE_DAYS - 2));
+            targetLeft = Math.min(maxLeft, leftIdx * unit);
+        } else {
+            targetLeft = maxLeft;
+        }
+        chartEl.scrollLeft = targetLeft;
+        chartEl.dataset.scrollFrac = maxLeft > 0 ? String(targetLeft / maxLeft) : '0';
+        init.done = true;
+    } else {
+        // Yeniden boyutlanma (ör. döndürme): oranı koru.
+        const frac = parseFloat(chartEl.dataset.scrollFrac) || 0;
+        chartEl.scrollLeft = frac * maxLeft;
+    }
+    updateChartScrubber(chartEl);
+}
+
+/** Ekran döndürme / görünür olma anında düzeni yeniden uygular (bir kez bağlanır). */
+function bindChartScrollResize(chartEl) {
+    if (chartEl.dataset.scrollResizeBound === '1' || typeof ResizeObserver === 'undefined') return;
+    chartEl.dataset.scrollResizeBound = '1';
+    const ro = new ResizeObserver(() => {
+        if (chartEl.classList.contains('css-chart--scroll')) applyMonthScrollLayout(chartEl);
+    });
+    ro.observe(chartEl);
+}
+
+/** İki uç noktayı + arada çizgiye dönüşen "tutamağı" kurar. */
+function renderChartScrubber(pagerEl, chartEl) {
+    if (!pagerEl) return;
+    pagerEl.hidden = false;
+    pagerEl.innerHTML = '';
+    pagerEl.classList.add('chart-pager--scrubber');
+
+    const track = document.createElement('div');
+    track.className = 'chart-scrubber';
+
+    const start = document.createElement('button');
+    start.type = 'button';
+    start.className = 'chart-scrubber__dot chart-scrubber__dot--start';
+    start.setAttribute('aria-label', t('stats.chartPage', { page: 1, total: 2 }));
+    start.addEventListener('click', () => smoothScrollChartToFraction(chartEl, 0));
+
+    const end = document.createElement('button');
+    end.type = 'button';
+    end.className = 'chart-scrubber__dot chart-scrubber__dot--end';
+    end.setAttribute('aria-label', t('stats.chartPage', { page: 2, total: 2 }));
+    end.addEventListener('click', () => smoothScrollChartToFraction(chartEl, 1));
+
+    const thumb = document.createElement('div');
+    thumb.className = 'chart-scrubber__thumb';
+
+    track.appendChild(start);
+    track.appendChild(end);
+    track.appendChild(thumb);
+    pagerEl.appendChild(track);
+
+    chartEl._scrubberThumb = thumb;
+    chartEl._scrubberTrack = track;
+}
+
+/**
+ * Aylık grafiği tek şeritte çizip yatay kaydırma + alttaki nokta/çizgi
+ * göstergesini kurar. `reset` doğruysa bugünün olduğu pencereye konumlanır,
+ * değilse son kaydırma oranı (chartEl.dataset.scrollFrac) korunur.
+ */
+function renderMonthScrollChart({ chartEl, yAxisEl, pagerEl, pack, reset }) {
+    const scaleMax = chartScaleMax(pack.buckets.map((b) => b.val));
+    writeChartYAxis(yAxisEl, scaleMax);
+    if (!chartEl) return;
+
+    chartEl._onChartSwipe = null;
+    chartEl.classList.remove('css-chart--dense', 'css-chart--months', 'css-chart--years', 'css-chart--week');
+    chartEl.classList.add('css-chart--scroll');
+    chartEl.innerHTML = '';
+
+    const strip = document.createElement('div');
+    strip.className = 'chart-scroll-strip';
+    pack.buckets.forEach((dt) => strip.appendChild(buildChartBarGroup(dt, scaleMax)));
+    chartEl.appendChild(strip);
+
+    renderChartScrubber(pagerEl, chartEl);
+    bindChartScrollSync(chartEl);
+    bindChartScrollResize(chartEl);
+
+    const storedFrac = parseFloat(chartEl.dataset.scrollFrac);
+    chartEl._monthScrollInit = {
+        hasStored: !reset && Number.isFinite(storedFrac),
+        storedFrac: Number.isFinite(storedFrac) ? storedFrac : 0,
+        todayIdx: pack.buckets.findIndex((b) => b.highlight),
+        done: false
+    };
+
+    // Grafik görünürse hemen konumlan; değilse (clientWidth 0) rAF /
+    // ResizeObserver ilk boyutu alınca aynı idempotent düzeni uygular.
+    applyMonthScrollLayout(chartEl);
+    requestAnimationFrame(() => applyMonthScrollLayout(chartEl));
+}
+
+/**
  * Grafiği çizer; pack sayfalıysa noktaları ve kaydırmayı da kurar.
  * @returns {number} kullanılan sayfa indeksi (çağıran durumu saklar)
  */
 function renderChartWithPager({ chartEl, yAxisEl, pagerEl, pack, pageIndex, onPageChange }) {
+    if (pack.scroll) {
+        renderMonthScrollChart({ chartEl, yAxisEl, pagerEl, pack, reset: pageIndex < 0 });
+        return 0;
+    }
+
     if (!pack.pages || pack.pages.length <= 1) {
         if (pagerEl) {
             pagerEl.hidden = true;
             pagerEl.innerHTML = '';
+            pagerEl.classList.remove('chart-pager--scrubber');
         }
         if (chartEl) chartEl._onChartSwipe = null;
         renderBarChart(chartEl, yAxisEl, pack.buckets, pack.density);
         return 0;
     }
+
+    if (pagerEl) pagerEl.classList.remove('chart-pager--scrubber');
 
     const pages = pack.pages;
     const idx = pageIndex < 0 ? findPageIndex(pages, (b) => b.highlight) : clampPageIndex(pageIndex, pages.length);
