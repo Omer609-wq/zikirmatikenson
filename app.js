@@ -8209,7 +8209,11 @@ function buildChartBuckets(tab, zid) {
         };
     }
     if (tab === 'year') {
-        // 12 ay iki sayfada (6+6): Arapça/Urduca ay adları tek sırada sığmıyor.
+        // 12 ay tek sırada denenir; ay adları sığmıyorsa (Arapça/Urduca/Bengalce
+        // gibi uzun adlarda) çizim anında ölçülüp 6+6'ya bölünür. Sığan dillerde
+        // (tr, en, id, ms, fr…) 12 ay tek sayfada kalır. Karar dile DEĞİL, gerçek
+        // etiket genişliğine bakar: aynı dil geniş grafikte sığıp dar zikir
+        // kartında sığmayabilir.
         const curMonth = today.slice(0, 7);
         const buckets = getYearMonthKeys().map((ym) => {
             const d = new Date(`${ym}-01T12:00:00`);
@@ -8223,7 +8227,7 @@ function buildChartBuckets(tab, zid) {
             density: 'months',
             headingKey: 'stats.chartYearMonths',
             buckets,
-            pages: splitIntoBalancedPages(buckets, YEAR_CHART_PAGE_COUNT)
+            yearAdaptive: true
         };
     }
 
@@ -8564,6 +8568,75 @@ function renderMonthScrollChart({ chartEl, yAxisEl, pagerEl, pack, reset }) {
 }
 
 /**
+ * Sayfalı grafiği çizer: seçili sayfa + noktalar + kaydırmayla sayfa değiştirme.
+ * `scaleMax` dönemin tamamından gelir (sayfalar karşılaştırılabilir kalsın).
+ * @returns {number} çizilen sayfa indeksi
+ */
+function renderPagedChart({ chartEl, yAxisEl, pagerEl, pages, scaleMax, density, pageIndex, onPageChange }) {
+    if (pagerEl) pagerEl.classList.remove('chart-pager--scrubber');
+    const idx = pageIndex < 0 ? findPageIndex(pages, (b) => b.highlight) : clampPageIndex(pageIndex, pages.length);
+
+    renderBarChart(chartEl, yAxisEl, pages[idx], density, scaleMax);
+    renderChartPagerDots(pagerEl, pages.length, idx, onPageChange);
+
+    bindChartSwipe(chartEl);
+    if (chartEl) {
+        chartEl._onChartSwipe = (step) => {
+            const next = clampPageIndex(idx + step, pages.length);
+            if (next !== idx) onPageChange(next);
+        };
+    }
+    return idx;
+}
+
+/** 12 ay çizildikten sonra herhangi bir ay etiketi kırpıldı mı (kutuya sığmadı mı)? */
+function yearLabelsOverflow(chartEl) {
+    // Ölçülemiyorsa (grafik görünür değil, clientWidth 0) güvenli taraf: böl.
+    if (!chartEl || !chartEl.clientWidth) return true;
+    let overflow = false;
+    chartEl.querySelectorAll('.chart-label').forEach((l) => {
+        if (l.scrollWidth > l.clientWidth + 0.5) overflow = true;
+    });
+    return overflow;
+}
+
+/**
+ * Yıl grafiği: önce 12 ay tek sırada çizilir, çizim anında ölçülür; ay adları
+ * sığıyorsa 12 ay tek sayfada kalır, sığmıyorsa 6+6'ya bölünüp noktalarla gezilir.
+ * Ölçüm senkron yapıldığından iki çizim arasında görünür titreme olmaz.
+ */
+function renderAdaptiveYearChart({ chartEl, yAxisEl, pagerEl, pack, pageIndex, onPageChange }) {
+    const scaleMax = chartScaleMax(pack.buckets.map((b) => b.val));
+
+    // 1) 12 ayı tek sırada dene.
+    renderBarChart(chartEl, yAxisEl, pack.buckets, pack.density, scaleMax);
+
+    // 2) Sığıyorsa öyle bırak: tek sayfa, gösterge yok.
+    if (!yearLabelsOverflow(chartEl)) {
+        if (pagerEl) {
+            pagerEl.hidden = true;
+            pagerEl.innerHTML = '';
+            pagerEl.classList.remove('chart-pager--scrubber');
+        }
+        if (chartEl) chartEl._onChartSwipe = null;
+        return 0;
+    }
+
+    // 3) Sığmıyorsa 6+6'ya böl ve sayfalı çiz.
+    const pages = splitIntoBalancedPages(pack.buckets, YEAR_CHART_PAGE_COUNT);
+    return renderPagedChart({
+        chartEl,
+        yAxisEl,
+        pagerEl,
+        pages,
+        scaleMax,
+        density: pack.density,
+        pageIndex,
+        onPageChange
+    });
+}
+
+/**
  * Grafiği çizer; pack sayfalıysa noktaları ve kaydırmayı da kurar.
  * @returns {number} kullanılan sayfa indeksi (çağıran durumu saklar)
  */
@@ -8571,6 +8644,10 @@ function renderChartWithPager({ chartEl, yAxisEl, pagerEl, pack, pageIndex, onPa
     if (pack.scroll) {
         renderMonthScrollChart({ chartEl, yAxisEl, pagerEl, pack, reset: pageIndex < 0 });
         return 0;
+    }
+
+    if (pack.yearAdaptive) {
+        return renderAdaptiveYearChart({ chartEl, yAxisEl, pagerEl, pack, pageIndex, onPageChange });
     }
 
     if (!pack.pages || pack.pages.length <= 1) {
@@ -8584,24 +8661,17 @@ function renderChartWithPager({ chartEl, yAxisEl, pagerEl, pack, pageIndex, onPa
         return 0;
     }
 
-    if (pagerEl) pagerEl.classList.remove('chart-pager--scrubber');
-
-    const pages = pack.pages;
-    const idx = pageIndex < 0 ? findPageIndex(pages, (b) => b.highlight) : clampPageIndex(pageIndex, pages.length);
-    // Ölçek dönemin tamamından (ayın / yılın): sayfalar karşılaştırılabilir kalsın.
-    const scaleMax = chartScaleMax(pack.buckets.map((b) => b.val));
-
-    renderBarChart(chartEl, yAxisEl, pages[idx], pack.density, scaleMax);
-    renderChartPagerDots(pagerEl, pages.length, idx, onPageChange);
-
-    bindChartSwipe(chartEl);
-    if (chartEl) {
-        chartEl._onChartSwipe = (step) => {
-            const next = clampPageIndex(idx + step, pages.length);
-            if (next !== idx) onPageChange(next);
-        };
-    }
-    return idx;
+    // Ölçek dönemin tamamından: sayfalar karşılaştırılabilir kalsın.
+    return renderPagedChart({
+        chartEl,
+        yAxisEl,
+        pagerEl,
+        pages: pack.pages,
+        scaleMax: chartScaleMax(pack.buckets.map((b) => b.val)),
+        density: pack.density,
+        pageIndex,
+        onPageChange
+    });
 }
 
 /**
