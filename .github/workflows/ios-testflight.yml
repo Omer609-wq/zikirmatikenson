@@ -80,11 +80,17 @@ jobs:
           echo "$ASC_KEY_P8_BASE64" | base64 --decode > "$KEY_PATH"
           echo "ASC_KEY_PATH=$KEY_PATH" >> "$GITHUB_ENV"
 
-      # Arşiv doğrudan dağıtım kimliğiyle imzalanır. Projedeki varsayılan
-      # (iPhone Developer) geliştirme profili ister, o da hesaba kayıtlı en az bir
-      # cihaz ister: ilk çalıştırma "Your team has no devices" ile düştü. App Store
-      # profili cihaz istemez; ayrıca bulut Mac her çalıştırmada yeni bir geliştirme
-      # sertifikası üretmez.
+      # Arşiv İMZASIZ alınır, imzayı yükleme adımı (exportArchive) atar.
+      #
+      # Neden: otomatik imzalama arşiv aşamasında yalnız geliştirme imzasına izin
+      # veriyor. Geliştirme profili hesaba kayıtlı bir cihaz ister ("Your team has
+      # no devices"); dağıtım kimliğini elle vermek ise "conflicting provisioning
+      # settings" ile reddediliyor — üstelik komut satırı ayarı bütün Pods
+      # hedeflerine de uygulanıyor. Export aşaması ise App Store için imzalar:
+      # buluttaki dağıtım sertifikası + App Store profili, cihaz istemez, bulut
+      # Mac'te her çalıştırmada yeni geliştirme sertifikası da üretilmez.
+      # CODE_SIGNING_ALLOWED=NO'nun Pods'a da uygulanması burada istenen şey:
+      # "[CP] Embed Pods Frameworks" imzalamayı atlar, export hepsini imzalar.
       - name: Arşiv
         working-directory: ios/App
         run: |
@@ -94,13 +100,9 @@ jobs:
             -configuration Release \
             -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/App.xcarchive" \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$ASC_KEY_PATH" \
-            -authenticationKeyID "$ASC_KEY_ID" \
-            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
-            CODE_SIGN_STYLE=Automatic \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
             CURRENT_PROJECT_VERSION="$BUILD_NUMBER"
 
       - name: TestFlight'a yükle
