@@ -34,7 +34,7 @@ jobs:
       BUILD_NUMBER: ${{ github.run_number }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Sırlar tanımlı mı
         env:
@@ -55,7 +55,7 @@ jobs:
         with:
           xcode-version: latest-stable
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
@@ -80,6 +80,11 @@ jobs:
           echo "$ASC_KEY_P8_BASE64" | base64 --decode > "$KEY_PATH"
           echo "ASC_KEY_PATH=$KEY_PATH" >> "$GITHUB_ENV"
 
+      # Arşiv doğrudan dağıtım kimliğiyle imzalanır. Projedeki varsayılan
+      # (iPhone Developer) geliştirme profili ister, o da hesaba kayıtlı en az bir
+      # cihaz ister: ilk çalıştırma "Your team has no devices" ile düştü. App Store
+      # profili cihaz istemez; ayrıca bulut Mac her çalıştırmada yeni bir geliştirme
+      # sertifikası üretmez.
       - name: Arşiv
         working-directory: ios/App
         run: |
@@ -95,6 +100,7 @@ jobs:
             -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
             CODE_SIGN_STYLE=Automatic \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
             CURRENT_PROJECT_VERSION="$BUILD_NUMBER"
 
       - name: TestFlight'a yükle
