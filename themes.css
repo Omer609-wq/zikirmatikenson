@@ -79,7 +79,8 @@ html[data-theme="light"] {
     --grip-handle-color: rgba(28, 25, 23, 0.48);
     --settings-outline-btn-color: var(--text-white);
     --settings-outline-btn-hover: rgba(28, 25, 23, 0.06);
-    --round-badge-color: var(--primary-green);
+    /* Krem zeminde yeşil tur rozeti sönük kalıyor; koyu metin rengi kullanılır. */
+    --round-badge-color: var(--text-white);
     --update-banner-accent: #b8860b;
     --update-banner-accent-bright: #ca9a2e;
     --update-banner-glow: rgba(184, 134, 11, 0.26);
