@@ -41,6 +41,17 @@ if (/^\s*VITE_PREMIUM_PREVIEW\s*=\s*1\s*$/m.test(envLocal)) {
     failed = true;
 }
 
+// Aynısı Topluluk için: test bayrağıyla yayın alınırsa gruplar vaktinden önce açılır.
+// Yayında açmak için app.js'teki COMMUNITY_UI_VISIBLE doğrudan true yapılır.
+if (
+    /^\s*VITE_COMMUNITY_PREVIEW\s*=\s*1\s*$/m.test(envLocal) ||
+    process.env.VITE_COMMUNITY_PREVIEW === '1'
+) {
+    console.error('FAIL: VITE_COMMUNITY_PREVIEW=1 açık — yayın build\'inde Topluluk görünür olurdu.');
+    console.error('.env.local\'dan ya da ortamdan kaldırın, sonra: npm run cap:release:android');
+    failed = true;
+}
+
 // Güvenlik ağı: yayın paketindeki debug-flags.json'da test bayrağı açık olmamalı.
 // (Açılabilecekleri yer Android debug derlemesi: android/app/src/debug/assets.
 // Ör. "specialDayPreview" açık kalırsa herkes her gün kandil başlığı görür.)

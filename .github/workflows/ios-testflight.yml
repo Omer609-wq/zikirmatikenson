@@ -16,6 +16,11 @@ name: iOS → TestFlight
 
 on:
   workflow_dispatch:
+    inputs:
+      community:
+        description: 'Topluluk (hatim grupları) açık — yalnızca test derlemesi, incelemeye gönderme'
+        type: boolean
+        default: false
 
 concurrency:
   group: ios-testflight
@@ -72,7 +77,10 @@ jobs:
           node -e "const c = require('./public/firebase-config.json'); if (!String(c.appId).includes(':web:')) { console.error('::error::FIREBASE_WEB_CONFIG bir Web app ayarı değil'); process.exit(1); }"
 
       - name: Web derlemesi ve Capacitor senkronu
+        env:
+          VITE_COMMUNITY_PREVIEW: ${{ inputs.community && '1' || '0' }}
         run: |
+          echo "Topluluk: $VITE_COMMUNITY_PREVIEW"
           npm ci
           npm run build
           npx cap sync ios

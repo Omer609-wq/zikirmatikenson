@@ -1082,10 +1082,12 @@ const PREMIUM_UI_VISIBLE = _premiumPreviewFlags.mode ? _premiumPreviewFlags.uiVi
  * buluta bağlanana kadar yayında gizli: "Topluluk" adı yalnız kişisel sekmeyle
  * yalan olur, ve sekme yayınlanırsa kullanıcılar buluta hiç ulaşmamış yerel
  * gruplar oluşturup geri dönülmesi gereken bir göç problemi doğurur.
- * Backend hazır olunca tek başına `true` yapılır.
+ * Yayında `true` yapılır. O zamana kadar yalnızca test derlemesinde açılır:
+ * VITE_COMMUNITY_PREVIEW=1 (.env.local ya da iOS'ta Run workflow → community).
+ * Android yayın betiği bu değişken açıkken durur.
  * Tasarım notu: docs/HATIM_GROUPS_DESIGN.md §1.
  */
-const COMMUNITY_UI_VISIBLE = false;
+const COMMUNITY_UI_VISIBLE = import.meta.env.VITE_COMMUNITY_PREVIEW === '1';
 
 /** Bayrak kapalıyken ana ekrana düşürülecek ekranlar. */
 const COMMUNITY_VIEW_IDS = new Set(['communityView', 'hatimGroupView']);
