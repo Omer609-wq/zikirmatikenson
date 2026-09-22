@@ -120,7 +120,7 @@
     "codeNotFound": "Aucun groupe trouvé avec ce code. Vérifie-le.",
     "displayNameTitle": "Ton nom dans le groupe",
     "displayNamePrompt": "Les autres membres te verront sous ce nom.",
-    "syncUnsupported": "Pour l’instant, les groupes sont disponibles uniquement dans l’application Android.",
+    "syncUnsupported": "Les groupes sont disponibles uniquement dans l’application mobile.",
     "syncNotConfigured": "Les groupes ne sont pas disponibles pour le moment. Réessaie plus tard.",
     "syncOffline": "Pas de connexion. Les groupes ont besoin d’Internet.",
     "syncDenied": "Tu n’as pas l’autorisation de faire cela.",

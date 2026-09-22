@@ -8,6 +8,7 @@ name: iOS → TestFlight
 #   ASC_KEY_ID          App Store Connect → Users and Access → Integrations → Team Keys
 #   ASC_ISSUER_ID       aynı sayfanın üstü
 #   ASC_KEY_P8_BASE64   indirilen AuthKey_XXXX.p8 dosyasının base64'ü
+#   FIREBASE_WEB_CONFIG public/firebase-config.json'ın içeriği olduğu gibi
 #
 # İmzalama: sertifika dosyası yok. App Store Connect API anahtarı (Admin) ile Xcode
 # bulut Mac'te sertifikayı ve profili kendisi alır (-allowProvisioningUpdates).
@@ -39,9 +40,10 @@ jobs:
       - name: Sırlar tanımlı mı
         env:
           ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          FIREBASE_WEB_CONFIG: ${{ secrets.FIREBASE_WEB_CONFIG }}
         run: |
           missing=0
-          for name in APPLE_TEAM_ID ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64; do
+          for name in APPLE_TEAM_ID ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64 FIREBASE_WEB_CONFIG; do
             if [ -z "${!name}" ]; then
               echo "::error::$name sırrı tanımlı değil"
               missing=1
@@ -60,8 +62,15 @@ jobs:
           node-version: 24
           cache: npm
 
-      # public/firebase-config.json depoda yok (gizli, yerel). iOS'ta paylaşımlı
-      # hatim Apple ile Giriş gelene kadar zaten kapalı; dosya o adımda sırdan yazılacak.
+      # public/firebase-config.json depoda yok (.gitignore). Paylaşımlı hatim onsuz
+      # "kullanılamıyor" der; Web app ayarı olmalı (appId içinde :web:).
+      - name: Firebase web ayarı
+        env:
+          FIREBASE_WEB_CONFIG: ${{ secrets.FIREBASE_WEB_CONFIG }}
+        run: |
+          printf '%s' "$FIREBASE_WEB_CONFIG" > public/firebase-config.json
+          node -e "const c = require('./public/firebase-config.json'); if (!String(c.appId).includes(':web:')) { console.error('::error::FIREBASE_WEB_CONFIG bir Web app ayarı değil'); process.exit(1); }"
+
       - name: Web derlemesi ve Capacitor senkronu
         run: |
           npm ci

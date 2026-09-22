@@ -116,7 +116,7 @@
     "codeNotFound": "Bu kodla bir grup bulunamadı. Kodu yeniden kontrol et.",
     "displayNameTitle": "Grupta görünecek adın",
     "displayNamePrompt": "Diğer üyeler seni bu adla görecek.",
-    "syncUnsupported": "Hatim grupları şimdilik yalnızca Android uygulamasında kullanılabilir.",
+    "syncUnsupported": "Hatim grupları yalnızca mobil uygulamada kullanılabilir.",
     "syncNotConfigured": "Hatim grupları şu anda kullanılamıyor. Daha sonra tekrar dene.",
     "syncOffline": "Bağlantı yok. Hatim grubunda işlem yapmak için internet gerekli.",
     "syncDenied": "Bu işlem için yetkin yok.",

@@ -175,7 +175,7 @@ import {
     reportHatim,
     uncompleteJuzRemote
 } from './lib/hatim-remote.js';
-import { getHatimContext, getHatimSyncAvailability, hatimSignInErrorKey } from './lib/hatim-session.js';
+import { getHatimContext, getHatimSyncAvailability, hatimSessionErrorKey } from './lib/hatim-session.js';
 import { getJuzDetail } from './lib/hatim-juz.js';
 import { HATIM_DUA_PERSONAL, HATIM_DUA_SHARED, getHatimDua } from './lib/hatim-dua.js';
 import { maybeRequestAppReview, recordCompletedRound } from './lib/app-review.js';
@@ -6345,8 +6345,8 @@ async function withHatimBusy(task) {
 }
 
 /**
- * Kullanıcı eylemi öncesi: cihaz uygun mu, oturum var mı. Oturum varsa sessiz,
- * yoksa Google girişi açılır. Olmazsa açıklamayı gösterip null döner.
+ * Kullanıcı eylemi öncesi: cihaz uygun mu, oturum açılabiliyor mu. Oturum anonim
+ * ve sessiz; açılamazsa (çoğunlukla bağlantı yok) açıklamayı gösterip null döner.
  */
 async function requireHatimSync() {
     const availability = await getHatimSyncAvailability();
@@ -6357,13 +6357,12 @@ async function requireHatimSync() {
         return null;
     }
     try {
-        const ctx = await getHatimContext({ interactive: true });
+        const ctx = await getHatimContext();
         setHatimUid(ctx.uid);
         return ctx;
     } catch (err) {
-        console.error('hatim sign-in', err);
-        const key = hatimSignInErrorKey(err);
-        if (key) await showAppAlert(t(key));
+        console.error('hatim session', err);
+        await showAppAlert(t(hatimSessionErrorKey(err)));
         return null;
     }
 }
@@ -6372,7 +6371,7 @@ async function requireHatimSync() {
 async function getHatimContextQuiet() {
     if ((await getHatimSyncAvailability()) !== 'ready') return null;
     try {
-        const ctx = await getHatimContext({ interactive: false });
+        const ctx = await getHatimContext();
         setHatimUid(ctx.uid);
         return ctx;
     } catch {
