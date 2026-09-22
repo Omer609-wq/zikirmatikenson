@@ -139,7 +139,11 @@
     "reportTitle": "Laporkan",
     "reportPrompt": "Ada nama atau konten yang tidak pantas di grup ini? Tulis singkat, kami akan meninjaunya.",
     "reportLabel": "Keterangan (opsional)",
-    "reportThanks": "Laporanmu sudah diterima. Kami akan meninjaunya."
+    "reportThanks": "Laporanmu sudah diterima. Kami akan meninjaunya.",
+    "hatimStartedToday": "dimulai hari ini",
+    "hatimOngoingDays": "sudah berjalan {count} hari",
+    "hatimCompletedSameDay": "selesai di hari yang sama",
+    "hatimCompletedInDays": "selesai dalam {count} hari"
   },
   "folder": {
     "search": "Cari",

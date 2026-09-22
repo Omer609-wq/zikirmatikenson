@@ -158,7 +158,19 @@
     "reportTitle": "إبلاغ",
     "reportPrompt": "هل في هذه المجموعة اسم أو محتوى غير لائق؟ اكتب ذلك باختصار وسنراجعه.",
     "reportLabel": "التفاصيل (اختياري)",
-    "reportThanks": "تم استلام بلاغك. سنراجعه."
+    "reportThanks": "تم استلام بلاغك. سنراجعه.",
+    "hatimStartedToday": "بدأت اليوم",
+    "hatimOngoingDays": "مستمرة منذ {count} يوم",
+    "hatimOngoingDays_one": "مستمرة منذ يوم واحد",
+    "hatimOngoingDays_two": "مستمرة منذ يومين",
+    "hatimOngoingDays_few": "مستمرة منذ {count} أيام",
+    "hatimOngoingDays_many": "مستمرة منذ {count} يومًا",
+    "hatimCompletedSameDay": "اكتملت في اليوم نفسه",
+    "hatimCompletedInDays": "اكتملت في {count} يوم",
+    "hatimCompletedInDays_one": "اكتملت في يوم واحد",
+    "hatimCompletedInDays_two": "اكتملت في يومين",
+    "hatimCompletedInDays_few": "اكتملت في {count} أيام",
+    "hatimCompletedInDays_many": "اكتملت في {count} يومًا"
   },
   "folder": {
     "search": "بحث",

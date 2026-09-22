@@ -139,7 +139,11 @@
     "reportTitle": "Şikâyet et",
     "reportPrompt": "Bu grupta uygunsuz bir ad ya da içerik mi var? Kısaca yazarsan inceleriz.",
     "reportLabel": "Açıklama (isteğe bağlı)",
-    "reportThanks": "Şikâyetin alındı. İnceleyeceğiz."
+    "reportThanks": "Şikâyetin alındı. İnceleyeceğiz.",
+    "hatimStartedToday": "bugün başladı",
+    "hatimOngoingDays": "{count} gündür devam ediyor",
+    "hatimCompletedSameDay": "aynı gün tamamlandı",
+    "hatimCompletedInDays": "{count} günde tamamlandı"
   },
   "folder": {
     "search": "Ara",

@@ -2640,6 +2640,17 @@ html[lang='ur'] .smart-reminder-weekday {
 }
 
 /* Grup ekranı üst özeti */
+/* Adın altındaki tarih satırı: başlangıç (N gündür devam ediyor) */
+.hatim-meta {
+    margin: -0.2rem 0 0.75rem;
+    font-size: var(--text-xs);
+    color: var(--text-gray);
+    text-align: center;
+}
+.hatim-meta[hidden] {
+    display: none;
+}
+
 .hatim-summary {
     margin-bottom: 0.9rem;
 }

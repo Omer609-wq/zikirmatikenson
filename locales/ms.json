@@ -139,7 +139,11 @@
     "reportTitle": "Laporkan",
     "reportPrompt": "Adakah nama atau kandungan yang tidak sesuai dalam kumpulan ini? Tulis secara ringkas dan kami akan menyemaknya.",
     "reportLabel": "Keterangan (pilihan)",
-    "reportThanks": "Laporan anda telah diterima. Kami akan menyemaknya."
+    "reportThanks": "Laporan anda telah diterima. Kami akan menyemaknya.",
+    "hatimStartedToday": "bermula hari ini",
+    "hatimOngoingDays": "sudah berjalan {count} hari",
+    "hatimCompletedSameDay": "selesai pada hari yang sama",
+    "hatimCompletedInDays": "selesai dalam {count} hari"
   },
   "folder": {
     "search": "Cari",

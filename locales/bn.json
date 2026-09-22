@@ -139,7 +139,11 @@
     "reportTitle": "রিপোর্ট করো",
     "reportPrompt": "এই গ্রুপে কি অনুপযুক্ত নাম বা বিষয়বস্তু আছে? সংক্ষেপে লেখো, আমরা দেখব।",
     "reportLabel": "বিবরণ (ঐচ্ছিক)",
-    "reportThanks": "তোমার রিপোর্ট পেয়েছি। আমরা দেখব।"
+    "reportThanks": "তোমার রিপোর্ট পেয়েছি। আমরা দেখব।",
+    "hatimStartedToday": "আজ শুরু হয়েছে",
+    "hatimOngoingDays": "{count} দিন ধরে চলছে",
+    "hatimCompletedSameDay": "একই দিনে শেষ হয়েছে",
+    "hatimCompletedInDays": "{count} দিনে শেষ হয়েছে"
   },
   "folder": {
     "search": "খুঁজুন",

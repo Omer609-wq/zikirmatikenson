@@ -143,7 +143,13 @@
     "reportTitle": "Signaler",
     "reportPrompt": "Ce groupe contient-il un nom ou un contenu inapproprié ? Explique-le brièvement, nous l’examinerons.",
     "reportLabel": "Détails (facultatif)",
-    "reportThanks": "Ton signalement a bien été reçu. Nous allons l’examiner."
+    "reportThanks": "Ton signalement a bien été reçu. Nous allons l’examiner.",
+    "hatimStartedToday": "en cours depuis aujourd’hui",
+    "hatimOngoingDays": "en cours depuis {count} jours",
+    "hatimOngoingDays_one": "en cours depuis {count} jour",
+    "hatimCompletedSameDay": "terminé le jour même",
+    "hatimCompletedInDays": "terminé en {count} jours",
+    "hatimCompletedInDays_one": "terminé en {count} jour"
   },
   "folder": {
     "search": "Rechercher",

@@ -142,7 +142,13 @@
     "reportTitle": "Report",
     "reportPrompt": "Is there an inappropriate name or content in this group? Tell us briefly and we’ll review it.",
     "reportLabel": "Details (optional)",
-    "reportThanks": "Your report was received. We’ll review it."
+    "reportThanks": "Your report was received. We’ll review it.",
+    "hatimStartedToday": "started today",
+    "hatimOngoingDays": "ongoing for {count} days",
+    "hatimOngoingDays_one": "ongoing for {count} day",
+    "hatimCompletedSameDay": "completed the same day",
+    "hatimCompletedInDays": "completed in {count} days",
+    "hatimCompletedInDays_one": "completed in {count} day"
   },
   "folder": {
     "search": "Search",

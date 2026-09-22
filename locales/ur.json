@@ -139,7 +139,11 @@
     "reportTitle": "شکایت کریں",
     "reportPrompt": "کیا اس گروپ میں کوئی نامناسب نام یا مواد ہے؟ مختصراً لکھیں، ہم جائزہ لیں گے۔",
     "reportLabel": "تفصیل (اختیاری)",
-    "reportThanks": "آپ کی شکایت موصول ہو گئی۔ ہم جائزہ لیں گے۔"
+    "reportThanks": "آپ کی شکایت موصول ہو گئی۔ ہم جائزہ لیں گے۔",
+    "hatimStartedToday": "آج شروع ہوا",
+    "hatimOngoingDays": "{count} دن سے جاری ہے",
+    "hatimCompletedSameDay": "اسی دن مکمل ہوا",
+    "hatimCompletedInDays": "{count} دن میں مکمل ہوا"
   },
   "folder": {
     "search": "تلاش",

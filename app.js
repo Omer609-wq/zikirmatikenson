@@ -150,6 +150,7 @@ import {
     getHatimProgress,
     getNextJuzToRead,
     getNextMemberJuz,
+    hatimTimeline,
     isHatimComplete,
     isHatimLimitReached,
     isPersonalHatim,
@@ -6851,6 +6852,31 @@ function renderHatimGroupView() {
 
     const title = document.getElementById('hatimGroupTitle');
     if (title) title.textContent = group.name;
+
+    // Adın altında: başlangıç tarihi (N gündür devam ediyor / N günde tamamlandı).
+    const meta = document.getElementById('hatimGroupMeta');
+    if (meta) {
+        const timeline = hatimTimeline(group);
+        meta.hidden = !timeline;
+        if (timeline) {
+            const date = new Date(timeline.startedAt).toLocaleDateString(getLocaleTag(), {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            let span;
+            if (timeline.complete) {
+                span = timeline.days === 0
+                    ? t('community.hatimCompletedSameDay')
+                    : t('community.hatimCompletedInDays', { count: timeline.days });
+            } else {
+                span = timeline.days === 0
+                    ? t('community.hatimStartedToday')
+                    : t('community.hatimOngoingDays', { count: timeline.days });
+            }
+            meta.textContent = `${date} (${span})`;
+        }
+    }
 
     const personal = isPersonalHatim(group);
 
