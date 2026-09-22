@@ -6442,17 +6442,26 @@ async function syncRemoteHatimInBackground(id) {
         currentViewId === 'hatimGroupView' && (currentHatimGroupId === id || currentHatimGroupId === null);
     if (state === 'gone' || state === 'removed') {
         renderCommunityCardSummary();
-        if (onThisGroup) {
-            closeHatimJuzDetail();
-            await showHatimSyncError(state);
-            showView('communityView', null, { push: false });
-        }
+        if (onThisGroup) await leaveGoneHatimGroup(state);
         return;
     }
     if (state === 'ok' && onThisGroup) {
         renderHatimGroupView();
         if (document.getElementById('hatimJuzOverlay')?.classList.contains('active')) renderHatimJuzDetail();
     }
+}
+
+/**
+ * Grup silindi ya da gruptan çıkarıldım: söyle, sonra Topluluk'a dön. Uyarı cüz
+ * detayını kapatmadan önce gelir: detay geçmişte geri giderek kapanır ve popstate
+ * açık katmanların hepsini kapatır; sonra açılan uyarı da gider, beklediği söz
+ * hiç çözülmez.
+ */
+async function leaveGoneHatimGroup(reason) {
+    await showHatimSyncError(reason);
+    closeHatimJuzDetail();
+    renderCommunityCardSummary();
+    showView('communityView', null, { push: false });
 }
 
 /** Paylaşımlı grupta cüz eylemleri buluta gider; başarıda yerel önbellek güncellenir. */
@@ -6479,19 +6488,20 @@ async function handleRemoteHatimJuzAction(group, action) {
 
     if (!res.ok) {
         if (res.reason === 'busyLocal') return;
-        if (res.reason === 'gone' || res.reason === 'removed') {
+        // Ret çoğu zaman tablonun değiştiğini söyler ('taken'): önce eşle. Yetki reddinin
+        // asıl sebebi gruptan çıkarılmak ya da grubun silinmesiyse onu söyle, "yetkin yok" değil.
+        const state =
+            res.reason === 'gone' || res.reason === 'removed'
+                ? res.reason
+                : await refreshRemoteHatim(group.id, ctx);
+        if (state === 'gone' || state === 'removed') {
             dropHatimLocally(group.id);
-            closeHatimJuzDetail();
-            await showHatimSyncError(res.reason);
-            renderCommunityCardSummary();
-            showView('communityView', null, { push: false });
+            await leaveGoneHatimGroup(state);
             return;
         }
-        await showHatimSyncError(res.reason);
-        // Ret çoğu zaman tablonun değiştiğini söyler ('taken'): güncel hâli göster.
-        await refreshRemoteHatim(group.id, ctx);
         renderHatimGroupView();
         renderHatimJuzDetail();
+        await showHatimSyncError(res.reason);
         return;
     }
 
