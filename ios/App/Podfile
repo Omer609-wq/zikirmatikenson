@@ -1,6 +1,6 @@
 require_relative '../../node_modules/@capacitor/ios/scripts/pods_helpers'
 
-platform :ios, '14.0'
+platform :ios, '15.0'
 use_frameworks!
 
 # workaround to avoid Xcode caching of Pods that requires
@@ -27,4 +27,13 @@ end
 
 post_install do |installer|
   assertDeploymentTarget(installer)
+  # App Store 15.0 altını kabul etmiyor. Eklenti pod'ları podspec'lerindeki 14.0'la
+  # derlenirse gömülü framework'lerin MinimumOSVersion'ı 14 kalır; uygulamayla eşitle.
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 15.0
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+      end
+    end
+  end
 end
