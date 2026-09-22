@@ -6648,6 +6648,10 @@ input:checked + .slider:before { transform: translateX(22px); }
     justify-content: center;
     transition: background 0.2s, border-color 0.2s;
 }
+/* display: flex, hidden özniteliğini ezer; bilgi uyarısında İptal görünmesin. */
+.app-dialog__btn-secondary[hidden] {
+    display: none;
+}
 .app-dialog__btn-secondary:hover {
     background: rgba(255, 255, 255, 0.06);
     border-color: rgba(255, 255, 255, 0.14);
