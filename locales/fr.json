@@ -131,7 +131,19 @@
     "juzDoneCannotRelease": "Un juz terminé ne peut pas être libéré. Annule d’abord « terminé ».",
     "ownerCannotLeave": "Le créateur ne peut pas quitter le groupe, mais peut le supprimer.",
     "forceReleaseJuz": "Libérer ce juz",
-    "forceReleaseConfirm": "Libérer ce juz ? La réservation du membre est supprimée et quelqu’un d’autre peut le prendre."
+    "forceReleaseConfirm": "Libérer ce juz ? La réservation du membre est supprimée et quelqu’un d’autre peut le prendre.",
+    "membersTitle": "Membres",
+    "membersCount": "Membres : {count}",
+    "membersLoading": "Chargement des membres…",
+    "memberYou": "toi",
+    "memberOwner": "Créateur",
+    "removeMember": "Retirer",
+    "removeMemberConfirm": "Retirer « {name} » du groupe ? Ses juz non terminés redeviennent libres, ceux terminés restent.",
+    "reportGroup": "Signaler le groupe",
+    "reportTitle": "Signaler",
+    "reportPrompt": "Ce groupe contient-il un nom ou un contenu inapproprié ? Explique-le brièvement, nous l’examinerons.",
+    "reportLabel": "Détails (facultatif)",
+    "reportThanks": "Ton signalement a bien été reçu. Nous allons l’examiner."
   },
   "folder": {
     "search": "Rechercher",

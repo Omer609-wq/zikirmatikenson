@@ -130,7 +130,19 @@
     "juzDoneCannotRelease": "A finished juz can’t be released. Undo “finished” first.",
     "ownerCannotLeave": "The owner can’t leave the group but can delete it.",
     "forceReleaseJuz": "Free This Juz",
-    "forceReleaseConfirm": "Free this juz? The member’s claim is removed and someone else can take it."
+    "forceReleaseConfirm": "Free this juz? The member’s claim is removed and someone else can take it.",
+    "membersTitle": "Members",
+    "membersCount": "Members: {count}",
+    "membersLoading": "Loading members…",
+    "memberYou": "you",
+    "memberOwner": "Owner",
+    "removeMember": "Remove",
+    "removeMemberConfirm": "Remove \"{name}\" from the group? Juz they haven’t finished become free; finished ones stay.",
+    "reportGroup": "Report group",
+    "reportTitle": "Report",
+    "reportPrompt": "Is there an inappropriate name or content in this group? Tell us briefly and we’ll review it.",
+    "reportLabel": "Details (optional)",
+    "reportThanks": "Your report was received. We’ll review it."
   },
   "folder": {
     "search": "Search",

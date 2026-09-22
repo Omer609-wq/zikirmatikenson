@@ -2888,6 +2888,119 @@ html[lang='ur'] .smart-reminder-weekday {
     color: var(--text-gray);
 }
 
+/* Üyeler satırı — paylaşımlı grupta kod düğmesinin altında */
+.hatim-members-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    margin: -0.4rem 0 1rem;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--surface-radius);
+    background: var(--surface-card);
+    color: var(--text-white);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+/* display: flex, [hidden]'ı ezer. */
+.hatim-members-btn[hidden] {
+    display: none;
+}
+.hatim-members-btn .material-icons-outlined {
+    flex: 0 0 auto;
+    font-size: 20px;
+    color: var(--text-gray);
+}
+.hatim-members-btn__label {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--text-sm);
+}
+
+/* Şikâyet: göze batmayan metin düğmesi */
+.hatim-report-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    width: 100%;
+    margin-top: 0.6rem;
+    padding: 0.5rem;
+    border: 0;
+    background: transparent;
+    color: var(--text-gray);
+    font: inherit;
+    font-size: var(--text-xs);
+    cursor: pointer;
+}
+.hatim-report-btn[hidden] {
+    display: none;
+}
+.hatim-report-btn .material-icons-outlined {
+    font-size: 16px;
+}
+
+/* Üye listesi penceresi */
+.hatim-members {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.hatim-members__row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.1rem;
+    border-bottom: 1px solid var(--surface-border);
+}
+.hatim-members__row:last-child {
+    border-bottom: 0;
+}
+.hatim-members__name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--text-sm);
+    color: var(--text-white);
+}
+.hatim-members__you {
+    color: var(--text-gray);
+    font-size: var(--text-xs);
+}
+.hatim-members__badge {
+    flex: 0 0 auto;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    border: 1px solid var(--hatim-done-border);
+    background: var(--hatim-done-bg);
+    color: var(--hatim-done-fg);
+    font-size: var(--text-xs);
+}
+.hatim-members__remove {
+    flex: 0 0 auto;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--surface-border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-gray);
+    font: inherit;
+    font-size: var(--text-xs);
+    cursor: pointer;
+}
+.hatim-members__status {
+    margin: 0 0 0.5rem;
+    font-size: var(--text-sm);
+    color: var(--text-gray);
+}
+.hatim-members__status[hidden] {
+    display: none;
+}
+
 /* ---- Cüz detay penceresi ---- */
 .hatim-juz-state {
     font-size: var(--text-sm);

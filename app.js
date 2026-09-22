@@ -168,7 +168,10 @@ import {
     findHatimByCode,
     joinHatim,
     leaveHatim,
+    listHatimMembers,
     releaseJuzRemote,
+    removeHatimMember,
+    reportHatim,
     uncompleteJuzRemote
 } from './lib/hatim-remote.js';
 import { getHatimContext, getHatimSyncAvailability, hatimSignInErrorKey } from './lib/hatim-session.js';
@@ -5220,6 +5223,7 @@ function closeAllOverlays() {
 
 const SCROLLABLE_OVERLAY_IDS = new Set([
     'trashOverlay',
+    'hatimMembersOverlay',
     'specialDaysOverlay',
     'smartReminderEditOverlay',
     'reviseQuranDisplayOverlay',
@@ -6541,6 +6545,98 @@ async function handleRemoteHatimDeleteOrLeave(group) {
     showView('communityView');
 }
 
+/** Üye listesi: herkes görür, yönetici başkalarını çıkarabilir (§7 engelleme). */
+async function openHatimMembers() {
+    const group = findHatimGroup(currentHatimGroupId);
+    if (!isRemoteHatim(group)) return;
+    const list = document.getElementById('hatimMembersList');
+    const status = document.getElementById('hatimMembersStatus');
+    if (list) list.innerHTML = '';
+    if (status) {
+        status.hidden = false;
+        status.textContent = t('community.membersLoading');
+    }
+    openOverlay('hatimMembersOverlay');
+    const ctx = await requireHatimSync();
+    if (!ctx) {
+        closeOverlayPreferHistory('hatimMembersOverlay');
+        return;
+    }
+    await renderHatimMembers(ctx, group.id);
+}
+
+async function renderHatimMembers(ctx, hatimId) {
+    const list = document.getElementById('hatimMembersList');
+    const status = document.getElementById('hatimMembersStatus');
+    const group = findHatimGroup(hatimId);
+    if (!list || !group) return;
+    const res = await listHatimMembers(ctx, hatimId);
+    if (!res.ok) {
+        if (status) status.textContent = t(HATIM_SYNC_REASON_KEYS[res.reason] || 'community.syncError');
+        return;
+    }
+    if (status) status.hidden = true;
+    const me = hatimMemberIdFor(group);
+    const iAmOwner = group.ownerId === me;
+    list.innerHTML = res.members
+        .map((m) => {
+            const isOwner = m.uid === group.ownerId;
+            const you =
+                m.uid === me
+                    ? ` <span class="hatim-members__you">(${escapeHtml(t('community.memberYou'))})</span>`
+                    : '';
+            const badge = isOwner
+                ? `<span class="hatim-members__badge">${escapeHtml(t('community.memberOwner'))}</span>`
+                : '';
+            const remove =
+                iAmOwner && !isOwner
+                    ? `<button type="button" class="hatim-members__remove" data-remove-member="${escapeAttr(m.uid)}" data-member-name="${escapeAttr(m.name || '')}">${escapeHtml(t('community.removeMember'))}</button>`
+                    : '';
+            return `<li class="hatim-members__row"><span class="hatim-members__name">${escapeHtml(m.name || t('community.someone'))}${you}</span>${badge}${remove}</li>`;
+        })
+        .join('');
+}
+
+/** Yönetici bir üyeyi çıkarır: bitmemiş cüzleri boşa düşer, bitmişleri kalır. */
+async function handleRemoveHatimMember(memberUid, memberName) {
+    const group = findHatimGroup(currentHatimGroupId);
+    if (!isRemoteHatim(group) || !memberUid) return;
+    const confirmed = await showAppConfirm(
+        t('community.removeMemberConfirm', { name: memberName || t('community.someone') })
+    );
+    if (!confirmed) return;
+    const ctx = await requireHatimSync();
+    if (!ctx) return;
+    const res = await withHatimBusy(() => removeHatimMember(ctx, group.id, memberUid));
+    if (!res.ok) {
+        await showHatimSyncError(res.reason);
+        return;
+    }
+    await refreshRemoteHatim(group.id, ctx);
+    renderHatimGroupView();
+    await renderHatimMembers(ctx, group.id);
+}
+
+/** Grubu şikâyet eder (§7). Açıklama isteğe bağlı; kayıt konsoldan okunur. */
+async function handleReportHatimGroup() {
+    const group = findHatimGroup(currentHatimGroupId);
+    if (!isRemoteHatim(group)) return;
+    const reason = await showAppPrompt(t('community.reportPrompt'), '', {
+        title: t('community.reportTitle'),
+        inputLabel: t('community.reportLabel'),
+        maxLength: 500
+    });
+    if (reason == null) return;
+    const ctx = await requireHatimSync();
+    if (!ctx) return;
+    const res = await withHatimBusy(() => reportHatim(ctx, group.id, reason));
+    if (!res.ok) {
+        await showHatimSyncError(res.reason);
+        return;
+    }
+    await showAppAlert(t('community.reportThanks'));
+}
+
 function listHatimsByKind(kind) {
     return hatimGroups.filter((g) =>
         kind === HATIM_KIND_PERSONAL ? isPersonalHatim(g) : !isPersonalHatim(g)
@@ -6776,12 +6872,27 @@ function renderHatimGroupView() {
     if (deleteLabel) {
         // Paylaşımlı grupta yalnızca yönetici siler; katılımcı ayrılır (§10).
         const leaves = isRemoteHatim(group) && group.ownerId !== me;
+        // Ayrılırken çöp kutusu simgesi "grubu siliyorum" gibi okunuyor.
+        const deleteIcon = document.querySelector('#hatimDeleteGroupBtn .material-icons-outlined');
+        if (deleteIcon) deleteIcon.textContent = leaves ? 'logout' : 'delete_outline';
         deleteLabel.textContent = personal
             ? t('community.deleteHatim')
             : leaves
               ? t('community.leaveGroup')
               : t('community.deleteGroup');
     }
+
+    // Üyeler ve şikâyet yalnızca sunucudaki grupta anlamlı. Yönetici kendi
+    // grubunu şikâyet etmez.
+    const remote = isRemoteHatim(group);
+    const membersBtn = document.getElementById('hatimMembersBtn');
+    if (membersBtn) membersBtn.hidden = !remote;
+    const membersLabel = document.getElementById('hatimMembersLabel');
+    if (membersLabel && remote) {
+        membersLabel.textContent = t('community.membersCount', { count: group.remote.memberCount });
+    }
+    const reportBtn = document.getElementById('hatimReportBtn');
+    if (reportBtn) reportBtn.hidden = !remote || group.ownerId === me;
 
     const progress = getHatimProgress(group);
     const fill = document.getElementById('hatimSummaryFill');
@@ -7233,6 +7344,16 @@ function setupHatimListeners() {
     document.getElementById('hatimDuaMealToggle')?.addEventListener('click', toggleHatimDuaMeaning);
     document.getElementById('hatimDeleteGroupBtn')?.addEventListener('click', () => {
         void handleDeleteHatimGroup();
+    });
+    document.getElementById('hatimMembersBtn')?.addEventListener('click', () => {
+        void openHatimMembers();
+    });
+    document.getElementById('hatimReportBtn')?.addEventListener('click', () => {
+        void handleReportHatimGroup();
+    });
+    document.getElementById('hatimMembersList')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-remove-member]');
+        if (btn) void handleRemoveHatimMember(btn.dataset.removeMember, btn.dataset.memberName || '');
     });
 
     ['hatimGroupList', 'hatimPersonalList'].forEach((id) => {

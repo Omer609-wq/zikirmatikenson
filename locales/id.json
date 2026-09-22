@@ -127,7 +127,19 @@
     "juzDoneCannotRelease": "Juz yang sudah selesai tidak bisa dilepas. Batalkan \"selesai\" dulu.",
     "ownerCannotLeave": "Pembuat grup tidak bisa keluar, tapi bisa menghapus grup.",
     "forceReleaseJuz": "Kosongkan Juz Ini",
-    "forceReleaseConfirm": "Kosongkan juz ini? Klaim anggota dihapus dan orang lain bisa mengambilnya."
+    "forceReleaseConfirm": "Kosongkan juz ini? Klaim anggota dihapus dan orang lain bisa mengambilnya.",
+    "membersTitle": "Anggota",
+    "membersCount": "Anggota: {count}",
+    "membersLoading": "Memuat anggota…",
+    "memberYou": "kamu",
+    "memberOwner": "Pembuat",
+    "removeMember": "Keluarkan",
+    "removeMemberConfirm": "Keluarkan \"{name}\" dari grup? Juz yang belum ia selesaikan jadi kosong, yang sudah selesai tetap.",
+    "reportGroup": "Laporkan grup",
+    "reportTitle": "Laporkan",
+    "reportPrompt": "Ada nama atau konten yang tidak pantas di grup ini? Tulis singkat, kami akan meninjaunya.",
+    "reportLabel": "Keterangan (opsional)",
+    "reportThanks": "Laporanmu sudah diterima. Kami akan meninjaunya."
   },
   "folder": {
     "search": "Cari",

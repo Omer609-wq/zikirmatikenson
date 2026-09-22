@@ -127,7 +127,19 @@
     "juzDoneCannotRelease": "Bitmiş cüz bırakılamaz. Önce \"bitirdim\"i geri al.",
     "ownerCannotLeave": "Yönetici gruptan ayrılamaz; grubu silebilir.",
     "forceReleaseJuz": "Cüzü Boşa Çıkar",
-    "forceReleaseConfirm": "Bu cüz boşa çıkarılsın mı? Alan kişinin kaydı silinir ve cüzü başkası alabilir."
+    "forceReleaseConfirm": "Bu cüz boşa çıkarılsın mı? Alan kişinin kaydı silinir ve cüzü başkası alabilir.",
+    "membersTitle": "Üyeler",
+    "membersCount": "Üyeler: {count}",
+    "membersLoading": "Üyeler yükleniyor…",
+    "memberYou": "sen",
+    "memberOwner": "Yönetici",
+    "removeMember": "Çıkar",
+    "removeMemberConfirm": "\"{name}\" gruptan çıkarılsın mı? Bitirmediği cüzler boşa düşer, bitirdikleri kalır.",
+    "reportGroup": "Grubu şikâyet et",
+    "reportTitle": "Şikâyet et",
+    "reportPrompt": "Bu grupta uygunsuz bir ad ya da içerik mi var? Kısaca yazarsan inceleriz.",
+    "reportLabel": "Açıklama (isteğe bağlı)",
+    "reportThanks": "Şikâyetin alındı. İnceleyeceğiz."
   },
   "folder": {
     "search": "Ara",

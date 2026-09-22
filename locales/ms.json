@@ -127,7 +127,19 @@
     "juzDoneCannotRelease": "Juzuk yang selesai tidak boleh dilepaskan. Batalkan \"selesai\" dahulu.",
     "ownerCannotLeave": "Pengasas tidak boleh meninggalkan kumpulan, tetapi boleh memadamnya.",
     "forceReleaseJuz": "Kosongkan Juzuk Ini",
-    "forceReleaseConfirm": "Kosongkan juzuk ini? Tuntutan ahli dipadam dan orang lain boleh mengambilnya."
+    "forceReleaseConfirm": "Kosongkan juzuk ini? Tuntutan ahli dipadam dan orang lain boleh mengambilnya.",
+    "membersTitle": "Ahli",
+    "membersCount": "Ahli: {count}",
+    "membersLoading": "Memuatkan ahli…",
+    "memberYou": "anda",
+    "memberOwner": "Pengasas",
+    "removeMember": "Keluarkan",
+    "removeMemberConfirm": "Keluarkan \"{name}\" daripada kumpulan? Juzuk yang belum diselesaikannya menjadi kosong, yang sudah selesai kekal.",
+    "reportGroup": "Laporkan kumpulan",
+    "reportTitle": "Laporkan",
+    "reportPrompt": "Adakah nama atau kandungan yang tidak sesuai dalam kumpulan ini? Tulis secara ringkas dan kami akan menyemaknya.",
+    "reportLabel": "Keterangan (pilihan)",
+    "reportThanks": "Laporan anda telah diterima. Kami akan menyemaknya."
   },
   "folder": {
     "search": "Cari",

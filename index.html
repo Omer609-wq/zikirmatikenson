@@ -175,6 +175,13 @@
                     <span class="material-icons-outlined" aria-hidden="true">share</span>
                 </button>
 
+                <!-- Paylaşımlı grupta üye listesi; yönetici buradan üye çıkarır. -->
+                <button type="button" class="hatim-members-btn" id="hatimMembersBtn" hidden>
+                    <span class="material-icons-outlined" aria-hidden="true">group</span>
+                    <span class="hatim-members-btn__label" id="hatimMembersLabel" data-i18n="community.membersTitle">Üyeler</span>
+                    <span class="material-icons-outlined" aria-hidden="true">chevron_right</span>
+                </button>
+
                 <div class="hatim-grid" id="hatimJuzGrid"></div>
 
                 <ul class="hatim-legend" aria-hidden="true">
@@ -203,6 +210,10 @@
 
                 <button type="button" class="secondary-btn hatim-delete-btn" id="hatimDeleteGroupBtn">
                     <span class="material-icons-outlined">delete_outline</span> <span id="hatimDeleteGroupLabel">Grubu Sil</span>
+                </button>
+                <button type="button" class="hatim-report-btn" id="hatimReportBtn" hidden>
+                    <span class="material-icons-outlined" aria-hidden="true">flag</span>
+                    <span data-i18n="community.reportGroup">Grubu şikâyet et</span>
                 </button>
             </section>
         </div>
@@ -1875,6 +1886,20 @@
                 <div class="hatim-juz-surahs" id="hatimJuzSurahs"></div>
             </div>
             <div class="modal-footer hatim-juz-actions" id="hatimJuzActions"></div>
+        </div>
+    </div>
+
+    <!-- Hatim grubu üyeleri -->
+    <div class="modal-overlay" id="hatimMembersOverlay" role="dialog" aria-modal="true" aria-labelledby="hatimMembersTitle">
+        <div class="modal glass-modal">
+            <div class="modal-header">
+                <h2 id="hatimMembersTitle" data-i18n="community.membersTitle">Üyeler</h2>
+                <button class="icon-btn closeModalBtn" data-modal="hatimMembersOverlay" data-i18n="community.close" data-i18n-attr="aria-label" aria-label="Kapat"><span class="material-icons-outlined">close</span></button>
+            </div>
+            <div class="modal-body">
+                <p class="hatim-members__status" id="hatimMembersStatus" hidden></p>
+                <ul class="hatim-members" id="hatimMembersList"></ul>
+            </div>
         </div>
     </div>
 

@@ -146,7 +146,19 @@
     "juzDoneCannotRelease": "لا يمكن ترك جزء مكتمل. ألغِ الإتمام أولًا.",
     "ownerCannotLeave": "لا يستطيع منشئ المجموعة مغادرتها، لكن يمكنه حذفها.",
     "forceReleaseJuz": "إتاحة هذا الجزء",
-    "forceReleaseConfirm": "هل تُتيح هذا الجزء؟ يُلغى حجز العضو ويمكن لغيره أخذه."
+    "forceReleaseConfirm": "هل تُتيح هذا الجزء؟ يُلغى حجز العضو ويمكن لغيره أخذه.",
+    "membersTitle": "الأعضاء",
+    "membersCount": "الأعضاء: {count}",
+    "membersLoading": "جارٍ تحميل الأعضاء…",
+    "memberYou": "أنت",
+    "memberOwner": "المنشئ",
+    "removeMember": "إزالة",
+    "removeMemberConfirm": "هل تزيل \"{name}\" من المجموعة؟ الأجزاء التي لم يُتمَّها تصبح متاحة، وتبقى التي أتمّها.",
+    "reportGroup": "الإبلاغ عن المجموعة",
+    "reportTitle": "إبلاغ",
+    "reportPrompt": "هل في هذه المجموعة اسم أو محتوى غير لائق؟ اكتب ذلك باختصار وسنراجعه.",
+    "reportLabel": "التفاصيل (اختياري)",
+    "reportThanks": "تم استلام بلاغك. سنراجعه."
   },
   "folder": {
     "search": "بحث",
