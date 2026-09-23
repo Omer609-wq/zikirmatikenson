@@ -38,11 +38,11 @@
   </style>
 </head>
 <body>
-  <p class="lang">Türkçe · <a href="en.html">English</a></p>
+  <p class="lang">Türkçe · <a href="en.html">English</a> · <a href="kullanim-sartlari.html">Kullanım Şartları</a></p>
 
   <h1>Gizlilik Politikası</h1>
   <p class="meta">
-    Zikirmatik · Son güncelleme: 11 Temmuz 2026<br>
+    Zikirmatik · Son güncelleme: 23 Eylül 2026<br>
     İletişim: <a href="mailto:zikirmatik.help@gmail.com">zikirmatik.help@gmail.com</a>
   </p>
 
@@ -55,7 +55,8 @@
   <h2>1. Özet</h2>
   <ul>
     <li>Zikirleriniz, klasörleriniz, sayaç geçmişiniz ve ayarlarınız <strong>cihazınızda</strong> saklanır.</li>
-    <li>Hesap açmak zorunlu değildir.</li>
+    <li>Hesap açmak, giriş yapmak gerekmez.</li>
+    <li>Yalnızca <strong>paylaşımlı hatim grubuna</strong> katılırsanız grup adı, o grupta kullandığınız ad ve cüz durumu sunucuda saklanır (bkz. 4. bölüm).</li>
     <li>Uygulama verisi Android sistem / Google otomatik yedeklemesine dahil edilmez.</li>
     <li>İnternet; Kur’an içeriği, güncelleme duyurusu ve mevsimsel içerik gibi özellikler için kullanılır.</li>
     <li>Uygulama çökerse hata ayıklama için çökme kaydı gönderilir (Google Firebase Crashlytics).</li>
@@ -86,7 +87,40 @@
     içerik sunumu içindir.
   </p>
 
-  <h2>4. Çökme raporları</h2>
+  <h2>4. Paylaşımlı hatim grupları</h2>
+  <p>
+    Uygulamanın geri kalanı çevrimdışı çalışır; <strong>yalnızca</strong> paylaşımlı
+    hatim grubu kurar ya da bir gruba katılırsanız sunucuda (Google Firebase
+    Firestore, Avrupa bölgesi) veri saklanır:
+  </p>
+  <ul>
+    <li>Grubun adı ve 6 haneli katılma kodu</li>
+    <li>O grupta kullandığınız ad — takma ad olabilir, gerçek adınız istenmez</li>
+    <li>Hangi cüzü aldığınız, bitirdiğiniz ve bunların zamanı</li>
+    <li>Cihazınıza özel <strong>anonim kimlik</strong>: adınıza, e-postanıza ya da telefonunuza bağlı değildir</li>
+    <li>Bir grubu şikâyet ederseniz şikâyet kaydı ve yazdığınız açıklama</li>
+  </ul>
+  <p>
+    Grup adı ve kullandığınız ad, aynı gruptaki diğer üyelerin ekranında görünür.
+    Gruplar herkese açık değildir; kodu bilmeyen biri grubu göremez, listelenmez
+    ve aranamaz. Bu veriler reklam ya da profilleme için kullanılmaz, üçüncü
+    taraflara satılmaz.
+  </p>
+  <p>
+    <strong>Silme:</strong> gruptan ayrıldığınızda üyelik kaydınız silinir. Grubu
+    kuran kişi grubu sildiğinde grubun tüm kayıtları silinir. Kimsenin dokunmadığı
+    gruplar 12 ay sonra sunucudan silinir. Anonim kimlik cihazınıza bağlı olduğu
+    için uygulamayı silmeniz ya da cihaz değiştirmeniz durumunda bu kimliğe
+    erişiminiz kalmaz. Kayıtlarınızın silinmesini istediğiniz başka bir durumda
+    aşağıdaki adresten yazabilirsiniz.
+  </p>
+  <p>
+    Kişisel hatim (kendi başınıza tuttuğunuz hatim) tamamen cihazınızda kalır,
+    sunucuya hiçbir şey gitmez. Kullanım kuralları için
+    <a href="kullanim-sartlari.html">Kullanım Şartları</a>.
+  </p>
+
+  <h2>5. Çökme raporları</h2>
   <p>
     Uygulama çöktüğünde, hatayı bulup düzeltebilmemiz için Google Firebase
     Crashlytics aracılığıyla bir çökme kaydı gönderilir. Bu kayıt cihaz modeli,
@@ -96,20 +130,20 @@
     profilleme amacıyla kullanılmaz.
   </p>
 
-  <h2>5. İzinler</h2>
+  <h2>6. İzinler</h2>
   <ul>
     <li><strong>Bildirimler:</strong> isteğe bağlı günlük hatırlatıcı</li>
     <li><strong>Titreşim, ses, ekranı uyanık tutma:</strong> uygulama içi deneyim</li>
     <li><strong>İnternet:</strong> yukarıdaki içerik ve duyurular için</li>
   </ul>
 
-  <h2>6. Çocuklar</h2>
+  <h2>7. Çocuklar</h2>
   <p>
     Uygulama çocuklara özel tasarlanmış bir hizmet değildir.
     Bilerek 13 yaş altından kişisel veri toplamayız.
   </p>
 
-  <h2>7. Güncellemeler</h2>
+  <h2>8. Güncellemeler</h2>
   <p class="note">
     Bu gizlilik politikası zaman zaman güncellenebilir. Güncel sürüm her zaman
     bu sayfada yayınlanır. Önemli değişikliklerde Play Store açıklaması veya
@@ -117,7 +151,7 @@
     kontrol etmenizi öneririz.
   </p>
 
-  <h2>8. İletişim</h2>
+  <h2>9. İletişim</h2>
   <p>
     Sorularınız için:
     <a href="mailto:zikirmatik.help@gmail.com">zikirmatik.help@gmail.com</a>
