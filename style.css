@@ -142,6 +142,29 @@
         url("/fonts/material-icons-outlined.woff") format("woff");
 }
 
+/* ================== URDUCA YAZI FONTU (NESİH) ==================
+   Inter'de Arap harfi yok; Urduca metni cihaz fontu çiziyordu. Android Nesih
+   (Noto Naskh Arabic) seçerken iOS lang="ur" görünce Nestalik (Noto Nastaliq Urdu)
+   seçiyor: eğik, çok yüksek satır isteyen bir stil, arayüz aralıklarına sığmıyor.
+   Aynı Nesih'i gömüp Urduca arayüzde kullanıyoruz; iki platform aynı görünür.
+   unicode-range yalnız Arap harflerini kapsar, Latin yazı Inter'de kalır.
+   Lisans: public/fonts/noto-naskh-arabic-OFL.txt */
+@font-face {
+    font-family: "Noto Naskh Arabic Local";
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src:
+        url("/fonts/noto-naskh-arabic-wght.woff2") format("woff2-variations"),
+        url("/fonts/noto-naskh-arabic-wght.woff2") format("woff2");
+    unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF,
+        U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+
+html[lang='ur'] {
+    --font-main: 'Inter', 'Noto Naskh Arabic Local', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
 .material-icons-outlined {
     font-family: "Material Icons Outlined";
     font-weight: normal;
@@ -6940,4 +6963,8 @@ input[type="time"]::-webkit-date-and-time-value {
     text-align: right;
     font-family: 'Segoe UI', 'Noto Naskh Arabic', 'Traditional Arabic', serif;
     line-height: 1.55;
+}
+/* Urduca zikir adları da bu sınıfı taşıyor (lang="ur"); iOS Nestalik'e düşmesin. */
+.arabic-text:lang(ur) {
+    font-family: 'Noto Naskh Arabic Local', var(--font-main);
 }
