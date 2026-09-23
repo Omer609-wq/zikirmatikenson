@@ -268,7 +268,12 @@ async function syncNativeDailyReminderNow(enabled, timeStr, locale) {
 
     /*
      * Android: `every` + `on` birlikte kullanılırsa yalnızca `every` dalı çalışıyor; saat yok sayılıyor.
-     * Güvenilir yol: her gün için ayrı tek-sefer `at` (UTC ISO) + uygulama görünür olunca yenileme.
+     * Güvenilir yol: her gün için ayrı tek-sefer `at` + uygulama görünür olunca yenileme.
+     *
+     * `at` string değil Date nesnesi olmalı: iOS köprüsü nesneyi olduğu gibi geçirir ve
+     * plugin `at`'ı yalnızca NSDate olarak okur. ISO string verilirse tetikleyici boş kalır,
+     * iOS bildirimi hemen gösterir — 28 günlük yığın aynı anda düşer. Android köprüsü
+     * JSON.stringify kullandığından Date orada zaten aynı ISO biçimine döner.
      */
     const dates = buildUpcomingLocalDates(hh, mm, REMINDER_DAYS_AHEAD);
     const quote = getReminderQuoteNotificationPayload(locale);
@@ -279,7 +284,7 @@ async function syncNativeDailyReminderNow(enabled, timeStr, locale) {
             body: quote.body,
             largeBody: quote.largeBody,
             schedule: {
-                at: at.toISOString()
+                at
             },
             extra: REMINDER_NOTIFICATION_EXTRA
         };
@@ -381,7 +386,7 @@ async function syncNativeSmartRemindersNow(slots) {
             title: '',
             body: slot.body || '',
             schedule: {
-                at: slot.at.toISOString()
+                at: slot.at // Date olmalı, bkz. syncNativeDailyReminderNow
             },
             extra: slot.extra || { openApp: true, view: 'homeView' }
         };
