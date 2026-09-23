@@ -3065,6 +3065,14 @@ function getPrivacyPolicyUrl() {
     return loc === 'tr' ? `${PRIVACY_POLICY_BASE_URL}/` : `${PRIVACY_POLICY_BASE_URL}/en.html`;
 }
 
+/** Kullanım şartları — gizlilikle aynı sayfa deposunda (§7 UGC, mağaza şartı). */
+function getTermsOfUseUrl() {
+    const loc = typeof getLocale === 'function' ? getLocale() : 'tr';
+    return loc === 'tr'
+        ? `${PRIVACY_POLICY_BASE_URL}/kullanim-sartlari.html`
+        : `${PRIVACY_POLICY_BASE_URL}/terms.html`;
+}
+
 function isAllowedPrivacyPolicyUrl(url) {
     try {
         const u = new URL(String(url || ''));
@@ -3077,14 +3085,21 @@ function isAllowedPrivacyPolicyUrl(url) {
     }
 }
 
-function openPrivacyPolicyPage() {
-    const url = getPrivacyPolicyUrl();
+function openPolicyPage(url) {
     if (!isAllowedPrivacyPolicyUrl(url)) return;
     if (isCapacitorNative()) {
         window.open(url, '_system');
         return;
     }
     window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+function openPrivacyPolicyPage() {
+    openPolicyPage(getPrivacyPolicyUrl());
+}
+
+function openTermsOfUsePage() {
+    openPolicyPage(getTermsOfUseUrl());
 }
 
 function syncPrivacyViewUI() {
@@ -9996,6 +10011,14 @@ function setupEventListeners() {
     if (privacyPolicyBtn && privacyPolicyBtn.dataset.bound !== '1') {
         privacyPolicyBtn.dataset.bound = '1';
         privacyPolicyBtn.addEventListener('click', () => openPrivacyPolicyPage());
+    }
+
+    for (const id of ['termsOfUseBtn', 'hatimTermsLink']) {
+        const btn = document.getElementById(id);
+        if (btn && btn.dataset.bound !== '1') {
+            btn.dataset.bound = '1';
+            btn.addEventListener('click', () => openTermsOfUsePage());
+        }
     }
 
     if (folderSearchInput) folderSearchInput.addEventListener('input', () => {

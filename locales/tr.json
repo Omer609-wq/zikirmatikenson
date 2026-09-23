@@ -135,6 +135,7 @@
     "memberOwner": "Yönetici",
     "removeMember": "Çıkar",
     "removeMemberConfirm": "\"{name}\" gruptan çıkarılsın mı? Bitirmediği cüzler boşa düşer, bitirdikleri kalır.",
+    "ugcNotice": "Grup adı ve grupta kullandığın ad diğer üyelere görünür. Uygunsuz içerik yasaktır; her grup ekranından şikâyet edebilirsin.",
     "reportGroup": "Grubu şikâyet et",
     "reportTitle": "Şikâyet et",
     "reportPrompt": "Bu grupta uygunsuz bir ad ya da içerik mi var? Kısaca yazarsan inceleriz.",
@@ -411,6 +412,7 @@
     "crashText": "Uygulama çökerse hatayı düzeltmek için teknik bir çökme kaydı gönderilebilir (Firebase Crashlytics). Zikirleriniz ve istatistikleriniz bu kayıtta yer almaz.",
     "billingTitle": "Satın almalar ve abonelik",
     "billingText": "Ödemeler tamamen Google Play üzerinden işlenir; uygulama kart veya ödeme bilgilerinize hiçbir şekilde erişmez. Abonelik durumunu doğrulamak için satın alma bilgileri (ürün kimliği, işlem durumu, anonim kullanıcı kimliği) abonelik yönetim servisi RevenueCat ile paylaşılır.",
+    "termsOfUse": "Kullanım şartları",
     "fullPolicy": "Tam gizlilik politikası",
     "fullPolicyHint": "Kısa özet yukarıdadır; ayrıntılı metin web sayfasında yayınlanır. Politika zaman zaman güncellenebilir."
   },

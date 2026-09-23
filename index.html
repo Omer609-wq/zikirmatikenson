@@ -146,6 +146,16 @@
                         <span class="material-icons-outlined">add</span> <span data-i18n="community.newGroup">Hatim Grubu Oluştur</span>
                     </button>
                     <div class="limit-warning" id="hatimLimitWarning" data-i18n="community.groupLimitWarning">Grup sınırına ulaşıldı. Yeni bir gruba katılmak için önce bir gruptan ayrıl.</div>
+
+                    <!-- Kullanıcı içeriği mağaza şartı: kural uyarısı ve şartlara bağlantı,
+                         grup adının ve takma adın yazıldığı ekranda dursun. -->
+                    <p class="hatim-terms-note" data-i18n="community.ugcNotice">
+                        Grup adı ve grupta kullandığın ad diğer üyelere görünür. Uygunsuz içerik yasaktır; her grup ekranından şikâyet edebilirsin.
+                    </p>
+                    <button type="button" class="hatim-report-btn" id="hatimTermsLink">
+                        <span class="material-icons-outlined" aria-hidden="true">gavel</span>
+                        <span data-i18n="privacy.termsOfUse">Kullanım şartları</span>
+                    </button>
                 </div>
             </section>
         </div>
@@ -959,6 +969,10 @@
                     <button type="button" class="secondary-btn" id="privacyPolicyBtn">
                         <span class="material-icons-outlined" aria-hidden="true">open_in_new</span>
                         <span data-i18n="privacy.fullPolicy">Tam gizlilik politikası</span>
+                    </button>
+                    <button type="button" class="secondary-btn" id="termsOfUseBtn">
+                        <span class="material-icons-outlined" aria-hidden="true">open_in_new</span>
+                        <span data-i18n="privacy.termsOfUse">Kullanım şartları</span>
                     </button>
                     <p class="settings-footnote" data-i18n="privacy.fullPolicyHint">
                         Kısa özet yukarıdadır; ayrıntılı metin web sayfasında yayınlanır. Politika zaman zaman güncellenebilir.

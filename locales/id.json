@@ -135,6 +135,7 @@
     "memberOwner": "Pembuat",
     "removeMember": "Keluarkan",
     "removeMemberConfirm": "Keluarkan \"{name}\" dari grup? Juz yang belum ia selesaikan jadi kosong, yang sudah selesai tetap.",
+    "ugcNotice": "Nama grup dan nama yang kamu gunakan di grup terlihat oleh anggota lain. Konten yang tidak pantas dilarang; kamu bisa melaporkannya dari layar grup mana pun.",
     "reportGroup": "Laporkan grup",
     "reportTitle": "Laporkan",
     "reportPrompt": "Ada nama atau konten yang tidak pantas di grup ini? Tulis singkat, kami akan meninjaunya.",
@@ -411,6 +412,7 @@
     "crashText": "Jika aplikasi crash, laporan teknis dapat dikirim untuk membantu perbaikan (Firebase Crashlytics). Daftar zikir dan statistik Anda tidak termasuk dalam laporan itu.",
     "billingTitle": "Pembelian & langganan",
     "billingText": "Pembayaran sepenuhnya diproses oleh Google Play; aplikasi tidak pernah mengakses data kartu atau pembayaranmu. Untuk memverifikasi status langganan, info pembelian (ID produk, status transaksi, ID pengguna anonim) dibagikan dengan layanan langganan RevenueCat.",
+    "termsOfUse": "Ketentuan penggunaan",
     "fullPolicy": "Kebijakan privasi lengkap",
     "fullPolicyHint": "Ringkasan di atas; teks lengkap dipublikasikan di web. Kebijakan dapat diperbarui dari waktu ke waktu."
   },

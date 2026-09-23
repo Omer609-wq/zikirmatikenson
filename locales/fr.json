@@ -139,6 +139,7 @@
     "memberOwner": "Créateur",
     "removeMember": "Retirer",
     "removeMemberConfirm": "Retirer « {name} » du groupe ? Ses juz non terminés redeviennent libres, ceux terminés restent.",
+    "ugcNotice": "Le nom du groupe et le nom que vous utilisez dans un groupe sont visibles par les autres membres. Les contenus inappropriés sont interdits ; vous pouvez les signaler depuis l’écran de chaque groupe.",
     "reportGroup": "Signaler le groupe",
     "reportTitle": "Signaler",
     "reportPrompt": "Ce groupe contient-il un nom ou un contenu inapproprié ? Explique-le brièvement, nous l’examinerons.",
@@ -420,6 +421,7 @@
     "crashText": "Si l'app plante, un rapport technique peut être envoyé pour aider à corriger le problème (Firebase Crashlytics). Vos listes de zikr et statistiques n'y figurent pas.",
     "billingTitle": "Achats et abonnement",
     "billingText": "Les paiements sont traités entièrement par Google Play ; l'application n'accède jamais à vos informations de paiement. Pour vérifier l'état de l'abonnement, les informations d'achat (identifiant du produit, état de la transaction, identifiant utilisateur anonyme) sont partagées avec le service d'abonnement RevenueCat.",
+    "termsOfUse": "Conditions d’utilisation",
     "fullPolicy": "Politique de confidentialité complète",
     "fullPolicyHint": "Le résumé est ci-dessus ; le texte détaillé est publié sur le web. La politique peut être mise à jour de temps à autre."
   },

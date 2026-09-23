@@ -2950,6 +2950,14 @@ html[lang='ur'] .smart-reminder-weekday {
 .hatim-report-btn[hidden] {
     display: none;
 }
+/* Kullanıcı içeriği uyarısı: grup adının yazıldığı ekranda, göze batmadan. */
+.hatim-terms-note {
+    margin: 1.4rem 0 0;
+    color: var(--text-gray);
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    text-align: center;
+}
 .hatim-report-btn .material-icons-outlined {
     font-size: 16px;
 }

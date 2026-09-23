@@ -138,6 +138,7 @@
     "memberOwner": "Owner",
     "removeMember": "Remove",
     "removeMemberConfirm": "Remove \"{name}\" from the group? Juz they haven’t finished become free; finished ones stay.",
+    "ugcNotice": "The group name and the name you use in a group are visible to other members. Objectionable content is not allowed; you can report it from any group screen.",
     "reportGroup": "Report group",
     "reportTitle": "Report",
     "reportPrompt": "Is there an inappropriate name or content in this group? Tell us briefly and we’ll review it.",
@@ -422,6 +423,7 @@
     "crashText": "If the app crashes, a technical crash report may be sent to help us fix the issue (Firebase Crashlytics). Your dhikr lists and statistics are not included in that report.",
     "billingTitle": "Purchases & subscription",
     "billingText": "Payments are processed entirely by Google Play; the app never accesses your card or payment details. To verify subscription status, purchase info (product ID, transaction state, an anonymous user ID) is shared with the subscription service RevenueCat.",
+    "termsOfUse": "Terms of use",
     "fullPolicy": "Full privacy policy",
     "fullPolicyHint": "The summary is above; the detailed policy is published on the web. The policy may be updated from time to time."
   },
