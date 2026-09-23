@@ -52,6 +52,18 @@ if (
     failed = true;
 }
 
+// app.js'te bayrak doğrudan açıksa yayın Topluluk'lu çıkar. Mağaza beyanları
+// bitmeden kazara gitmesin diye bilinçli onay (COMMUNITY_RELEASE=1) istenir.
+if (
+    /^\s*const COMMUNITY_UI_VISIBLE\s*=\s*true\s*;/m.test(read(path.join(ROOT, 'app.js'))) &&
+    process.env.COMMUNITY_RELEASE !== '1'
+) {
+    console.error('FAIL: app.js\'te COMMUNITY_UI_VISIBLE = true — yayın Topluluk açık çıkar.');
+    console.error('Beyanlar hazırsa bilerek gönder: COMMUNITY_RELEASE=1 npm run cap:release:android');
+    console.error('Hazır değilse satırı yine bayrağa bağla: import.meta.env.VITE_COMMUNITY_PREVIEW === \'1\'');
+    failed = true;
+}
+
 // Güvenlik ağı: yayın paketindeki debug-flags.json'da test bayrağı açık olmamalı.
 // (Açılabilecekleri yer Android debug derlemesi: android/app/src/debug/assets.
 // Ör. "specialDayPreview" açık kalırsa herkes her gün kandil başlığı görür.)

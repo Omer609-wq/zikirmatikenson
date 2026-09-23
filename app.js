@@ -1083,16 +1083,16 @@ const PREMIUM_LIVE = _premiumPreviewFlags.mode ? _premiumPreviewFlags.live : fal
 const PREMIUM_UI_VISIBLE = _premiumPreviewFlags.mode ? _premiumPreviewFlags.uiVisible : false;
 
 /**
- * Topluluk kartı + hatim ekranları. Kod eksiksiz ve testli, ama paylaşımlı hatim
- * buluta bağlanana kadar yayında gizli: "Topluluk" adı yalnız kişisel sekmeyle
- * yalan olur, ve sekme yayınlanırsa kullanıcılar buluta hiç ulaşmamış yerel
- * gruplar oluşturup geri dönülmesi gereken bir göç problemi doğurur.
- * Yayında `true` yapılır. O zamana kadar yalnızca test derlemesinde açılır:
- * VITE_COMMUNITY_PREVIEW=1 (.env.local ya da iOS'ta Run workflow → community).
- * Android yayın betiği bu değişken açıkken durur.
+ * Topluluk kartı + hatim ekranları. 23 Eyl 2026: paylaşımlı hatim buluta
+ * bağlandı ve telefonda denenebilsin diye bayrak doğrudan açıldı; artık her
+ * derlemede görünür.
+ *
+ * Mağaza beyanları (Data Safety / UGC / yaş) bitmeden yayına kazara gitmesin
+ * diye Android yayın betiği bunu görünce durur; beyanlar hazır olduğunda
+ * COMMUNITY_RELEASE=1 ile bilerek geçilir.
  * Tasarım notu: docs/HATIM_GROUPS_DESIGN.md §1.
  */
-const COMMUNITY_UI_VISIBLE = import.meta.env.VITE_COMMUNITY_PREVIEW === '1';
+const COMMUNITY_UI_VISIBLE = true;
 
 /** Bayrak kapalıyken ana ekrana düşürülecek ekranlar. */
 const COMMUNITY_VIEW_IDS = new Set(['communityView', 'hatimGroupView']);
@@ -5662,6 +5662,13 @@ function setDailyQuote() {
 const LIST_DRAG_LONG_MS = 520;
 const LIST_DRAG_MOVE_CANCEL_PX_MOUSE = 22;
 const LIST_DRAG_MOVE_CANCEL_PX_TOUCH = 72;
+/** Parmak listenin bu kadar yakınına gelince otomatik kaydırma başlar (px). */
+const LIST_DRAG_AUTOSCROLL_EDGE_PX = 72;
+/** Otomatik kaydırmanın kare başına en yüksek hızı (px). */
+const LIST_DRAG_AUTOSCROLL_MAX_PX = 16;
+/** Slot değişimi dokunsal geri bildirimi için en az aralık (ms) — sürekli titremesin. */
+const LIST_DRAG_TICK_MIN_MS = 55;
+let lastDragReorderTickTs = 0;
 let activeListDrag = null;
 /** Sıralama tutamacından başlayan dokunuşlar; uzun basımla seçim moduna girmeyi engeller. */
 const listDragHandlePointerIds = new Set();
@@ -5735,11 +5742,80 @@ function clearListDragTransforms(container) {
     });
 }
 
+/** Listenin dikey kaydırılan atası (`.main-content.scrollable`). */
+function findListScrollContainer(el) {
+    let node = el?.parentElement;
+    while (node && node !== document.body && node !== document.documentElement) {
+        const oy = getComputedStyle(node).overflowY;
+        if (oy === 'auto' || oy === 'scroll') return node;
+        node = node.parentElement;
+    }
+    return null;
+}
+
+/** Slot değişiminde kısa dokunsal geri bildirim; art arda titremeyi throttle ile önler. */
+function dragReorderTick() {
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    if (now - lastDragReorderTickTs < LIST_DRAG_TICK_MIN_MS) return;
+    lastDragReorderTickTs = now;
+    runDragReorderNudge();
+}
+
+/**
+ * Parmak listenin üst/alt kenar bandına girince kaydırma hızını (px/kare) ayarlar
+ * ve gerekiyorsa kaydırma döngüsünü başlatır. Parmak kenarda sabit dursa bile
+ * döngü rAF ile kendini sürdürür (pointermove gelmese de kaymaya devam eder).
+ */
+function updateListAutoScroll(clientY) {
+    const drag = activeListDrag;
+    if (!drag || !drag.scrollContainer) return;
+    const sc = drag.scrollContainer;
+    const rect = sc.getBoundingClientRect();
+    const edge = LIST_DRAG_AUTOSCROLL_EDGE_PX;
+    const topDist = clientY - rect.top;
+    const bottomDist = rect.bottom - clientY;
+    let vy = 0;
+    if (topDist < edge) vy = -LIST_DRAG_AUTOSCROLL_MAX_PX * (1 - Math.max(0, topDist) / edge);
+    else if (bottomDist < edge) vy = LIST_DRAG_AUTOSCROLL_MAX_PX * (1 - Math.max(0, bottomDist) / edge);
+    drag.autoScrollVy = vy;
+    if (vy !== 0 && !drag.autoScrollRAF) {
+        drag.autoScrollRAF = requestAnimationFrame(runListAutoScrollStep);
+    }
+}
+
+function runListAutoScrollStep() {
+    const drag = activeListDrag;
+    if (!drag) return;
+    drag.autoScrollRAF = 0;
+    const sc = drag.scrollContainer;
+    const vy = drag.autoScrollVy || 0;
+    if (!vy || !sc) return;
+    const max = sc.scrollHeight - sc.clientHeight;
+    const next = Math.max(0, Math.min(max, sc.scrollTop + vy));
+    const moved = next !== sc.scrollTop;
+    sc.scrollTop = next;
+    // Liste hayaletin altında kaydıkça boşluğu ve slot geri bildirimini tazele.
+    updateListDragShifts(drag.lastClientY);
+    if (moved) drag.autoScrollRAF = requestAnimationFrame(runListAutoScrollStep);
+}
+
+function stopListAutoScroll() {
+    if (activeListDrag && activeListDrag.autoScrollRAF) {
+        cancelAnimationFrame(activeListDrag.autoScrollRAF);
+        activeListDrag.autoScrollRAF = 0;
+    }
+}
+
 function updateListDragShifts(clientY) {
     if (!activeListDrag) return;
     const { container, sourceEl, sourceIndex, shiftHeight } = activeListDrag;
     if (sourceIndex < 0) return;
     const insertAt = computeListDropIndex(container, clientY, sourceEl);
+    // Kutucuk bir üst/alt slota geçtiğinde kısa dokunsal geri bildirim.
+    if (insertAt !== activeListDrag.lastInsertAt) {
+        activeListDrag.lastInsertAt = insertAt;
+        dragReorderTick();
+    }
     const nodes = [...container.querySelectorAll('[data-drag-order-item]')];
     nodes.forEach((el, i) => {
         if (el === sourceEl) {
@@ -5755,6 +5831,7 @@ function updateListDragShifts(clientY) {
 
 function moveListDragGhost(clientY) {
     if (!activeListDrag) return;
+    activeListDrag.lastClientY = clientY;
     const { ghost, ghostLeft, ghostWidth, ghostHeight, offsetY } = activeListDrag;
     ghost.style.top = `${clientY - offsetY}px`;
     ghost.style.left = `${ghostLeft}px`;
@@ -5763,10 +5840,12 @@ function moveListDragGhost(clientY) {
         ghost.style.minHeight = `${ghostHeight}px`;
     }
     updateListDragShifts(clientY);
+    updateListAutoScroll(clientY);
 }
 
 function teardownListDrag() {
     if (!activeListDrag) return;
+    stopListAutoScroll();
     const { removeDocListeners, ghost, sourceEl, container, pointerId } = activeListDrag;
     clearListDragTransforms(container);
     removeDocListeners();
@@ -5779,6 +5858,7 @@ function teardownListDrag() {
 
 function completeListDrag(clientY) {
     if (!activeListDrag) return;
+    stopListAutoScroll();
     const { id, sourceEl, container, getSortedIds, onCommit, ghost, removeDocListeners, pointerId } = activeListDrag;
     removeDocListeners();
     clearListDragTransforms(container);
@@ -5865,6 +5945,12 @@ function beginListDrag(sourceEl, id, container, getSortedIds, onCommit, pointerI
         offsetY: clientY - rect.top,
         sourceIndex,
         shiftHeight,
+        // Otomatik kaydırma + slot geri bildirimi durumu
+        scrollContainer: findListScrollContainer(container),
+        lastClientY: clientY,
+        lastInsertAt: computeListDropIndex(container, clientY, sourceEl),
+        autoScrollVy: 0,
+        autoScrollRAF: 0,
         removeDocListeners() {
             document.removeEventListener('pointermove', docMove, { capture: true });
             document.removeEventListener('pointerup', docEnd, { capture: true });
@@ -5872,6 +5958,7 @@ function beginListDrag(sourceEl, id, container, getSortedIds, onCommit, pointerI
         }
     };
 
+    lastDragReorderTickTs = 0;
     moveListDragGhost(clientY);
     runDragReorderNudge();
 }
