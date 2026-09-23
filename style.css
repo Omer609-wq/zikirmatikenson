@@ -258,6 +258,9 @@ body {
     flex-grow: 1;
     min-height: 0; /* flex sütununda taşmayı kes; dikey kaydırma güvenilir çalışsın */
     overflow-y: auto;
+    /* Yalnız overflow-y verilince x de auto olur: bir çocuk birkaç px taşarsa tüm sayfa
+       parmakla sağa sola kayar. Bu kutu yalnız dikey kaysın. */
+    overflow-x: hidden;
     padding: 1.1rem 0.85rem;
     padding-bottom: calc(6.5rem + var(--app-bottom-inset-merged)); /* alt menü + sistem çubuğu */
 }
@@ -6709,6 +6712,21 @@ input:checked + .slider:before { transform: translateX(22px); }
     line-height: var(--leading-body);
 }
 .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-green); }
+/*
+ * iOS saat kutusuna kendi yerel görünümünü veriyor ve bu görünümde kutu width:100%'ü
+ * aşıp kapsayıcıdan taşıyor (Ayarlar > Hatırlatma Saati, küçük ekranda belirgin).
+ * appearance:none ile kutu bizim ölçülerimize uyar; dokununca iOS saat çarkı yine açılır.
+ */
+input[type="time"] {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+}
+input[type="time"]::-webkit-date-and-time-value {
+    text-align: start;
+}
 
 /* Kütüphane detay modalı — mobil tipografi */
 .lib-detail-verified {
