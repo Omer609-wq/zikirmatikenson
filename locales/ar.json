@@ -171,7 +171,10 @@
     "hatimCompletedInDays_one": "اكتملت في يوم واحد",
     "hatimCompletedInDays_two": "اكتملت في يومين",
     "hatimCompletedInDays_few": "اكتملت في {count} أيام",
-    "hatimCompletedInDays_many": "اكتملت في {count} يومًا"
+    "hatimCompletedInDays_many": "اكتملت في {count} يومًا",
+    "membersJoinedDot": "انضم عضو جديد",
+    "membersLeftDot": "غادر عضو",
+    "memberJoinedNew": "انضم حديثًا"
   },
   "folder": {
     "search": "بحث",

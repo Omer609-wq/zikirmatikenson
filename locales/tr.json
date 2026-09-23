@@ -144,7 +144,10 @@
     "hatimStartedToday": "bugün başladı",
     "hatimOngoingDays": "{count} gündür devam ediyor",
     "hatimCompletedSameDay": "aynı gün tamamlandı",
-    "hatimCompletedInDays": "{count} günde tamamlandı"
+    "hatimCompletedInDays": "{count} günde tamamlandı",
+    "membersJoinedDot": "Yeni katılan var",
+    "membersLeftDot": "Ayrılan var",
+    "memberJoinedNew": "yeni katıldı"
   },
   "folder": {
     "search": "Ara",

@@ -144,7 +144,10 @@
     "hatimStartedToday": "আজ শুরু হয়েছে",
     "hatimOngoingDays": "{count} দিন ধরে চলছে",
     "hatimCompletedSameDay": "একই দিনে শেষ হয়েছে",
-    "hatimCompletedInDays": "{count} দিনে শেষ হয়েছে"
+    "hatimCompletedInDays": "{count} দিনে শেষ হয়েছে",
+    "membersJoinedDot": "নতুন কেউ যোগ দিয়েছে",
+    "membersLeftDot": "কেউ চলে গেছে",
+    "memberJoinedNew": "নতুন যোগ দিয়েছে"
   },
   "folder": {
     "search": "খুঁজুন",

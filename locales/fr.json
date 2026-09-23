@@ -150,7 +150,10 @@
     "hatimOngoingDays_one": "en cours depuis {count} jour",
     "hatimCompletedSameDay": "terminé le jour même",
     "hatimCompletedInDays": "terminé en {count} jours",
-    "hatimCompletedInDays_one": "terminé en {count} jour"
+    "hatimCompletedInDays_one": "terminé en {count} jour",
+    "membersJoinedDot": "Quelqu’un a rejoint",
+    "membersLeftDot": "Quelqu’un est parti",
+    "memberJoinedNew": "vient de rejoindre"
   },
   "folder": {
     "search": "Rechercher",

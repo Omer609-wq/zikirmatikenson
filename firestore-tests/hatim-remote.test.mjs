@@ -97,7 +97,7 @@ test('kurma: grup, geçerli kod ve 30 boş cüzle kurulur, yönetici üyedir', a
     assert.equal(fetched.ok, true);
     assert.equal(fetched.group.juz.length, 30);
     assert.ok(fetched.group.juz.every((j) => j.state === JUZ_FREE));
-    assert.deepEqual(fetched.group.remote, { rev: 0, memberCount: 1 });
+    assert.deepEqual(fetched.group.remote, { rev: 0, memberCount: 1, memberUids: [OWNER] });
     assert.equal(fetched.group.ownerId, OWNER);
 });
 
@@ -230,6 +230,21 @@ test('çıkarma: yönetici üyeyi çıkarır, çıkarılan cihaz bunu açılış
 
     const after = await fetchHatim(ctx[MEMBER], hatimId, before.group);
     assert.equal(after.reason, 'removed');
+});
+
+test('okuma: üye kimlikleri gelir — yeşil/kırmızı nokta bunlara bakar', async () => {
+    const { hatimId, ctx } = await setup(MEMBER);
+    const first = await fetchHatim(ctx[OWNER], hatimId);
+    assert.deepEqual([...first.group.remote.memberUids].sort(), [MEMBER, OWNER].sort());
+
+    ctx[OTHER] = ctxOf(OTHER);
+    await joinHatim(ctx[OTHER], hatimId, 'Ali');
+    const joined = await fetchHatim(ctx[OWNER], hatimId, first.group);
+    assert.ok(joined.group.remote.memberUids.includes(OTHER), 'katılan listeye girer');
+
+    await removeHatimMember(ctx[OWNER], hatimId, MEMBER);
+    const afterRemove = await fetchHatim(ctx[OWNER], hatimId, joined.group);
+    assert.equal(afterRemove.group.remote.memberUids.includes(MEMBER), false, 'çıkarılan listeden düşer');
 });
 
 test('üye listesi katılma sırasıyla gelir', async () => {

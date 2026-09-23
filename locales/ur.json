@@ -144,7 +144,10 @@
     "hatimStartedToday": "آج شروع ہوا",
     "hatimOngoingDays": "{count} دن سے جاری ہے",
     "hatimCompletedSameDay": "اسی دن مکمل ہوا",
-    "hatimCompletedInDays": "{count} دن میں مکمل ہوا"
+    "hatimCompletedInDays": "{count} دن میں مکمل ہوا",
+    "membersJoinedDot": "کوئی شامل ہوا",
+    "membersLeftDot": "کوئی چلا گیا",
+    "memberJoinedNew": "نیا شامل ہوا"
   },
   "folder": {
     "search": "تلاش",

@@ -144,7 +144,10 @@
     "hatimStartedToday": "bermula hari ini",
     "hatimOngoingDays": "sudah berjalan {count} hari",
     "hatimCompletedSameDay": "selesai pada hari yang sama",
-    "hatimCompletedInDays": "selesai dalam {count} hari"
+    "hatimCompletedInDays": "selesai dalam {count} hari",
+    "membersJoinedDot": "Ada yang menyertai",
+    "membersLeftDot": "Ada yang keluar",
+    "memberJoinedNew": "baru menyertai"
   },
   "folder": {
     "search": "Cari",

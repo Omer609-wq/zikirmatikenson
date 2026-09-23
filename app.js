@@ -159,7 +159,12 @@ import {
     releaseJuz,
     uncompleteJuz
 } from './lib/hatim-groups.js';
-import { dropGoneHatims, isRemoteHatim } from './lib/hatim-remote-map.js';
+import {
+    dropGoneHatims,
+    isRemoteHatim,
+    memberDiff,
+    withSeenMembers
+} from './lib/hatim-remote-map.js';
 import {
     claimJuzRemote,
     completeJuzRemote,
@@ -6605,6 +6610,9 @@ async function renderHatimMembers(ctx, hatimId) {
     if (status) status.hidden = true;
     const me = hatimMemberIdFor(group);
     const iAmOwner = group.ownerId === me;
+    // Fark, işaretlemeden önce hesaplanır: bu bakışta yeni katılanlar hâlâ yeşil
+    // görünsün, sönme bir sonraki açılışta olsun.
+    const { joined } = memberDiff(group);
     list.innerHTML = res.members
         .map((m) => {
             const isOwner = m.uid === group.ownerId;
@@ -6612,6 +6620,9 @@ async function renderHatimMembers(ctx, hatimId) {
                 m.uid === me
                     ? ` <span class="hatim-members__you">(${escapeHtml(t('community.memberYou'))})</span>`
                     : '';
+            const isNew = joined.includes(m.uid)
+                ? `<span class="hatim-dot hatim-dot--joined" role="img" aria-label="${escapeAttr(t('community.memberJoinedNew'))}"></span>`
+                : '';
             const badge = isOwner
                 ? `<span class="hatim-members__badge">${escapeHtml(t('community.memberOwner'))}</span>`
                 : '';
@@ -6619,9 +6630,14 @@ async function renderHatimMembers(ctx, hatimId) {
                 iAmOwner && !isOwner
                     ? `<button type="button" class="hatim-members__remove" data-remove-member="${escapeAttr(m.uid)}" data-member-name="${escapeAttr(m.name || '')}">${escapeHtml(t('community.removeMember'))}</button>`
                     : '';
-            return `<li class="hatim-members__row"><span class="hatim-members__name">${escapeHtml(m.name || t('community.someone'))}${you}</span>${badge}${remove}</li>`;
+            return `<li class="hatim-members__row">${isNew}<span class="hatim-members__name">${escapeHtml(m.name || t('community.someone'))}${you}</span>${badge}${remove}</li>`;
         })
         .join('');
+
+    // Listeye bakıldı: noktalar sönsün. Temel, az önce okunan taze liste.
+    const seenUids = res.members.map((m) => m.uid);
+    commitHatimGroup(withSeenMembers(findHatimGroup(hatimId) || group, seenUids));
+    renderHatimGroupView();
 }
 
 /** Yönetici bir üyeyi çıkarır: bitmemiş cüzleri boşa düşer, bitmişleri kalır. */
@@ -6943,6 +6959,13 @@ function renderHatimGroupView() {
     if (membersLabel && remote) {
         membersLabel.textContent = t('community.membersCount', { count: group.remote.memberCount });
     }
+    // Son bakıştan beri katılan varsa yeşil, ayrılan/çıkarılan varsa kırmızı nokta;
+    // ikisi birden olduysa ikisi de yanar. Liste açılınca sönerler.
+    const changes = remote ? memberDiff(group) : null;
+    const joinedDot = document.getElementById('hatimMembersJoinedDot');
+    if (joinedDot) joinedDot.hidden = !changes || changes.joined.length === 0;
+    const leftDot = document.getElementById('hatimMembersLeftDot');
+    if (leftDot) leftDot.hidden = !changes || changes.left.length === 0;
     const reportBtn = document.getElementById('hatimReportBtn');
     if (reportBtn) reportBtn.hidden = !remote || group.ownerId === me;
 
@@ -7262,7 +7285,8 @@ async function handleCreateHatimGroup() {
         await showHatimSyncError(res.reason);
         return;
     }
-    hatimGroups.push({ ...res.group, order: hatimGroups.length });
+    // Kuran kişi tek üyedir; kendi katılışını "yeni" diye görmesin.
+    hatimGroups.push(withSeenMembers({ ...res.group, order: hatimGroups.length }, [ctx.uid]));
     saveData();
     renderCommunityCardSummary();
     showView('hatimGroupView', res.group.id);
@@ -7326,7 +7350,8 @@ async function handleJoinHatimGroup() {
         await showHatimSyncError(joined.reason);
         return;
     }
-    hatimGroups.push({ ...joined.group, order: hatimGroups.length });
+    // Katılan kişi, o anki üyeleri "yeni katılmış" saymasın.
+    hatimGroups.push(withSeenMembers({ ...joined.group, order: hatimGroups.length }));
     saveData();
     renderCommunityCardSummary();
     showView('hatimGroupView', joined.group.id);

@@ -149,7 +149,10 @@
     "hatimOngoingDays_one": "ongoing for {count} day",
     "hatimCompletedSameDay": "completed the same day",
     "hatimCompletedInDays": "completed in {count} days",
-    "hatimCompletedInDays_one": "completed in {count} day"
+    "hatimCompletedInDays_one": "completed in {count} day",
+    "membersJoinedDot": "Someone joined",
+    "membersLeftDot": "Someone left",
+    "memberJoinedNew": "newly joined"
   },
   "folder": {
     "search": "Search",

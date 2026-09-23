@@ -2962,6 +2962,23 @@ html[lang='ur'] .smart-reminder-weekday {
     font-size: 16px;
 }
 
+/* Üye listesindeki değişiklik noktaları: yeşil katılan, kırmızı ayrılan */
+.hatim-dot {
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+.hatim-dot[hidden] {
+    display: none;
+}
+.hatim-dot--joined {
+    background: var(--hatim-done-fg);
+}
+.hatim-dot--left {
+    background: var(--danger, #dc2626);
+}
+
 /* Üye listesi penceresi */
 .hatim-members {
     list-style: none;
