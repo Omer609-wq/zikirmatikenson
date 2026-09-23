@@ -1920,6 +1920,9 @@ function parseQuranDrawerAyahSelection(ayahCount) {
 function populateQuranDrawerFolderSelect() {
     const select = document.getElementById('quranDrawerFolderDestSelect');
     if (!select) return false;
+    // Kaydetmeden hemen önce de çağrılıyor; kullanıcının seçtiği klasör
+    // listeyi yeniden kurunca sıfırlanmasın diye önce mevcut değeri sakla.
+    const prev = select.value;
     select.innerHTML = '';
     folders.forEach((f) => {
         const opt = document.createElement('option');
@@ -1927,6 +1930,9 @@ function populateQuranDrawerFolderSelect() {
         opt.textContent = f.name;
         select.appendChild(opt);
     });
+    if (prev && folders.some((f) => f.id === prev)) {
+        select.value = prev;
+    }
     return select.options.length > 0;
 }
 
