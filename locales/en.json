@@ -99,7 +99,6 @@
     "surahsTitle": "Surahs covered",
     "surahFull": "complete",
     "deleteConfirm": "Delete the group \"{name}\"? Your juz records in it are deleted too.",
-    "shareText": "Join our hatim group. Code: {code}",
     "shareCopied": "Invite text copied.",
     "juzReading": "Reading",
     "juzDoneShort": "Done",
@@ -152,7 +151,13 @@
     "hatimCompletedInDays_one": "completed in {count} day",
     "membersJoinedDot": "Someone joined",
     "membersLeftDot": "Someone left",
-    "memberJoinedNew": "newly joined"
+    "memberJoinedNew": "newly joined",
+    "shareTitle": "Khatm invite",
+    "shareInvite": "Join the \"{name}\" khatm on Zikirmatik. Pick a juz and read at your own pace.",
+    "shareInviteNoName": "Join our khatm on Zikirmatik. Pick a juz and read at your own pace.",
+    "shareCode": "Join code: {code}",
+    "shareAndroidLabel": "Android",
+    "shareIosLabel": "iPhone"
   },
   "folder": {
     "search": "Search",

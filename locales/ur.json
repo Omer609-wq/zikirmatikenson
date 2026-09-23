@@ -96,7 +96,6 @@
     "surahsTitle": "شامل سورتیں",
     "surahFull": "مکمل",
     "deleteConfirm": "\"{name}\" گروپ حذف کریں؟ اس میں آپ کے پاروں کا ریکارڈ بھی مٹ جائے گا۔",
-    "shareText": "ہمارے ختم گروپ میں شامل ہوں۔ کوڈ: {code}",
     "shareCopied": "دعوتی متن نقل ہو گیا۔",
     "juzReading": "زیرِ مطالعہ",
     "juzDoneShort": "مکمل",
@@ -147,7 +146,13 @@
     "hatimCompletedInDays": "{count} دن میں مکمل ہوا",
     "membersJoinedDot": "کوئی شامل ہوا",
     "membersLeftDot": "کوئی چلا گیا",
-    "memberJoinedNew": "نیا شامل ہوا"
+    "memberJoinedNew": "نیا شامل ہوا",
+    "shareTitle": "ختم کی دعوت",
+    "shareInvite": "Zikirmatik پر \"{name}\" ختم میں شامل ہو جائیے۔ ایک پارہ منتخب کیجیے اور اپنی رفتار سے پڑھیے۔",
+    "shareInviteNoName": "Zikirmatik پر ہمارے ختم میں شامل ہو جائیے۔ ایک پارہ منتخب کیجیے اور اپنی رفتار سے پڑھیے۔",
+    "shareCode": "شمولیت کوڈ: {code}",
+    "shareAndroidLabel": "اینڈرائیڈ",
+    "shareIosLabel": "آئی فون"
   },
   "folder": {
     "search": "تلاش",

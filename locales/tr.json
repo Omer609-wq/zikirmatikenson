@@ -96,7 +96,6 @@
     "surahsTitle": "Kapsadığı sureler",
     "surahFull": "tamamı",
     "deleteConfirm": "\"{name}\" grubu silinsin mi? Bu gruptaki cüz kayıtların da silinir.",
-    "shareText": "Hatim grubumuza katıl. Kod: {code}",
     "shareCopied": "Davet metni kopyalandı.",
     "juzReading": "Okunuyor",
     "juzDoneShort": "Bitti",
@@ -147,7 +146,13 @@
     "hatimCompletedInDays": "{count} günde tamamlandı",
     "membersJoinedDot": "Yeni katılan var",
     "membersLeftDot": "Ayrılan var",
-    "memberJoinedNew": "yeni katıldı"
+    "memberJoinedNew": "yeni katıldı",
+    "shareTitle": "Hatim daveti",
+    "shareInvite": "Zikirmatik'te \"{name}\" hatmine katıl. Bir cüz seç, kendi hızında oku.",
+    "shareInviteNoName": "Zikirmatik'te hatmimize katıl. Bir cüz seç, kendi hızında oku.",
+    "shareCode": "Katılma kodu: {code}",
+    "shareAndroidLabel": "Android",
+    "shareIosLabel": "iPhone"
   },
   "folder": {
     "search": "Ara",

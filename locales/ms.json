@@ -96,7 +96,6 @@
     "surahsTitle": "Surah yang merangkumi",
     "surahFull": "penuh",
     "deleteConfirm": "Padam kumpulan \"{name}\"? Rekod juzuk anda di dalamnya turut dipadam.",
-    "shareText": "Sertai kumpulan khatam kami. Kod: {code}",
     "shareCopied": "Teks jemputan disalin.",
     "juzReading": "Dibaca",
     "juzDoneShort": "Selesai",
@@ -147,7 +146,13 @@
     "hatimCompletedInDays": "selesai dalam {count} hari",
     "membersJoinedDot": "Ada yang menyertai",
     "membersLeftDot": "Ada yang keluar",
-    "memberJoinedNew": "baru menyertai"
+    "memberJoinedNew": "baru menyertai",
+    "shareTitle": "Jemputan khatam",
+    "shareInvite": "Sertai khatam \"{name}\" di Zikirmatik. Pilih satu juzuk dan baca mengikut kelajuan anda.",
+    "shareInviteNoName": "Sertai khatam kami di Zikirmatik. Pilih satu juzuk dan baca mengikut kelajuan anda.",
+    "shareCode": "Kod sertai: {code}",
+    "shareAndroidLabel": "Android",
+    "shareIosLabel": "iPhone"
   },
   "folder": {
     "search": "Cari",

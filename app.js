@@ -9,6 +9,7 @@ import {
     syncNativeSmartReminders
 } from './native-reminders.js';
 import { IN_APP_OVERLAY_IDS } from './lib/overlay-registry.js';
+import { buildHatimInvite, isShareCancelled } from './lib/hatim-invite.js';
 import {
     clampPageIndex,
     findPageIndex,
@@ -7444,23 +7445,43 @@ async function handleJoinHatimGroup() {
     showView('hatimGroupView', joined.group.id);
 }
 
+/**
+ * Davet: grubun adı + katılma kodu + mağaza bağlantıları tek metinde.
+ *
+ * Telefonda Capacitor eklentisi sistemin paylaşım sayfasını açar (WhatsApp,
+ * Telegram, mesajlar...); tarayıcıda Web Share, o da yoksa panoya kopyalanır.
+ * Android WebView Web Share desteklemediği için eklenti şart.
+ */
 async function handleShareHatimGroup() {
     const group = findHatimGroup(currentHatimGroupId);
     if (!group) return;
-    const text = t('community.shareText', { code: group.code });
+    const name = String(group.name || '').trim();
+    const text = buildHatimInvite({
+        invite: name ? t('community.shareInvite', { name }) : t('community.shareInviteNoName'),
+        codeLine: t('community.shareCode', { code: group.code }),
+        androidLabel: t('community.shareAndroidLabel'),
+        iosLabel: t('community.shareIosLabel')
+    });
+    const title = t('community.shareTitle');
     try {
-        if (navigator.share) {
-            await navigator.share({ text });
+        if (isCapacitorNative()) {
+            const { Share } = await import('@capacitor/share');
+            await Share.share({ title, text, dialogTitle: title });
             return;
         }
-    } catch (_) {
-        return; // kullanıcı paylaşımı iptal etti
+        if (navigator.share) {
+            await navigator.share({ title, text });
+            return;
+        }
+    } catch (err) {
+        if (isShareCancelled(err)) return;
+        console.error('hatim share', err); // paylaşım açılmadı: panoya düş
     }
     try {
         await navigator.clipboard.writeText(text);
         await showAppAlert(t('community.shareCopied'));
     } catch (e) {
-        console.error('hatim share', e);
+        console.error('hatim share clipboard', e);
     }
 }
 

@@ -100,7 +100,6 @@
     "surahsTitle": "Sourates couvertes",
     "surahFull": "entière",
     "deleteConfirm": "Supprimer le groupe « {name} » ? Tes juz enregistrés dedans seront aussi supprimés.",
-    "shareText": "Rejoins notre groupe de khatm. Code : {code}",
     "shareCopied": "Texte d’invitation copié.",
     "juzReading": "En cours",
     "juzDoneShort": "Terminé",
@@ -153,7 +152,13 @@
     "hatimCompletedInDays_one": "terminé en {count} jour",
     "membersJoinedDot": "Quelqu’un a rejoint",
     "membersLeftDot": "Quelqu’un est parti",
-    "memberJoinedNew": "vient de rejoindre"
+    "memberJoinedNew": "vient de rejoindre",
+    "shareTitle": "Invitation à la khatma",
+    "shareInvite": "Rejoins la khatma « {name} » sur Zikirmatik. Choisis un juz et lis à ton rythme.",
+    "shareInviteNoName": "Rejoins notre khatma sur Zikirmatik. Choisis un juz et lis à ton rythme.",
+    "shareCode": "Code pour rejoindre : {code}",
+    "shareAndroidLabel": "Android",
+    "shareIosLabel": "iPhone"
   },
   "folder": {
     "search": "Rechercher",

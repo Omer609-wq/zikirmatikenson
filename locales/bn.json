@@ -96,7 +96,6 @@
     "surahsTitle": "অন্তর্ভুক্ত সূরা",
     "surahFull": "সম্পূর্ণ",
     "deleteConfirm": "\"{name}\" গ্রুপটি মুছে ফেলা হবে? এতে থাকা তোমার পারার রেকর্ডও মুছে যাবে।",
-    "shareText": "আমাদের খতম গ্রুপে যোগ দাও। কোড: {code}",
     "shareCopied": "আমন্ত্রণ লেখা কপি হয়েছে।",
     "juzReading": "পড়া হচ্ছে",
     "juzDoneShort": "শেষ",
@@ -147,7 +146,13 @@
     "hatimCompletedInDays": "{count} দিনে শেষ হয়েছে",
     "membersJoinedDot": "নতুন কেউ যোগ দিয়েছে",
     "membersLeftDot": "কেউ চলে গেছে",
-    "memberJoinedNew": "নতুন যোগ দিয়েছে"
+    "memberJoinedNew": "নতুন যোগ দিয়েছে",
+    "shareTitle": "খতমের দাওয়াত",
+    "shareInvite": "Zikirmatik অ্যাপে \"{name}\" খতমে যোগ দিন। একটি পারা বেছে নিন, নিজের গতিতে পড়ুন।",
+    "shareInviteNoName": "Zikirmatik অ্যাপে আমাদের খতমে যোগ দিন। একটি পারা বেছে নিন, নিজের গতিতে পড়ুন।",
+    "shareCode": "যোগদান কোড: {code}",
+    "shareAndroidLabel": "অ্যান্ড্রয়েড",
+    "shareIosLabel": "আইফোন"
   },
   "folder": {
     "search": "খুঁজুন",

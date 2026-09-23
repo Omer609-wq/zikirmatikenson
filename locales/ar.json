@@ -115,7 +115,6 @@
     "surahsTitle": "السور المشمولة",
     "surahFull": "كاملة",
     "deleteConfirm": "هل تحذف مجموعة \"{name}\"؟ ستُحذف أيضًا سجلات أجزائك فيها.",
-    "shareText": "انضم إلى مجموعة الختمة. الرمز: {code}",
     "shareCopied": "نُسخ نص الدعوة.",
     "juzReading": "قيد القراءة",
     "juzDoneShort": "منتهٍ",
@@ -174,7 +173,13 @@
     "hatimCompletedInDays_many": "اكتملت في {count} يومًا",
     "membersJoinedDot": "انضم عضو جديد",
     "membersLeftDot": "غادر عضو",
-    "memberJoinedNew": "انضم حديثًا"
+    "memberJoinedNew": "انضم حديثًا",
+    "shareTitle": "دعوة ختمة",
+    "shareInvite": "انضم إلى ختمة \"{name}\" في تطبيق Zikirmatik. اختر جزءًا واقرأه على مهلك.",
+    "shareInviteNoName": "انضم إلى ختمتنا في تطبيق Zikirmatik. اختر جزءًا واقرأه على مهلك.",
+    "shareCode": "رمز الانضمام: {code}",
+    "shareAndroidLabel": "أندرويد",
+    "shareIosLabel": "آيفون"
   },
   "folder": {
     "search": "بحث",
