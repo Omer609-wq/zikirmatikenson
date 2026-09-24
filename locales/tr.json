@@ -158,7 +158,8 @@
     "cardNextJuz": "sıradaki {juz}. cüz",
     "duaLockedNote": "Bütün cüzler bitince açılacak.",
     "completeDuaMeaning": "Rabbimiz! Bunu bizden kabul buyur. Şüphesiz sen hakkıyla işiten, hakkıyla bilensin.",
-    "completeDuaReady": "Hatim duası açıldı, okuyabilirsin"
+    "completeDuaReady": "Hatim duası açıldı, okuyabilirsin",
+    "memberLeft": "ayrıldı"
   },
   "folder": {
     "search": "Ara",
@@ -233,7 +234,7 @@
     "searchPlaceholder": "İsim, Türkçe anlam veya fazilet/okuma metni (örn. tuvalet, günah, tevekkül)…",
     "tabDua": "Dualar",
     "tabZikir": "Zikirler",
-    "tabSurahs": "Sureler",
+    "tabSurahs": "Kur'an",
     "groupTovbe": "Tövbe ve İstiğfar",
     "groupCount": "{count} dua",
     "verifiedTitle": "Kaynaklı",

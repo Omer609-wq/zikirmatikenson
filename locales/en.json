@@ -162,7 +162,8 @@
     "cardNextJuz": "juz {juz} next",
     "duaLockedNote": "Unlocks when every juz is finished.",
     "completeDuaMeaning": "Our Lord, accept this from us. Indeed, You are the Hearing, the Knowing.",
-    "completeDuaReady": "The hatim du‘a is now open, you can read it"
+    "completeDuaReady": "The hatim du‘a is now open, you can read it",
+    "memberLeft": "left"
   },
   "folder": {
     "search": "Search",
@@ -242,7 +243,7 @@
     "searchPlaceholder": "Name, meaning, or context (e.g. toilet, travel, sleep)…",
     "tabDua": "Duas",
     "tabZikir": "Dhikr",
-    "tabSurahs": "Surahs",
+    "tabSurahs": "Qur'an",
     "groupTovbe": "Repentance & Forgiveness",
     "groupCount": "{count} supplications",
     "groupCount_one": "{count} supplication",

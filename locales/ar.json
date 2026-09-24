@@ -182,7 +182,8 @@
     "cardNextJuz": "التالي الجزء {juz}",
     "duaLockedNote": "يُفتح بعد إتمام جميع الأجزاء.",
     "completeDuaMeaning": "من دعاء إبراهيم وإسماعيل عليهما السلام عند رفع قواعد البيت.",
-    "completeDuaReady": "فُتح دعاء الختمة، يمكنك قراءته"
+    "completeDuaReady": "فُتح دعاء الختمة، يمكنك قراءته",
+    "memberLeft": "غادر"
   },
   "folder": {
     "search": "بحث",
@@ -280,7 +281,7 @@
     "searchPlaceholder": "اسم أو معنى أو سياق (مثل: نوم، سفر، طعام)…",
     "tabDua": "أدعية",
     "tabZikir": "أذكار",
-    "tabSurahs": "السور",
+    "tabSurahs": "القرآن",
     "groupTovbe": "التوبة والاستغفار",
     "groupCount": "{count} دعاء",
     "groupCount_one": "دعاء واحد",

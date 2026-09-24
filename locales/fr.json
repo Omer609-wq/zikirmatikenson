@@ -163,7 +163,8 @@
     "cardNextJuz": "juz {juz} à suivre",
     "duaLockedNote": "Disponible une fois tous les juz terminés.",
     "completeDuaMeaning": "Notre Seigneur, accepte ceci de notre part. Tu es certes l’Audient, l’Omniscient.",
-    "completeDuaReady": "La du‘â du khatm est ouverte, tu peux la lire"
+    "completeDuaReady": "La du‘â du khatm est ouverte, tu peux la lire",
+    "memberLeft": "parti"
   },
   "folder": {
     "search": "Rechercher",
@@ -240,7 +241,7 @@
     "searchPlaceholder": "Nom, sens ou contexte (ex. toilettes, voyage, sommeil)…",
     "tabDua": "Invocations",
     "tabZikir": "Dhikr",
-    "tabSurahs": "Sourates",
+    "tabSurahs": "Coran",
     "groupTovbe": "Repentir et pardon",
     "groupCount": "{count} invocations",
     "groupCount_one": "{count} invocation",

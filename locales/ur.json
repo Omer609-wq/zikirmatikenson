@@ -158,7 +158,8 @@
     "cardNextJuz": "اگلا پارہ {juz}",
     "duaLockedNote": "تمام پارے مکمل ہونے پر کھلے گا۔",
     "completeDuaMeaning": "اے ہمارے رب! یہ ہم سے قبول فرما۔ بے شک تو ہی سننے والا، جاننے والا ہے۔",
-    "completeDuaReady": "ختم کی دعا کھل گئی، آپ پڑھ سکتے ہیں"
+    "completeDuaReady": "ختم کی دعا کھل گئی، آپ پڑھ سکتے ہیں",
+    "memberLeft": "چلا گیا"
   },
   "folder": {
     "search": "تلاش",
@@ -233,7 +234,7 @@
     "searchPlaceholder": "نام، معنی یا سیاق (مثلاً سفر، نیند)…",
     "tabDua": "دعائیں",
     "tabZikir": "اذکار",
-    "tabSurahs": "سورتیں",
+    "tabSurahs": "قرآن",
     "groupTovbe": "توبہ و استغفار",
     "groupCount": "{count} دعائیں",
     "verifiedTitle": "ماخذ کے ساتھ",

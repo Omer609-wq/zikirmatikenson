@@ -158,7 +158,8 @@
     "cardNextJuz": "juz {juz} berikutnya",
     "duaLockedNote": "Terbuka setelah semua juz selesai.",
     "completeDuaMeaning": "Ya Tuhan kami, terimalah ini dari kami. Sesungguhnya Engkau Maha Mendengar lagi Maha Mengetahui.",
-    "completeDuaReady": "Doa khatam sudah terbuka, silakan dibaca"
+    "completeDuaReady": "Doa khatam sudah terbuka, silakan dibaca",
+    "memberLeft": "keluar"
   },
   "folder": {
     "search": "Cari",
@@ -233,7 +234,7 @@
     "searchPlaceholder": "Nama, makna, atau konteks (mis. toilet, perjalanan, tidur)…",
     "tabDua": "Doa",
     "tabZikir": "Zikir",
-    "tabSurahs": "Surah",
+    "tabSurahs": "Al-Qur'an",
     "groupTovbe": "Taubat dan Istigfar",
     "groupCount": "{count} doa",
     "verifiedTitle": "Bersumber",

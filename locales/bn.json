@@ -158,7 +158,8 @@
     "cardNextJuz": "পরবর্তী পারা {juz}",
     "duaLockedNote": "সব পারা শেষ হলে খুলবে।",
     "completeDuaMeaning": "হে আমাদের প্রতিপালক! আমাদের পক্ষ থেকে এটি কবুল করুন। নিশ্চয়ই আপনি সর্বশ্রোতা, সর্বজ্ঞ।",
-    "completeDuaReady": "খতমের দোয়া খুলে গেছে, আপনি পড়তে পারেন"
+    "completeDuaReady": "খতমের দোয়া খুলে গেছে, আপনি পড়তে পারেন",
+    "memberLeft": "চলে গেছে"
   },
   "folder": {
     "search": "খুঁজুন",
@@ -233,7 +234,7 @@
     "searchPlaceholder": "নাম, অর্থ বা প্রসঙ্গ (যেমন টয়লেট, ভ্রমণ, ঘুম)…",
     "tabDua": "দোয়া",
     "tabZikir": "জিকির",
-    "tabSurahs": "সূরা",
+    "tabSurahs": "কুরআন",
     "groupTovbe": "তওবা ও ইস্তিগফার",
     "groupCount": "{count}টি দোয়া",
     "verifiedTitle": "সূত্রসহ",
