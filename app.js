@@ -447,6 +447,19 @@ const DEFAULT_ZIKIR_ARABIC_BY_ID = {
 };
 
 const CLASSIC_ZIKIR_IDS = ['z_1', 'z_2', 'z_3', 'z_4'];
+/**
+ * Varsayılan klasik zikirlerin kütüphane maddesi karşılıkları (Arapça birebir eşleşir):
+ * z_1 سُبْحَانَ اللَّهِ→lib_6, z_2 الْحَمْدُ لِلَّهِ→lib_3, z_3 اللَّهُ أَكْبَرُ→lib_5, z_4 لَا إِلَهَ إِلَّا اللَّهُ→lib_4.
+ * Bu zikirler libraryId taşımaz (adları İngilizce/Türkçe yazımı farklı olduğundan
+ * ada göre çözülemiyorlardı); Keşfet'teki "ekli" işareti bu haritayla eşlenir.
+ */
+const CLASSIC_ZIKIR_LIBRARY_IDS = { z_1: 'lib_6', z_2: 'lib_3', z_3: 'lib_5', z_4: 'lib_4' };
+
+/** Keşfet "ekli" işareti için zikrin etkin kütüphane kimliği (klasikler dahil). */
+function effectiveLibraryIdForBadge(z) {
+    if (!z) return null;
+    return z.libraryId || CLASSIC_ZIKIR_LIBRARY_IDS[z.id] || null;
+}
 
 function classicZikirMeaningKey(zid) {
     return `defaults.zikirMeaning.${zid}`;
@@ -8120,7 +8133,7 @@ function closeAllLibraryAddedHints() {
  * yayılması durdurulur.
  */
 function appendLibraryAddedBadge(card, z) {
-    const inFolders = getFoldersForLibraryItem(z.id, zikirs, folders);
+    const inFolders = getFoldersForLibraryItem(z.id, zikirs, folders, effectiveLibraryIdForBadge);
     if (inFolders.length === 0) return;
 
     const badge = document.createElement('button');
