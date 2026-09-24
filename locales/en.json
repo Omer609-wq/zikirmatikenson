@@ -163,7 +163,8 @@
     "duaLockedNote": "Unlocks when every juz is finished.",
     "completeDuaMeaning": "Our Lord, accept this from us. Indeed, You are the Hearing, the Knowing.",
     "completeDuaReady": "The hatim du‘a is now open, you can read it",
-    "memberLeft": "left"
+    "memberLeft": "left",
+    "completedOn": "Completed · {date}"
   },
   "folder": {
     "search": "Search",

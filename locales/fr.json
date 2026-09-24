@@ -164,7 +164,8 @@
     "duaLockedNote": "Disponible une fois tous les juz terminés.",
     "completeDuaMeaning": "Notre Seigneur, accepte ceci de notre part. Tu es certes l’Audient, l’Omniscient.",
     "completeDuaReady": "La du‘â du khatm est ouverte, tu peux la lire",
-    "memberLeft": "parti"
+    "memberLeft": "parti",
+    "completedOn": "Terminé · {date}"
   },
   "folder": {
     "search": "Rechercher",

@@ -159,7 +159,8 @@
     "duaLockedNote": "تمام پارے مکمل ہونے پر کھلے گا۔",
     "completeDuaMeaning": "اے ہمارے رب! یہ ہم سے قبول فرما۔ بے شک تو ہی سننے والا، جاننے والا ہے۔",
     "completeDuaReady": "ختم کی دعا کھل گئی، آپ پڑھ سکتے ہیں",
-    "memberLeft": "چلا گیا"
+    "memberLeft": "چلا گیا",
+    "completedOn": "مکمل · {date}"
   },
   "folder": {
     "search": "تلاش",

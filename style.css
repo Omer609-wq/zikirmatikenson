@@ -2394,6 +2394,7 @@ html[lang='ur'] .smart-reminder-weekday {
     background: var(--surface-card);
     border: 1px solid var(--surface-border);
     border-radius: var(--surface-radius);
+    position: relative; /* seçim dairesi kartın DIŞINA (soluna) absolute konumlanır */
     padding: 0.85rem 0.95rem 0.85rem 0.65rem;
     cursor: pointer;
     /* Varsayılan: dikey kaydırma; uzun basarken .drag-reorder-pending ile none olur */
@@ -2403,7 +2404,7 @@ html[lang='ur'] .smart-reminder-weekday {
     justify-content: flex-start;
     text-align: left;
     gap: 0.45rem;
-    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.22s cubic-bezier(0.25, 0.8, 0.35, 1);
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.22s cubic-bezier(0.25, 0.8, 0.35, 1), margin-left 0.2s ease;
     box-shadow: var(--surface-shadow);
 }
 
@@ -3069,6 +3070,14 @@ html[lang='ur'] .smart-reminder-weekday {
     margin-top: 0.5rem;
 }
 
+/* Tamamlanmış hatim satırı: listenin altında, sönük; çubuğu yeşil ve dolu. */
+.hatim-group-row--done {
+    opacity: 0.72;
+}
+.hatim-group-row--done .hatim-group-row__fill {
+    background: var(--hatim-done-fg);
+}
+
 /* Üye listesindeki değişiklik noktaları: yeşil katılan, kırmızı ayrılan */
 .hatim-dot {
     flex: 0 0 auto;
@@ -3576,21 +3585,24 @@ html[data-theme="black"] #updateBannerDetailOverlay.active .update-banner-spotli
     display: none;
 }
 
+/* Seçim dairesi kartın DIŞINDA, solda; kart sağa kayar. */
 .folder-card__check {
-    flex: 0 0 auto;
+    position: absolute;
+    left: -2.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 0;
-    min-width: 0;
-    overflow: hidden;
     opacity: 0;
     pointer-events: none;
-    transition: width 0.2s ease, opacity 0.15s ease, min-width 0.2s ease;
+    transition: opacity 0.15s ease;
+}
+.folder-grid--select-mode .folder-card {
+    margin-left: 2.5rem;
 }
 .folder-grid--select-mode .folder-card__check {
-    width: 2.25rem;
-    min-width: 2.25rem;
     opacity: 1;
     pointer-events: auto;
 }
@@ -3662,8 +3674,7 @@ html[data-theme="black"] #updateBannerDetailOverlay.active .update-banner-spotli
 }
 .folder-grid--select-mode .row-drag-handle,
 .zikir-list--select-mode .row-drag-handle {
-    pointer-events: none;
-    opacity: 0.28;
+    display: none;
 }
 
 .zikir-list li {
@@ -4009,12 +4020,13 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
     background: var(--surface-card);
     border: 1px solid var(--surface-border);
     border-radius: var(--surface-radius);
+    position: relative; /* seçim dairesi kartın DIŞINA (soluna) absolute konumlanır */
     padding: 0.85rem 1rem;
     margin-bottom: 0.65rem;
     cursor: pointer;
     touch-action: pan-y;
     box-shadow: var(--surface-shadow);
-    transition: background 0.15s, border-color 0.15s, transform 0.22s cubic-bezier(0.25, 0.8, 0.35, 1);
+    transition: background 0.15s, border-color 0.15s, transform 0.22s cubic-bezier(0.25, 0.8, 0.35, 1), margin-left 0.2s ease;
 }
 .zikir-list li:active {
     background: var(--surface-card-active);

@@ -183,7 +183,8 @@
     "duaLockedNote": "يُفتح بعد إتمام جميع الأجزاء.",
     "completeDuaMeaning": "من دعاء إبراهيم وإسماعيل عليهما السلام عند رفع قواعد البيت.",
     "completeDuaReady": "فُتح دعاء الختمة، يمكنك قراءته",
-    "memberLeft": "غادر"
+    "memberLeft": "غادر",
+    "completedOn": "اكتملت · {date}"
   },
   "folder": {
     "search": "بحث",

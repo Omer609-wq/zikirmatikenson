@@ -159,7 +159,8 @@
     "duaLockedNote": "Bütün cüzler bitince açılacak.",
     "completeDuaMeaning": "Rabbimiz! Bunu bizden kabul buyur. Şüphesiz sen hakkıyla işiten, hakkıyla bilensin.",
     "completeDuaReady": "Hatim duası açıldı, okuyabilirsin",
-    "memberLeft": "ayrıldı"
+    "memberLeft": "ayrıldı",
+    "completedOn": "Tamamlandı · {date}"
   },
   "folder": {
     "search": "Ara",

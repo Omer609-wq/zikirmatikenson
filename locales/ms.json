@@ -159,7 +159,8 @@
     "duaLockedNote": "Terbuka selepas semua juzuk selesai.",
     "completeDuaMeaning": "Wahai Tuhan kami, terimalah ini daripada kami. Sesungguhnya Engkau Maha Mendengar lagi Maha Mengetahui.",
     "completeDuaReady": "Doa khatam sudah dibuka, anda boleh membacanya",
-    "memberLeft": "keluar"
+    "memberLeft": "keluar",
+    "completedOn": "Selesai · {date}"
   },
   "folder": {
     "search": "Cari",

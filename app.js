@@ -159,7 +159,10 @@ import {
     getNextMemberJuz,
     hatimTimeline,
     isHatimComplete,
+    isHatimFrozen,
     isHatimLimitReached,
+    hatimCompletedAt,
+    tidyHatimArchive,
     isPersonalHatim,
     isValidHatimCode,
     listMemberJuz,
@@ -5571,6 +5574,7 @@ function showView(viewId, param = null, options = {}) {
         resetLibraryCategoryTab();
         renderLibrary();
     } else if (viewId === 'communityView') {
+        applyHatimHousekeeping();
         renderCommunityView();
         void syncRemoteHatimsInBackground();
     } else if (viewId === 'hatimGroupView') {
@@ -6573,6 +6577,8 @@ async function askHatimName(kind) {
 async function refreshRemoteHatim(id, ctx = null) {
     const group = findHatimGroup(id);
     if (!isRemoteHatim(group)) return 'local';
+    // Donmuş hatim artık yerel bir kayıt: sunucuda değişecek bir şeyi yok.
+    if (isHatimFrozen(group)) return 'frozen';
     const context = ctx || (await getHatimContextQuiet());
     if (!context) return 'unavailable';
     const res = await fetchHatim(context, id, group);
@@ -6586,7 +6592,7 @@ async function refreshRemoteHatim(id, ctx = null) {
 
 /** Topluluk açılınca: paylaşımlı grupları arka planda eşle, hayalet grupları at. */
 async function syncRemoteHatimsInBackground() {
-    const ids = hatimGroups.filter(isRemoteHatim).map((g) => g.id);
+    const ids = hatimGroups.filter((g) => isRemoteHatim(g) && !isHatimFrozen(g)).map((g) => g.id);
     if (!ids.length) return;
     const ctx = await getHatimContextQuiet();
     if (!ctx) return;
@@ -6958,17 +6964,53 @@ function syncHatimTabs() {
     if (sharedPanel) sharedPanel.hidden = currentHatimTab === HATIM_KIND_PERSONAL;
 }
 
+/**
+ * Arşiv bakımı: tavanı aşan en eski hatimler düşer, donmuşların senkron
+ * defteri atılır. Açılışta ve Topluluk'a her girişte çalışır — ikisi de ucuz,
+ * listedeki grup sayısı en fazla 35.
+ */
+function applyHatimHousekeeping() {
+    const { groups, changed } = tidyHatimArchive(hatimGroups);
+    if (!changed) return;
+    hatimGroups = groups;
+    saveData();
+}
+
+/** Hatim tarihleri tek yerden: "3 Ekim 2026". */
+function formatHatimDate(ms) {
+    return new Date(ms).toLocaleDateString(getLocaleTag(), {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
+}
+
+/** Devam edenler üstte; tamamlananlar altta, en son biten önce. */
+function sortHatimsForList(groups) {
+    const devam = groups.filter((g) => !isHatimComplete(g));
+    const bitmis = groups
+        .filter((g) => isHatimComplete(g))
+        .sort((a, b) => hatimCompletedAt(b) - hatimCompletedAt(a));
+    return devam.concat(bitmis);
+}
+
 /** Hatim satırı — hem kişisel hem grup listesinde aynı görünüm. */
 function hatimRowHtml(group) {
     const progress = getHatimProgress(group);
     const percent = Math.round(((progress.done + progress.claimed) / progress.total) * 100);
+    // Biten hatimde kalan cüz sayısı değil, ne zaman bittiği anlamlı.
+    const complete = isHatimComplete(group);
+    const doneAt = complete ? hatimCompletedAt(group) : 0;
+    const meta = complete
+        ? doneAt
+            ? t('community.completedOn', { date: formatHatimDate(doneAt) })
+            : t('community.completeTitle')
+        : t('community.groupProgress', { done: progress.done, total: progress.total });
     return `
-        <button type="button" class="hatim-group-row" data-group-id="${escapeAttr(group.id)}">
+        <button type="button" class="hatim-group-row${complete ? ' hatim-group-row--done' : ''}" data-group-id="${escapeAttr(group.id)}">
             <span class="hatim-group-row__text">
                 <span class="hatim-group-row__name">${escapeHtml(group.name)}</span>
-                <span class="hatim-group-row__meta">${escapeHtml(
-                    t('community.groupProgress', { done: progress.done, total: progress.total })
-                )}</span>
+                <span class="hatim-group-row__meta">${escapeHtml(meta)}</span>
                 <span class="hatim-group-row__bar"><span class="hatim-group-row__fill" style="width:${percent}%"></span></span>
             </span>
             <span class="material-icons-outlined hatim-group-row__chevron" aria-hidden="true">chevron_right</span>
@@ -6988,14 +7030,15 @@ function renderCommunityView() {
     if (!list) return;
 
     syncHatimTabs();
-    const shared = listHatimsByKind(HATIM_KIND_SHARED);
-    const personal = listHatimsByKind(HATIM_KIND_PERSONAL);
+    const shared = sortHatimsForList(listHatimsByKind(HATIM_KIND_SHARED));
+    const personal = sortHatimsForList(listHatimsByKind(HATIM_KIND_PERSONAL));
 
     // Cüzlerim — grupları tek listede toplar. Kişisel hatimde bütün cüzler
-    // zaten kullanıcının olduğu için orada anlamı yok.
-    const mine = shared.flatMap((g) =>
-        listMemberJuz(g, hatimMemberIdFor(g)).map((juz) => ({ group: g, juz }))
-    );
+    // zaten kullanıcının olduğu için orada anlamı yok. Biten hatimler de
+    // dışarıda: elde iş kalmadı, girerlerse liste eski cüzlerle dolardı.
+    const mine = shared
+        .filter((g) => !isHatimComplete(g))
+        .flatMap((g) => listMemberJuz(g, hatimMemberIdFor(g)).map((juz) => ({ group: g, juz })));
     if (mineBlock) mineBlock.hidden = mine.length === 0;
     if (mineList) {
         mineList.innerHTML = mine
@@ -7054,11 +7097,7 @@ function renderHatimGroupView() {
         const timeline = hatimTimeline(group);
         meta.hidden = !timeline;
         if (timeline) {
-            const date = new Date(timeline.startedAt).toLocaleDateString(getLocaleTag(), {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
+            const date = formatHatimDate(timeline.startedAt);
             let span;
             if (timeline.complete) {
                 span = timeline.days === 0
@@ -7074,10 +7113,13 @@ function renderHatimGroupView() {
     }
 
     const personal = isPersonalHatim(group);
+    // Donmuş hatim: canlı bilgiler (kod, üye sayısı) artık güncellenmiyor,
+    // gösterilirse yalan söylerler. Geriye tarih, cüz tablosu ve dua kalır.
+    const frozen = isHatimFrozen(group);
 
-    // Kişisel hatimde katılma kodu ve paylaşım anlamsız.
+    // Kişisel hatimde katılma kodu ve paylaşım anlamsız; donmuşta da öyle.
     const shareBtn = document.getElementById('hatimShareBtn');
-    if (shareBtn) shareBtn.hidden = personal;
+    if (shareBtn) shareBtn.hidden = personal || frozen;
     const codeValue = document.getElementById('hatimCodeValue');
     if (codeValue) codeValue.textContent = group.code;
 
@@ -7116,7 +7158,7 @@ function renderHatimGroupView() {
 
     // Üyeler ve şikâyet yalnızca sunucudaki grupta anlamlı. Yönetici kendi
     // grubunu şikâyet etmez.
-    const remote = isRemoteHatim(group);
+    const remote = isRemoteHatim(group) && !frozen;
     const membersBtn = document.getElementById('hatimMembersBtn');
     if (membersBtn) membersBtn.hidden = !remote;
     const membersLabel = document.getElementById('hatimMembersLabel');
