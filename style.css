@@ -3606,6 +3606,11 @@ html[data-theme="black"] #updateBannerDetailOverlay.active .update-banner-spotli
     opacity: 1;
     pointer-events: auto;
 }
+/* Mevsimsel kart kuralı check'i position:relative yapıyordu; dışarıda absolute kalsın. */
+.folder-card--seasonal .folder-card__check {
+    position: absolute;
+    z-index: 1;
+}
 /* Yuvarlak seçim işareti (native kutu yerine): boş halka → seçilince yeşil + tik. */
 .folder-card__check input,
 .zikir-row__check input {
@@ -3683,20 +3688,22 @@ html[data-theme="black"] #updateBannerDetailOverlay.active .update-banner-spotli
     gap: 0.35rem;
 }
 .zikir-list li .zikir-row__check {
-    flex: 0 0 auto;
+    position: absolute;
+    left: -2.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2.5rem;
     display: flex;
-    align-items: flex-start;
-    padding-top: 0.2rem;
-    width: 0;
-    min-width: 0;
-    overflow: hidden;
+    align-items: center;
+    justify-content: center;
     opacity: 0;
     pointer-events: none;
-    transition: width 0.2s ease, opacity 0.15s ease, min-width 0.2s ease;
+    transition: opacity 0.15s ease;
+}
+.zikir-list--select-mode li {
+    margin-left: 2.5rem;
 }
 .zikir-list--select-mode li .zikir-row__check {
-    width: 2.25rem;
-    min-width: 2.25rem;
     opacity: 1;
     pointer-events: auto;
 }
