@@ -5576,6 +5576,7 @@ function showView(viewId, param = null, options = {}) {
     } else if (viewId === 'communityView') {
         applyHatimHousekeeping();
         renderCommunityView();
+        warmHatimSync();
         void syncRemoteHatimsInBackground();
     } else if (viewId === 'hatimGroupView') {
         if (param != null) currentHatimGroupId = param;
@@ -6583,7 +6584,8 @@ async function refreshRemoteHatim(id, ctx = null) {
     if (!context) return 'unavailable';
     const res = await fetchHatim(context, id, group);
     if (res.ok) {
-        if (findHatimGroup(id)) commitHatimGroup(res.group);
+        // Eşitleme kullanıcının beklediği bir iş değil: yazma ertelenir.
+        if (findHatimGroup(id)) commitHatimGroup(res.group, { defer: true });
         return 'ok';
     }
     if (res.reason === 'gone' || res.reason === 'removed') dropHatimLocally(id);
@@ -6591,6 +6593,22 @@ async function refreshRemoteHatim(id, ctx = null) {
 }
 
 /** Topluluk açılınca: paylaşımlı grupları arka planda eşle, hayalet grupları at. */
+let hatimSyncWarmed = false;
+
+/**
+ * Topluluk açılır açılmaz oturumu hazırlar: ilk cüz dokunuşu modül yükleme +
+ * anonim giriş + bağlantı kurma bedelini ödemesin — kasma olarak hissedilen
+ * şeyin büyük kısmı o ilk kurulum.
+ *
+ * Ana ekranda yapılmıyor: anonim giriş sunucuda hesap açar, Topluluk'a hiç
+ * girmeyecek kullanıcı için gereksiz. Sessiz ve beklemesiz; başarısızsa iz bırakmaz.
+ */
+function warmHatimSync() {
+    if (hatimSyncWarmed) return;
+    hatimSyncWarmed = true;
+    void getHatimContextQuiet();
+}
+
 async function syncRemoteHatimsInBackground() {
     const ids = hatimGroups.filter((g) => isRemoteHatim(g) && !isHatimFrozen(g)).map((g) => g.id);
     if (!ids.length) return;
@@ -6796,7 +6814,7 @@ async function renderHatimMembers(ctx, hatimId) {
     // Listeye bakıldı: noktalar sönsün, ayrılanlar düşsün. Adlar da saklanır ki
     // bir dahakine ayrılan kişi adıyla gösterilebilsin.
     const seenMembers = res.members.map((m) => ({ uid: m.uid, name: m.name || '' }));
-    commitHatimGroup(withSeenMembers(findHatimGroup(hatimId) || group, seenMembers));
+    commitHatimGroup(withSeenMembers(findHatimGroup(hatimId) || group, seenMembers), { defer: true });
     renderHatimGroupView();
 }
 
@@ -6863,11 +6881,19 @@ function findHatimGroup(id) {
 }
 
 /** Model saf olduğu için güncellenmiş grubu diziye geri yazarız. */
-function commitHatimGroup(next) {
+/**
+ * @param {object} next
+ * @param {{ defer?: boolean }} [opts] `defer`: yazmayı ertele. Arka plan
+ *   eşitlemesi beş grubu paralel yeniliyor; her biri ayrı ayrı tüm veriyi diske
+ *   yazarsa eski telefonda arka arkaya takılma olur. Ertelenen yazma uygulama
+ *   arka plana atılırken zaten diske işleniyor (flushSave).
+ */
+function commitHatimGroup(next, { defer = false } = {}) {
     const idx = hatimGroups.findIndex((g) => g.id === next.id);
     if (idx < 0) return;
     hatimGroups[idx] = next;
-    saveData();
+    if (defer) scheduleSave();
+    else saveData();
 }
 
 function hatimSurahName(n) {

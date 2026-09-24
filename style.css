@@ -6864,9 +6864,10 @@ input:checked + .slider:before { transform: translateX(22px); }
 }
 .modal-overlay.app-dialog-overlay {
     z-index: 50;
+    /* Bulanıklık yok: tam ekran blur eski WebView'da her açılışta pahalı bir
+       yeniden boyama demek (genel modal katmanından da bu yüzden kaldırılmıştı).
+       Koyu zemin aynı ayrımı bedelsiz veriyor. */
     background: var(--modal-backdrop-dialog, rgba(2, 6, 23, 0.82));
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
 }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
 
