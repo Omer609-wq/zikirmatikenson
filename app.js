@@ -8251,7 +8251,13 @@ function isLibraryCardLocked(z, premiumUser) {
 }
 
 function renderLibrary() {
-    void ensurePremiumLibraryLoaded().then(() => renderLibraryContent());
+    // Premium kütüphane yüklenemese bile (ör. ağ hatası) taban kütüphaneyle çiz.
+    ensurePremiumLibraryLoaded()
+        .then(() => renderLibraryContent())
+        .catch((e) => {
+            console.warn('Zikirmatik: premium kütüphane yüklenemedi, taban listeyle devam', e);
+            renderLibraryContent();
+        });
 }
 
 function renderLibraryContent() {
@@ -8328,7 +8334,13 @@ function appendLibraryGroupCard(parent, group) {
 }
 
 function renderLibraryGroupDetail() {
-    void ensurePremiumLibraryLoaded().then(() => renderLibraryGroupContent());
+    // Premium kütüphane yüklenemese bile grup içeriğini taban veriyle çiz.
+    ensurePremiumLibraryLoaded()
+        .then(() => renderLibraryGroupContent())
+        .catch((e) => {
+            console.warn('Zikirmatik: premium kütüphane yüklenemedi, taban listeyle devam', e);
+            renderLibraryGroupContent();
+        });
 }
 
 function renderLibraryGroupContent() {
