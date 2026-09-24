@@ -3070,6 +3070,36 @@ html[lang='ur'] .smart-reminder-weekday {
     margin-top: 0.5rem;
 }
 
+/* "Tamamlananlar (12)" — katlı bölüm başlığı. */
+.hatim-archive__toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.5rem 0.1rem;
+    background: none;
+    border: 0;
+    color: var(--text-gray);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.hatim-archive__toggle[hidden] {
+    display: none;
+}
+.hatim-archive__toggle .material-icons-outlined {
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+.hatim-archive__toggle[aria-expanded="true"] .material-icons-outlined {
+    transform: rotate(180deg);
+}
+.hatim-archive {
+    margin-top: 0.2rem;
+}
+
 /* Tamamlanmış hatim satırı: listenin altında, sönük; çubuğu yeşil ve dolu. */
 .hatim-group-row--done {
     opacity: 0.72;

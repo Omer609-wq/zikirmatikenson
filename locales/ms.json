@@ -160,7 +160,8 @@
     "completeDuaMeaning": "Wahai Tuhan kami, terimalah ini daripada kami. Sesungguhnya Engkau Maha Mendengar lagi Maha Mengetahui.",
     "completeDuaReady": "Doa khatam sudah dibuka, anda boleh membacanya",
     "memberLeft": "keluar",
-    "completedOn": "Selesai · {date}"
+    "completedOn": "Selesai · {date}",
+    "archiveTitle": "Selesai ({count})"
   },
   "folder": {
     "search": "Cari",

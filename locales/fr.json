@@ -165,7 +165,8 @@
     "completeDuaMeaning": "Notre Seigneur, accepte ceci de notre part. Tu es certes l’Audient, l’Omniscient.",
     "completeDuaReady": "La du‘â du khatm est ouverte, tu peux la lire",
     "memberLeft": "parti",
-    "completedOn": "Terminé · {date}"
+    "completedOn": "Terminé · {date}",
+    "archiveTitle": "Terminés ({count})"
   },
   "folder": {
     "search": "Rechercher",

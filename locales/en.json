@@ -164,7 +164,8 @@
     "completeDuaMeaning": "Our Lord, accept this from us. Indeed, You are the Hearing, the Knowing.",
     "completeDuaReady": "The hatim du‘a is now open, you can read it",
     "memberLeft": "left",
-    "completedOn": "Completed · {date}"
+    "completedOn": "Completed · {date}",
+    "archiveTitle": "Completed ({count})"
   },
   "folder": {
     "search": "Search",

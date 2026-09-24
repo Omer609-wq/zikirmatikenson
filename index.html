@@ -121,6 +121,13 @@
                     <div class="hatim-group-list" id="hatimPersonalList"></div>
                     <p class="hatim-empty" id="hatimPersonalEmpty" data-i18n="community.personalEmptyHint">Kendi hatmini başlat. 30 cüz otomatik eklenir, okudukça işaretlersin.</p>
 
+                    <!-- Tamamlananlar katlı gelir: liste kuyruğu uzayıp devam edeni bastırmasın. -->
+                    <button type="button" class="hatim-archive__toggle" id="hatimPersonalArchiveToggle" aria-expanded="false" aria-controls="hatimPersonalArchiveList" hidden>
+                        <span class="material-icons-outlined" aria-hidden="true">expand_more</span>
+                        <span id="hatimPersonalArchiveLabel">Tamamlananlar</span>
+                    </button>
+                    <div class="hatim-group-list hatim-archive" id="hatimPersonalArchiveList" hidden></div>
+
                     <button class="primary-btn" id="newPersonalHatimBtn" style="margin-top: 1rem;">
                         <span class="material-icons-outlined">add</span> <span data-i18n="community.newPersonalHatim">Hatim Başlat</span>
                     </button>
@@ -142,6 +149,13 @@
                     <h2 class="hatim-section-title" id="hatimGroupsTitle" data-i18n="community.groupsTitle">Hatim gruplarım</h2>
                     <div class="hatim-group-list" id="hatimGroupList"></div>
                     <p class="hatim-empty" id="hatimEmptyHint" data-i18n="community.emptyHint">Henüz hatim grubun yok. Yeni bir grup oluştur ya da sana verilen kodla var olan bir gruba katıl.</p>
+
+                    <!-- Tamamlananlar katlı gelir: liste kuyruğu uzayıp devam edeni bastırmasın. -->
+                    <button type="button" class="hatim-archive__toggle" id="hatimArchiveToggle" aria-expanded="false" aria-controls="hatimArchiveList" hidden>
+                        <span class="material-icons-outlined" aria-hidden="true">expand_more</span>
+                        <span id="hatimArchiveLabel">Tamamlananlar</span>
+                    </button>
+                    <div class="hatim-group-list hatim-archive" id="hatimArchiveList" hidden></div>
 
                     <button class="primary-btn" id="newHatimGroupBtn" style="margin-top: 1rem;">
                         <span class="material-icons-outlined">add</span> <span data-i18n="community.newGroup">Hatim Grubu Oluştur</span>

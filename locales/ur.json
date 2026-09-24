@@ -160,7 +160,8 @@
     "completeDuaMeaning": "اے ہمارے رب! یہ ہم سے قبول فرما۔ بے شک تو ہی سننے والا، جاننے والا ہے۔",
     "completeDuaReady": "ختم کی دعا کھل گئی، آپ پڑھ سکتے ہیں",
     "memberLeft": "چلا گیا",
-    "completedOn": "مکمل · {date}"
+    "completedOn": "مکمل · {date}",
+    "archiveTitle": "مکمل شدہ ({count})"
   },
   "folder": {
     "search": "تلاش",

@@ -160,7 +160,8 @@
     "completeDuaMeaning": "হে আমাদের প্রতিপালক! আমাদের পক্ষ থেকে এটি কবুল করুন। নিশ্চয়ই আপনি সর্বশ্রোতা, সর্বজ্ঞ।",
     "completeDuaReady": "খতমের দোয়া খুলে গেছে, আপনি পড়তে পারেন",
     "memberLeft": "চলে গেছে",
-    "completedOn": "সম্পন্ন · {date}"
+    "completedOn": "সম্পন্ন · {date}",
+    "archiveTitle": "সম্পন্ন ({count})"
   },
   "folder": {
     "search": "খুঁজুন",

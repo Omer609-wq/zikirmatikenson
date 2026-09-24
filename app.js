@@ -6985,13 +6985,45 @@ function formatHatimDate(ms) {
     });
 }
 
-/** Devam edenler üstte; tamamlananlar altta, en son biten önce. */
-function sortHatimsForList(groups) {
-    const devam = groups.filter((g) => !isHatimComplete(g));
-    const bitmis = groups
-        .filter((g) => isHatimComplete(g))
-        .sort((a, b) => hatimCompletedAt(b) - hatimCompletedAt(a));
-    return devam.concat(bitmis);
+/** Devam edenler ve tamamlananlar ayrı: tamamlananlar katlı bölümde, yenisi önce. */
+function splitHatimsForList(groups) {
+    return {
+        active: groups.filter((g) => !isHatimComplete(g)),
+        done: groups
+            .filter((g) => isHatimComplete(g))
+            .sort((a, b) => hatimCompletedAt(b) - hatimCompletedAt(a))
+    };
+}
+
+/**
+ * "Tamamlananlar (12)" bölümü. Her girişte kapalı başlar: geçmiş bir tık
+ * uzakta dursun, listenin başını kaplamasın.
+ */
+function renderHatimArchiveSection(prefix, groups) {
+    const toggle = document.getElementById(`${prefix}Toggle`);
+    const list = document.getElementById(`${prefix}List`);
+    const label = document.getElementById(`${prefix}Label`);
+    if (!toggle || !list) return;
+    if (!groups.length) {
+        toggle.hidden = true;
+        list.hidden = true;
+        list.innerHTML = '';
+        return;
+    }
+    toggle.hidden = false;
+    toggle.setAttribute('aria-expanded', 'false');
+    if (label) label.textContent = t('community.archiveTitle', { count: groups.length });
+    list.innerHTML = groups.map(hatimRowHtml).join('');
+    list.hidden = true;
+}
+
+function toggleHatimArchive(prefix) {
+    const toggle = document.getElementById(`${prefix}Toggle`);
+    const list = document.getElementById(`${prefix}List`);
+    if (!toggle || !list) return;
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', open ? 'false' : 'true');
+    list.hidden = open;
 }
 
 /** Hatim satırı — hem kişisel hem grup listesinde aynı görünüm. */
@@ -7030,8 +7062,10 @@ function renderCommunityView() {
     if (!list) return;
 
     syncHatimTabs();
-    const shared = sortHatimsForList(listHatimsByKind(HATIM_KIND_SHARED));
-    const personal = sortHatimsForList(listHatimsByKind(HATIM_KIND_PERSONAL));
+    const sharedSplit = splitHatimsForList(listHatimsByKind(HATIM_KIND_SHARED));
+    const personalSplit = splitHatimsForList(listHatimsByKind(HATIM_KIND_PERSONAL));
+    const shared = sharedSplit.active;
+    const personal = personalSplit.active;
 
     // Cüzlerim — grupları tek listede toplar. Kişisel hatimde bütün cüzler
     // zaten kullanıcının olduğu için orada anlamı yok. Biten hatimler de
@@ -7059,15 +7093,18 @@ function renderCommunityView() {
     }
 
     if (groupsTitle) groupsTitle.hidden = shared.length === 0;
-    if (emptyHint) emptyHint.hidden = shared.length > 0;
+    // Boş ipucu yalnız hiç hatim yokken: arşivi olan kullanıcı "hiç grubun yok" görmesin.
+    if (emptyHint) emptyHint.hidden = shared.length > 0 || sharedSplit.done.length > 0;
     list.innerHTML = shared.map(hatimRowHtml).join('');
+    renderHatimArchiveSection('hatimArchive', sharedSplit.done);
 
     const personalList = document.getElementById('hatimPersonalList');
     const personalEmpty = document.getElementById('hatimPersonalEmpty');
     const personalLimit = document.getElementById('hatimPersonalLimitWarning');
     const newPersonalBtn = document.getElementById('newPersonalHatimBtn');
     if (personalList) personalList.innerHTML = personal.map(hatimRowHtml).join('');
-    if (personalEmpty) personalEmpty.hidden = personal.length > 0;
+    if (personalEmpty) personalEmpty.hidden = personal.length > 0 || personalSplit.done.length > 0;
+    renderHatimArchiveSection('hatimPersonalArchive', personalSplit.done);
 
     // Sınır kip başına: bir sekmenin dolması diğerini kapatmaz.
     const sharedFull = isHatimLimitReached(hatimGroups, HATIM_KIND_SHARED);
@@ -7685,7 +7722,14 @@ function setupHatimListeners() {
         if (btn) void handleRemoveHatimMember(btn.dataset.removeMember, btn.dataset.memberName || '');
     });
 
-    ['hatimGroupList', 'hatimPersonalList'].forEach((id) => {
+    document.getElementById('hatimArchiveToggle')?.addEventListener('click', () => {
+        toggleHatimArchive('hatimArchive');
+    });
+    document.getElementById('hatimPersonalArchiveToggle')?.addEventListener('click', () => {
+        toggleHatimArchive('hatimPersonalArchive');
+    });
+
+    ['hatimGroupList', 'hatimPersonalList', 'hatimArchiveList', 'hatimPersonalArchiveList'].forEach((id) => {
         document.getElementById(id)?.addEventListener('click', (e) => {
             const row = e.target.closest('.hatim-group-row');
             if (row) showView('hatimGroupView', row.dataset.groupId);

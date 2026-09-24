@@ -160,7 +160,8 @@
     "completeDuaMeaning": "Rabbimiz! Bunu bizden kabul buyur. Şüphesiz sen hakkıyla işiten, hakkıyla bilensin.",
     "completeDuaReady": "Hatim duası açıldı, okuyabilirsin",
     "memberLeft": "ayrıldı",
-    "completedOn": "Tamamlandı · {date}"
+    "completedOn": "Tamamlandı · {date}",
+    "archiveTitle": "Tamamlananlar ({count})"
   },
   "folder": {
     "search": "Ara",

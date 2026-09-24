@@ -184,7 +184,8 @@
     "completeDuaMeaning": "من دعاء إبراهيم وإسماعيل عليهما السلام عند رفع قواعد البيت.",
     "completeDuaReady": "فُتح دعاء الختمة، يمكنك قراءته",
     "memberLeft": "غادر",
-    "completedOn": "اكتملت · {date}"
+    "completedOn": "اكتملت · {date}",
+    "archiveTitle": "المكتملة ({count})"
   },
   "folder": {
     "search": "بحث",
