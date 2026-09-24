@@ -180,7 +180,9 @@
     "cardGroups_two": "مجموعتان نشطتان",
     "cardGroups_few": "{count} مجموعات نشطة",
     "cardNextJuz": "التالي الجزء {juz}",
-    "duaLockedNote": "يُفتح بعد إتمام جميع الأجزاء."
+    "duaLockedNote": "يُفتح بعد إتمام جميع الأجزاء.",
+    "completeDuaMeaning": "من دعاء إبراهيم وإسماعيل عليهما السلام عند رفع قواعد البيت.",
+    "completeDuaReady": "فُتح دعاء الختمة، يمكنك قراءته"
   },
   "folder": {
     "search": "بحث",

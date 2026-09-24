@@ -160,7 +160,9 @@
     "cardGroups": "{count} active groups",
     "cardGroups_one": "{count} active group",
     "cardNextJuz": "juz {juz} next",
-    "duaLockedNote": "Unlocks when every juz is finished."
+    "duaLockedNote": "Unlocks when every juz is finished.",
+    "completeDuaMeaning": "Our Lord, accept this from us. Indeed, You are the Hearing, the Knowing.",
+    "completeDuaReady": "The hatim du‘a is now open, you can read it"
   },
   "folder": {
     "search": "Search",

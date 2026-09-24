@@ -171,6 +171,19 @@
             </header>
 
             <section class="main-content scrollable">
+                <!-- Hatim bitince en üstte açılır; kapanmaz, çünkü ekranın yeni hâli bu. -->
+                <section class="hatim-done-card" id="hatimCompleteCard" hidden>
+                    <h2 class="hatim-done-card__title" data-i18n="community.completeTitle">Hatim tamamlandı</h2>
+                    <p class="hatim-done-card__dua" dir="rtl" lang="ar">رَبَّنَا تَقَبَّلْ مِنَّآ إِنَّكَ أَنتَ ٱلسَّمِيعُ ٱلْعَلِيمُ</p>
+                    <p class="hatim-done-card__meaning" data-i18n="community.completeDuaMeaning">Rabbimiz! Bizden kabul buyur. Şüphesiz sen hakkıyla işiten, hakkıyla bilensin.</p>
+                    <p class="hatim-done-card__ref" id="hatimCompleteDuaRef"></p>
+                    <p class="hatim-done-card__stats" id="hatimCompleteStats"></p>
+                    <button type="button" class="hatim-done-card__link" id="hatimCompleteDuaBtn">
+                        <span data-i18n="community.completeDuaReady">Hatim duası açıldı, okuyabilirsin</span>
+                        <span class="material-icons-outlined" aria-hidden="true">chevron_right</span>
+                    </button>
+                </section>
+
                 <p class="hatim-meta" id="hatimGroupMeta" hidden></p>
                 <div class="hatim-summary">
                     <div class="hatim-summary__bar" id="hatimSummaryBar" role="progressbar" aria-valuemin="0" aria-valuemax="30" aria-valuenow="0">
@@ -204,25 +217,7 @@
                     <li><span class="hatim-legend__dot hatim-legend__dot--done"></span><span data-i18n="community.legendDone">Bitti</span></li>
                 </ul>
 
-                <!-- Yalnızca dua düğmesiyle açılır; hatim bitince kendiliğinden açılmaz. -->
-                <section class="hatim-complete" id="hatimCompleteCard" hidden>
-                    <div class="hatim-complete__head">
-                        <span class="material-icons-outlined" aria-hidden="true">auto_awesome</span>
-                        <h2 class="hatim-complete__title" data-i18n="community.completeTitle">Hatim tamamlandı</h2>
-                    </div>
-                    <p class="hatim-complete__stats" id="hatimCompleteStats"></p>
-
-                    <h3 class="hatim-dua__title" data-i18n="community.duaTitle">Hatim duası</h3>
-                    <p class="hatim-dua__ar" id="hatimDuaArabic" dir="rtl" lang="ar"></p>
-                    <p class="hatim-dua__lat" id="hatimDuaTranslit"></p>
-                    <button type="button" class="hatim-dua__toggle" id="hatimDuaMealToggle" aria-expanded="false" aria-controls="hatimDuaMeaning">
-                        <span class="material-icons-outlined" aria-hidden="true">expand_more</span>
-                        <span id="hatimDuaMealToggleLabel" data-i18n="community.duaShowMeaning">Anlamını göster</span>
-                    </button>
-                    <p class="hatim-dua__meal" id="hatimDuaMeaning" hidden></p>
-                </section>
-
-                <button type="button" class="secondary-btn hatim-dua-btn" id="hatimDuaBtn" aria-disabled="true" aria-expanded="false" aria-controls="hatimCompleteCard" data-i18n="community.duaTitle">Hatim duası</button>
+                <button type="button" class="secondary-btn hatim-dua-btn" id="hatimDuaBtn" aria-disabled="true" data-i18n="community.duaTitle">Hatim duası</button>
                 <button type="button" class="secondary-btn hatim-delete-btn" id="hatimDeleteGroupBtn">
                     <span class="material-icons-outlined">delete_outline</span> <span id="hatimDeleteGroupLabel">Grubu Sil</span>
                 </button>
@@ -230,6 +225,25 @@
                     <span class="material-icons-outlined" aria-hidden="true">flag</span>
                     <span data-i18n="community.reportGroup">Grubu şikâyet et</span>
                 </button>
+            </section>
+        </div>
+
+        <!-- =================== HATIM DUASI (ayrı sayfa) =================== -->
+        <div id="hatimDuaView" class="view hidden">
+            <header class="glass-header">
+                <button class="icon-btn backBtn" data-target="hatimGroupView" data-i18n="community.close" data-i18n-attr="aria-label" aria-label="Kapat"><span class="material-icons-outlined">close</span></button>
+                <h1 data-i18n="community.duaTitle">Hatim duası</h1>
+                <div class="header-spacer" aria-hidden="true"></div>
+            </header>
+
+            <section class="main-content scrollable hatim-dua-page">
+                <p class="hatim-dua__ar" id="hatimDuaArabic" dir="rtl" lang="ar"></p>
+                <p class="hatim-dua__lat" id="hatimDuaTranslit"></p>
+                <button type="button" class="hatim-dua__toggle" id="hatimDuaMealToggle" aria-expanded="false" aria-controls="hatimDuaMeaning">
+                    <span class="material-icons-outlined" aria-hidden="true">expand_more</span>
+                    <span id="hatimDuaMealToggleLabel" data-i18n="community.duaShowMeaning">Anlamını göster</span>
+                </button>
+                <p class="hatim-dua__meal" id="hatimDuaMeaning" hidden></p>
             </section>
         </div>
 

@@ -156,7 +156,9 @@
     "shareIosLabel": "آئی فون",
     "cardGroups": "{count} فعال گروپ",
     "cardNextJuz": "اگلا پارہ {juz}",
-    "duaLockedNote": "تمام پارے مکمل ہونے پر کھلے گا۔"
+    "duaLockedNote": "تمام پارے مکمل ہونے پر کھلے گا۔",
+    "completeDuaMeaning": "اے ہمارے رب! یہ ہم سے قبول فرما۔ بے شک تو ہی سننے والا، جاننے والا ہے۔",
+    "completeDuaReady": "ختم کی دعا کھل گئی، آپ پڑھ سکتے ہیں"
   },
   "folder": {
     "search": "تلاش",

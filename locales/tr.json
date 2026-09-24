@@ -156,7 +156,9 @@
     "shareIosLabel": "iPhone",
     "cardGroups": "Aktif {count} grup",
     "cardNextJuz": "sıradaki {juz}. cüz",
-    "duaLockedNote": "Bütün cüzler bitince açılacak."
+    "duaLockedNote": "Bütün cüzler bitince açılacak.",
+    "completeDuaMeaning": "Rabbimiz! Bunu bizden kabul buyur. Şüphesiz sen hakkıyla işiten, hakkıyla bilensin.",
+    "completeDuaReady": "Hatim duası açıldı, okuyabilirsin"
   },
   "folder": {
     "search": "Ara",

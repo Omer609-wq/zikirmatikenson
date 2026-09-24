@@ -156,7 +156,9 @@
     "shareIosLabel": "আইফোন",
     "cardGroups": "{count} সক্রিয় গ্রুপ",
     "cardNextJuz": "পরবর্তী পারা {juz}",
-    "duaLockedNote": "সব পারা শেষ হলে খুলবে।"
+    "duaLockedNote": "সব পারা শেষ হলে খুলবে।",
+    "completeDuaMeaning": "হে আমাদের প্রতিপালক! আমাদের পক্ষ থেকে এটি কবুল করুন। নিশ্চয়ই আপনি সর্বশ্রোতা, সর্বজ্ঞ।",
+    "completeDuaReady": "খতমের দোয়া খুলে গেছে, আপনি পড়তে পারেন"
   },
   "folder": {
     "search": "খুঁজুন",

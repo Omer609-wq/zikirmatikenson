@@ -959,8 +959,6 @@ let currentLibraryGroupId = null;
 /** @type {ReturnType<typeof createHatimGroup>[]} */
 let hatimGroups = [];
 let currentHatimGroupId = null;
-/** Duası açık olan grubun kimliği; gruptan çıkınca kapanır. */
-let hatimDuaOpenFor = null;
 let currentHatimJuzN = null;
 /** Topluluk ekranındaki sekme: 'personal' | 'shared'. Ekranın adı Topluluk
     olduğu için grup sekmesi önde ve varsayılan. */
@@ -1117,7 +1115,7 @@ const PREMIUM_UI_VISIBLE = _premiumPreviewFlags.mode ? _premiumPreviewFlags.uiVi
 const COMMUNITY_UI_VISIBLE = true;
 
 /** Bayrak kapalıyken ana ekrana düşürülecek ekranlar. */
-const COMMUNITY_VIEW_IDS = new Set(['communityView', 'hatimGroupView']);
+const COMMUNITY_VIEW_IDS = new Set(['communityView', 'hatimGroupView', 'hatimDuaView']);
 
 /** Premium sekmesinden açılan özellikler → düzenleme ekranı / yönlendirme (PREMIUM_LIVE iken) */
 const PREMIUM_FEATURE_VIEW_IDS = new Set([
@@ -5576,10 +5574,11 @@ function showView(viewId, param = null, options = {}) {
         renderCommunityView();
         void syncRemoteHatimsInBackground();
     } else if (viewId === 'hatimGroupView') {
-        hatimDuaOpenFor = null; // gruba her girişte dua kapalı başlar
         if (param != null) currentHatimGroupId = param;
         renderHatimGroupView();
         void syncRemoteHatimInBackground(currentHatimGroupId);
+    } else if (viewId === 'hatimDuaView') {
+        renderHatimDuaView();
     } else if (viewId === 'libraryGroupView') {
         currentLibraryGroupId = param;
         renderLibraryGroupDetail();
@@ -7088,7 +7087,6 @@ function renderHatimGroupView() {
         const duaReady = isHatimComplete(group);
         duaBtn.classList.toggle('hatim-dua-btn--locked', !duaReady);
         duaBtn.setAttribute('aria-disabled', duaReady ? 'false' : 'true');
-        duaBtn.setAttribute('aria-expanded', duaReady && hatimDuaOpenFor === group.id ? 'true' : 'false');
     }
 
     const deleteLabel = document.getElementById('hatimDeleteGroupLabel');
@@ -7174,23 +7172,25 @@ function renderHatimGroupView() {
 }
 
 /**
- * Tebrik + hatim duası kartı.
+ * Tebrik kartı: hatim bitince grup ekranının tepesinde durur.
  *
- * Hatim bitince kendiliğinden açılmaz: dua okumak bir niyet işi, ekrana kendi
- * başına düşmesi yerine dua düğmesiyle açılır. Bir sonraki girişte yine kapalı
- * gelir, çünkü açıklık gruba bağlı (`hatimDuaOpenFor`) ve gruptan çıkınca sıfırlanır.
+ * Kapanmıyor, çünkü bitmiş hatmin ekranı artık bu: cüz bittiği an uygulamada
+ * olmayan da gruba girince görsün. Dua burada değil, kendi sayfasında.
  */
 function renderHatimCompleteCard(group) {
     const card = document.getElementById('hatimCompleteCard');
     if (!card) return;
 
-    if (!isHatimComplete(group) || hatimDuaOpenFor !== group.id) {
+    if (!isHatimComplete(group)) {
         card.hidden = true;
         return;
     }
     card.hidden = false;
 
     const personal = isPersonalHatim(group);
+    const ref = document.getElementById('hatimCompleteDuaRef');
+    if (ref) ref.textContent = `${hatimSurahName(2)} 2:127`;
+
     const stats = document.getElementById('hatimCompleteStats');
     if (stats) {
         const lines = [
@@ -7202,6 +7202,13 @@ function renderHatimCompleteCard(group) {
         }
         stats.textContent = lines.join(' ');
     }
+}
+
+/** Dua sayfası: hangi hatimden gelindiyse onun duası. */
+function renderHatimDuaView() {
+    const group = findHatimGroup(currentHatimGroupId);
+    if (!group) return;
+    const personal = isPersonalHatim(group);
 
     // Kişisel hatimde birinci tekil dua, ortak hatimde öznesi "biz" olan dua.
     const dua = getHatimDua(
@@ -7554,7 +7561,7 @@ async function handleShareHatimGroup() {
     }
 }
 
-/** Dua düğmesi: hatim bitmişse duayı açıp kapatır, bitmemişse kısa bir bilgi verir. */
+/** Dua düğmesi: hatim bitmişse dua sayfasını açar, bitmemişse kısa bir bilgi verir. */
 function handleHatimDuaButton() {
     const group = findHatimGroup(currentHatimGroupId);
     if (!group) return;
@@ -7562,13 +7569,7 @@ function handleHatimDuaButton() {
         showTransientNote(t('community.duaLockedNote'));
         return;
     }
-    const wasOpen = hatimDuaOpenFor === group.id;
-    hatimDuaOpenFor = wasOpen ? null : group.id;
-    renderHatimGroupView();
-    if (wasOpen) return;
-    document
-        .getElementById('hatimCompleteCard')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    showView('hatimDuaView');
 }
 
 async function handleDeleteHatimGroup() {
@@ -7614,6 +7615,9 @@ function setupHatimListeners() {
     });
     document.getElementById('hatimDuaMealToggle')?.addEventListener('click', toggleHatimDuaMeaning);
     document.getElementById('hatimDuaBtn')?.addEventListener('click', handleHatimDuaButton);
+    document.getElementById('hatimCompleteDuaBtn')?.addEventListener('click', () => {
+        showView('hatimDuaView');
+    });
     document.getElementById('hatimDeleteGroupBtn')?.addEventListener('click', () => {
         void handleDeleteHatimGroup();
     });

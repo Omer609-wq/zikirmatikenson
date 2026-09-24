@@ -156,7 +156,9 @@
     "shareIosLabel": "iPhone",
     "cardGroups": "{count} grup aktif",
     "cardNextJuz": "juz {juz} berikutnya",
-    "duaLockedNote": "Terbuka setelah semua juz selesai."
+    "duaLockedNote": "Terbuka setelah semua juz selesai.",
+    "completeDuaMeaning": "Ya Tuhan kami, terimalah ini dari kami. Sesungguhnya Engkau Maha Mendengar lagi Maha Mengetahui.",
+    "completeDuaReady": "Doa khatam sudah terbuka, silakan dibaca"
   },
   "folder": {
     "search": "Cari",

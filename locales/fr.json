@@ -161,7 +161,9 @@
     "cardGroups": "{count} groupes actifs",
     "cardGroups_one": "{count} groupe actif",
     "cardNextJuz": "juz {juz} à suivre",
-    "duaLockedNote": "Disponible une fois tous les juz terminés."
+    "duaLockedNote": "Disponible une fois tous les juz terminés.",
+    "completeDuaMeaning": "Notre Seigneur, accepte ceci de notre part. Tu es certes l’Audient, l’Omniscient.",
+    "completeDuaReady": "La du‘â du khatm est ouverte, tu peux la lire"
   },
   "folder": {
     "search": "Rechercher",

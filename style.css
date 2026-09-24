@@ -2862,38 +2862,72 @@ html[lang='ur'] .smart-reminder-weekday {
 }
 
 /* ---- Hatim tamamlandı kartı + hatim duası ---- */
-.hatim-complete {
-    margin-top: 1.4rem;
-    padding: 1rem 0.95rem 1.1rem;
-    border: 1px solid var(--hatim-done-border);
+/* Tebrik kartı — bitmiş hatmin ekran başı.
+   Çerçeve ve başlık kehribar: cüz tablosu ve "bitti" rengi zaten yeşil, kart da
+   yeşil olsa ekranda kaybolurdu. Dua satırı en büyük punto, içeriğin merkezi o. */
+.hatim-done-card {
+    margin: 0 0 1.2rem;
+    padding: 1.05rem 1rem 0.85rem;
+    border: 1px solid var(--hatim-claimed-border);
     border-radius: calc(var(--surface-radius) + 3px);
-    background: var(--hatim-done-bg);
+    background: var(--hatim-claimed-bg);
+    text-align: center;
 }
-.hatim-complete__head {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--hatim-done-fg);
-}
-.hatim-complete__title {
+.hatim-done-card__title {
     margin: 0;
     font-size: var(--text-md);
     font-weight: 700;
+    color: var(--hatim-claimed-fg);
 }
-.hatim-complete__stats {
-    margin: 0.4rem 0 0;
+.hatim-done-card__dua {
+    margin: 0.85rem 0 0;
+    font-size: clamp(1.15rem, 5vw, 1.45rem);
+    line-height: 2;
+    color: var(--text-arabic, var(--text-white));
+}
+.hatim-done-card__meaning {
+    margin: 0.35rem 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--leading-body);
+    color: var(--text-white);
+}
+.hatim-done-card__ref {
+    margin: 0.3rem 0 0;
+    font-size: var(--text-xs);
+    letter-spacing: 0.03em;
+    color: var(--text-gray);
+}
+.hatim-done-card__stats {
+    margin: 0.9rem 0 0;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--hatim-claimed-border);
     font-size: var(--text-sm);
     line-height: var(--leading-body);
     color: var(--text-gray);
 }
-
-.hatim-dua__title {
-    margin: 1.1rem 0 0.6rem;
-    font-size: var(--text-xs);
+.hatim-done-card__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    width: 100%;
+    margin-top: 0.55rem;
+    padding: 0.35rem 0;
+    background: none;
+    border: 0;
+    color: var(--hatim-claimed-fg);
+    font-size: var(--text-sm);
     font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--text-gray);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.hatim-done-card__link .material-icons-outlined {
+    font-size: 18px;
+}
+
+/* Dua sayfası: ekranın tamamı metne kalsın. */
+.hatim-dua-page {
+    padding-top: 1.2rem;
 }
 /* Okuyucudaki ayet kartıyla aynı dil: üstte Arapça, altında okunuş. */
 .hatim-dua__ar {
