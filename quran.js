@@ -1426,18 +1426,18 @@ function createAyahElement(ayah, surahN, readMode) {
     ar.textContent = ayah.ar || '';
     block.appendChild(ar);
 
-    if ((mode === 'meal-ar' || mode === 'meal-translit-ar') && ayah.tr) {
-        const trLine = document.createElement('p');
-        trLine.className = 'quran-ayah__tr';
-        trLine.textContent = ayah.tr;
-        block.appendChild(trLine);
-    }
-
     if ((mode === 'translit-ar' || mode === 'meal-translit-ar') && ayah.lat) {
         const latLine = document.createElement('p');
         latLine.className = 'quran-ayah__lat';
         latLine.textContent = ayah.lat;
         block.appendChild(latLine);
+    }
+
+    if ((mode === 'meal-ar' || mode === 'meal-translit-ar') && ayah.tr) {
+        const trLine = document.createElement('p');
+        trLine.className = 'quran-ayah__tr';
+        trLine.textContent = ayah.tr;
+        block.appendChild(trLine);
     }
 
     return block;
@@ -1488,17 +1488,17 @@ function createMushafSubsAyah(ayah, surahN, readMode) {
     ref.textContent = formatAyahCardRef(surahName, surahN, ayah.n);
     row.appendChild(ref);
 
-    if ((mode === 'meal-ar' || mode === 'meal-translit-ar') && ayah.tr) {
-        const meal = document.createElement('p');
-        meal.className = 'quran-mushaf-subs-ayah__meal';
-        meal.textContent = ayah.tr;
-        row.appendChild(meal);
-    }
     if ((mode === 'translit-ar' || mode === 'meal-translit-ar') && ayah.lat) {
         const lat = document.createElement('p');
         lat.className = 'quran-mushaf-subs-ayah__lat';
         lat.textContent = ayah.lat;
         row.appendChild(lat);
+    }
+    if ((mode === 'meal-ar' || mode === 'meal-translit-ar') && ayah.tr) {
+        const meal = document.createElement('p');
+        meal.className = 'quran-mushaf-subs-ayah__meal';
+        meal.textContent = ayah.tr;
+        row.appendChild(meal);
     }
     return row;
 }
