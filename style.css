@@ -3115,6 +3115,16 @@ html[lang='ur'] .smart-reminder-weekday {
     color: var(--text-gray);
     font-size: var(--text-xs);
 }
+/* "(yeni katıldı)" / "(ayrıldı)" — adın sağında, sönük. */
+.hatim-members__tag {
+    flex: 0 0 auto;
+    color: var(--text-gray);
+    font-size: var(--text-xs);
+}
+/* Ayrılan kişi: artık üye değil, satırı soluk. */
+.hatim-members__row--left {
+    opacity: 0.6;
+}
 .hatim-members__badge {
     flex: 0 0 auto;
     padding: 0.1rem 0.45rem;

@@ -6755,31 +6755,42 @@ async function renderHatimMembers(ctx, hatimId) {
     const iAmOwner = group.ownerId === me;
     // Fark, işaretlemeden önce hesaplanır: bu bakışta yeni katılanlar hâlâ yeşil
     // görünsün, sönme bir sonraki açılışta olsun.
-    const { joined } = memberDiff(group);
-    list.innerHTML = res.members
-        .map((m) => {
-            const isOwner = m.uid === group.ownerId;
-            const you =
-                m.uid === me
-                    ? ` <span class="hatim-members__you">(${escapeHtml(t('community.memberYou'))})</span>`
-                    : '';
-            const isNew = joined.includes(m.uid)
-                ? `<span class="hatim-dot hatim-dot--joined" role="img" aria-label="${escapeAttr(t('community.memberJoinedNew'))}"></span>`
+    const { joined, left } = memberDiff(group);
+    const rows = res.members.map((m) => {
+        const isOwner = m.uid === group.ownerId;
+        const you =
+            m.uid === me
+                ? ` <span class="hatim-members__you">(${escapeHtml(t('community.memberYou'))})</span>`
                 : '';
-            const badge = isOwner
-                ? `<span class="hatim-members__badge">${escapeHtml(t('community.memberOwner'))}</span>`
+        const isNew = joined.includes(m.uid);
+        const dot = isNew
+            ? `<span class="hatim-dot hatim-dot--joined" aria-hidden="true"></span>`
+            : '';
+        const tag = isNew
+            ? `<span class="hatim-members__tag">(${escapeHtml(t('community.memberJoinedNew'))})</span>`
+            : '';
+        const badge = isOwner
+            ? `<span class="hatim-members__badge">${escapeHtml(t('community.memberOwner'))}</span>`
+            : '';
+        const remove =
+            iAmOwner && !isOwner
+                ? `<button type="button" class="hatim-members__remove" data-remove-member="${escapeAttr(m.uid)}" data-member-name="${escapeAttr(m.name || '')}">${escapeHtml(t('community.removeMember'))}</button>`
                 : '';
-            const remove =
-                iAmOwner && !isOwner
-                    ? `<button type="button" class="hatim-members__remove" data-remove-member="${escapeAttr(m.uid)}" data-member-name="${escapeAttr(m.name || '')}">${escapeHtml(t('community.removeMember'))}</button>`
-                    : '';
-            return `<li class="hatim-members__row">${isNew}<span class="hatim-members__name">${escapeHtml(m.name || t('community.someone'))}${you}</span>${badge}${remove}</li>`;
-        })
-        .join('');
+        return `<li class="hatim-members__row">${dot}<span class="hatim-members__name">${escapeHtml(m.name || t('community.someone'))}${you}</span>${tag}${badge}${remove}</li>`;
+    });
 
-    // Listeye bakıldı: noktalar sönsün. Temel, az önce okunan taze liste.
-    const seenUids = res.members.map((m) => m.uid);
-    commitHatimGroup(withSeenMembers(findHatimGroup(hatimId) || group, seenUids));
+    // Ayrılanlar sunucudan düştü; son bakışta kayıtlı adlarıyla bir kez görünür,
+    // liste kapanınca kaybolurlar.
+    const leftRows = left.map(
+        (m) =>
+            `<li class="hatim-members__row hatim-members__row--left"><span class="hatim-dot hatim-dot--left" aria-hidden="true"></span><span class="hatim-members__name">${escapeHtml(m.name || t('community.someone'))}</span><span class="hatim-members__tag">(${escapeHtml(t('community.memberLeft'))})</span></li>`
+    );
+    list.innerHTML = rows.concat(leftRows).join('');
+
+    // Listeye bakıldı: noktalar sönsün, ayrılanlar düşsün. Adlar da saklanır ki
+    // bir dahakine ayrılan kişi adıyla gösterilebilsin.
+    const seenMembers = res.members.map((m) => ({ uid: m.uid, name: m.name || '' }));
+    commitHatimGroup(withSeenMembers(findHatimGroup(hatimId) || group, seenMembers));
     renderHatimGroupView();
 }
 
