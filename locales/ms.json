@@ -42,8 +42,6 @@
     "tabShared": "Bersama",
     "cardAria": "Komuniti — kumpulan khatam",
     "cardEmpty": "Cipta kumpulan khatam atau sertai dengan kod",
-    "cardSummary": "{count} kumpulan · juzuk {juz} seterusnya",
-    "cardSummaryDone": "{count} kumpulan · {done}/{total} juzuk",
     "personalHatimName": "Khatam saya",
     "newPersonalHatim": "Mulakan Khatam",
     "personalEmptyHint": "Mulakan khatam sendiri. Kesemua 30 juzuk ditambah; tandakan sambil anda membaca.",
@@ -155,7 +153,9 @@
     "shareInviteNoName": "Sertai khatam kami di Zikirmatik. Pilih satu juzuk dan baca mengikut kelajuan anda.",
     "shareCode": "Kod sertai: {code}",
     "shareAndroidLabel": "Android",
-    "shareIosLabel": "iPhone"
+    "shareIosLabel": "iPhone",
+    "cardGroups": "{count} kumpulan aktif",
+    "cardNextJuz": "juzuk {juz} seterusnya"
   },
   "folder": {
     "search": "Cari",

@@ -6887,26 +6887,25 @@ function renderCommunityCardSummary() {
 
     const me = hatimMemberIds();
     const next = getHatimNextForMember();
-    // Kişisel hatim varsa kart onu gösterir; çoğu kullanıcı için ana iş o.
     const personal = listHatimsByKind(HATIM_KIND_PERSONAL);
-    const primary = personal[0] || (next ? next.group : hatimGroups[0]);
-    const progress = getHatimProgress(primary);
-    const personalNext = personal.length ? getNextJuzToRead(primary) : null;
+    const personalNext = personal.length ? getNextJuzToRead(personal[0]) : null;
+    // Kart tek bir hatmin adını değil, kaç grupta olunduğunu söyler: birden
+    // fazla gruptayken hangisinin gösterildiği rastgele görünüyordu.
+    // Bitmiş gruplar "aktif" sayılmaz.
+    const activeGroups = listHatimsByKind(HATIM_KIND_SHARED).filter(
+        (g) => !isHatimComplete(g)
+    ).length;
 
     let summary;
-    if (personal.length && personalNext) {
+    if (activeGroups) {
+        const lead = t('community.cardGroups', { count: activeGroups });
+        const juz = next ? next.juz.n : personalNext ? personalNext.n : null;
+        summary = juz ? `${lead} · ${t('community.cardNextJuz', { juz })}` : lead;
+    } else if (personalNext) {
         summary = t('community.cardSummaryPersonal', { juz: personalNext.n });
-    } else if (personal.length) {
-        // Kişisel hatim bitti.
-        summary = t('community.hatimComplete');
-    } else if (next) {
-        summary = t('community.cardSummary', { count: hatimGroups.length, juz: next.juz.n });
     } else {
-        summary = t('community.cardSummaryDone', {
-            count: hatimGroups.length,
-            done: progress.done,
-            total: progress.total
-        });
+        // Kişisel hatim ya da elde kalan gruplar bitmiş.
+        summary = t('community.hatimComplete');
     }
 
     // Şerit tek bir hatmi değil, kullanıcının bütün hatimlerini toplar: aynı cüz

@@ -44,9 +44,6 @@
     "tabShared": "Ensemble",
     "cardAria": "Communauté — groupes de khatm",
     "cardEmpty": "Crée un groupe de khatm ou rejoins-en un avec un code",
-    "cardSummary": "{count} groupes · juz {juz} à suivre",
-    "cardSummary_one": "{count} groupe · juz {juz} à suivre",
-    "cardSummaryDone": "{count} groupes · {done}/{total} juz",
     "personalHatimName": "Mon khatm",
     "newPersonalHatim": "Commencer un khatm",
     "personalEmptyHint": "Commence ton propre khatm. Les 30 juz sont ajoutés ; coche-les au fil de ta lecture.",
@@ -58,7 +55,6 @@
     "deleteHatim": "Supprimer le khatm",
     "deleteHatimConfirm": "Supprimer « {name} » ? Tes juz enregistrés dedans seront aussi supprimés.",
     "cardSummaryPersonal": "Mon khatm · juz {juz} à suivre",
-    "cardSummaryDone_one": "{count} groupe · {done}/{total} juz",
     "close": "Fermer",
     "myJuzTitle": "Mes juz",
     "groupsTitle": "Mes groupes de khatm",
@@ -161,7 +157,10 @@
     "shareInviteNoName": "Rejoins notre khatma sur Zikirmatik. Choisis un juz et lis à ton rythme.",
     "shareCode": "Code pour rejoindre : {code}",
     "shareAndroidLabel": "Android",
-    "shareIosLabel": "iPhone"
+    "shareIosLabel": "iPhone",
+    "cardGroups": "{count} groupes actifs",
+    "cardGroups_one": "{count} groupe actif",
+    "cardNextJuz": "juz {juz} à suivre"
   },
   "folder": {
     "search": "Rechercher",

@@ -42,8 +42,6 @@
     "tabShared": "একসাথে",
     "cardAria": "কমিউনিটি — খতম গ্রুপ",
     "cardEmpty": "খতম গ্রুপ তৈরি করো বা কোড দিয়ে যোগ দাও",
-    "cardSummary": "{count} গ্রুপ · পরবর্তী পারা {juz}",
-    "cardSummaryDone": "{count} গ্রুপ · {done}/{total} পারা",
     "personalHatimName": "আমার খতম",
     "newPersonalHatim": "খতম শুরু করো",
     "personalEmptyHint": "নিজের খতম শুরু করো। ৩০ পারা যুক্ত হবে; পড়ার সাথে সাথে চিহ্নিত করো।",
@@ -155,7 +153,9 @@
     "shareInviteNoName": "Zikirmatik অ্যাপে আমাদের খতমে যোগ দিন। একটি পারা বেছে নিন, নিজের গতিতে পড়ুন।",
     "shareCode": "যোগদান কোড: {code}",
     "shareAndroidLabel": "অ্যান্ড্রয়েড",
-    "shareIosLabel": "আইফোন"
+    "shareIosLabel": "আইফোন",
+    "cardGroups": "{count} সক্রিয় গ্রুপ",
+    "cardNextJuz": "পরবর্তী পারা {juz}"
   },
   "folder": {
     "search": "খুঁজুন",

@@ -42,8 +42,6 @@
     "tabShared": "Grupla",
     "cardAria": "Topluluk — hatim grupları",
     "cardEmpty": "Hatim grubu oluştur ya da kodla katıl",
-    "cardSummary": "{count} grup · sıradaki {juz}. cüz",
-    "cardSummaryDone": "{count} grup · {done}/{total} cüz",
     "personalHatimName": "Hatmim",
     "newPersonalHatim": "Hatim Başlat",
     "personalEmptyHint": "Kendi hatmini başlat. 30 cüz otomatik eklenir, okudukça işaretlersin.",
@@ -155,7 +153,9 @@
     "shareInviteNoName": "Zikirmatik'te hatmimize katıl. Bir cüz seç, kendi hızında oku.",
     "shareCode": "Katılma kodu: {code}",
     "shareAndroidLabel": "Android",
-    "shareIosLabel": "iPhone"
+    "shareIosLabel": "iPhone",
+    "cardGroups": "Aktif {count} grup",
+    "cardNextJuz": "sıradaki {juz}. cüz"
   },
   "folder": {
     "search": "Ara",

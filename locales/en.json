@@ -43,9 +43,6 @@
     "tabShared": "Together",
     "cardAria": "Community — hatim groups",
     "cardEmpty": "Create a hatim group or join with a code",
-    "cardSummary": "{count} groups · juz {juz} next",
-    "cardSummary_one": "{count} group · juz {juz} next",
-    "cardSummaryDone": "{count} groups · {done}/{total} juz",
     "personalHatimName": "My hatim",
     "newPersonalHatim": "Start a Hatim",
     "personalEmptyHint": "Start your own hatim. All 30 juz are added; mark them as you read.",
@@ -57,7 +54,6 @@
     "deleteHatim": "Delete Hatim",
     "deleteHatimConfirm": "Delete \"{name}\"? Your juz records in it are deleted too.",
     "cardSummaryPersonal": "My hatim · juz {juz} next",
-    "cardSummaryDone_one": "{count} group · {done}/{total} juz",
     "close": "Close",
     "myJuzTitle": "My juz",
     "groupsTitle": "My hatim groups",
@@ -160,7 +156,10 @@
     "shareInviteNoName": "Join our khatm on Zikirmatik. Pick a juz and read at your own pace.",
     "shareCode": "Join code: {code}",
     "shareAndroidLabel": "Android",
-    "shareIosLabel": "iPhone"
+    "shareIosLabel": "iPhone",
+    "cardGroups": "{count} active groups",
+    "cardGroups_one": "{count} active group",
+    "cardNextJuz": "juz {juz} next"
   },
   "folder": {
     "search": "Search",

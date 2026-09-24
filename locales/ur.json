@@ -42,8 +42,6 @@
     "tabShared": "مل کر",
     "cardAria": "کمیونٹی — ختم گروپ",
     "cardEmpty": "ختم گروپ بنائیں یا کوڈ سے شامل ہوں",
-    "cardSummary": "{count} گروپ · اگلا پارہ {juz}",
-    "cardSummaryDone": "{count} گروپ · {done}/{total} پارے",
     "personalHatimName": "میرا ختم",
     "newPersonalHatim": "ختم شروع کریں",
     "personalEmptyHint": "اپنا ختم شروع کریں۔ تیس پارے شامل ہو جائیں گے؛ پڑھتے جائیں، نشان لگاتے جائیں۔",
@@ -155,7 +153,9 @@
     "shareInviteNoName": "Zikirmatik پر ہمارے ختم میں شامل ہو جائیے۔ ایک پارہ منتخب کیجیے اور اپنی رفتار سے پڑھیے۔",
     "shareCode": "شمولیت کوڈ: {code}",
     "shareAndroidLabel": "اینڈرائیڈ",
-    "shareIosLabel": "آئی فون"
+    "shareIosLabel": "آئی فون",
+    "cardGroups": "{count} فعال گروپ",
+    "cardNextJuz": "اگلا پارہ {juz}"
   },
   "folder": {
     "search": "تلاش",

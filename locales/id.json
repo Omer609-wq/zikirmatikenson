@@ -42,8 +42,6 @@
     "tabShared": "Bersama",
     "cardAria": "Komunitas — grup khatam",
     "cardEmpty": "Buat grup khatam atau gabung dengan kode",
-    "cardSummary": "{count} grup · juz {juz} berikutnya",
-    "cardSummaryDone": "{count} grup · {done}/{total} juz",
     "personalHatimName": "Khatam saya",
     "newPersonalHatim": "Mulai Khatam",
     "personalEmptyHint": "Mulai khatam sendiri. Ke-30 juz ditambahkan; tandai saat kamu membacanya.",
@@ -155,7 +153,9 @@
     "shareInviteNoName": "Ikut khataman kami di Zikirmatik. Pilih satu juz dan baca sesuai kecepatanmu.",
     "shareCode": "Kode gabung: {code}",
     "shareAndroidLabel": "Android",
-    "shareIosLabel": "iPhone"
+    "shareIosLabel": "iPhone",
+    "cardGroups": "{count} grup aktif",
+    "cardNextJuz": "juz {juz} berikutnya"
   },
   "folder": {
     "search": "Cari",
