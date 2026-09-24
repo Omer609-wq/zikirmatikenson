@@ -155,7 +155,8 @@
     "shareAndroidLabel": "Android",
     "shareIosLabel": "iPhone",
     "cardGroups": "{count} grup aktif",
-    "cardNextJuz": "juz {juz} berikutnya"
+    "cardNextJuz": "juz {juz} berikutnya",
+    "duaLockedNote": "Terbuka setelah semua juz selesai."
   },
   "folder": {
     "search": "Cari",

@@ -693,6 +693,38 @@ html.counter-customize-open .bottom-nav {
     color: #fbbf24;
 }
 
+/* Kısa bilgi balonu: ekranda belirir, kendiliğinden söner. Diyalog değil,
+   akışı kesmez; onay gerektirmeyen "şu an olmaz" durumları için. */
+.app-note {
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--bottom-nav-stack-height, 64px) + 1rem);
+    z-index: 1100;
+    max-width: min(88vw, 24rem);
+    padding: 0.7rem 1.05rem;
+    border-radius: 999px;
+    background: var(--surface-card);
+    border: 1px solid var(--surface-border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    color: var(--text-white);
+    font-size: var(--text-base);
+    text-align: center;
+    opacity: 0;
+    transform: translate(-50%, 12px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.app-note--in {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+    .app-note {
+        transition: opacity 0.15s linear;
+        transform: translate(-50%, 0);
+    }
+}
+
 .premium-upsell-overlay {
     z-index: 1200;
 }
@@ -2986,6 +3018,26 @@ html[lang='ur'] .smart-reminder-weekday {
 }
 .hatim-report-btn .material-icons-outlined {
     font-size: 16px;
+}
+
+/* Dua düğmesi: hatim bitene kadar sönük durur, basılınca kısa bilgi verir. */
+.hatim-dua-btn {
+    margin-bottom: 0.6rem;
+}
+.hatim-dua-btn--locked {
+    opacity: 0.45;
+}
+.hatim-dua-btn--locked:active {
+    transform: none; /* basılıyor hissi vermesin: açılmadı */
+}
+
+/* Tamamlanan hatim kartına götürüldüğünde kısa vurgu. */
+@keyframes hatim-complete-flash {
+    from { box-shadow: 0 0 0 2px var(--hatim-done-border); }
+    to { box-shadow: 0 0 0 2px transparent; }
+}
+.hatim-complete--flash {
+    animation: hatim-complete-flash 1.1s ease-out;
 }
 
 /* Üye listesindeki değişiklik noktaları: yeşil katılan, kırmızı ayrılan */

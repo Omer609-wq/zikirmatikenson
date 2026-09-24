@@ -112,7 +112,13 @@ import {
     parseDateKey,
     percentChange
 } from './lib/weekly-report.js';
-import { showAppAlert, showAppConfirm, showAppPrompt, setupAppDialog } from './lib/app-dialog.js';
+import {
+    showAppAlert,
+    showAppConfirm,
+    showAppPrompt,
+    showTransientNote,
+    setupAppDialog
+} from './lib/app-dialog.js';
 import { setupLocaleWelcome, maybeShowLocaleWelcome, closeLocaleWelcomeIfOpen } from './lib/locale-welcome.js';
 import {
     closePremiumUpsell,
@@ -7070,6 +7076,17 @@ function renderHatimGroupView() {
             : t('community.legendClaimed');
     }
 
+    // Dua düğmesi hatim bitmeden de durur, ama sönük: bitince ne olacağını
+    // baştan göstermek, tamamlanınca birden beliren düğmeden anlaşılır.
+    // `disabled` yerine `aria-disabled`, çünkü basınca uyarı çıkması gerek —
+    // gerçekten disabled bir düğme tıklama olayı üretmez.
+    const duaBtn = document.getElementById('hatimDuaBtn');
+    if (duaBtn) {
+        const duaReady = isHatimComplete(group);
+        duaBtn.classList.toggle('hatim-dua-btn--locked', !duaReady);
+        duaBtn.setAttribute('aria-disabled', duaReady ? 'false' : 'true');
+    }
+
     const deleteLabel = document.getElementById('hatimDeleteGroupLabel');
     if (deleteLabel) {
         // Paylaşımlı grupta yalnızca yönetici siler; katılımcı ayrılır (§10).
@@ -7531,6 +7548,23 @@ async function handleShareHatimGroup() {
     }
 }
 
+/** Dua düğmesi: hatim bitmişse duaya götürür, bitmemişse kısa bir bilgi verir. */
+function handleHatimDuaButton() {
+    const group = findHatimGroup(currentHatimGroupId);
+    if (!group) return;
+    if (!isHatimComplete(group)) {
+        showTransientNote(t('community.duaLockedNote'));
+        return;
+    }
+    const card = document.getElementById('hatimCompleteCard');
+    if (!card) return;
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Kart zaten ekranda olabilir; kısa bir vurgu olmadan düğme ölü hissettiriyor.
+    card.classList.remove('hatim-complete--flash');
+    void card.offsetWidth;
+    card.classList.add('hatim-complete--flash');
+}
+
 async function handleDeleteHatimGroup() {
     const group = findHatimGroup(currentHatimGroupId);
     if (!group) return;
@@ -7573,6 +7607,7 @@ function setupHatimListeners() {
         void handleShareHatimGroup();
     });
     document.getElementById('hatimDuaMealToggle')?.addEventListener('click', toggleHatimDuaMeaning);
+    document.getElementById('hatimDuaBtn')?.addEventListener('click', handleHatimDuaButton);
     document.getElementById('hatimDeleteGroupBtn')?.addEventListener('click', () => {
         void handleDeleteHatimGroup();
     });

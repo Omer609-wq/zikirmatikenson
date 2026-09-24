@@ -159,7 +159,8 @@
     "shareIosLabel": "iPhone",
     "cardGroups": "{count} active groups",
     "cardGroups_one": "{count} active group",
-    "cardNextJuz": "juz {juz} next"
+    "cardNextJuz": "juz {juz} next",
+    "duaLockedNote": "Unlocks when every juz is finished."
   },
   "folder": {
     "search": "Search",

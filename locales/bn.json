@@ -155,7 +155,8 @@
     "shareAndroidLabel": "অ্যান্ড্রয়েড",
     "shareIosLabel": "আইফোন",
     "cardGroups": "{count} সক্রিয় গ্রুপ",
-    "cardNextJuz": "পরবর্তী পারা {juz}"
+    "cardNextJuz": "পরবর্তী পারা {juz}",
+    "duaLockedNote": "সব পারা শেষ হলে খুলবে।"
   },
   "folder": {
     "search": "খুঁজুন",

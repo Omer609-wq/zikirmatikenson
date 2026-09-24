@@ -160,7 +160,8 @@
     "shareIosLabel": "iPhone",
     "cardGroups": "{count} groupes actifs",
     "cardGroups_one": "{count} groupe actif",
-    "cardNextJuz": "juz {juz} à suivre"
+    "cardNextJuz": "juz {juz} à suivre",
+    "duaLockedNote": "Disponible une fois tous les juz terminés."
   },
   "folder": {
     "search": "Rechercher",

@@ -179,7 +179,8 @@
     "cardGroups_one": "مجموعة نشطة واحدة",
     "cardGroups_two": "مجموعتان نشطتان",
     "cardGroups_few": "{count} مجموعات نشطة",
-    "cardNextJuz": "التالي الجزء {juz}"
+    "cardNextJuz": "التالي الجزء {juz}",
+    "duaLockedNote": "يُفتح بعد إتمام جميع الأجزاء."
   },
   "folder": {
     "search": "بحث",
