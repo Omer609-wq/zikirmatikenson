@@ -3503,11 +3503,42 @@ html[data-theme="black"] #updateBannerDetailOverlay.active .update-banner-spotli
     opacity: 1;
     pointer-events: auto;
 }
-.folder-card__check input {
-    width: 1.15rem;
-    height: 1.15rem;
-    accent-color: var(--primary-green);
+/* Yuvarlak seçim işareti (native kutu yerine): boş halka → seçilince yeşil + tik. */
+.folder-card__check input,
+.zikir-row__check input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.4rem;
+    height: 1.4rem;
+    margin: 0;
+    border: 2px solid rgba(148, 163, 184, 0.6);
+    border-radius: 50%;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.folder-card__check input::after,
+.zikir-row__check input::after {
+    content: '';
+    width: 0.4rem;
+    height: 0.72rem;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translateY(-1px);
+    opacity: 0;
+    transition: opacity 0.12s ease;
+}
+.folder-card__check input:checked,
+.zikir-row__check input:checked {
+    background: var(--primary-green);
+    border-color: var(--primary-green);
+}
+.folder-card__check input:checked::after,
+.zikir-row__check input:checked::after {
+    opacity: 1;
 }
 
 .row-drag-handle {
@@ -3566,12 +3597,6 @@ html[data-theme="black"] #updateBannerDetailOverlay.active .update-banner-spotli
     min-width: 2.25rem;
     opacity: 1;
     pointer-events: auto;
-}
-.zikir-row__check input {
-    width: 1.15rem;
-    height: 1.15rem;
-    accent-color: var(--primary-green);
-    cursor: pointer;
 }
 .zikir-list li .zikir-row__inner {
     flex: 1;
@@ -3636,12 +3661,54 @@ html[data-theme="black"] #updateBannerDetailOverlay.active .update-banner-spotli
     pointer-events: none;
 }
 
-#homeView.home-view--select-mode .main-content.scrollable {
-    /* Çoklu seçim çubuğu alt menünün üstünde; --bottom-nav-stack-height ile hizalı */
-    padding-bottom: calc(6.5rem + 3.75rem + var(--app-bottom-inset-merged));
+/* ====== Seçim modu: başlıktaki bağlamsal çubuk (✕ · sayı · ✏️ · 🗑️) ====== */
+/* [hidden] + display:flex çakışması: Android WebView'da çubuk hep görünüyordu */
+.header-select-bar[hidden] {
+    display: none !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
 }
-#folderDetailView.folder-detail--select-mode .main-content.scrollable {
-    padding-bottom: calc(6.25rem + var(--app-bottom-inset-merged));
+.header-select-bar {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: 0.15rem;
+    min-width: 0;
+}
+.header-select-bar__count {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-left: 0.35rem;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-white);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.header-select-bar .icon-btn {
+    flex: 0 0 auto;
+}
+.header-select-bar__delete {
+    color: #ef4444;
+}
+.header-select-bar__delete:active {
+    color: #dc2626;
+}
+.header-select-bar__edit:disabled,
+.header-select-bar__delete:disabled {
+    opacity: 0.32;
+    pointer-events: none;
+}
+/* Seçim modunda başlığın normal içeriği gizlenir; yerini bağlamsal çubuk alır. */
+#homeView.home-view--select-mode .glass-header > .header-left,
+#homeView.home-view--select-mode .glass-header > .header-spacer {
+    display: none;
+}
+#folderDetailView.folder-detail--select-mode .glass-header > .backBtn,
+#folderDetailView.folder-detail--select-mode .glass-header > #folderDetailTitle,
+#folderDetailView.folder-detail--select-mode .glass-header > .header-spacer {
+    display: none;
 }
 
 .drag-hint {

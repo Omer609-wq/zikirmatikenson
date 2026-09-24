@@ -19,7 +19,7 @@
   "home": {
     "newFolder": "Create New Folder",
     "folderDragHint": "Long-press a folder to delete. Drag the grip on the left to reorder.",
-    "folderDragHintSelect": "Tap the checkbox or row to select items, then tap Delete at the bottom. Cancel to exit. Reorder: use the grip lines.",
+    "folderDragHintSelect": "Tap the circle or row to select, then tap the trash icon at the top to delete. Tap ✕ to cancel. Reorder: use the grip lines.",
     "cancel": "Cancel",
     "delete": "Delete",
     "selectNone": "No selection",
@@ -32,7 +32,10 @@
     "folderLimitWarning": "Folder limit reached. Go Premium for unlimited folders.",
     "newFolderTitle": "New folder",
     "newFolderPrompt": "Enter a name for the new folder.",
-    "folderNameLabel": "Folder name"
+    "folderNameLabel": "Folder name",
+    "rename": "Rename",
+    "renameFolderTitle": "Rename folder",
+    "renameFolderPrompt": "Enter a new name for the folder."
   },
   "community": {
     "title": "Community",
@@ -164,8 +167,8 @@
     "searchPlaceholder": "Search zikir…",
     "favoritesOnly": "Favorites only",
     "zikirDragHint": "Long-press a row to delete. Drag the grip on the left to reorder.",
-    "zikirDragHintSelect": "Tap the checkbox or row to select items, then tap Delete at the bottom. Cancel to exit. Reorder: use the grip lines.",
-    "zikirDragHintSelectNoReorder": "Tap the checkbox or row to select items, then tap Delete at the bottom. Cancel to exit. Reordering is off while search or favorites filter is on.",
+    "zikirDragHintSelect": "Tap the circle or row to select, then tap the trash icon at the top to delete. Tap ✕ to cancel. Reorder: use the grip lines.",
+    "zikirDragHintSelectNoReorder": "Tap the circle or row to select, then tap the trash icon at the top to delete. Tap ✕ to cancel. Reordering is off while search or favorites filter is on.",
     "zikirDragHintReorderDisabled": "Clear search and turn off the favorites filter to reorder.",
     "seasonalDragHint": "These special-day dhikr appear only for the scheduled period.",
     "limitWarning": "This folder has reached the zikir limit. Delete one or move to another folder.",

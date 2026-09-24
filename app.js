@@ -1222,6 +1222,7 @@ let dailyQuoteExpanded = false;
 const folderMultiSelectBar = document.getElementById('folderMultiSelectBar');
 const folderSelectCancelBtn = document.getElementById('folderSelectCancelBtn');
 const folderSelectDeleteBtn = document.getElementById('folderSelectDeleteBtn');
+const folderSelectEditBtn = document.getElementById('folderSelectEditBtn');
 const folderSelectCountEl = document.getElementById('folderSelectCount');
 const folderHomeDragHint = document.getElementById('folderHomeDragHint');
 const zikirMultiSelectBar = document.getElementById('zikirMultiSelectBar');
@@ -5002,6 +5003,12 @@ function updateFolderSelectChrome() {
     if (folderSelectDeleteBtn) {
         folderSelectDeleteBtn.disabled = selectedFolderIds.size === 0;
     }
+    // Yeniden adlandırma yalnızca tek klasör seçiliyken (ve korumalı değilse) açık.
+    if (folderSelectEditBtn) {
+        const only = selectedFolderIds.size === 1 ? [...selectedFolderIds][0] : null;
+        const renameable = !!only && !PROTECTED_FOLDER_IDS.has(only) && !isSeasonalFolderId(only);
+        folderSelectEditBtn.disabled = !renameable;
+    }
 }
 
 function updateZikirSelectChrome() {
@@ -5109,6 +5116,27 @@ function toggleZikirSelected(id) {
     setMultiSelectBarShown(zikirMultiSelectBar, true);
     updateZikirSelectChrome();
     renderFolderDetail();
+}
+
+async function renameSelectedFolder() {
+    if (selectedFolderIds.size !== 1) return;
+    const id = [...selectedFolderIds][0];
+    if (PROTECTED_FOLDER_IDS.has(id) || isSeasonalFolderId(id)) {
+        await showAppAlert(t('confirm.protectedFoldersMsg'), { title: t('confirm.protectedFoldersTitle') });
+        return;
+    }
+    const folder = folders.find((f) => f.id === id);
+    if (!folder) return;
+    const name = await showAppPrompt(t('home.renameFolderPrompt'), folder.name, {
+        title: t('home.renameFolderTitle'),
+        inputLabel: t('home.folderNameLabel')
+    });
+    const next = name != null ? name.trim() : '';
+    if (next && next !== folder.name) {
+        folder.name = next;
+        saveData();
+        exitFolderSelectMode();
+    }
 }
 
 async function deleteSelectedFolders() {
@@ -9782,6 +9810,9 @@ function setupEventListeners() {
     }
     if (folderSelectDeleteBtn) {
         folderSelectDeleteBtn.addEventListener('click', () => deleteSelectedFolders());
+    }
+    if (folderSelectEditBtn) {
+        folderSelectEditBtn.addEventListener('click', () => renameSelectedFolder());
     }
     if (zikirSelectCancelBtn) {
         zikirSelectCancelBtn.addEventListener('click', () => exitZikirSelectMode(false));

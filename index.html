@@ -65,6 +65,12 @@
                     </button>
                 </div>
                 <div class="header-spacer" aria-hidden="true"></div>
+                <div id="folderMultiSelectBar" class="header-select-bar" hidden>
+                    <button type="button" class="icon-btn header-select-bar__cancel" id="folderSelectCancelBtn" data-i18n="home.cancel" data-i18n-attr="aria-label" aria-label="İptal"><span class="material-icons-outlined" aria-hidden="true">close</span></button>
+                    <span id="folderSelectCount" class="header-select-bar__count">0 seçili</span>
+                    <button type="button" class="icon-btn header-select-bar__edit" id="folderSelectEditBtn" data-i18n="home.rename" data-i18n-attr="aria-label" aria-label="Yeniden adlandır"><span class="material-icons-outlined" aria-hidden="true">edit</span></button>
+                    <button type="button" class="icon-btn header-select-bar__delete" id="folderSelectDeleteBtn" data-i18n="home.delete" data-i18n-attr="aria-label" aria-label="Sil"><span class="material-icons-outlined" aria-hidden="true">delete</span></button>
+                </div>
             </header>
             <p class="drag-hint" id="folderHomeDragHint" data-i18n="home.folderDragHint">Silmek için klasöre uzun basın. Sıralamak için en soldaki üç çizgiyi tutup sürükleyin.</p>
 
@@ -87,11 +93,6 @@
                 <div id="updateBannerSlot" class="update-banner-slot" hidden></div>
             </section>
 
-            <div id="folderMultiSelectBar" class="multi-select-bar" hidden>
-                <button type="button" class="multi-select-bar__btn multi-select-bar__btn--ghost" id="folderSelectCancelBtn" data-i18n="home.cancel">İptal</button>
-                <span id="folderSelectCount" class="multi-select-bar__meta">0 seçili</span>
-                <button type="button" class="multi-select-bar__btn multi-select-bar__btn--danger" id="folderSelectDeleteBtn" data-i18n="home.delete">Sil</button>
-            </div>
 
             <!-- Random Hadith/Ayah Footer -->
             <footer class="quote-footer" id="homeQuoteFooter" role="presentation">
@@ -237,6 +238,11 @@
                 <button class="icon-btn backBtn" data-target="homeView"><span class="material-icons-outlined">arrow_back</span></button>
                 <h1 id="folderDetailTitle">Varsayılan Zikirler</h1>
                 <div class="header-spacer" aria-hidden="true"></div>
+                <div id="zikirMultiSelectBar" class="header-select-bar" hidden>
+                    <button type="button" class="icon-btn header-select-bar__cancel" id="zikirSelectCancelBtn" data-i18n="home.cancel" data-i18n-attr="aria-label" aria-label="İptal"><span class="material-icons-outlined" aria-hidden="true">close</span></button>
+                    <span id="zikirSelectCount" class="header-select-bar__count">0 seçili</span>
+                    <button type="button" class="icon-btn header-select-bar__delete" id="zikirSelectDeleteBtn" data-i18n="home.delete" data-i18n-attr="aria-label" aria-label="Sil"><span class="material-icons-outlined" aria-hidden="true">delete</span></button>
+                </div>
             </header>
             <p class="drag-hint drag-hint--folder" id="folderZikirDragHint" data-i18n="folder.zikirDragHint">Silmek için satıra uzun basın. Sıralamak için en soldaki üç çizgiyi tutup sürükleyin.</p>
 
@@ -263,11 +269,6 @@
                 </button>
             </section>
 
-            <div id="zikirMultiSelectBar" class="multi-select-bar" hidden>
-                <button type="button" class="multi-select-bar__btn multi-select-bar__btn--ghost" id="zikirSelectCancelBtn" data-i18n="home.cancel">İptal</button>
-                <span id="zikirSelectCount" class="multi-select-bar__meta">0 seçili</span>
-                <button type="button" class="multi-select-bar__btn multi-select-bar__btn--danger" id="zikirSelectDeleteBtn" data-i18n="home.delete">Sil</button>
-            </div>
         </div>
 
 

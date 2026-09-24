@@ -19,7 +19,7 @@
   "home": {
     "newFolder": "Créer un dossier",
     "folderDragHint": "Appui long sur un dossier pour supprimer. Faites glisser la poignée à gauche pour réorganiser.",
-    "folderDragHintSelect": "Cochez ou touchez une ligne pour sélectionner, puis Supprimer en bas. Annuler pour quitter. Réorganisation : poignée à gauche.",
+    "folderDragHintSelect": "Touchez le cercle ou la ligne pour sélectionner, puis touchez l’icône corbeille en haut pour supprimer. Touchez ✕ pour annuler. Réorganiser : utilisez les poignées.",
     "cancel": "Annuler",
     "delete": "Supprimer",
     "selectNone": "Aucune sélection",
@@ -33,7 +33,10 @@
     "folderLimitWarning": "Limite de dossiers atteinte. Premium pour des dossiers illimités.",
     "newFolderTitle": "Nouveau dossier",
     "newFolderPrompt": "Entrez un nom pour le nouveau dossier.",
-    "folderNameLabel": "Nom du dossier"
+    "folderNameLabel": "Nom du dossier",
+    "rename": "Renommer",
+    "renameFolderTitle": "Renommer le dossier",
+    "renameFolderPrompt": "Saisissez un nouveau nom pour le dossier."
   },
   "community": {
     "title": "Communauté",
@@ -165,8 +168,8 @@
     "searchPlaceholder": "Rechercher un zikir…",
     "favoritesOnly": "Favoris uniquement",
     "zikirDragHint": "Appui long sur une ligne pour supprimer. Faites glisser la poignée à gauche pour réorganiser.",
-    "zikirDragHintSelect": "Cochez ou touchez une ligne pour sélectionner, puis Supprimer en bas. Annuler pour quitter. Réorganisation : poignée à gauche.",
-    "zikirDragHintSelectNoReorder": "Cochez ou touchez une ligne pour sélectionner, puis Supprimer en bas. Annuler pour quitter. Réorganisation désactivée pendant la recherche ou le filtre favoris.",
+    "zikirDragHintSelect": "Touchez le cercle ou la ligne pour sélectionner, puis touchez l’icône corbeille en haut pour supprimer. Touchez ✕ pour annuler. Réorganiser : utilisez les poignées.",
+    "zikirDragHintSelectNoReorder": "Touchez le cercle ou la ligne pour sélectionner, puis touchez l’icône corbeille en haut pour supprimer. Touchez ✕ pour annuler. La réorganisation est désactivée pendant la recherche ou le filtre favoris.",
     "zikirDragHintReorderDisabled": "Effacez la recherche et désactivez le filtre favoris pour réorganiser.",
     "seasonalDragHint": "Ces dhikr des jours spéciaux n'apparaissent que pendant la période prévue.",
     "limitWarning": "Ce dossier a atteint la limite de zikir. Supprimez-en un ou déplacez-le vers un autre dossier.",

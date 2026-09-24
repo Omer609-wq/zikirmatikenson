@@ -19,7 +19,7 @@
   "home": {
     "newFolder": "Cipta Folder Baharu",
     "folderDragHint": "Tekan lama folder untuk padam. Seret pemegang di kiri untuk susun semula.",
-    "folderDragHintSelect": "Tandakan kotak atau ketik baris untuk pilih; kemudian ketik Padam di bawah. Batal untuk keluar. Susun semula: pemegang tiga garis.",
+    "folderDragHintSelect": "Ketik bulatan atau baris untuk pilih, kemudian ketik ikon tong sampah di atas untuk padam. Ketik ✕ untuk batal. Susun semula: guna garis pemegang.",
     "cancel": "Batal",
     "delete": "Padam",
     "selectNone": "Tiada pilihan",
@@ -31,7 +31,10 @@
     "folderLimitWarning": "Had folder dicapai. Premium untuk folder tanpa had.",
     "newFolderTitle": "Folder baharu",
     "newFolderPrompt": "Masukkan nama untuk folder baharu.",
-    "folderNameLabel": "Nama folder"
+    "folderNameLabel": "Nama folder",
+    "rename": "Namakan semula",
+    "renameFolderTitle": "Namakan semula folder",
+    "renameFolderPrompt": "Masukkan nama baharu untuk folder."
   },
   "community": {
     "title": "Komuniti",
@@ -159,8 +162,8 @@
     "searchPlaceholder": "Cari zikir…",
     "favoritesOnly": "Kegemaran sahaja",
     "zikirDragHint": "Tekan lama baris untuk padam. Seret pemegang di kiri untuk susun semula.",
-    "zikirDragHintSelect": "Tandakan kotak atau ketik baris untuk pilih; kemudian ketik Padam di bawah. Batal untuk keluar. Susun semula: pemegang tiga garis.",
-    "zikirDragHintSelectNoReorder": "Tandakan kotak atau ketik baris untuk pilih; kemudian ketik Padam di bawah. Batal untuk keluar. Susunan dimatikan semasa carian atau penapis kegemaran aktif.",
+    "zikirDragHintSelect": "Ketik bulatan atau baris untuk pilih, kemudian ketik ikon tong sampah di atas untuk padam. Ketik ✕ untuk batal. Susun semula: guna garis pemegang.",
+    "zikirDragHintSelectNoReorder": "Ketik bulatan atau baris untuk pilih, kemudian ketik ikon tong sampah di atas untuk padam. Ketik ✕ untuk batal. Susunan semula dimatikan semasa carian atau penapis kegemaran aktif.",
     "zikirDragHintReorderDisabled": "Kosongkan carian dan tutup penapis kegemaran untuk menyusun semula.",
     "seasonalDragHint": "Zikir hari istimewa ini hanya dipaparkan dalam tempoh yang ditetapkan.",
     "limitWarning": "Folder ini telah mencapai had zikir. Padam atau pindah ke folder lain.",

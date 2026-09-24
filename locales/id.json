@@ -19,7 +19,7 @@
   "home": {
     "newFolder": "Buat Folder Baru",
     "folderDragHint": "Tahan lama folder untuk menghapus. Seret pegangan di kiri untuk mengurutkan.",
-    "folderDragHintSelect": "Ketuk kotak centang atau baris untuk memilih; lalu ketuk Hapus di bawah. Batal untuk keluar. Urutkan: pegangan tiga garis.",
+    "folderDragHintSelect": "Ketuk lingkaran atau baris untuk memilih, lalu ketuk ikon tempat sampah di atas untuk menghapus. Ketuk ✕ untuk batal. Urutkan: gunakan garis pegangan.",
     "cancel": "Batal",
     "delete": "Hapus",
     "selectNone": "Tidak ada pilihan",
@@ -31,7 +31,10 @@
     "folderLimitWarning": "Batas folder tercapai. Premium untuk folder tanpa batas.",
     "newFolderTitle": "Folder baru",
     "newFolderPrompt": "Tulis nama untuk folder baru.",
-    "folderNameLabel": "Nama folder"
+    "folderNameLabel": "Nama folder",
+    "rename": "Ganti nama",
+    "renameFolderTitle": "Ganti nama folder",
+    "renameFolderPrompt": "Masukkan nama baru untuk folder."
   },
   "community": {
     "title": "Komunitas",
@@ -159,8 +162,8 @@
     "searchPlaceholder": "Cari zikir…",
     "favoritesOnly": "Hanya favorit",
     "zikirDragHint": "Tahan lama baris untuk menghapus. Seret pegangan di kiri untuk mengurutkan.",
-    "zikirDragHintSelect": "Ketuk kotak centang atau baris untuk memilih; lalu ketuk Hapus di bawah. Batal untuk keluar. Urutkan: pegangan tiga garis.",
-    "zikirDragHintSelectNoReorder": "Ketuk kotak centang atau baris untuk memilih; lalu ketuk Hapus di bawah. Batal untuk keluar. Pengurutan nonaktif saat pencarian atau filter favorit aktif.",
+    "zikirDragHintSelect": "Ketuk lingkaran atau baris untuk memilih, lalu ketuk ikon tempat sampah di atas untuk menghapus. Ketuk ✕ untuk batal. Urutkan: gunakan garis pegangan.",
+    "zikirDragHintSelectNoReorder": "Ketuk lingkaran atau baris untuk memilih, lalu ketuk ikon tempat sampah di atas untuk menghapus. Ketuk ✕ untuk batal. Pengurutan nonaktif saat pencarian atau filter favorit aktif.",
     "zikirDragHintReorderDisabled": "Hapus pencarian dan matikan filter favorit untuk mengurutkan.",
     "seasonalDragHint": "Zikir hari istimewa ini hanya muncul selama periode yang ditentukan.",
     "limitWarning": "Folder ini sudah mencapai batas zikir. Hapus atau pindahkan ke folder lain.",

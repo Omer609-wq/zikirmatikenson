@@ -19,7 +19,7 @@
   "home": {
     "newFolder": "Yeni Klasör Oluştur",
     "folderDragHint": "Silmek için klasöre uzun basın. Sıralamak için en soldaki üç çizgiyi tutup sürükleyin.",
-    "folderDragHintSelect": "Kutucuğa tik veya satıra dokunarak seçin; sileceklerinizi işaretledikten sonra alttan Sil'e dokunun. Vazgeç: İptal. Sıralama: üç çizgi.",
+    "folderDragHintSelect": "Yuvarlağa veya satıra dokunarak seçin; sileceklerinizi işaretleyip üstteki çöp kutusuna dokunun. Vazgeçmek için ✕. Sıralama: üç çizgi.",
     "cancel": "İptal",
     "delete": "Sil",
     "selectNone": "Seçim yok",
@@ -31,7 +31,10 @@
     "folderLimitWarning": "Klasör sınırına ulaşıldı. Premium ile sınırsız klasör oluşturabilirsin.",
     "newFolderTitle": "Yeni klasör",
     "newFolderPrompt": "Yeni klasör için bir ad yazın.",
-    "folderNameLabel": "Klasör adı"
+    "folderNameLabel": "Klasör adı",
+    "rename": "Yeniden adlandır",
+    "renameFolderTitle": "Klasörü yeniden adlandır",
+    "renameFolderPrompt": "Klasör için yeni bir ad yazın."
   },
   "community": {
     "title": "Topluluk",
@@ -159,8 +162,8 @@
     "searchPlaceholder": "Zikir ara...",
     "favoritesOnly": "Sadece Favoriler",
     "zikirDragHint": "Silmek için satıra uzun basın. Sıralamak için en soldaki üç çizgiyi tutup sürükleyin.",
-    "zikirDragHintSelect": "Kutucuğa tik veya satıra dokunarak seçin; sileceklerinizi işaretledikten sonra alttan Sil'e dokunun. Vazgeç: İptal. Sıralama: üç çizgi.",
-    "zikirDragHintSelectNoReorder": "Kutucuğa tik veya satıra dokunarak seçin; sileceklerinizi işaretledikten sonra alttan Sil'e dokunun. Vazgeç: İptal. Arama veya favori açıkken sıralama kapalı.",
+    "zikirDragHintSelect": "Yuvarlağa veya satıra dokunarak seçin; sileceklerinizi işaretleyip üstteki çöp kutusuna dokunun. Vazgeçmek için ✕. Sıralama: üç çizgi.",
+    "zikirDragHintSelectNoReorder": "Yuvarlağa veya satıra dokunarak seçin; sileceklerinizi işaretleyip üstteki çöp kutusuna dokunun. Vazgeçmek için ✕. Arama veya favori açıkken sıralama kapalı.",
     "zikirDragHintReorderDisabled": "Sıralamak için aramayı temizleyin ve favori filtresini kapatın.",
     "seasonalDragHint": "Bu özel günlük zikirler yalnızca belirlenen süre boyunca görünür.",
     "limitWarning": "Bu klasörde zikir üst sınırına ulaşıldı. Bir zikri silerek veya başka klasöre taşıyarak yer açabilirsin.",
