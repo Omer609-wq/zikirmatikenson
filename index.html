@@ -204,7 +204,7 @@
                     <li><span class="hatim-legend__dot hatim-legend__dot--done"></span><span data-i18n="community.legendDone">Bitti</span></li>
                 </ul>
 
-                <!-- Hatim tamamlanınca açılır; öncesinde gizlidir. -->
+                <!-- Yalnızca dua düğmesiyle açılır; hatim bitince kendiliğinden açılmaz. -->
                 <section class="hatim-complete" id="hatimCompleteCard" hidden>
                     <div class="hatim-complete__head">
                         <span class="material-icons-outlined" aria-hidden="true">auto_awesome</span>
@@ -222,10 +222,7 @@
                     <p class="hatim-dua__meal" id="hatimDuaMeaning" hidden></p>
                 </section>
 
-                <button type="button" class="secondary-btn hatim-dua-btn" id="hatimDuaBtn" aria-disabled="true">
-                    <span class="material-icons-outlined" aria-hidden="true">auto_awesome</span>
-                    <span data-i18n="community.duaTitle">Hatim duası</span>
-                </button>
+                <button type="button" class="secondary-btn hatim-dua-btn" id="hatimDuaBtn" aria-disabled="true" aria-expanded="false" aria-controls="hatimCompleteCard" data-i18n="community.duaTitle">Hatim duası</button>
                 <button type="button" class="secondary-btn hatim-delete-btn" id="hatimDeleteGroupBtn">
                     <span class="material-icons-outlined">delete_outline</span> <span id="hatimDeleteGroupLabel">Grubu Sil</span>
                 </button>
@@ -785,7 +782,7 @@
                         </div>
                     </div>
                     <h2 id="quranReaderReadModeTitle" class="quran-reader-drawer__title quran-reader-drawer__title--section" data-i18n="quran.readModeTitle">Görünüm</h2>
-                    <div class="quran-read-mode-list quran-read-mode-list--seg-col" id="quranReadModeList" role="radiogroup" aria-labelledby="quranReaderReadModeTitle">
+                    <div class="quran-read-mode-list quran-read-mode-list--box-col" id="quranReadModeList" role="radiogroup" aria-labelledby="quranReaderReadModeTitle">
                         <button type="button" class="quran-read-mode-option" data-read-mode="meal-ar" role="radio" aria-checked="true">
                             <span class="quran-read-mode-option__label" data-i18n="quran.readModeMealAr">Meal + Arapça</span>
                         </button>
@@ -874,8 +871,8 @@
                     <p id="quranAyahExpandRef" class="quran-ayah-expand__ref"></p>
                     <p id="quranAyahExpandBism" class="quran-ayah-expand__bism arabic-text" dir="rtl" lang="ar" hidden></p>
                     <p id="quranAyahExpandAr" class="quran-ayah-expand__ar arabic-text" dir="rtl" lang="ar"></p>
-                    <p id="quranAyahExpandTr" class="quran-ayah-expand__tr" hidden></p>
                     <p id="quranAyahExpandLat" class="quran-ayah-expand__lat" hidden></p>
+                    <p id="quranAyahExpandTr" class="quran-ayah-expand__tr" hidden></p>
                     <p class="quran-ayah-expand__hint" data-i18n="quran.ayahExpandSwipeHint">Önceki veya sonraki ayet için sola veya sağa kaydırın</p>
                 </div>
             </div>

@@ -959,6 +959,8 @@ let currentLibraryGroupId = null;
 /** @type {ReturnType<typeof createHatimGroup>[]} */
 let hatimGroups = [];
 let currentHatimGroupId = null;
+/** Duası açık olan grubun kimliği; gruptan çıkınca kapanır. */
+let hatimDuaOpenFor = null;
 let currentHatimJuzN = null;
 /** Topluluk ekranındaki sekme: 'personal' | 'shared'. Ekranın adı Topluluk
     olduğu için grup sekmesi önde ve varsayılan. */
@@ -5574,6 +5576,7 @@ function showView(viewId, param = null, options = {}) {
         renderCommunityView();
         void syncRemoteHatimsInBackground();
     } else if (viewId === 'hatimGroupView') {
+        hatimDuaOpenFor = null; // gruba her girişte dua kapalı başlar
         if (param != null) currentHatimGroupId = param;
         renderHatimGroupView();
         void syncRemoteHatimInBackground(currentHatimGroupId);
@@ -7085,6 +7088,7 @@ function renderHatimGroupView() {
         const duaReady = isHatimComplete(group);
         duaBtn.classList.toggle('hatim-dua-btn--locked', !duaReady);
         duaBtn.setAttribute('aria-disabled', duaReady ? 'false' : 'true');
+        duaBtn.setAttribute('aria-expanded', duaReady && hatimDuaOpenFor === group.id ? 'true' : 'false');
     }
 
     const deleteLabel = document.getElementById('hatimDeleteGroupLabel');
@@ -7170,15 +7174,17 @@ function renderHatimGroupView() {
 }
 
 /**
- * Hatim tamamlandığında açılan kart: tebrik + hatim duası.
- * Tek seferlik bir uyarı değil; tamamlanmış hatmin ekranında kalıcı durur,
- * böylece kullanıcı meclis günü tekrar açıp okuyabilir.
+ * Tebrik + hatim duası kartı.
+ *
+ * Hatim bitince kendiliğinden açılmaz: dua okumak bir niyet işi, ekrana kendi
+ * başına düşmesi yerine dua düğmesiyle açılır. Bir sonraki girişte yine kapalı
+ * gelir, çünkü açıklık gruba bağlı (`hatimDuaOpenFor`) ve gruptan çıkınca sıfırlanır.
  */
 function renderHatimCompleteCard(group) {
     const card = document.getElementById('hatimCompleteCard');
     if (!card) return;
 
-    if (!isHatimComplete(group)) {
+    if (!isHatimComplete(group) || hatimDuaOpenFor !== group.id) {
         card.hidden = true;
         return;
     }
@@ -7548,7 +7554,7 @@ async function handleShareHatimGroup() {
     }
 }
 
-/** Dua düğmesi: hatim bitmişse duaya götürür, bitmemişse kısa bir bilgi verir. */
+/** Dua düğmesi: hatim bitmişse duayı açıp kapatır, bitmemişse kısa bir bilgi verir. */
 function handleHatimDuaButton() {
     const group = findHatimGroup(currentHatimGroupId);
     if (!group) return;
@@ -7556,13 +7562,13 @@ function handleHatimDuaButton() {
         showTransientNote(t('community.duaLockedNote'));
         return;
     }
-    const card = document.getElementById('hatimCompleteCard');
-    if (!card) return;
-    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    // Kart zaten ekranda olabilir; kısa bir vurgu olmadan düğme ölü hissettiriyor.
-    card.classList.remove('hatim-complete--flash');
-    void card.offsetWidth;
-    card.classList.add('hatim-complete--flash');
+    const wasOpen = hatimDuaOpenFor === group.id;
+    hatimDuaOpenFor = wasOpen ? null : group.id;
+    renderHatimGroupView();
+    if (wasOpen) return;
+    document
+        .getElementById('hatimCompleteCard')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 async function handleDeleteHatimGroup() {
