@@ -6334,18 +6334,16 @@ html[data-counter-show-round="false"] .round-badge { display: none !important; }
     background: rgba(34, 197, 94, 0.12);
     border-color: rgba(34, 197, 94, 0.45);
 }
+/* Aktif: eski tasarım — ince yeşil çerçeve + içi soluk yeşil (solid dolgu değil). */
 .quran-read-mode-list--box-col .quran-read-mode-option.active {
-    background: var(--primary-green);
-    border-color: var(--primary-green);
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.5);
 }
 .quran-read-mode-list--box-col .quran-read-mode-option__label {
     font-size: 0.85rem;
     font-weight: 600;
     line-height: 1.2;
     white-space: nowrap;
-}
-.quran-read-mode-list--box-col .quran-read-mode-option.active .quran-read-mode-option__label {
-    color: #fff;
 }
 
 .quran-ayah-list--layout-mushaf {
