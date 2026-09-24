@@ -6226,6 +6226,47 @@ html[data-counter-show-round="false"] .round-badge { display: none !important; }
     color: var(--text-gray);
 }
 
+/* Okuyucu paneli: Görünüm / Kur'an düzeni — yatay segmented control.
+   Dikey kart yerine tek satır: seçili segment dolu yeşil hap. */
+.quran-read-mode-list--seg {
+    flex-direction: row;
+    gap: 2px;
+    padding: 3px;
+    background: rgba(128, 128, 128, 0.14);
+    border: 1px solid var(--surface-border);
+    border-radius: 12px;
+}
+.quran-read-mode-list--seg .quran-read-mode-option {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    text-align: center;
+    padding: 0.5rem 0.3rem;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+}
+.quran-read-mode-list--seg .quran-read-mode-option:active {
+    background: rgba(34, 197, 94, 0.14);
+}
+.quran-read-mode-list--seg .quran-read-mode-option.active {
+    background: var(--primary-green);
+}
+.quran-read-mode-list--seg .quran-read-mode-option__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: normal;
+    word-break: break-word;
+}
+.quran-read-mode-list--seg .quran-read-mode-option.active .quran-read-mode-option__label {
+    color: #fff;
+}
+
 .quran-ayah-list--layout-mushaf {
     gap: 1.25rem;
 }
