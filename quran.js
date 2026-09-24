@@ -36,7 +36,7 @@ import { t, getLocale, normalizeAppLocale } from './i18n.js';
 import { closeTafsirBridgeSheet, openTafsirBridgeSheet } from './tafsir-bridge.js';
 
 const VALID_MEAL_IDS = new Set(['vakfi', 'diyanet', 'bn', 'muyassar', 'sahih', 'hamidullah', 'basmeih', 'indonesian', 'ahmedali', 'jalandhry']);
-const VALID_READ_MODES = new Set(['meal-ar', 'translit-ar', 'ar-only']);
+const VALID_READ_MODES = new Set(['meal-ar', 'meal-translit-ar', 'translit-ar', 'ar-only']);
 /** Klasöre ayet kaydında ek seçenek: meal + okunuş + Arapça */
 const VALID_ZIKIR_DISPLAY_MODES = new Set(['meal-ar', 'translit-ar', 'ar-only', 'meal-translit-ar']);
 const VALID_READER_LAYOUTS = new Set(['scroll', 'mushaf']);
@@ -194,7 +194,7 @@ export function getDefaultQuranReadModeForLocale(locale) {
 
 export function normalizeQuranReadModeForLocale(mode, locale = getLocale()) {
     const normalized = normalizeQuranReadMode(mode);
-    if (!localeHasQuranMeal(locale) && normalized === 'meal-ar') {
+    if (!localeHasQuranMeal(locale) && (normalized === 'meal-ar' || normalized === 'meal-translit-ar')) {
         return getDefaultQuranReadModeForLocale(locale);
     }
     return normalized;
@@ -829,6 +829,7 @@ function syncExpandCardReadMode(mode) {
     if (!card) return;
     card.classList.remove(
         'quran-ayah-expand__card--meal-ar',
+        'quran-ayah-expand__card--meal-translit-ar',
         'quran-ayah-expand__card--translit-ar',
         'quran-ayah-expand__card--ar-only'
     );
@@ -856,8 +857,8 @@ function fillAyahExpandCard(surahN, ayah, readMode) {
     const bism = ayah.bismillah && String(ayah.bismillah).trim();
     setExpandTextField(bismEl, bism, !!bism);
     setExpandTextField(arEl, ayah.ar, true);
-    setExpandTextField(trEl, ayah.tr, mode === 'meal-ar');
-    setExpandTextField(latEl, ayah.lat, mode === 'translit-ar');
+    setExpandTextField(trEl, ayah.tr, mode === 'meal-ar' || mode === 'meal-translit-ar');
+    setExpandTextField(latEl, ayah.lat, mode === 'translit-ar' || mode === 'meal-translit-ar');
 }
 
 export function isQuranMushafDomActive() {
@@ -996,7 +997,8 @@ export function syncQuranReaderChrome(readMode, readerLayout = DEFAULT_QURAN_REA
     const localeMeals = getQuranMealsForLocale(getLocale());
     if (mealWrap) {
         mealWrap.hidden =
-            layout === 'mushaf' || (mode !== 'meal-ar' || localeMeals.length <= 1);
+            layout === 'mushaf' ||
+            ((mode !== 'meal-ar' && mode !== 'meal-translit-ar') || localeMeals.length <= 1);
     }
 
     const meta = document.getElementById('quranMushafMeta');
@@ -1018,6 +1020,7 @@ export function syncQuranReaderChrome(readMode, readerLayout = DEFAULT_QURAN_REA
     if (list) {
         list.classList.remove(
             'quran-ayah-list--meal-ar',
+            'quran-ayah-list--meal-translit-ar',
             'quran-ayah-list--translit-ar',
             'quran-ayah-list--ar-only',
             'quran-ayah-list--layout-scroll',
@@ -1048,7 +1051,7 @@ function syncQuranReadModeUI(readMode) {
     const hasMeal = localeHasQuranMeal(getLocale());
     document.querySelectorAll('#quranReadModeList .quran-read-mode-option').forEach((btn) => {
         const readModeId = btn.getAttribute('data-read-mode');
-        if (readModeId === 'meal-ar') btn.hidden = !hasMeal;
+        if (readModeId === 'meal-ar' || readModeId === 'meal-translit-ar') btn.hidden = !hasMeal;
         const on = readModeId === mode;
         btn.classList.toggle('active', on);
         btn.setAttribute('aria-checked', on ? 'true' : 'false');
@@ -1423,14 +1426,14 @@ function createAyahElement(ayah, surahN, readMode) {
     ar.textContent = ayah.ar || '';
     block.appendChild(ar);
 
-    if (mode === 'meal-ar' && ayah.tr) {
+    if ((mode === 'meal-ar' || mode === 'meal-translit-ar') && ayah.tr) {
         const trLine = document.createElement('p');
         trLine.className = 'quran-ayah__tr';
         trLine.textContent = ayah.tr;
         block.appendChild(trLine);
     }
 
-    if (mode === 'translit-ar' && ayah.lat) {
+    if ((mode === 'translit-ar' || mode === 'meal-translit-ar') && ayah.lat) {
         const latLine = document.createElement('p');
         latLine.className = 'quran-ayah__lat';
         latLine.textContent = ayah.lat;
@@ -1485,13 +1488,13 @@ function createMushafSubsAyah(ayah, surahN, readMode) {
     ref.textContent = formatAyahCardRef(surahName, surahN, ayah.n);
     row.appendChild(ref);
 
-    if (mode === 'meal-ar' && ayah.tr) {
+    if ((mode === 'meal-ar' || mode === 'meal-translit-ar') && ayah.tr) {
         const meal = document.createElement('p');
         meal.className = 'quran-mushaf-subs-ayah__meal';
         meal.textContent = ayah.tr;
         row.appendChild(meal);
     }
-    if (mode === 'translit-ar' && ayah.lat) {
+    if ((mode === 'translit-ar' || mode === 'meal-translit-ar') && ayah.lat) {
         const lat = document.createElement('p');
         lat.className = 'quran-mushaf-subs-ayah__lat';
         lat.textContent = ayah.lat;
