@@ -3100,6 +3100,22 @@ html[lang='ur'] .smart-reminder-weekday {
     margin-top: 0.2rem;
 }
 
+/* Sunucu onayı beklenen hücre: yeni hâli görünür, hafif nabızla "kaydediliyor".
+   Yalnız opaklık oynar — eski GPU'da da yeniden boyama gerektirmez. */
+@keyframes hatim-cell-pending {
+    from { opacity: 1; }
+    to { opacity: 0.55; }
+}
+.hatim-cell--pending {
+    animation: hatim-cell-pending 0.7s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) {
+    .hatim-cell--pending {
+        animation: none;
+        opacity: 0.7;
+    }
+}
+
 /* Tamamlanmış hatim satırı: listenin altında, sönük; çubuğu yeşil ve dolu. */
 .hatim-group-row--done {
     opacity: 0.72;

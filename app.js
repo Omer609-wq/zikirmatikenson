@@ -167,7 +167,8 @@ import {
     isValidHatimCode,
     listMemberJuz,
     releaseJuz,
-    uncompleteJuz
+    uncompleteJuz,
+    applyJuzActionLocally
 } from './lib/hatim-groups.js';
 import {
     dropGoneHatims,
@@ -962,6 +963,22 @@ let currentLibraryGroupId = null;
 /** @type {ReturnType<typeof createHatimGroup>[]} */
 let hatimGroups = [];
 let currentHatimGroupId = null;
+
+/*
+ * İyimser güncelleme: dokunulan cüz sunucu cevabını beklemeden ekranda değişir,
+ * reddedilirse geri alınır.
+ *
+ * `hatimConfirmedBase`: onay bekleyen grubun onaylı (işlemden önceki) hâli.
+ * Ekrandaki grup iyimser; diske ve buluta ise bu hâl yazılır — uygulama yarıda
+ * kapanırsa onaylanmamış bir cüz önbelleğe sızmasın (rev değişmediği için bir
+ * daha sunucudan okunmaz, sonsuza kadar yanlış kalırdı). Aynı zamanda arka plan
+ * eşitlemesine "bu grup işlemde, dokunma" der.
+ */
+const hatimConfirmedBase = new Map();
+/** Onay bekleyen hücre — hafif nabızla gösterilir. */
+let hatimPendingJuz = null;
+/** Ayrılma/silme onay beklerken listeden gizlenen gruplar; diskte hâlâ durur. */
+const hatimHiddenIds = new Set();
 let currentHatimJuzN = null;
 /** Topluluk ekranındaki sekme: 'personal' | 'shared'. Ekranın adı Topluluk
     olduğu için grup sekmesi önde ve varsayılan. */
@@ -2828,7 +2845,8 @@ function buildBackupPayload() {
         appMeta,
         lifetimeTotal,
         lifetimeByZikir,
-        hatimGroups
+        // Onay bekleyen grup iyimser hâliyle değil, onaylı hâliyle yazılır.
+        hatimGroups: hatimGroups.map((g) => hatimConfirmedBase.get(g.id) || g)
     };
 }
 
@@ -6615,6 +6633,9 @@ async function refreshRemoteHatim(id, ctx = null) {
     if (!isRemoteHatim(group)) return 'local';
     // Donmuş hatim artık yerel bir kayıt: sunucuda değişecek bir şeyi yok.
     if (isHatimFrozen(group)) return 'frozen';
+    // İşlemi süren grup: eşitleme sonucu iyimser hâli ezip ekranı titretmesin.
+    // İşlem bitince kendi sonucunu zaten yazıyor.
+    if (hatimConfirmedBase.has(id)) return 'pending';
     const context = ctx || (await getHatimContextQuiet());
     if (!context) return 'unavailable';
     const res = await fetchHatim(context, id, group);
@@ -6645,7 +6666,9 @@ function warmHatimSync() {
 }
 
 async function syncRemoteHatimsInBackground() {
-    const ids = hatimGroups.filter((g) => isRemoteHatim(g) && !isHatimFrozen(g)).map((g) => g.id);
+    const ids = hatimGroups
+        .filter((g) => isRemoteHatim(g) && !isHatimFrozen(g) && !hatimHiddenIds.has(g.id))
+        .map((g) => g.id);
     if (!ids.length) return;
     const ctx = await getHatimContextQuiet();
     if (!ctx) return;
@@ -6698,26 +6721,56 @@ async function handleRemoteHatimJuzAction(group, action) {
     } else if (action === 'forceRelease') {
         if (!(await showAppConfirm(t('community.forceReleaseConfirm')))) return;
     }
-    const ctx = await requireHatimSync();
-    if (!ctx) return;
+    // Aynı anda tek işlem: ikinci dokunuş ilkinin iyimser hâlinin üstüne binmesin.
+    if (hatimSyncBusy) return;
 
-    const res = await withHatimBusy(() => {
+    // İyimser adım: sunucuyu beklemeden ekrana bas. Yerelde bile geçersizse
+    // (önbellekte cüz başkasında görünüyorsa) basılmaz, karar sunucunun.
+    const before = findHatimGroup(group.id) || group;
+    const optimistic = applyJuzActionLocally(before, juzN, action, hatimMemberIdFor(before), {
+        memberName: name
+    });
+    if (optimistic) {
+        hatimConfirmedBase.set(group.id, before);
+        hatimPendingJuz = { groupId: group.id, n: juzN };
+        setHatimGroupInMemory(optimistic);
+        renderHatimGroupView();
+        renderHatimJuzDetail();
+        renderCommunityCardSummary();
+    }
+
+    // Oturum hazırlığı da beklemenin içinde: ilk dokunuşta bile ekran hemen değişir.
+    const res = await withHatimBusy(async () => {
+        const ctx = await requireHatimSync();
+        if (!ctx) return { ok: false, reason: 'noContext' };
         if (action === 'claim') return claimJuzRemote(ctx, group.id, juzN, name);
         if (action === 'complete') return completeJuzRemote(ctx, group.id, juzN);
         if (action === 'uncomplete') return uncompleteJuzRemote(ctx, group.id, juzN);
         if (action === 'release') return releaseJuzRemote(ctx, group.id, juzN);
         if (action === 'forceRelease') return releaseJuzRemote(ctx, group.id, juzN, { force: true });
-        return Promise.resolve({ ok: false, reason: 'busyLocal' });
+        return { ok: false, reason: 'busyLocal' };
     });
 
+    // Bekleme bitti: bundan sonrası sunucunun cevabına göre.
+    hatimConfirmedBase.delete(group.id);
+    hatimPendingJuz = null;
+
     if (!res.ok) {
-        if (res.reason === 'busyLocal') return;
+        // Önce geri al: ne olursa olsun ekran onaylı hâle dönsün.
+        if (optimistic && findHatimGroup(group.id)) setHatimGroupInMemory(before);
+        if (res.reason === 'busyLocal' || res.reason === 'noContext') {
+            // noContext: requireHatimSync sebebini zaten gösterdi.
+            renderHatimGroupView();
+            renderHatimJuzDetail();
+            renderCommunityCardSummary();
+            return;
+        }
         // Ret çoğu zaman tablonun değiştiğini söyler ('taken'): önce eşle. Yetki reddinin
         // asıl sebebi gruptan çıkarılmak ya da grubun silinmesiyse onu söyle, "yetkin yok" değil.
         const state =
             res.reason === 'gone' || res.reason === 'removed'
                 ? res.reason
-                : await refreshRemoteHatim(group.id, ctx);
+                : await refreshRemoteHatim(group.id);
         if (state === 'gone' || state === 'removed') {
             dropHatimLocally(group.id);
             await leaveGoneHatimGroup(state);
@@ -6725,12 +6778,14 @@ async function handleRemoteHatimJuzAction(group, action) {
         }
         renderHatimGroupView();
         renderHatimJuzDetail();
+        renderCommunityCardSummary();
         await showHatimSyncError(res.reason);
         return;
     }
 
+    // İyimser adım rev'i değiştirmedi; karşılaştırma onaylı hâlin rev'iyle.
     const latest = findHatimGroup(group.id) || group;
-    if (res.rev === latest.remote.rev + 1) {
+    if (res.rev === before.remote.rev + 1) {
         // Arada başka değişiklik yok: yalnızca bu cüzü yaz.
         commitHatimGroup({
             ...latest,
@@ -6740,7 +6795,7 @@ async function handleRemoteHatimJuzAction(group, action) {
     } else {
         // Başkaları da değiştirmiş. Yeni rev'i eski tabloyla yazmak önbelleği bir
         // sonraki değişikliğe kadar eskide bırakırdı: tabloyu yeniden oku.
-        await refreshRemoteHatim(group.id, ctx);
+        await refreshRemoteHatim(group.id);
     }
     renderHatimGroupView();
     renderHatimJuzDetail();
@@ -6764,19 +6819,30 @@ async function handleRemoteHatimDeleteOrLeave(group) {
             : t('community.leaveConfirm', { name: group.name })
     );
     if (!confirmed) return;
-    const ctx = await requireHatimSync();
-    if (!ctx) return;
+    if (hatimSyncBusy) return;
 
-    const res = await withHatimBusy(() => (isOwner ? deleteHatim(ctx, group.id) : leaveHatim(ctx, group.id)));
-    if (!res.ok && res.reason === 'busyLocal') return;
-    // Grup zaten silinmişse ayrılmış sayılır; listeden düşmesi yeter.
-    if (!res.ok && res.reason !== 'gone') {
-        await showHatimSyncError(res.reason);
-        return;
-    }
-    dropHatimLocally(group.id);
+    // İyimser: grup hemen listeden kalkar, kullanıcı Topluluk'a döner. Diskteki
+    // kayıt sunucu onaylayana kadar durur; reddedilirse grup listeye geri gelir.
+    hatimHiddenIds.add(group.id);
     renderCommunityCardSummary();
     showView('communityView');
+
+    const res = await withHatimBusy(async () => {
+        const ctx = await requireHatimSync();
+        if (!ctx) return { ok: false, reason: 'noContext' };
+        return isOwner ? deleteHatim(ctx, group.id) : leaveHatim(ctx, group.id);
+    });
+    hatimHiddenIds.delete(group.id);
+
+    // Grup zaten silinmişse ayrılmış sayılır; listeden düşmesi yeter.
+    if (res.ok || res.reason === 'gone') {
+        dropHatimLocally(group.id);
+    }
+    renderCommunityCardSummary();
+    if (currentViewId === 'communityView') renderCommunityView();
+    if (!res.ok && res.reason !== 'gone' && res.reason !== 'noContext' && res.reason !== 'busyLocal') {
+        await showHatimSyncError(res.reason);
+    }
 }
 
 /** Üye listesi: herkes görür, yönetici başkalarını çıkarabilir (§7 engelleme). */
@@ -6893,10 +6959,21 @@ async function handleReportHatimGroup() {
     await showAppAlert(t('community.reportThanks'));
 }
 
+/** Ekranda gösterilen hatimler: ayrılma/silme onayı bekleyenler hariç. */
+function visibleHatimGroups() {
+    return hatimHiddenIds.size ? hatimGroups.filter((g) => !hatimHiddenIds.has(g.id)) : hatimGroups;
+}
+
 function listHatimsByKind(kind) {
-    return hatimGroups.filter((g) =>
+    return visibleHatimGroups().filter((g) =>
         kind === HATIM_KIND_PERSONAL ? isPersonalHatim(g) : !isPersonalHatim(g)
     );
+}
+
+/** Grubu yalnız bellekte değiştirir, diske yazmaz — iyimser adım ve geri alma için. */
+function setHatimGroupInMemory(next) {
+    const idx = hatimGroups.findIndex((g) => g.id === next.id);
+    if (idx >= 0) hatimGroups[idx] = next;
 }
 
 /** Kişisel hatimde ad sorulmaz; "Hatmim", "Hatmim 2"… diye kendiliğinden adlanır. */
@@ -6966,7 +7043,7 @@ function renderCommunityCardSummary() {
     const body = document.getElementById('communityCardBody');
     if (!body) return;
 
-    if (!hatimGroups.length) {
+    if (!visibleHatimGroups().length) {
         body.innerHTML = `<span class="community-card__hint">${escapeHtml(t('community.cardEmpty'))}</span>`;
         return;
     }
@@ -6997,7 +7074,7 @@ function renderCommunityCardSummary() {
     // Şerit tek bir hatmi değil, kullanıcının bütün hatimlerini toplar: aynı cüz
     // birden çok hatimde üstlenilebiliyor ve tek hatmin şeridi bunu gösteremiyordu.
     // Bekleyen sayısı arttıkça nokta koyulaşır, hepsi bitince yeşile döner.
-    const strip = buildMemberJuzStrip(hatimGroups, me)
+    const strip = buildMemberJuzStrip(visibleHatimGroups(), me)
         .map((cell) => {
             const tone = cell.level > 1 ? ` community-card__dot--load${cell.level}` : '';
             return `<span class="community-card__dot community-card__dot--${cell.state}${tone}"></span>`;
@@ -7293,6 +7370,10 @@ function renderHatimGroupView() {
         .map((juz) => {
             const cls = hatimJuzStateClass(juz);
             const isMine = juz.by === me;
+            const pending =
+                hatimPendingJuz?.groupId === group.id && hatimPendingJuz.n === juz.n
+                    ? ' hatim-cell--pending'
+                    : '';
             const icon =
                 juz.state === JUZ_DONE
                     ? 'check'
@@ -7310,7 +7391,7 @@ function renderHatimGroupView() {
                 personal || juz.state === JUZ_FREE ? '' : juz.byName || t('community.someone');
             return `
                 <button type="button"
-                    class="hatim-cell hatim-cell--${cls}${isMine ? ' hatim-cell--mine' : ''}"
+                    class="hatim-cell hatim-cell--${cls}${isMine ? ' hatim-cell--mine' : ''}${pending}"
                     data-juz="${juz.n}"
                     aria-label="${escapeAttr(`${hatimJuzLabel(juz.n)} — ${stateLabel}${who ? ' — ' + who : ''}`)}">
                     ${icon ? `<span class="hatim-cell__icon material-icons-outlined" aria-hidden="true">${icon}</span>` : ''}
@@ -7501,6 +7582,13 @@ function renderHatimJuzDetail() {
         buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="read">${escapeHtml(t('community.readJuz'))}</button>`);
     }
     actions.innerHTML = buttons.join('');
+    // Onay beklerken ikinci işlem yok: dokunuş sessizce yutulmasın, düğme sönük dursun.
+    // "Oku" serbest — sunucuya bir şey yazmıyor.
+    if (hatimPendingJuz?.groupId === group.id && hatimPendingJuz.n === juz.n) {
+        actions.querySelectorAll('[data-hatim-action]').forEach((btn) => {
+            if (btn.dataset.hatimAction !== 'read') btn.disabled = true;
+        });
+    }
 }
 
 function openHatimJuzDetail(juzN) {
