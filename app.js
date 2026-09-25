@@ -5085,8 +5085,7 @@ function onFolderLongPressSelect(id) {
     if (folderGrid) folderGrid.classList.add('folder-grid--select-mode');
     setMultiSelectBarShown(folderMultiSelectBar, true);
     if (homeQuoteFooter) homeQuoteFooter.hidden = folderSelectMode;
-    updateFolderSelectChrome();
-    renderFolders();
+    syncFolderSelectDom();
 }
 
 function onZikirLongPressSelect(id) {
@@ -5104,8 +5103,7 @@ function onZikirLongPressSelect(id) {
     if (fd) fd.classList.add('folder-detail--select-mode');
     if (folderZikirList) folderZikirList.classList.add('zikir-list--select-mode');
     setMultiSelectBarShown(zikirMultiSelectBar, true);
-    updateZikirSelectChrome();
-    renderFolderDetail();
+    syncZikirSelectDom();
 }
 
 function toggleFolderSelected(id) {
@@ -5114,8 +5112,7 @@ function toggleFolderSelected(id) {
     /* Sil çubuğu seçim yaparken açık kalsın; kapanış: İptal veya silme tamamlanınca */
     folderSelectBarVisible = true;
     setMultiSelectBarShown(folderMultiSelectBar, true);
-    updateFolderSelectChrome();
-    renderFolders();
+    syncFolderSelectDom();
 }
 
 function toggleZikirSelected(id) {
@@ -5124,7 +5121,46 @@ function toggleZikirSelected(id) {
     zikirSelectBarVisible = true;
     setMultiSelectBarShown(zikirMultiSelectBar, true);
     updateZikirSelectChrome();
-    renderFolderDetail();
+    syncZikirSelectDom();
+}
+
+/**
+ * Seçim modunu YENİDEN ÇİZMEDEN mevcut DOM üstünde günceller. Yeniden çizim
+ * (innerHTML sıfırlama) kartları yeni eleman olarak yaratıyor ve CSS geçişleri
+ * oynamıyordu; bu yüzden "basılı tut → moda gir" ve tik atma burada canlanır.
+ */
+function syncFolderSelectDom() {
+    document.querySelectorAll('#folderGrid .folder-select-cb').forEach((cb) => {
+        cb.checked = selectedFolderIds.has(cb.getAttribute('data-folder-id'));
+    });
+    if (newFolderBtn) newFolderBtn.style.display = folderSelectMode ? 'none' : 'flex';
+    if (folderHomeDragHint) {
+        folderHomeDragHint.textContent = folderSelectMode
+            ? t('home.folderDragHintSelect')
+            : t('home.folderDragHint');
+    }
+    updateFolderSelectChrome();
+}
+
+function syncZikirSelectDom() {
+    document.querySelectorAll('#folderZikirList .zikir-select-cb').forEach((cb) => {
+        cb.checked = selectedZikirIds.has(cb.getAttribute('data-zikir-id'));
+    });
+    const seasonal = isSeasonalFolderId(currentFolderId);
+    if (openAddZikirModalBtn && !seasonal && currentFolderId !== 'f_esma') {
+        openAddZikirModalBtn.style.display = zikirSelectMode ? 'none' : 'flex';
+    }
+    if (folderZikirDragHint && !seasonal) {
+        const canDrag = toSearchTokens(folderSearchQuery).length === 0 && !folderFavOnly;
+        if (zikirSelectMode) {
+            folderZikirDragHint.textContent = canDrag
+                ? t('folder.zikirDragHintSelect')
+                : t('folder.zikirDragHintSelectNoReorder');
+        } else {
+            folderZikirDragHint.textContent = t('folder.zikirDragHint');
+        }
+    }
+    updateZikirSelectChrome();
 }
 
 async function renameSelectedFolder() {
@@ -6369,8 +6405,7 @@ function renderFolders() {
                     else selectedFolderIds.delete(f.id);
                     folderSelectBarVisible = true;
                     setMultiSelectBarShown(folderMultiSelectBar, true);
-                    updateFolderSelectChrome();
-                    renderFolders();
+                    syncFolderSelectDom();
                 });
             };
             cb.addEventListener('change', (ev) => {
@@ -7968,8 +8003,7 @@ function renderFolderDetail() {
                     else selectedZikirIds.delete(z.id);
                     zikirSelectBarVisible = true;
                     setMultiSelectBarShown(zikirMultiSelectBar, true);
-                    updateZikirSelectChrome();
-                    renderFolderDetail();
+                    syncZikirSelectDom();
                 });
             };
             zcb.addEventListener('change', (ev) => {

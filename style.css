@@ -2404,7 +2404,7 @@ html[lang='ur'] .smart-reminder-weekday {
     justify-content: flex-start;
     text-align: left;
     gap: 0.45rem;
-    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.22s cubic-bezier(0.25, 0.8, 0.35, 1), margin-left 0.2s ease;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.22s cubic-bezier(0.25, 0.8, 0.35, 1), margin-left 0.26s cubic-bezier(0.25, 0.8, 0.35, 1);
     box-shadow: var(--surface-shadow);
 }
 
@@ -3615,7 +3615,7 @@ html[data-theme="black"] #updateBannerDetailOverlay.active .update-banner-spotli
     display: none;
 }
 
-/* Seçim dairesi kartın DIŞINDA, solda; kart sağa kayar. */
+/* Seçim dairesi kartın DIŞINDA, solda; kart yumuşakça sağa kayar, daire açığa çıkar. */
 .folder-card__check {
     position: absolute;
     left: -2.5rem;
@@ -3626,14 +3626,16 @@ html[data-theme="black"] #updateBannerDetailOverlay.active .update-banner-spotli
     align-items: center;
     justify-content: center;
     opacity: 0;
+    transform: translateX(10px) scale(0.6);
     pointer-events: none;
-    transition: opacity 0.15s ease;
+    transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.34, 1.3, 0.5, 1);
 }
 .folder-grid--select-mode .folder-card {
     margin-left: 2.5rem;
 }
 .folder-grid--select-mode .folder-card__check {
     opacity: 1;
+    transform: translateX(0) scale(1);
     pointer-events: auto;
 }
 /* Mevsimsel kart kuralı check'i position:relative yapıyordu; dışarıda absolute kalsın. */
@@ -3727,14 +3729,16 @@ html[data-theme="black"] #updateBannerDetailOverlay.active .update-banner-spotli
     align-items: center;
     justify-content: center;
     opacity: 0;
+    transform: translateX(10px) scale(0.6);
     pointer-events: none;
-    transition: opacity 0.15s ease;
+    transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.34, 1.3, 0.5, 1);
 }
 .zikir-list--select-mode li {
     margin-left: 2.5rem;
 }
 .zikir-list--select-mode li .zikir-row__check {
     opacity: 1;
+    transform: translateX(0) scale(1);
     pointer-events: auto;
 }
 .zikir-list li .zikir-row__inner {
@@ -4063,7 +4067,7 @@ li.drag-reorder-ghost.drag-reorder-ghost--select .zikir-row__check {
     cursor: pointer;
     touch-action: pan-y;
     box-shadow: var(--surface-shadow);
-    transition: background 0.15s, border-color 0.15s, transform 0.22s cubic-bezier(0.25, 0.8, 0.35, 1), margin-left 0.2s ease;
+    transition: background 0.15s, border-color 0.15s, transform 0.22s cubic-bezier(0.25, 0.8, 0.35, 1), margin-left 0.26s cubic-bezier(0.25, 0.8, 0.35, 1);
 }
 .zikir-list li:active {
     background: var(--surface-card-active);
