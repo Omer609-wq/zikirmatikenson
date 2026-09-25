@@ -4716,6 +4716,7 @@ html[data-counter-show-round="false"] .round-badge { display: none !important; }
 }
 
 .chart-container {
+    position: relative; /* .chart-tooltip bu karta göre konumlanır */
     background: var(--surface-card);
     border: 1px solid var(--surface-border);
     border-radius: var(--surface-radius);
@@ -4979,12 +4980,12 @@ html[data-counter-show-round="false"] .round-badge { display: none !important; }
     max-height: 100%;
     transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.chart-bar:hover::after, .chart-bar:active::after {
-    content: attr(data-tooltip);
+/* Çubuk sayısı baloncuğu: kartın içinde yüzer (JS konumlar), kaydırma şeridi
+   kırpmasın ve başlığın altında kalmasın diye çubuğun ::after'ı değil. */
+.chart-tooltip {
     position: absolute;
-    top: -28px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    top: 0;
     background: var(--chart-tooltip-bg, rgba(255, 255, 255, 0.9));
     color: var(--chart-tooltip-fg, var(--bg-darker));
     padding: 0.2rem 0.5rem;
@@ -4995,6 +4996,9 @@ html[data-counter-show-round="false"] .round-badge { display: none !important; }
     white-space: nowrap;
     z-index: 20;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.chart-tooltip[hidden] {
+    display: none !important;
 }
 .chart-label {
     font-size: 0.7rem;

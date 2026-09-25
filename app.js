@@ -8964,6 +8964,84 @@ function renderBarChart(chartEl, yAxisEl, buckets, density, scaleMaxOverride) {
     if (density === 'default') chartEl.classList.add('css-chart--week');
 
     buckets.forEach((dt) => chartEl.appendChild(buildChartBarGroup(dt, scaleMax)));
+    hideChartTooltip(chartEl);
+    bindChartTooltip(chartEl);
+}
+
+/**
+ * Çubuğa basınca sayıyı gösteren baloncuk. Çubuğun ::after'ı yerine grafik
+ * kartının (.chart-container) içinde, kaydırma şeridinin DIŞINDA tek bir eleman:
+ * aylık şerit overflow ile kırpıyordu, uzun çubuklarda baloncuk başlığın altında
+ * kalıyordu. Kart içinde yatayda sınırlanır; basılı tutulduğu sürece görünür.
+ */
+function getChartTooltipEl(chartEl, create) {
+    const host = chartEl?.closest('.chart-container');
+    if (!host) return null;
+    let tip = host.querySelector(':scope > .chart-tooltip');
+    if (!tip && create) {
+        tip = document.createElement('div');
+        tip.className = 'chart-tooltip';
+        tip.hidden = true;
+        tip.setAttribute('aria-hidden', 'true');
+        host.appendChild(tip);
+    }
+    return tip;
+}
+
+function hideChartTooltip(chartEl) {
+    const tip = getChartTooltipEl(chartEl, false);
+    if (tip) tip.hidden = true;
+}
+
+function showChartTooltip(chartEl, bar) {
+    const tip = getChartTooltipEl(chartEl, true);
+    if (!tip || !bar.dataset.tooltip) return;
+    const host = tip.parentElement;
+    tip.textContent = bar.dataset.tooltip;
+    tip.hidden = false;
+    const hostRect = host.getBoundingClientRect();
+    const barRect = bar.getBoundingClientRect();
+    const gap = 6;
+    const edge = 4;
+    // absolute konumun başlangıcı kartın dolgu kutusu (kenarlığın içi)
+    const originX = hostRect.left + host.clientLeft;
+    const originY = hostRect.top + host.clientTop;
+    const w = tip.offsetWidth;
+    const h = tip.offsetHeight;
+    let left = barRect.left + barRect.width / 2 - originX - w / 2;
+    left = Math.max(edge, Math.min(host.clientWidth - w - edge, left));
+    const top = Math.max(edge, barRect.top - originY - h - gap);
+    tip.style.left = `${Math.round(left)}px`;
+    tip.style.top = `${Math.round(top)}px`;
+}
+
+function bindChartTooltip(chartEl) {
+    if (!chartEl || chartEl.dataset.tooltipBound === '1') return;
+    chartEl.dataset.tooltipBound = '1';
+    const hide = () => hideChartTooltip(chartEl);
+    const barFrom = (e) => {
+        const bar = e.target.closest?.('.chart-bar');
+        return bar && chartEl.contains(bar) ? bar : null;
+    };
+    chartEl.addEventListener('pointerdown', (e) => {
+        const bar = barFrom(e);
+        if (bar) showChartTooltip(chartEl, bar);
+        else hide();
+    });
+    // Fare: üzerine gelince göster (eski :hover davranışı)
+    chartEl.addEventListener('pointerover', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        const bar = barFrom(e);
+        if (bar) showChartTooltip(chartEl, bar);
+    });
+    chartEl.addEventListener('pointerout', (e) => {
+        if (e.pointerType === 'mouse' && barFrom(e)) hide();
+    });
+    chartEl.addEventListener('pointerup', hide);
+    chartEl.addEventListener('pointercancel', hide);
+    chartEl.addEventListener('pointerleave', hide);
+    // Aylık şerit kayarken baloncuk çubuktan kopmasın
+    chartEl.addEventListener('scroll', hide, { passive: true });
 }
 
 /** Kaydırmanın sayfa değiştirmesi için gereken en az yatay mesafe. */
@@ -9202,6 +9280,8 @@ function renderMonthScrollChart({ chartEl, yAxisEl, pagerEl, pack, reset }) {
     strip.className = 'chart-scroll-strip';
     pack.buckets.forEach((dt) => strip.appendChild(buildChartBarGroup(dt, scaleMax)));
     chartEl.appendChild(strip);
+    hideChartTooltip(chartEl);
+    bindChartTooltip(chartEl);
 
     renderChartScrubber(pagerEl, chartEl);
     bindChartScrollSync(chartEl);
