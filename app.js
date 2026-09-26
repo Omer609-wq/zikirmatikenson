@@ -169,7 +169,10 @@ import {
     listMemberJuz,
     releaseJuz,
     uncompleteJuz,
-    applyJuzActionLocally
+    applyJuzActionLocally,
+    isJuzStale,
+    HATIM_STALE_CLAIM_DAYS,
+    HATIM_OWNER_TAKEOVER_DAYS
 } from './lib/hatim-groups.js';
 import {
     dropGoneHatims,
@@ -6705,8 +6708,13 @@ async function refreshRemoteHatim(id, ctx = null) {
     if (!context) return 'unavailable';
     const res = await fetchHatim(context, id, group);
     if (res.ok) {
+        const me = hatimMemberIdFor(group);
+        const wasOwner = group.ownerId === me;
         // Eşitleme kullanıcının beklediği bir iş değil: yazma ertelenir.
         if (findHatimGroup(id)) commitHatimGroup(res.group, { defer: true });
+        // Yöneticilik el değiştirdiyse söylensin: devralan da, geri dönen eski yönetici de.
+        if (res.tookOver) return 'tookOver';
+        if (wasOwner && res.group.ownerId !== me) return 'lostOwner';
         return 'ok';
     }
     if (res.reason === 'gone') return settleGoneHatim(id);
@@ -6733,6 +6741,13 @@ function warmHatimSync() {
     loadHatimRemote().catch(() => {});
 }
 
+/** Yöneticilik el değiştirdi: devralana ve geri dönen eski yöneticiye. */
+function hatimOwnershipNotice(state, name) {
+    return state === 'tookOver'
+        ? t('community.ownerTookOverNotice', { name, days: HATIM_OWNER_TAKEOVER_DAYS })
+        : t('community.ownerLostNotice', { name, days: HATIM_OWNER_TAKEOVER_DAYS });
+}
+
 async function syncRemoteHatimsInBackground() {
     const ids = hatimGroups
         .filter((g) => isRemoteHatim(g) && !isHatimFrozen(g) && !hatimHiddenIds.has(g.id))
@@ -6753,6 +6768,9 @@ async function syncRemoteHatimsInBackground() {
         if (states[i] === 'gone') notices.push(t('community.groupGoneNotice', { name }));
         else if (states[i] === 'removed') notices.push(t('community.groupRemovedNotice', { name }));
         else if (states[i] === 'archived') notices.push(t('community.groupArchivedNotice', { name }));
+        else if (states[i] === 'tookOver' || states[i] === 'lostOwner') {
+            notices.push(hatimOwnershipNotice(states[i], name));
+        }
     });
     for (const notice of notices) await showAppAlert(notice);
 }
@@ -6772,9 +6790,13 @@ async function syncRemoteHatimInBackground(id) {
         if (onThisGroup) await leaveGoneHatimGroup(state);
         return;
     }
-    if ((state === 'ok' || state === 'archived') && onThisGroup) {
+    const changed = ['ok', 'archived', 'tookOver', 'lostOwner'].includes(state);
+    if (changed && onThisGroup) {
         renderHatimGroupView();
         if (document.getElementById('hatimJuzOverlay')?.classList.contains('active')) renderHatimJuzDetail();
+    }
+    if ((state === 'tookOver' || state === 'lostOwner') && onThisGroup) {
+        showTransientNote(hatimOwnershipNotice(state, findHatimGroup(id)?.name || ''));
     }
     if (state === 'archived') {
         renderCommunityCardSummary();
@@ -6807,6 +6829,15 @@ async function handleRemoteHatimJuzAction(group, action) {
         if (!name) return;
     } else if (action === 'forceRelease') {
         if (!(await showAppConfirm(t('community.forceReleaseConfirm')))) return;
+    } else if (action === 'releaseStale') {
+        const juz = group.juz.find((j) => j.n === juzN);
+        const confirmed = await showAppConfirm(
+            t('community.releaseStaleConfirm', {
+                name: juz?.byName || t('community.someone'),
+                days: HATIM_STALE_CLAIM_DAYS
+            })
+        );
+        if (!confirmed) return;
     }
     // Aynı anda tek işlem: ikinci dokunuş ilkinin iyimser hâlinin üstüne binmesin.
     if (hatimSyncBusy) return;
@@ -6835,6 +6866,7 @@ async function handleRemoteHatimJuzAction(group, action) {
         if (action === 'uncomplete') return uncompleteJuzRemote(ctx, group.id, juzN);
         if (action === 'release') return releaseJuzRemote(ctx, group.id, juzN);
         if (action === 'forceRelease') return releaseJuzRemote(ctx, group.id, juzN, { force: true });
+        if (action === 'releaseStale') return releaseJuzRemote(ctx, group.id, juzN, { stale: true });
         return { ok: false, reason: 'busyLocal' };
     });
 
@@ -7692,6 +7724,10 @@ function renderHatimJuzDetail() {
         } else if (isRemoteHatim(group) && juz.state === JUZ_CLAIMED && group.ownerId === me) {
             // Yönetici, kaybolan ya da okumayan üyenin cüzünü boşa çıkarır; yoksa hatim kilitlenir (§10).
             buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="forceRelease">${escapeHtml(t('community.forceReleaseJuz'))}</button>`);
+        } else if (isRemoteHatim(group) && isJuzStale(juz)) {
+            // Uzun süredir okunmayan cüzü her üye boşa çıkarabilir: alan kişi ya da
+            // yönetici kaybolmuşsa hatim kilitlenmesin.
+            buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="releaseStale">${escapeHtml(t('community.releaseStaleJuz', { days: HATIM_STALE_CLAIM_DAYS }))}</button>`);
         }
     }
     // Okuma yalnızca kendi üstlendiğin cüzde: alınmamış ya da başkasının cüzünde

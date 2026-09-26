@@ -197,7 +197,11 @@
     "renameTitle": "تغيير الاسم",
     "renamePromptShared": "اكتب الاسم الجديد. سيراه كل أعضاء المجموعة.",
     "renamePromptPersonal": "اكتب اسمًا جديدًا لختمتك.",
-    "hatimNameLabel": "اسم الختمة"
+    "hatimNameLabel": "اسم الختمة",
+    "releaseStaleJuz": "حرّره (لم يُقرأ منذ {days} أيام)",
+    "releaseStaleConfirm": "لم يقرأ {name} هذا الجزء منذ أكثر من {days} أيام. هل تحرّره ليأخذه غيره؟",
+    "ownerTookOverNotice": "لم يظهر مشرف مجموعة \"{name}\" منذ {days} يومًا، فأصبحتَ أنت المشرف.",
+    "ownerLostNotice": "لم تظهر في مجموعة \"{name}\" منذ {days} يومًا، فانتقل الإشراف إلى أقدم عضو."
   },
   "folder": {
     "search": "بحث",

@@ -173,7 +173,11 @@
     "renameTitle": "Tukar nama",
     "renamePromptShared": "Tulis nama baharu. Semua ahli kumpulan akan melihatnya.",
     "renamePromptPersonal": "Tulis nama baharu untuk khatam anda.",
-    "hatimNameLabel": "Nama khatam"
+    "hatimNameLabel": "Nama khatam",
+    "releaseStaleJuz": "Kosongkan (tidak dibaca {days} hari)",
+    "releaseStaleConfirm": "{name} tidak membaca juzuk ini lebih daripada {days} hari. Kosongkan supaya orang lain boleh mengambilnya?",
+    "ownerTookOverNotice": "Pentadbir kumpulan \"{name}\" tidak kelihatan selama {days} hari, jadi anda kini pentadbirnya.",
+    "ownerLostNotice": "Anda tidak kelihatan dalam kumpulan \"{name}\" selama {days} hari, jadi hak pentadbir berpindah kepada ahli terawal."
   },
   "folder": {
     "search": "Cari",

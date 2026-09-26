@@ -461,3 +461,132 @@ test('ad sınırı UTF-16 birimi sayar; istemci emojiyi bölmeden keser', async 
     assert.deepEqual(res, { ok: true, name: 'a'.repeat(38) + '😀' });
     assert.equal((await serverHatim(hatimId)).name, 'a'.repeat(38) + '😀');
 });
+
+/* ------------------------------------------------------------------ */
+/* Bayat cüz ve yönetici devri                                         */
+/* ------------------------------------------------------------------ */
+
+const GUN = 86400000;
+
+/** Kuralları kapatıp hatim belgesine alan yazar (zamanı geriye almak için). */
+async function seedHatim(hatimId, fields) {
+    await env.withSecurityRulesDisabled(async (c) => {
+        await updateDoc(doc(c.firestore(), 'hatims', hatimId), fields);
+    });
+}
+
+test('bayat cüz: 7 günden eskiyse her üye boşaltır, tazeyse boşaltamaz', async () => {
+    const { hatimId, ctx } = await setup(MEMBER, OTHER);
+    await claimJuzRemote(ctx[MEMBER], hatimId, 9, 'Ömer');
+
+    const taze = await releaseJuzRemote(ctx[OTHER], hatimId, 9, { stale: true });
+    assert.equal(taze.ok, false, 'taze cüz boşaltılamaz');
+
+    await env.withSecurityRulesDisabled(async (c) => {
+        await updateDoc(doc(c.firestore(), 'hatims', hatimId, 'juz', '9'), { claimedAt: new Date(Date.now() - 8 * GUN) });
+    });
+    const bayat = await releaseJuzRemote(ctx[OTHER], hatimId, 9, { stale: true });
+    assert.equal(bayat.ok, true, 'bayat cüzü başka üye boşaltır');
+    assert.equal((await serverJuz(hatimId, 9)).state, JUZ_FREE);
+    assert.equal((await serverHatim(hatimId)).doneCount, 0);
+});
+
+test('bayat cüz: bitmiş cüz bayatlamaz, üye olmayan boşaltamaz', async () => {
+    const { hatimId, ctx } = await setup(MEMBER);
+    await claimJuzRemote(ctx[MEMBER], hatimId, 2, 'Ömer');
+    await completeJuzRemote(ctx[MEMBER], hatimId, 2);
+    await env.withSecurityRulesDisabled(async (c) => {
+        await updateDoc(doc(c.firestore(), 'hatims', hatimId, 'juz', '2'), { claimedAt: new Date(Date.now() - 30 * GUN) });
+    });
+    assert.equal((await releaseJuzRemote(ctx[OWNER], hatimId, 2, { stale: true })).reason, 'done');
+
+    await claimJuzRemote(ctx[MEMBER], hatimId, 3, 'Ömer');
+    await env.withSecurityRulesDisabled(async (c) => {
+        await updateDoc(doc(c.firestore(), 'hatims', hatimId, 'juz', '3'), { claimedAt: new Date(Date.now() - 30 * GUN) });
+    });
+    assert.equal((await releaseJuzRemote(ctxOf(OUTSIDER), hatimId, 3, { stale: true })).ok, false);
+});
+
+test('yedek: ilk katılan yedek olur, sonrakiler değiştirmez', async () => {
+    const { hatimId } = await setup(MEMBER, OTHER);
+    const h = await serverHatim(hatimId);
+    assert.equal(h.successorUid, MEMBER);
+    assert.ok(h.ownerSeenAt, 'kuruluşta yöneticinin son bakışı yazılır');
+});
+
+test('yedek: yedek ayrılınca ya da çıkarılınca sıradaki en eski üye geçer', async () => {
+    const { hatimId, ctx } = await setup(MEMBER, OTHER, OUTSIDER);
+    assert.equal((await serverHatim(hatimId)).successorUid, MEMBER);
+
+    assert.equal((await leaveHatim(ctx[MEMBER], hatimId)).ok, true);
+    assert.equal((await serverHatim(hatimId)).successorUid, OTHER, 'ayrılan yedeğin yerine sıradaki');
+
+    assert.equal((await removeHatimMember(ctx[OWNER], hatimId, OTHER)).ok, true);
+    assert.equal((await serverHatim(hatimId)).successorUid, OUTSIDER, 'çıkarılan yedeğin yerine sıradaki');
+
+    assert.equal((await leaveHatim(ctx[OUTSIDER], hatimId)).ok, true);
+    assert.equal((await serverHatim(hatimId)).successorUid, null, 'kimse kalmadıysa boş');
+});
+
+test('yedek: yedek, alanını güncellemeden ayrılamaz (kural)', async () => {
+    const { hatimId, ctx } = await setup(MEMBER, OTHER);
+    const db = ctx[MEMBER].db;
+    const h = await serverHatim(hatimId);
+    const b = writeBatch(db);
+    b.delete(doc(db, 'hatims', hatimId, 'members', MEMBER));
+    b.update(doc(db, 'hatims', hatimId), { memberCount: h.memberCount - 1 });
+    await assert.rejects(b.commit());
+    // Kontrol: yedeği sıradakine devrederek aynı ayrılma geçer.
+    const dogru = writeBatch(db);
+    dogru.delete(doc(db, 'hatims', hatimId, 'members', MEMBER));
+    dogru.update(doc(db, 'hatims', hatimId), { memberCount: h.memberCount - 1, successorUid: OTHER });
+    await dogru.commit();
+});
+
+test('devir: yönetici 14 gündür görünmüyorsa yedek açılışta devralır', async () => {
+    const { hatimId, ctx } = await setup(MEMBER, OTHER);
+
+    // Yönetici yakın zamanda göründü: devir yok.
+    const erken = await fetchHatim(ctx[MEMBER], hatimId);
+    assert.equal(erken.tookOver, false);
+    assert.equal((await serverHatim(hatimId)).ownerUid, OWNER);
+
+    await seedHatim(hatimId, { ownerSeenAt: new Date(Date.now() - 15 * GUN) });
+    // Yedek olmayan üye devralamaz.
+    assert.equal((await fetchHatim(ctx[OTHER], hatimId)).tookOver, false);
+
+    const res = await fetchHatim(ctx[MEMBER], hatimId);
+    assert.equal(res.tookOver, true);
+    assert.equal(res.group.ownerId, MEMBER);
+    const h = await serverHatim(hatimId);
+    assert.equal(h.ownerUid, MEMBER);
+    assert.equal(h.successorUid, OTHER, 'yeni yedek sıradaki, eski yönetici değil');
+
+    // Yeni yönetici yetkileri kullanır, eski yönetici artık kullanamaz.
+    assert.equal((await renameHatim(ctx[MEMBER], hatimId, 'Devralınan')).ok, true);
+    assert.equal((await renameHatim(ctx[OWNER], hatimId, 'Eski')).reason, 'denied');
+    // Eski yönetici artık sıradan üye: ayrılabilir.
+    assert.equal((await leaveHatim(ctx[OWNER], hatimId)).ok, true);
+});
+
+test('devir: yönetici bakınca sayaç sıfırlanır, doğrudan erken devir kuralda reddedilir', async () => {
+    const { hatimId, ctx } = await setup(MEMBER);
+    await seedHatim(hatimId, { ownerSeenAt: new Date(Date.now() - 3 * GUN) });
+    await fetchHatim(ctx[OWNER], hatimId);
+    const tazelendi = (await serverHatim(hatimId)).ownerSeenAt.toMillis();
+    assert.ok(Date.now() - tazelendi < 60000, 'yönetici açınca son bakış güncellenir');
+
+    // İstemciyi atlayan erken devir denemesi reddedilir.
+    await assert.rejects(updateDoc(doc(ctx[MEMBER].db, 'hatims', hatimId), {
+        ownerUid: MEMBER,
+        successorUid: null,
+        ownerSeenAt: serverTimestamp()
+    }));
+    // Kontrol: süre dolunca aynı yazma geçer.
+    await seedHatim(hatimId, { ownerSeenAt: new Date(Date.now() - 15 * GUN) });
+    await updateDoc(doc(ctx[MEMBER].db, 'hatims', hatimId), {
+        ownerUid: MEMBER,
+        successorUid: null,
+        ownerSeenAt: serverTimestamp()
+    });
+});

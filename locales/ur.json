@@ -173,7 +173,11 @@
     "renameTitle": "نام بدلیں",
     "renamePromptShared": "نیا نام لکھیں۔ گروپ کے سب اراکین یہی نام دیکھیں گے۔",
     "renamePromptPersonal": "اپنے ختم کا نیا نام لکھیں۔",
-    "hatimNameLabel": "ختم کا نام"
+    "hatimNameLabel": "ختم کا نام",
+    "releaseStaleJuz": "خالی کریں ({days} دن سے نہیں پڑھا گیا)",
+    "releaseStaleConfirm": "{name} نے {days} دن سے زیادہ یہ پارہ نہیں پڑھا۔ کیا اسے خالی کریں تاکہ کوئی اور لے سکے؟",
+    "ownerTookOverNotice": "\"{name}\" گروپ کے منتظم {days} دن سے نظر نہیں آئے، اس لیے اب آپ منتظم ہیں۔",
+    "ownerLostNotice": "آپ \"{name}\" گروپ میں {days} دن نظر نہیں آئے، اس لیے منتظمی سب سے پرانے رکن کو منتقل ہو گئی۔"
   },
   "folder": {
     "search": "تلاش",

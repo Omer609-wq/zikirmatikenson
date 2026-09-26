@@ -173,7 +173,11 @@
     "renameTitle": "Ganti nama",
     "renamePromptShared": "Tulis nama baru. Semua anggota grup akan melihatnya.",
     "renamePromptPersonal": "Tulis nama baru untuk khatamanmu.",
-    "hatimNameLabel": "Nama khataman"
+    "hatimNameLabel": "Nama khataman",
+    "releaseStaleJuz": "Kosongkan (tidak dibaca {days} hari)",
+    "releaseStaleConfirm": "{name} belum membaca juz ini lebih dari {days} hari. Kosongkan agar orang lain bisa mengambilnya?",
+    "ownerTookOverNotice": "Admin grup \"{name}\" tidak terlihat selama {days} hari, jadi kamu sekarang adminnya.",
+    "ownerLostNotice": "Kamu tidak terlihat di grup \"{name}\" selama {days} hari, jadi hak admin pindah ke anggota terlama."
   },
   "folder": {
     "search": "Cari",

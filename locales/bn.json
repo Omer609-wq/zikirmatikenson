@@ -173,7 +173,11 @@
     "renameTitle": "নাম বদলাও",
     "renamePromptShared": "নতুন নাম লেখো। গ্রুপের সবাই এই নাম দেখবে।",
     "renamePromptPersonal": "তোমার খতমের নতুন নাম লেখো।",
-    "hatimNameLabel": "খতমের নাম"
+    "hatimNameLabel": "খতমের নাম",
+    "releaseStaleJuz": "খালি করো ({days} দিন ধরে পড়া হয়নি)",
+    "releaseStaleConfirm": "{name} {days} দিনের বেশি এই পারা পড়েননি। খালি করবে, যাতে অন্য কেউ নিতে পারে?",
+    "ownerTookOverNotice": "\"{name}\" গ্রুপের অ্যাডমিন {days} দিন ধরে অনুপস্থিত, তাই এখন তুমি অ্যাডমিন।",
+    "ownerLostNotice": "\"{name}\" গ্রুপে তুমি {days} দিন অনুপস্থিত ছিলে, তাই অ্যাডমিন হয়েছেন সবচেয়ে পুরোনো সদস্য।"
   },
   "folder": {
     "search": "খুঁজুন",

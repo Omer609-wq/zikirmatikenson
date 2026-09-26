@@ -355,7 +355,8 @@ test('yönetici: bitmiş cüzü zorla boşaltamaz', async () => {
 });
 
 test('katılımcı: başkasının cüzünü zorla boşaltamaz', async () => {
-    await seedGroup({ juz: { 5: { state: 'claimed', by: OWNER, byName: 'Hoca', claimedAt: new Date(0) } } });
+    // Taze cüz: bayat cüzü (7 gün+) her üye boşaltabilir, o ayrı testte.
+    await seedGroup({ juz: { 5: { state: 'claimed', by: OWNER, byName: 'Hoca', claimedAt: new Date() } } });
     const s = db(MEMBER);
     const batch = writeBatch(s);
     batch.update(doc(s, 'hatims', HATIM, 'juz', '5'), releasedJuz);

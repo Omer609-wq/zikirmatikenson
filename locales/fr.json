@@ -178,7 +178,11 @@
     "renameTitle": "Renommer",
     "renamePromptShared": "Écris le nouveau nom. Tous les membres du groupe le verront.",
     "renamePromptPersonal": "Écris un nouveau nom pour ton khatm.",
-    "hatimNameLabel": "Nom du khatm"
+    "hatimNameLabel": "Nom du khatm",
+    "releaseStaleJuz": "Libérer (non lu depuis {days} jours)",
+    "releaseStaleConfirm": "{name} ne lit plus ce juz depuis plus de {days} jours. Le libérer pour qu’un autre puisse le prendre ?",
+    "ownerTookOverNotice": "L’administrateur de « {name} » est absent depuis {days} jours : tu es maintenant l’administrateur.",
+    "ownerLostNotice": "Tu étais absent de « {name} » depuis {days} jours : l’administration est passée au plus ancien membre."
   },
   "folder": {
     "search": "Rechercher",

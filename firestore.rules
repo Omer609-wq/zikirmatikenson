@@ -142,9 +142,57 @@ service cloud.firestore {
       function joining() {
         return !exists(memberPath(hatimId, request.auth.uid))
           && existsAfter(memberPath(hatimId, request.auth.uid))
-          && changedKeys().hasOnly(['memberCount'])
+          && changedKeys().hasOnly(['memberCount', 'successorUid'])
           && request.resource.data.memberCount == resource.data.memberCount + 1
-          && resource.data.get('doneCount', 0) < 30;
+          && resource.data.get('doneCount', 0) < 30
+          && successorOnJoin();
+      }
+
+      // Yedek yönetici (successorUid) gruba ilk katılan kişidir: yedek boşken
+      // katılan kendini yazar, doluyken kimse dokunamaz.
+      function successorOnJoin() {
+        return !changedKeys().hasAny(['successorUid'])
+          || (resource.data.get('successorUid', null) == null
+            && request.resource.data.successorUid == request.auth.uid);
+      }
+
+      // Üye ayrılırken ya da çıkarılırken yedek korunur: yedek gidiyorsa yerine
+      // kalan bir üye (ya da kimse) yazılmalı; gitmiyorsa alan değişmez. Hangi
+      // üyenin gittiğini bu belge göremez, yedeğin yazmadan sonra var olup
+      // olmadığına bakar.
+      function successorKept() {
+        let before = resource.data.get('successorUid', null);
+        let after = request.resource.data.get('successorUid', null);
+        return (before == after
+            && (before == null || existsAfter(memberPath(hatimId, before))))
+          || (before != after
+            && before != null
+            && !existsAfter(memberPath(hatimId, before))
+            && (after == null
+              || (after != resource.data.ownerUid
+                && existsAfter(memberPath(hatimId, after)))));
+      }
+
+      // Yönetici gruba baktı: devir sayacı sıfırlanır.
+      function ownerSeen() {
+        return resource.data.ownerUid == request.auth.uid
+          && changedKeys().hasOnly(['ownerSeenAt'])
+          && request.resource.data.ownerSeenAt == request.time;
+      }
+
+      // Yönetici 14 gündür görünmüyor: yedek yöneticiliği devralır, yerine kalan
+      // bir üye yedek olur. Sunucu kodu yok; bunu yedeğin uygulaması grubu açınca
+      // yapar, koşulları kural denetler. Eski yönetici sıradan üye olarak kalır.
+      function takeover() {
+        return resource.data.get('successorUid', null) == request.auth.uid
+          && exists(memberPath(hatimId, request.auth.uid))
+          && request.time > resource.data.get('ownerSeenAt', resource.data.createdAt) + duration.value(14, 'd')
+          && changedKeys().hasOnly(['ownerUid', 'successorUid', 'ownerSeenAt'])
+          && request.resource.data.ownerUid == request.auth.uid
+          && request.resource.data.ownerSeenAt == request.time
+          && (request.resource.data.get('successorUid', null) == null
+            || (request.resource.data.successorUid != request.auth.uid
+              && exists(memberPath(hatimId, request.resource.data.successorUid))));
       }
 
       // Katılımcı ayrılır (§10). Yönetici ayrılamaz, yalnızca grubu siler.
@@ -153,7 +201,8 @@ service cloud.firestore {
         return exists(memberPath(hatimId, request.auth.uid))
           && !existsAfter(memberPath(hatimId, request.auth.uid))
           && resource.data.ownerUid != request.auth.uid
-          && changedKeys().hasOnly(['memberCount', 'rev'])
+          && changedKeys().hasOnly(['memberCount', 'rev', 'successorUid'])
+          && successorKept()
           && request.resource.data.memberCount == resource.data.memberCount - 1
           && request.resource.data.memberCount >= 1
           && request.resource.data.rev >= resource.data.rev
@@ -165,7 +214,8 @@ service cloud.firestore {
       // belgenin kuralı göremez, sayacı yalnızca yönetici kaydırabilir.
       function removingMember() {
         return resource.data.ownerUid == request.auth.uid
-          && changedKeys().hasOnly(['memberCount', 'rev'])
+          && changedKeys().hasOnly(['memberCount', 'rev', 'successorUid'])
+          && successorKept()
           && request.resource.data.memberCount == resource.data.memberCount - 1
           && request.resource.data.memberCount >= 1
           && request.resource.data.rev >= resource.data.rev
@@ -179,8 +229,10 @@ service cloud.firestore {
 
       // Kod ve yöneticinin üyelik kaydı aynı toplu yazmada oluşmalı.
       allow create: if signedIn()
-        && request.resource.data.keys().hasOnly(['name', 'code', 'ownerUid', 'createdAt', 'rev', 'memberCount', 'doneCount'])
+        && request.resource.data.keys().hasOnly(['name', 'code', 'ownerUid', 'createdAt', 'rev', 'memberCount', 'doneCount', 'successorUid', 'ownerSeenAt'])
         && request.resource.data.get('doneCount', 0) == 0
+        && request.resource.data.get('successorUid', null) == null
+        && (!('ownerSeenAt' in request.resource.data) || request.resource.data.ownerSeenAt == request.time)
         && validName(request.resource.data.name, 40)
         && validCode(request.resource.data.code)
         && request.resource.data.ownerUid == request.auth.uid
@@ -191,7 +243,8 @@ service cloud.firestore {
         && existsAfter(memberPath(hatimId, request.auth.uid));
 
       allow update: if signedIn()
-        && (renameByOwner() || tableChange() || joining() || leaving() || removingMember());
+        && (renameByOwner() || tableChange() || joining() || leaving() || removingMember()
+          || ownerSeen() || takeover());
 
       // Yalnızca yönetici; kod belgesi aynı yazmada silinmeli ki başıboş kod kalmasın.
       // Alt koleksiyonlar da aynı yazmada silinmeli — silinmezse istemci onları
@@ -310,6 +363,15 @@ service cloud.firestore {
             && becomesFree();
         }
 
+        // 7 günden uzun süredir alınmış ama bitmemiş cüzü her üye boşaltabilir:
+        // alan kişi kaybolmuşsa (uygulamayı silmiş, telefon değiştirmiş) hatim
+        // kilitlenmesin. Süre sunucu saatiyle ölçülür, istemci saati oynatılamaz.
+        function releaseStale() {
+          return resource.data.state == 'claimed'
+            && request.time > resource.data.claimedAt + duration.value(7, 'd')
+            && becomesFree();
+        }
+
         // Biten cüz sayısı cüzün gerçek geçişini izler: "bitti"ye geçişte +1,
         // "bitti"den çıkışta -1, başka her geçişte değişmez. Katılım kapısı bu
         // sayıya bakıyor; keyfi oynarsa bitmemiş hatim kapanır ya da tersi.
@@ -341,7 +403,7 @@ service cloud.firestore {
           && exists(memberPath(hatimId, request.auth.uid))
           && revBumped(hatimId)
           && doneCountFollows()
-          && (claim() || complete() || uncomplete() || releaseOwn() || forceRelease());
+          && (claim() || complete() || uncomplete() || releaseOwn() || forceRelease() || releaseStale());
 
         allow delete: if isOwner(hatimId) && hatimDeletedInBatch(hatimId);
       }

@@ -173,7 +173,11 @@
     "renameTitle": "Adı değiştir",
     "renamePromptShared": "Yeni adı yaz. Gruptaki herkes bu adı görür.",
     "renamePromptPersonal": "Hatmin yeni adını yaz.",
-    "hatimNameLabel": "Hatim adı"
+    "hatimNameLabel": "Hatim adı",
+    "releaseStaleJuz": "Boşa çıkar ({days} gündür okunmuyor)",
+    "releaseStaleConfirm": "{name} bu cüzü {days} günden uzun süredir okumuyor. Boşa çıkarılsın mı? Başka biri alabilir.",
+    "ownerTookOverNotice": "\"{name}\" grubunun yöneticisi {days} gündür görünmediği için yöneticilik sana geçti.",
+    "ownerLostNotice": "\"{name}\" grubunda {days} gün görünmediğin için yöneticilik ilk katılan üyeye geçti."
   },
   "folder": {
     "search": "Ara",
