@@ -7254,10 +7254,12 @@ function renderCommunityView() {
     const personal = personalSplit.active;
 
     // Cüzlerim — grupları tek listede toplar. Kişisel hatimde bütün cüzler
-    // zaten kullanıcının olduğu için orada anlamı yok. Biten hatimler de
-    // dışarıda: elde iş kalmadı, girerlerse liste eski cüzlerle dolardı.
-    const mine = shared
-        .filter((g) => !isHatimComplete(g))
+    // zaten kullanıcının olduğu için orada anlamı yok. Kural şeritle aynı:
+    // biten hatmin cüzleri bir gün yeşil kalır, donunca listeden düşer —
+    // yoksa liste zamanla eski cüzlerle dolardı.
+    // Devam edenler önce: listede işlem bekleyen onlar.
+    const mine = [...sharedSplit.active, ...sharedSplit.done]
+        .filter((g) => !isHatimFrozen(g))
         .flatMap((g) => listMemberJuz(g, hatimMemberIdFor(g)).map((juz) => ({ group: g, juz })));
     if (mineBlock) mineBlock.hidden = mine.length === 0;
     if (mineList) {
