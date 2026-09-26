@@ -590,3 +590,31 @@ test('devir: yönetici bakınca sayaç sıfırlanır, doğrudan erken devir kura
         ownerSeenAt: serverTimestamp()
     });
 });
+
+test('üye sınırı: 30 üyeli gruba katılınamaz, 29 iken katılınır', async () => {
+    const { hatimId, code, ctx } = await setup(MEMBER);
+    await seedHatim(hatimId, { memberCount: 30 });
+
+    const outsider = ctxOf(OTHER);
+    const found = await findHatimByCode(outsider, code);
+    assert.equal(found.full, true);
+    assert.equal(found.alreadyMember, false);
+    assert.equal((await joinHatim(outsider, hatimId, 'Ali')).reason, 'full');
+
+    // İstemciyi atlayan doğrudan yazma kuralda reddedilir.
+    const yaz = () => {
+        const b = writeBatch(outsider.db);
+        b.set(doc(outsider.db, 'hatims', hatimId, 'members', OTHER), { name: 'Ali', joinedAt: serverTimestamp() });
+        b.update(doc(outsider.db, 'hatims', hatimId), { memberCount: 31 });
+        return b.commit();
+    };
+    await assert.rejects(yaz());
+
+    // Zaten üye olan dolu grubu yine bulur.
+    assert.equal((await findHatimByCode(ctx[MEMBER], code)).alreadyMember, true);
+
+    // Kontrol: 29 iken aynı kişi katılabilir.
+    await seedHatim(hatimId, { memberCount: 29 });
+    assert.equal((await joinHatim(outsider, hatimId, 'Ali')).ok, true);
+    assert.equal((await serverHatim(hatimId)).memberCount, 30);
+});

@@ -177,7 +177,8 @@
     "releaseStaleJuz": "Boşa çıkar ({days} gündür okunmuyor)",
     "releaseStaleConfirm": "{name} bu cüzü {days} günden uzun süredir okumuyor. Boşa çıkarılsın mı? Başka biri alabilir.",
     "ownerTookOverNotice": "\"{name}\" grubunun yöneticisi {days} gündür görünmediği için yöneticilik sana geçti.",
-    "ownerLostNotice": "\"{name}\" grubunda {days} gün görünmediğin için yöneticilik ilk katılan üyeye geçti."
+    "ownerLostNotice": "\"{name}\" grubunda {days} gün görünmediğin için yöneticilik ilk katılan üyeye geçti.",
+    "joinClosedFull": "Bu grup dolu: bir grupta en fazla {max} üye olabilir."
   },
   "folder": {
     "search": "Ara",

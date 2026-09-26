@@ -177,7 +177,8 @@
     "releaseStaleJuz": "Kosongkan (tidak dibaca {days} hari)",
     "releaseStaleConfirm": "{name} tidak membaca juzuk ini lebih daripada {days} hari. Kosongkan supaya orang lain boleh mengambilnya?",
     "ownerTookOverNotice": "Pentadbir kumpulan \"{name}\" tidak kelihatan selama {days} hari, jadi anda kini pentadbirnya.",
-    "ownerLostNotice": "Anda tidak kelihatan dalam kumpulan \"{name}\" selama {days} hari, jadi hak pentadbir berpindah kepada ahli terawal."
+    "ownerLostNotice": "Anda tidak kelihatan dalam kumpulan \"{name}\" selama {days} hari, jadi hak pentadbir berpindah kepada ahli terawal.",
+    "joinClosedFull": "Kumpulan ini penuh: satu kumpulan maksimum {max} ahli."
   },
   "folder": {
     "search": "Cari",

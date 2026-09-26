@@ -170,6 +170,7 @@ import {
     releaseJuz,
     uncompleteJuz,
     applyJuzActionLocally,
+    HATIM_MEMBER_LIMIT,
     isJuzStale,
     HATIM_STALE_CLAIM_DAYS,
     HATIM_OWNER_TAKEOVER_DAYS
@@ -6596,7 +6597,8 @@ const HATIM_SYNC_REASON_KEYS = {
     owner: 'community.ownerCannotLeave',
     notFound: 'community.codeNotFound',
     invalid: 'community.codeInvalid',
-    complete: 'community.joinClosedComplete'
+    complete: 'community.joinClosedComplete',
+    full: 'community.joinClosedFull'
 };
 
 async function showHatimSyncError(reason) {
@@ -7433,10 +7435,11 @@ function renderHatimGroupView() {
     const renameBtn = document.getElementById('hatimRenameBtn');
     if (renameBtn) renameBtn.hidden = !canRenameHatim(group);
 
-    // Kişisel hatimde katılma kodu ve paylaşım anlamsız. Bitmiş hatimde de: kod
-    // katılım kabul etmiyor. Cüz geri alınıp hatim yeniden açılırsa kart da döner.
+    // Kişisel hatimde katılma kodu ve paylaşım anlamsız. Bitmiş ya da dolu grupta
+    // da: kod katılım kabul etmiyor. Cüz geri alınır ya da biri ayrılırsa kart döner.
     const shareBtn = document.getElementById('hatimShareBtn');
-    if (shareBtn) shareBtn.hidden = personal || frozen || isHatimComplete(group);
+    const full = isRemoteHatim(group) && group.remote.memberCount >= HATIM_MEMBER_LIMIT;
+    if (shareBtn) shareBtn.hidden = personal || frozen || isHatimComplete(group) || full;
     const codeValue = document.getElementById('hatimCodeValue');
     if (codeValue) codeValue.textContent = group.code;
 
@@ -7895,6 +7898,10 @@ async function handleJoinHatimGroup() {
     // kaldırıp geri isteyen) kişi aşağıdan devam eder.
     if (found.complete && !found.alreadyMember) {
         await showAppAlert(t('community.joinClosedComplete'));
+        return;
+    }
+    if (found.full && !found.alreadyMember) {
+        await showAppAlert(t('community.joinClosedFull', { max: HATIM_MEMBER_LIMIT }));
         return;
     }
     if (findHatimGroup(found.hatimId)) {

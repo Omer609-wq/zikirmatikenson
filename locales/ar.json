@@ -201,7 +201,8 @@
     "releaseStaleJuz": "حرّره (لم يُقرأ منذ {days} أيام)",
     "releaseStaleConfirm": "لم يقرأ {name} هذا الجزء منذ أكثر من {days} أيام. هل تحرّره ليأخذه غيره؟",
     "ownerTookOverNotice": "لم يظهر مشرف مجموعة \"{name}\" منذ {days} يومًا، فأصبحتَ أنت المشرف.",
-    "ownerLostNotice": "لم تظهر في مجموعة \"{name}\" منذ {days} يومًا، فانتقل الإشراف إلى أقدم عضو."
+    "ownerLostNotice": "لم تظهر في مجموعة \"{name}\" منذ {days} يومًا، فانتقل الإشراف إلى أقدم عضو.",
+    "joinClosedFull": "هذه المجموعة ممتلئة: الحد الأقصى {max} عضوًا."
   },
   "folder": {
     "search": "بحث",

@@ -181,7 +181,8 @@
     "releaseStaleJuz": "Free it up (not read for {days} days)",
     "releaseStaleConfirm": "{name} hasn't read this juz for over {days} days. Free it up so someone else can take it?",
     "ownerTookOverNotice": "The admin of \"{name}\" hasn't been seen for {days} days, so you are now the admin.",
-    "ownerLostNotice": "You weren't seen in \"{name}\" for {days} days, so admin rights passed to the earliest member."
+    "ownerLostNotice": "You weren't seen in \"{name}\" for {days} days, so admin rights passed to the earliest member.",
+    "joinClosedFull": "This group is full: a group can have at most {max} members."
   },
   "folder": {
     "search": "Search",

@@ -182,7 +182,8 @@
     "releaseStaleJuz": "Libérer (non lu depuis {days} jours)",
     "releaseStaleConfirm": "{name} ne lit plus ce juz depuis plus de {days} jours. Le libérer pour qu’un autre puisse le prendre ?",
     "ownerTookOverNotice": "L’administrateur de « {name} » est absent depuis {days} jours : tu es maintenant l’administrateur.",
-    "ownerLostNotice": "Tu étais absent de « {name} » depuis {days} jours : l’administration est passée au plus ancien membre."
+    "ownerLostNotice": "Tu étais absent de « {name} » depuis {days} jours : l’administration est passée au plus ancien membre.",
+    "joinClosedFull": "Ce groupe est complet : {max} membres au maximum."
   },
   "folder": {
     "search": "Rechercher",

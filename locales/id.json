@@ -177,7 +177,8 @@
     "releaseStaleJuz": "Kosongkan (tidak dibaca {days} hari)",
     "releaseStaleConfirm": "{name} belum membaca juz ini lebih dari {days} hari. Kosongkan agar orang lain bisa mengambilnya?",
     "ownerTookOverNotice": "Admin grup \"{name}\" tidak terlihat selama {days} hari, jadi kamu sekarang adminnya.",
-    "ownerLostNotice": "Kamu tidak terlihat di grup \"{name}\" selama {days} hari, jadi hak admin pindah ke anggota terlama."
+    "ownerLostNotice": "Kamu tidak terlihat di grup \"{name}\" selama {days} hari, jadi hak admin pindah ke anggota terlama.",
+    "joinClosedFull": "Grup ini penuh: satu grup maksimal {max} anggota."
   },
   "folder": {
     "search": "Cari",

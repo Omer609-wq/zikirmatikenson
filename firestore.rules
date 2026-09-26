@@ -136,7 +136,9 @@ service cloud.firestore {
               || request.resource.data.doneCount == resource.data.doneCount - 1));
       }
 
-      // Kodla katılma: üyelik kaydı aynı yazmada oluşur, sayaç 1 artar.
+      // Kodla katılma: üyelik kaydı aynı yazmada oluşur, sayaç 1 artar. Bir grupta
+      // en fazla 30 üye: her açılışta üye listesi okunuyor, sınırsız grup hem
+      // pahalı hem de anonim hesapla doldurulabilir.
       // Bitmiş hatme yeni katılım yok: okunacak cüz kalmadı. Hatim yeniden
       // açılırsa (cüz geri alınırsa) sayı düşer, kapı kendiliğinden açılır.
       function joining() {
@@ -144,6 +146,7 @@ service cloud.firestore {
           && existsAfter(memberPath(hatimId, request.auth.uid))
           && changedKeys().hasOnly(['memberCount', 'successorUid'])
           && request.resource.data.memberCount == resource.data.memberCount + 1
+          && request.resource.data.memberCount <= 30
           && resource.data.get('doneCount', 0) < 30
           && successorOnJoin();
       }
