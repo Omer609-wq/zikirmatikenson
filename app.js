@@ -995,6 +995,7 @@ const leaveHatim = lazyHatim('leaveHatim');
 const listHatimMembers = lazyHatim('listHatimMembers');
 const releaseJuzRemote = lazyHatim('releaseJuzRemote');
 const removeHatimMember = lazyHatim('removeHatimMember');
+const renameHatim = lazyHatim('renameHatim');
 const reportHatim = lazyHatim('reportHatim');
 const uncompleteJuzRemote = lazyHatim('uncompleteJuzRemote');
 
@@ -7396,6 +7397,9 @@ function renderHatimGroupView() {
     // gösterilirse yalan söylerler. Geriye tarih, cüz tablosu ve dua kalır.
     const frozen = isHatimFrozen(group);
 
+    const renameBtn = document.getElementById('hatimRenameBtn');
+    if (renameBtn) renameBtn.hidden = !canRenameHatim(group);
+
     // Kişisel hatimde katılma kodu ve paylaşım anlamsız. Bitmiş hatimde de: kod
     // katılım kabul etmiyor. Cüz geri alınıp hatim yeniden açılırsa kart da döner.
     const shareBtn = document.getElementById('hatimShareBtn');
@@ -7934,6 +7938,68 @@ function handleHatimDuaButton() {
     showView('hatimDuaView');
 }
 
+/**
+ * Adı kim değiştirebilir: kişisel hatimde sahibi, grupta yalnız yönetici (kural
+ * da öyle). Donmuş hatim bir kayıt, adı da değişmez.
+ */
+function canRenameHatim(group) {
+    if (!group || isHatimFrozen(group)) return false;
+    if (!isRemoteHatim(group)) return true;
+    return group.ownerId === getHatimUid();
+}
+
+async function handleRenameHatim() {
+    const group = findHatimGroup(currentHatimGroupId);
+    if (!canRenameHatim(group)) return;
+    const personal = isPersonalHatim(group);
+    const input = await showAppPrompt(
+        t(personal ? 'community.renamePromptPersonal' : 'community.renamePromptShared'),
+        group.name,
+        {
+            title: t('community.renameTitle'),
+            inputLabel: t(personal ? 'community.hatimNameLabel' : 'community.groupNameLabel'),
+            maxLength: HATIM_GROUP_NAME_MAX
+        }
+    );
+    if (input == null) return;
+    const name = String(input).trim().slice(0, HATIM_GROUP_NAME_MAX);
+    if (!name || name === group.name) return;
+
+    if (!isRemoteHatim(group)) {
+        commitHatimGroup({ ...group, name });
+        renderHatimGroupView();
+        renderCommunityCardSummary();
+        return;
+    }
+
+    // Paylaşımlı grup: ad hemen değişir, sunucu reddederse eskiye döner.
+    // Onay beklerken eşitleme iyimser adı ezmesin, diske eski ad yazılsın.
+    if (hatimSyncBusy) return;
+    hatimConfirmedBase.set(group.id, group);
+    setHatimGroupInMemory({ ...group, name });
+    renderHatimGroupView();
+
+    const res = await withHatimBusy(async () => {
+        const ctx = await requireHatimSync();
+        if (!ctx) return { ok: false, reason: 'noContext' };
+        return renameHatim(ctx, group.id, name);
+    });
+    hatimConfirmedBase.delete(group.id);
+
+    if (res.ok) {
+        const latest = findHatimGroup(group.id);
+        if (latest) commitHatimGroup({ ...latest, name: res.name });
+    } else {
+        if (findHatimGroup(group.id)) setHatimGroupInMemory(group);
+        if (res.reason === 'gone') settleGoneHatim(group.id);
+        else if (res.reason !== 'noContext' && res.reason !== 'busyLocal') {
+            await showHatimSyncError(res.reason);
+        }
+    }
+    if (currentViewId === 'hatimGroupView') renderHatimGroupView();
+    renderCommunityCardSummary();
+}
+
 async function handleDeleteHatimGroup() {
     const group = findHatimGroup(currentHatimGroupId);
     if (!group) return;
@@ -7982,6 +8048,9 @@ function setupHatimListeners() {
     });
     document.getElementById('hatimDuaMealToggle')?.addEventListener('click', toggleHatimDuaMeaning);
     document.getElementById('hatimDuaBtn')?.addEventListener('click', handleHatimDuaButton);
+    document.getElementById('hatimRenameBtn')?.addEventListener('click', () => {
+        void handleRenameHatim();
+    });
     document.getElementById('hatimCompleteDuaBtn')?.addEventListener('click', () => {
         showView('hatimDuaView');
     });

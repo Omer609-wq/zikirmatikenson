@@ -3124,6 +3124,30 @@ html[lang='ur'] .smart-reminder-weekday {
     background: var(--hatim-done-fg);
 }
 
+/* Hatim adı + kalem: başlık alanının ortasında birlikte durur. */
+.hatim-title {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1rem;
+}
+.hatim-title h1 {
+    min-width: 0;
+    text-align: center;
+}
+.hatim-title__edit {
+    flex: 0 0 auto;
+    color: var(--text-gray);
+}
+.hatim-title__edit[hidden] {
+    display: none;
+}
+.hatim-title__edit .material-icons-outlined {
+    font-size: 18px;
+}
+
 /* Üye listesindeki değişiklik noktaları: yeşil katılan, kırmızı ayrılan */
 .hatim-dot {
     flex: 0 0 auto;

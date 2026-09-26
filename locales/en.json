@@ -172,7 +172,12 @@
     "groupGoneNotice": "\"{name}\" was deleted by its admin.",
     "groupRemovedNotice": "You were removed from \"{name}\".",
     "groupArchivedNotice": "\"{name}\" was closed by its admin. The hatim stays in your archive.",
-    "joinClosedComplete": "This hatim is complete and closed to new members."
+    "joinClosedComplete": "This hatim is complete and closed to new members.",
+    "renameAria": "Rename",
+    "renameTitle": "Rename",
+    "renamePromptShared": "Enter the new name. Everyone in the group will see it.",
+    "renamePromptPersonal": "Enter a new name for your hatim.",
+    "hatimNameLabel": "Hatim name"
   },
   "folder": {
     "search": "Search",

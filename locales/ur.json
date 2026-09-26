@@ -168,7 +168,12 @@
     "groupGoneNotice": "\"{name}\" گروپ کو منتظم نے حذف کر دیا۔",
     "groupRemovedNotice": "آپ کو \"{name}\" گروپ سے نکال دیا گیا۔",
     "groupArchivedNotice": "\"{name}\" گروپ کو منتظم نے بند کر دیا۔ ختم آپ کے آرکائیو میں موجود ہے۔",
-    "joinClosedComplete": "یہ ختم مکمل ہو چکا ہے، نئے اراکین کے لیے بند ہے۔"
+    "joinClosedComplete": "یہ ختم مکمل ہو چکا ہے، نئے اراکین کے لیے بند ہے۔",
+    "renameAria": "نام بدلیں",
+    "renameTitle": "نام بدلیں",
+    "renamePromptShared": "نیا نام لکھیں۔ گروپ کے سب اراکین یہی نام دیکھیں گے۔",
+    "renamePromptPersonal": "اپنے ختم کا نیا نام لکھیں۔",
+    "hatimNameLabel": "ختم کا نام"
   },
   "folder": {
     "search": "تلاش",

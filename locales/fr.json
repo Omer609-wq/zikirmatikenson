@@ -173,7 +173,12 @@
     "groupGoneNotice": "« {name} » a été supprimé par son administrateur.",
     "groupRemovedNotice": "Tu as été retiré de « {name} ».",
     "groupArchivedNotice": "« {name} » a été fermé par son administrateur. Le khatm reste dans ton archive.",
-    "joinClosedComplete": "Ce khatm est terminé et fermé aux nouveaux membres."
+    "joinClosedComplete": "Ce khatm est terminé et fermé aux nouveaux membres.",
+    "renameAria": "Renommer",
+    "renameTitle": "Renommer",
+    "renamePromptShared": "Écris le nouveau nom. Tous les membres du groupe le verront.",
+    "renamePromptPersonal": "Écris un nouveau nom pour ton khatm.",
+    "hatimNameLabel": "Nom du khatm"
   },
   "folder": {
     "search": "Rechercher",

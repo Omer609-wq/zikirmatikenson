@@ -25,6 +25,7 @@ import {
     listHatimMembers,
     releaseJuzRemote,
     removeHatimMember,
+    renameHatim,
     reportHatim,
     uncompleteJuzRemote
 } from '../lib/hatim-remote.js';
@@ -428,4 +429,20 @@ test('eski grup (sayaçsız): bitirme ve katılma eskisi gibi, sayaç eklenemez'
     // Kontrol: aynı rev artışı sayaçsız geçer — ret sayaçtandı.
     await updateDoc(doc(ctx[MEMBER].db, 'hatims', hatimId), { rev: h.rev + 1 });
     assert.equal((await findHatimByCode(ctxOf(OTHER), code)).complete, false);
+});
+
+test('ad değiştirme: yalnız yönetici; üye yeni adı eşitlemede alır', async () => {
+    const { hatimId, ctx } = await setup(MEMBER);
+    assert.equal((await renameHatim(ctx[MEMBER], hatimId, 'Başka ad')).reason, 'denied');
+    const res = await renameHatim(ctx[OWNER], hatimId, '  Cuma Hatmi  ');
+    assert.deepEqual(res, { ok: true, name: 'Cuma Hatmi' }, 'kenar boşlukları atılır');
+    assert.equal((await serverHatim(hatimId)).name, 'Cuma Hatmi');
+    assert.equal((await fetchHatim(ctx[MEMBER], hatimId)).group.name, 'Cuma Hatmi');
+    assert.equal((await renameHatim(ctx[OWNER], hatimId, '   ')).reason, 'invalid');
+});
+
+test('ad değiştirme: silinmiş grupta gone döner', async () => {
+    const { hatimId, ctx } = await setup();
+    await deleteHatim(ctx[OWNER], hatimId);
+    assert.equal((await renameHatim(ctx[OWNER], hatimId, 'Yeni')).reason, 'gone');
 });

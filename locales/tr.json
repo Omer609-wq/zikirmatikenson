@@ -168,7 +168,12 @@
     "groupGoneNotice": "\"{name}\" grubu yöneticisi tarafından silindi.",
     "groupRemovedNotice": "\"{name}\" grubundan çıkarıldın.",
     "groupArchivedNotice": "\"{name}\" yöneticisi tarafından kapatıldı. Hatim arşivinde duruyor.",
-    "joinClosedComplete": "Bu hatim tamamlandı, yeni katılım kapalı."
+    "joinClosedComplete": "Bu hatim tamamlandı, yeni katılım kapalı.",
+    "renameAria": "Adı değiştir",
+    "renameTitle": "Adı değiştir",
+    "renamePromptShared": "Yeni adı yaz. Gruptaki herkes bu adı görür.",
+    "renamePromptPersonal": "Hatmin yeni adını yaz.",
+    "hatimNameLabel": "Hatim adı"
   },
   "folder": {
     "search": "Ara",

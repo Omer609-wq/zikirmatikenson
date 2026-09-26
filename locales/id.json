@@ -168,7 +168,12 @@
     "groupGoneNotice": "Grup \"{name}\" dihapus oleh adminnya.",
     "groupRemovedNotice": "Kamu dikeluarkan dari grup \"{name}\".",
     "groupArchivedNotice": "Grup \"{name}\" ditutup oleh adminnya. Khataman tetap ada di arsipmu.",
-    "joinClosedComplete": "Khataman ini sudah selesai dan tertutup untuk anggota baru."
+    "joinClosedComplete": "Khataman ini sudah selesai dan tertutup untuk anggota baru.",
+    "renameAria": "Ganti nama",
+    "renameTitle": "Ganti nama",
+    "renamePromptShared": "Tulis nama baru. Semua anggota grup akan melihatnya.",
+    "renamePromptPersonal": "Tulis nama baru untuk khatamanmu.",
+    "hatimNameLabel": "Nama khataman"
   },
   "folder": {
     "search": "Cari",

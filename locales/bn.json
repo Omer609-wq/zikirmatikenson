@@ -168,7 +168,12 @@
     "groupGoneNotice": "\"{name}\" গ্রুপটি অ্যাডমিন মুছে ফেলেছেন।",
     "groupRemovedNotice": "তোমাকে \"{name}\" গ্রুপ থেকে সরানো হয়েছে।",
     "groupArchivedNotice": "\"{name}\" গ্রুপটি অ্যাডমিন বন্ধ করেছেন। খতম তোমার আর্কাইভে আছে।",
-    "joinClosedComplete": "এই খতম সম্পন্ন হয়েছে, নতুন সদস্যদের জন্য বন্ধ।"
+    "joinClosedComplete": "এই খতম সম্পন্ন হয়েছে, নতুন সদস্যদের জন্য বন্ধ।",
+    "renameAria": "নাম বদলাও",
+    "renameTitle": "নাম বদলাও",
+    "renamePromptShared": "নতুন নাম লেখো। গ্রুপের সবাই এই নাম দেখবে।",
+    "renamePromptPersonal": "তোমার খতমের নতুন নাম লেখো।",
+    "hatimNameLabel": "খতমের নাম"
   },
   "folder": {
     "search": "খুঁজুন",
