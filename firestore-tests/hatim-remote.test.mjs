@@ -446,3 +446,18 @@ test('ad değiştirme: silinmiş grupta gone döner', async () => {
     await deleteHatim(ctx[OWNER], hatimId);
     assert.equal((await renameHatim(ctx[OWNER], hatimId, 'Yeni')).reason, 'gone');
 });
+
+test('ad sınırı UTF-16 birimi sayar; istemci emojiyi bölmeden keser', async () => {
+    const { hatimId, ctx } = await setup();
+    const yaz = (name) => updateDoc(doc(ctx[OWNER].db, 'hatims', hatimId), { name });
+
+    // Kural harf ya da bayt değil, UTF-16 birimi sayıyor.
+    await yaz('ş'.repeat(40)); // 40 birim, 80 bayt: kabul
+    await yaz('a'.repeat(36) + '😀🌙'); // 40 birim: kabul
+    await assert.rejects(yaz('a'.repeat(37) + '😀🌙')); // 41 birim: ret
+
+    // İstemci 42 birimlik adı emojiyi bölmeden 40'a indirir ve kural kabul eder.
+    const res = await renameHatim(ctx[OWNER], hatimId, 'a'.repeat(38) + '😀🌙');
+    assert.deepEqual(res, { ok: true, name: 'a'.repeat(38) + '😀' });
+    assert.equal((await serverHatim(hatimId)).name, 'a'.repeat(38) + '😀');
+});

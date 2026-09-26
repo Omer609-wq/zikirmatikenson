@@ -9,6 +9,7 @@ import {
     syncNativeSmartReminders
 } from './native-reminders.js';
 import { IN_APP_OVERLAY_IDS } from './lib/overlay-registry.js';
+import { truncateText } from './lib/coerce.js';
 import { buildHatimInvite, isShareCancelled } from './lib/hatim-invite.js';
 import {
     clampPageIndex,
@@ -6542,7 +6543,7 @@ function getLocalMemberName() {
 
 function setLocalMemberName(name) {
     if (!appMeta || typeof appMeta !== 'object') appMeta = { installedAt: null };
-    appMeta.memberName = String(name || '').trim().slice(0, HATIM_MEMBER_NAME_MAX);
+    appMeta.memberName = truncateText(String(name || '').trim(), HATIM_MEMBER_NAME_MAX).trimEnd();
 }
 
 /* ---------- Paylaşımlı hatim: kimlik ve senkron ---------- */
@@ -6663,7 +6664,7 @@ async function askHatimName(kind) {
         }
     );
     if (name == null) return null;
-    const trimmed = String(name).trim().slice(0, HATIM_MEMBER_NAME_MAX);
+    const trimmed = truncateText(String(name).trim(), HATIM_MEMBER_NAME_MAX).trimEnd();
     if (!trimmed) {
         await showAppAlert(t('community.claimNameRequired'));
         return null;
@@ -7756,7 +7757,7 @@ async function handleHatimJuzAction(action) {
             maxLength: HATIM_MEMBER_NAME_MAX
         });
         if (name == null) return;
-        const trimmed = String(name).trim().slice(0, HATIM_MEMBER_NAME_MAX);
+        const trimmed = truncateText(String(name).trim(), HATIM_MEMBER_NAME_MAX).trimEnd();
         if (!trimmed) {
             await showAppAlert(t('community.claimNameRequired'));
             return;
@@ -7962,7 +7963,7 @@ async function handleRenameHatim() {
         }
     );
     if (input == null) return;
-    const name = String(input).trim().slice(0, HATIM_GROUP_NAME_MAX);
+    const name = truncateText(String(input).trim(), HATIM_GROUP_NAME_MAX).trimEnd();
     if (!name || name === group.name) return;
 
     if (!isRemoteHatim(group)) {
