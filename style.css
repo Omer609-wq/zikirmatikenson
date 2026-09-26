@@ -3099,6 +3099,10 @@ html[lang='ur'] .smart-reminder-weekday {
 .hatim-archive {
     margin-top: 0.2rem;
 }
+/* .hatim-group-list display:flex veriyor; o [hidden]'ı ezmesin, yoksa bölüm hep açık kalır. */
+.hatim-archive[hidden] {
+    display: none;
+}
 
 /* Sunucu onayı beklenen hücre: yeni hâli görünür, hafif nabızla "kaydediliyor".
    Yalnız opaklık oynar — eski GPU'da da yeniden boyama gerektirmez. */
