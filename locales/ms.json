@@ -161,7 +161,9 @@
     "completeDuaReady": "Doa khatam sudah dibuka, anda boleh membacanya",
     "memberLeft": "keluar",
     "completedOn": "Selesai · {date}",
-    "archiveTitle": "Selesai ({count})"
+    "archiveTitle": "Selesai ({count})",
+    "removeFromArchive": "Buang dari Arkib",
+    "removeFromArchiveConfirm": "Buang \"{name}\" dari arkib anda? Hanya rekod dalam telefon anda dipadam."
   },
   "folder": {
     "search": "Cari",

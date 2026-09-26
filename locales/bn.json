@@ -161,7 +161,9 @@
     "completeDuaReady": "খতমের দোয়া খুলে গেছে, আপনি পড়তে পারেন",
     "memberLeft": "চলে গেছে",
     "completedOn": "সম্পন্ন · {date}",
-    "archiveTitle": "সম্পন্ন ({count})"
+    "archiveTitle": "সম্পন্ন ({count})",
+    "removeFromArchive": "আর্কাইভ থেকে সরাও",
+    "removeFromArchiveConfirm": "\"{name}\" তোমার আর্কাইভ থেকে সরানো হবে? শুধু তোমার ফোনের রেকর্ড মুছে যাবে।"
   },
   "folder": {
     "search": "খুঁজুন",

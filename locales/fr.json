@@ -166,7 +166,9 @@
     "completeDuaReady": "La du‘â du khatm est ouverte, tu peux la lire",
     "memberLeft": "parti",
     "completedOn": "Terminé · {date}",
-    "archiveTitle": "Terminés ({count})"
+    "archiveTitle": "Terminés ({count})",
+    "removeFromArchive": "Retirer de l’archive",
+    "removeFromArchiveConfirm": "Retirer « {name} » de ton archive ? Seul l’enregistrement sur ton téléphone est supprimé."
   },
   "folder": {
     "search": "Rechercher",

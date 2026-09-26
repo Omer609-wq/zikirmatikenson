@@ -161,7 +161,9 @@
     "completeDuaReady": "Hatim duası açıldı, okuyabilirsin",
     "memberLeft": "ayrıldı",
     "completedOn": "Tamamlandı · {date}",
-    "archiveTitle": "Tamamlananlar ({count})"
+    "archiveTitle": "Tamamlananlar ({count})",
+    "removeFromArchive": "Arşivden Kaldır",
+    "removeFromArchiveConfirm": "\"{name}\" arşivinden kaldırılsın mı? Yalnız senin telefonundaki kayıt silinir."
   },
   "folder": {
     "search": "Ara",

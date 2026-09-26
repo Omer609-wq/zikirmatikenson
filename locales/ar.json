@@ -185,7 +185,9 @@
     "completeDuaReady": "فُتح دعاء الختمة، يمكنك قراءته",
     "memberLeft": "غادر",
     "completedOn": "اكتملت · {date}",
-    "archiveTitle": "المكتملة ({count})"
+    "archiveTitle": "المكتملة ({count})",
+    "removeFromArchive": "إزالة من الأرشيف",
+    "removeFromArchiveConfirm": "هل تزيل \"{name}\" من أرشيفك؟ يُحذف السجل من هاتفك فقط."
   },
   "folder": {
     "search": "بحث",

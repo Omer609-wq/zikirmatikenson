@@ -161,7 +161,9 @@
     "completeDuaReady": "ختم کی دعا کھل گئی، آپ پڑھ سکتے ہیں",
     "memberLeft": "چلا گیا",
     "completedOn": "مکمل · {date}",
-    "archiveTitle": "مکمل شدہ ({count})"
+    "archiveTitle": "مکمل شدہ ({count})",
+    "removeFromArchive": "آرکائیو سے ہٹائیں",
+    "removeFromArchiveConfirm": "کیا \"{name}\" کو اپنے آرکائیو سے ہٹانا چاہتے ہیں؟ صرف آپ کے فون کا ریکارڈ حذف ہوگا۔"
   },
   "folder": {
     "search": "تلاش",

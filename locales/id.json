@@ -161,7 +161,9 @@
     "completeDuaReady": "Doa khatam sudah terbuka, silakan dibaca",
     "memberLeft": "keluar",
     "completedOn": "Selesai · {date}",
-    "archiveTitle": "Selesai ({count})"
+    "archiveTitle": "Selesai ({count})",
+    "removeFromArchive": "Hapus dari Arsip",
+    "removeFromArchiveConfirm": "Hapus \"{name}\" dari arsipmu? Hanya catatan di ponselmu yang dihapus."
   },
   "folder": {
     "search": "Cari",

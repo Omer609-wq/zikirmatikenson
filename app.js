@@ -7368,15 +7368,18 @@ function renderHatimGroupView() {
     const deleteLabel = document.getElementById('hatimDeleteGroupLabel');
     if (deleteLabel) {
         // Paylaşımlı grupta yalnızca yönetici siler; katılımcı ayrılır (§10).
-        const leaves = isRemoteHatim(group) && group.ownerId !== me;
+        // Donmuş hatimde ikisi de yok: herkes yalnız kendi arşivinden kaldırır.
+        const leaves = !frozen && isRemoteHatim(group) && group.ownerId !== me;
         // Ayrılırken çöp kutusu simgesi "grubu siliyorum" gibi okunuyor.
         const deleteIcon = document.querySelector('#hatimDeleteGroupBtn .material-icons-outlined');
         if (deleteIcon) deleteIcon.textContent = leaves ? 'logout' : 'delete_outline';
-        deleteLabel.textContent = personal
-            ? t('community.deleteHatim')
-            : leaves
-              ? t('community.leaveGroup')
-              : t('community.deleteGroup');
+        deleteLabel.textContent = frozen
+            ? t('community.removeFromArchive')
+            : personal
+              ? t('community.deleteHatim')
+              : leaves
+                ? t('community.leaveGroup')
+                : t('community.deleteGroup');
     }
 
     // Üyeler ve şikâyet yalnızca sunucudaki grupta anlamlı. Yönetici kendi
@@ -7612,17 +7615,22 @@ function renderHatimJuzDetail() {
     const actions = document.getElementById('hatimJuzActions');
     if (!actions) return;
     const buttons = [];
-    if (juz.state === JUZ_FREE) {
-        const claimLabel = personal ? t('community.claimJuzPersonal') : t('community.claimJuz');
-        buttons.push(`<button type="button" class="primary-btn full-width" data-hatim-action="claim">${escapeHtml(claimLabel)}</button>`);
-    } else if (juz.by === me && juz.state === JUZ_CLAIMED) {
-        buttons.push(`<button type="button" class="primary-btn full-width" data-hatim-action="complete">${escapeHtml(t('community.completeJuz'))}</button>`);
-        buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="release">${escapeHtml(t('community.releaseJuz'))}</button>`);
-    } else if (juz.by === me && juz.state === JUZ_DONE) {
-        buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="uncomplete">${escapeHtml(t('community.uncompleteJuz'))}</button>`);
-    } else if (isRemoteHatim(group) && juz.state === JUZ_CLAIMED && group.ownerId === me) {
-        // Yönetici, kaybolan ya da okumayan üyenin cüzünü boşa çıkarır; yoksa hatim kilitlenir (§10).
-        buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="forceRelease">${escapeHtml(t('community.forceReleaseJuz'))}</button>`);
+    // Donmuş hatim bir kayıt: cüz durumu değişmez. Değişseydi sunucuya gider ama
+    // öbür üyelerin donmuş kopyası bunu hiç görmez, hatim kimisinde bitmiş
+    // kimisinde bitmemiş kalırdı. Okumak serbest — durumu değiştirmiyor.
+    if (!isHatimFrozen(group)) {
+        if (juz.state === JUZ_FREE) {
+            const claimLabel = personal ? t('community.claimJuzPersonal') : t('community.claimJuz');
+            buttons.push(`<button type="button" class="primary-btn full-width" data-hatim-action="claim">${escapeHtml(claimLabel)}</button>`);
+        } else if (juz.by === me && juz.state === JUZ_CLAIMED) {
+            buttons.push(`<button type="button" class="primary-btn full-width" data-hatim-action="complete">${escapeHtml(t('community.completeJuz'))}</button>`);
+            buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="release">${escapeHtml(t('community.releaseJuz'))}</button>`);
+        } else if (juz.by === me && juz.state === JUZ_DONE) {
+            buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="uncomplete">${escapeHtml(t('community.uncompleteJuz'))}</button>`);
+        } else if (isRemoteHatim(group) && juz.state === JUZ_CLAIMED && group.ownerId === me) {
+            // Yönetici, kaybolan ya da okumayan üyenin cüzünü boşa çıkarır; yoksa hatim kilitlenir (§10).
+            buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="forceRelease">${escapeHtml(t('community.forceReleaseJuz'))}</button>`);
+        }
     }
     // Okuma yalnızca kendi üstlendiğin cüzde: alınmamış ya da başkasının cüzünde
     // "oku" düğmesi kullanıcıyı üstlenmeden okumaya yönlendiriyordu.
@@ -7665,6 +7673,10 @@ async function handleHatimJuzAction(action) {
         showView('quranSurahView', { surah: detail.start.surah, ayah: detail.start.ayah });
         return;
     }
+
+    // Donmuş hatimde durum değişmez; düğmeler zaten yok, açık kalmış eski bir
+    // pencereden gelen dokunuş da yutulsun.
+    if (isHatimFrozen(group)) return;
 
     if (isRemoteHatim(group)) {
         await handleRemoteHatimJuzAction(group, action);
@@ -7862,13 +7874,18 @@ function handleHatimDuaButton() {
 async function handleDeleteHatimGroup() {
     const group = findHatimGroup(currentHatimGroupId);
     if (!group) return;
-    if (isRemoteHatim(group)) {
+    // Donmuş hatim sunucuya artık dokunmaz: yönetici de katılımcı da yalnız kendi
+    // arşivinden kaldırır. Öbür üyelerin kaydı olduğu gibi kalır.
+    const frozen = isHatimFrozen(group);
+    if (isRemoteHatim(group) && !frozen) {
         await handleRemoteHatimDeleteOrLeave(group);
         return;
     }
-    const confirmKey = isPersonalHatim(group)
-        ? 'community.deleteHatimConfirm'
-        : 'community.deleteConfirm';
+    const confirmKey = frozen
+        ? 'community.removeFromArchiveConfirm'
+        : isPersonalHatim(group)
+          ? 'community.deleteHatimConfirm'
+          : 'community.deleteConfirm';
     const ok = await showAppConfirm(t(confirmKey, { name: group.name }));
     if (!ok) return;
     hatimGroups = hatimGroups.filter((g) => g.id !== group.id);

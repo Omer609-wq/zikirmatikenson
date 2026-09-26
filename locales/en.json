@@ -165,7 +165,9 @@
     "completeDuaReady": "The hatim du‘a is now open, you can read it",
     "memberLeft": "left",
     "completedOn": "Completed · {date}",
-    "archiveTitle": "Completed ({count})"
+    "archiveTitle": "Completed ({count})",
+    "removeFromArchive": "Remove from Archive",
+    "removeFromArchiveConfirm": "Remove \"{name}\" from your archive? Only the record on your phone is deleted."
   },
   "folder": {
     "search": "Search",
