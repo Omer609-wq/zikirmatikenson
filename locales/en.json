@@ -167,7 +167,11 @@
     "completedOn": "Completed · {date}",
     "archiveTitle": "Completed ({count})",
     "removeFromArchive": "Remove from Archive",
-    "removeFromArchiveConfirm": "Remove \"{name}\" from your archive? Only the record on your phone is deleted."
+    "removeFromArchiveConfirm": "Remove \"{name}\" from your archive? Only the record on your phone is deleted.",
+    "deleteCompletedConfirm": "Delete \"{name}\" from the server? The hatim stays in your and the members' archives, and no one can join anymore.",
+    "groupGoneNotice": "\"{name}\" was deleted by its admin.",
+    "groupRemovedNotice": "You were removed from \"{name}\".",
+    "groupArchivedNotice": "\"{name}\" was closed by its admin. The hatim stays in your archive."
   },
   "folder": {
     "search": "Search",

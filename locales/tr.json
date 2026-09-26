@@ -163,7 +163,11 @@
     "completedOn": "Tamamlandı · {date}",
     "archiveTitle": "Tamamlananlar ({count})",
     "removeFromArchive": "Arşivden Kaldır",
-    "removeFromArchiveConfirm": "\"{name}\" arşivinden kaldırılsın mı? Yalnız senin telefonundaki kayıt silinir."
+    "removeFromArchiveConfirm": "\"{name}\" arşivinden kaldırılsın mı? Yalnız senin telefonundaki kayıt silinir.",
+    "deleteCompletedConfirm": "\"{name}\" sunucudan silinsin mi? Hatim senin ve üyelerin arşivinde kalır, gruba artık katılınamaz.",
+    "groupGoneNotice": "\"{name}\" grubu yöneticisi tarafından silindi.",
+    "groupRemovedNotice": "\"{name}\" grubundan çıkarıldın.",
+    "groupArchivedNotice": "\"{name}\" yöneticisi tarafından kapatıldı. Hatim arşivinde duruyor."
   },
   "folder": {
     "search": "Ara",

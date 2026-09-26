@@ -163,7 +163,11 @@
     "completedOn": "Selesai · {date}",
     "archiveTitle": "Selesai ({count})",
     "removeFromArchive": "Hapus dari Arsip",
-    "removeFromArchiveConfirm": "Hapus \"{name}\" dari arsipmu? Hanya catatan di ponselmu yang dihapus."
+    "removeFromArchiveConfirm": "Hapus \"{name}\" dari arsipmu? Hanya catatan di ponselmu yang dihapus.",
+    "deleteCompletedConfirm": "Hapus \"{name}\" dari server? Khataman tetap ada di arsipmu dan arsip anggota, dan tidak ada lagi yang bisa bergabung.",
+    "groupGoneNotice": "Grup \"{name}\" dihapus oleh adminnya.",
+    "groupRemovedNotice": "Kamu dikeluarkan dari grup \"{name}\".",
+    "groupArchivedNotice": "Grup \"{name}\" ditutup oleh adminnya. Khataman tetap ada di arsipmu."
   },
   "folder": {
     "search": "Cari",

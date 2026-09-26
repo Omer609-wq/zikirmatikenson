@@ -163,7 +163,11 @@
     "completedOn": "সম্পন্ন · {date}",
     "archiveTitle": "সম্পন্ন ({count})",
     "removeFromArchive": "আর্কাইভ থেকে সরাও",
-    "removeFromArchiveConfirm": "\"{name}\" তোমার আর্কাইভ থেকে সরানো হবে? শুধু তোমার ফোনের রেকর্ড মুছে যাবে।"
+    "removeFromArchiveConfirm": "\"{name}\" তোমার আর্কাইভ থেকে সরানো হবে? শুধু তোমার ফোনের রেকর্ড মুছে যাবে।",
+    "deleteCompletedConfirm": "\"{name}\" সার্ভার থেকে মুছে ফেলা হবে? খতম তোমার ও সদস্যদের আর্কাইভে থাকবে, আর কেউ যোগ দিতে পারবে না।",
+    "groupGoneNotice": "\"{name}\" গ্রুপটি অ্যাডমিন মুছে ফেলেছেন।",
+    "groupRemovedNotice": "তোমাকে \"{name}\" গ্রুপ থেকে সরানো হয়েছে।",
+    "groupArchivedNotice": "\"{name}\" গ্রুপটি অ্যাডমিন বন্ধ করেছেন। খতম তোমার আর্কাইভে আছে।"
   },
   "folder": {
     "search": "খুঁজুন",

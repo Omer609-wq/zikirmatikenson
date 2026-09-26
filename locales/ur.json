@@ -163,7 +163,11 @@
     "completedOn": "مکمل · {date}",
     "archiveTitle": "مکمل شدہ ({count})",
     "removeFromArchive": "آرکائیو سے ہٹائیں",
-    "removeFromArchiveConfirm": "کیا \"{name}\" کو اپنے آرکائیو سے ہٹانا چاہتے ہیں؟ صرف آپ کے فون کا ریکارڈ حذف ہوگا۔"
+    "removeFromArchiveConfirm": "کیا \"{name}\" کو اپنے آرکائیو سے ہٹانا چاہتے ہیں؟ صرف آپ کے فون کا ریکارڈ حذف ہوگا۔",
+    "deleteCompletedConfirm": "کیا \"{name}\" کو سرور سے حذف کرنا چاہتے ہیں؟ ختم آپ کے اور اراکین کے آرکائیو میں رہے گا، اب کوئی شامل نہیں ہو سکے گا۔",
+    "groupGoneNotice": "\"{name}\" گروپ کو منتظم نے حذف کر دیا۔",
+    "groupRemovedNotice": "آپ کو \"{name}\" گروپ سے نکال دیا گیا۔",
+    "groupArchivedNotice": "\"{name}\" گروپ کو منتظم نے بند کر دیا۔ ختم آپ کے آرکائیو میں موجود ہے۔"
   },
   "folder": {
     "search": "تلاش",

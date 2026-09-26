@@ -187,7 +187,11 @@
     "completedOn": "اكتملت · {date}",
     "archiveTitle": "المكتملة ({count})",
     "removeFromArchive": "إزالة من الأرشيف",
-    "removeFromArchiveConfirm": "هل تزيل \"{name}\" من أرشيفك؟ يُحذف السجل من هاتفك فقط."
+    "removeFromArchiveConfirm": "هل تزيل \"{name}\" من أرشيفك؟ يُحذف السجل من هاتفك فقط.",
+    "deleteCompletedConfirm": "هل تحذف \"{name}\" من الخادم؟ تبقى الختمة في أرشيفك وأرشيف الأعضاء، ولا يمكن لأحد الانضمام بعد ذلك.",
+    "groupGoneNotice": "حذف المشرف مجموعة \"{name}\".",
+    "groupRemovedNotice": "أُزِلتَ من مجموعة \"{name}\".",
+    "groupArchivedNotice": "أغلق المشرف مجموعة \"{name}\". تبقى الختمة في أرشيفك."
   },
   "folder": {
     "search": "بحث",

@@ -163,7 +163,11 @@
     "completedOn": "Selesai · {date}",
     "archiveTitle": "Selesai ({count})",
     "removeFromArchive": "Buang dari Arkib",
-    "removeFromArchiveConfirm": "Buang \"{name}\" dari arkib anda? Hanya rekod dalam telefon anda dipadam."
+    "removeFromArchiveConfirm": "Buang \"{name}\" dari arkib anda? Hanya rekod dalam telefon anda dipadam.",
+    "deleteCompletedConfirm": "Padam \"{name}\" dari pelayan? Khatam kekal dalam arkib anda dan arkib ahli, dan tiada sesiapa boleh menyertai lagi.",
+    "groupGoneNotice": "Kumpulan \"{name}\" dipadam oleh pentadbirnya.",
+    "groupRemovedNotice": "Anda telah dikeluarkan dari kumpulan \"{name}\".",
+    "groupArchivedNotice": "Kumpulan \"{name}\" ditutup oleh pentadbirnya. Khatam kekal dalam arkib anda."
   },
   "folder": {
     "search": "Cari",

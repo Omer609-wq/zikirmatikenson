@@ -6674,6 +6674,22 @@ async function askHatimName(kind) {
  * Tek bir paylaşımlı grubu sunucuyla eşler. Silinmiş ya da çıkarıldığım grubu atar.
  * @returns {Promise<'local' | 'unavailable' | 'ok' | 'gone' | 'removed' | string>}
  */
+/**
+ * Sunucuda silinmiş grup. Bitmişse arşive iner: o hatim üyenin de geçmişi,
+ * yöneticinin silme kararı başkasının tamamladığı hatmi yok etmesin. Bitmemişse
+ * hatırlanacak bir hatim yok, listeden düşer.
+ * @returns {'archived' | 'gone'}
+ */
+function settleGoneHatim(id) {
+    const group = findHatimGroup(id);
+    if (group && isRemoteHatim(group) && isHatimComplete(group)) {
+        commitHatimGroup({ ...group, remote: { ...group.remote, gone: true } });
+        return 'archived';
+    }
+    dropHatimLocally(id);
+    return 'gone';
+}
+
 async function refreshRemoteHatim(id, ctx = null) {
     const group = findHatimGroup(id);
     if (!isRemoteHatim(group)) return 'local';
@@ -6690,7 +6706,8 @@ async function refreshRemoteHatim(id, ctx = null) {
         if (findHatimGroup(id)) commitHatimGroup(res.group, { defer: true });
         return 'ok';
     }
-    if (res.reason === 'gone' || res.reason === 'removed') dropHatimLocally(id);
+    if (res.reason === 'gone') return settleGoneHatim(id);
+    if (res.reason === 'removed') dropHatimLocally(id);
     return res.reason;
 }
 
@@ -6720,9 +6737,21 @@ async function syncRemoteHatimsInBackground() {
     if (!ids.length) return;
     const ctx = await getHatimContextQuiet();
     if (!ctx) return;
-    await Promise.all(ids.map((id) => refreshRemoteHatim(id, ctx)));
+    // Ad önceden alınır: silinen grubun kaydı eşitlemeden sonra artık yok.
+    const names = new Map(ids.map((id) => [id, findHatimGroup(id)?.name || '']));
+    const states = await Promise.all(ids.map((id) => refreshRemoteHatim(id, ctx)));
     if (currentViewId === 'communityView') renderCommunityView();
     renderCommunityCardSummary();
+
+    // Grup listeden sessizce kaybolmasın: bir kere, adıyla söylensin.
+    const notices = [];
+    ids.forEach((id, i) => {
+        const name = names.get(id);
+        if (states[i] === 'gone') notices.push(t('community.groupGoneNotice', { name }));
+        else if (states[i] === 'removed') notices.push(t('community.groupRemovedNotice', { name }));
+        else if (states[i] === 'archived') notices.push(t('community.groupArchivedNotice', { name }));
+    });
+    for (const notice of notices) await showAppAlert(notice);
 }
 
 /**
@@ -6740,9 +6769,16 @@ async function syncRemoteHatimInBackground(id) {
         if (onThisGroup) await leaveGoneHatimGroup(state);
         return;
     }
-    if (state === 'ok' && onThisGroup) {
+    if ((state === 'ok' || state === 'archived') && onThisGroup) {
         renderHatimGroupView();
         if (document.getElementById('hatimJuzOverlay')?.classList.contains('active')) renderHatimJuzDetail();
+    }
+    if (state === 'archived') {
+        renderCommunityCardSummary();
+        // Ekran sessizce salt okunura dönmesin: kod ve üye satırı neden kalktı, söylensin.
+        if (onThisGroup) {
+            showTransientNote(t('community.groupArchivedNotice', { name: findHatimGroup(id)?.name || '' }));
+        }
     }
 }
 
@@ -6815,10 +6851,19 @@ async function handleRemoteHatimJuzAction(group, action) {
         }
         // Ret çoğu zaman tablonun değiştiğini söyler ('taken'): önce eşle. Yetki reddinin
         // asıl sebebi gruptan çıkarılmak ya da grubun silinmesiyse onu söyle, "yetkin yok" değil.
-        const state =
+        let state =
             res.reason === 'gone' || res.reason === 'removed'
                 ? res.reason
                 : await refreshRemoteHatim(group.id);
+        // Sunucu doğrudan "silindi" dediyse kayıt hâlâ elde: bitmişse arşive insin.
+        if (state === 'gone' && findHatimGroup(group.id)) state = settleGoneHatim(group.id);
+        if (state === 'archived') {
+            renderHatimGroupView();
+            renderHatimJuzDetail();
+            renderCommunityCardSummary();
+            showTransientNote(t('community.groupArchivedNotice', { name: group.name }));
+            return;
+        }
         if (state === 'gone' || state === 'removed') {
             dropHatimLocally(group.id);
             await leaveGoneHatimGroup(state);
@@ -6861,10 +6906,14 @@ async function handleRemoteHatimJuzAction(group, action) {
 /** Paylaşımlı grupta yönetici siler, katılımcı ayrılır (§10). */
 async function handleRemoteHatimDeleteOrLeave(group) {
     const isOwner = group.ownerId === getHatimUid();
+    // Bitmiş grubu silmek yalnız sunucuyu temizler; hatim herkesin arşivinde kalır.
+    const complete = isHatimComplete(group);
     const confirmed = await showAppConfirm(
-        isOwner
-            ? t('community.deleteSharedConfirm', { name: group.name, count: group.remote.memberCount })
-            : t('community.leaveConfirm', { name: group.name })
+        isOwner && complete
+            ? t('community.deleteCompletedConfirm', { name: group.name })
+            : isOwner
+              ? t('community.deleteSharedConfirm', { name: group.name, count: group.remote.memberCount })
+              : t('community.leaveConfirm', { name: group.name })
     );
     if (!confirmed) return;
     if (hatimSyncBusy) return;
@@ -6882,9 +6931,13 @@ async function handleRemoteHatimDeleteOrLeave(group) {
     });
     hatimHiddenIds.delete(group.id);
 
-    // Grup zaten silinmişse ayrılmış sayılır; listeden düşmesi yeter.
-    if (res.ok || res.reason === 'gone') {
+    if (res.ok && !isOwner) {
+        // Ayrıldı: kendi seçimi, listeden düşer.
         dropHatimLocally(group.id);
+    } else if (res.ok || res.reason === 'gone') {
+        // Sunucuda artık yok (yönetici sildi ya da zaten silinmişti): bitmişse
+        // arşive iner, bitmemişse düşer.
+        settleGoneHatim(group.id);
     }
     renderCommunityCardSummary();
     if (currentViewId === 'communityView') renderCommunityView();

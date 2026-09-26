@@ -168,7 +168,11 @@
     "completedOn": "Terminé · {date}",
     "archiveTitle": "Terminés ({count})",
     "removeFromArchive": "Retirer de l’archive",
-    "removeFromArchiveConfirm": "Retirer « {name} » de ton archive ? Seul l’enregistrement sur ton téléphone est supprimé."
+    "removeFromArchiveConfirm": "Retirer « {name} » de ton archive ? Seul l’enregistrement sur ton téléphone est supprimé.",
+    "deleteCompletedConfirm": "Supprimer « {name} » du serveur ? Le khatm reste dans ton archive et celle des membres, et personne ne pourra plus rejoindre.",
+    "groupGoneNotice": "« {name} » a été supprimé par son administrateur.",
+    "groupRemovedNotice": "Tu as été retiré de « {name} ».",
+    "groupArchivedNotice": "« {name} » a été fermé par son administrateur. Le khatm reste dans ton archive."
   },
   "folder": {
     "search": "Rechercher",
