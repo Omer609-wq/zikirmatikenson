@@ -167,7 +167,8 @@
     "deleteCompletedConfirm": "Hapus \"{name}\" dari server? Khataman tetap ada di arsipmu dan arsip anggota, dan tidak ada lagi yang bisa bergabung.",
     "groupGoneNotice": "Grup \"{name}\" dihapus oleh adminnya.",
     "groupRemovedNotice": "Kamu dikeluarkan dari grup \"{name}\".",
-    "groupArchivedNotice": "Grup \"{name}\" ditutup oleh adminnya. Khataman tetap ada di arsipmu."
+    "groupArchivedNotice": "Grup \"{name}\" ditutup oleh adminnya. Khataman tetap ada di arsipmu.",
+    "joinClosedComplete": "Khataman ini sudah selesai dan tertutup untuk anggota baru."
   },
   "folder": {
     "search": "Cari",

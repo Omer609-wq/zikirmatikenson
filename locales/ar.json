@@ -191,7 +191,8 @@
     "deleteCompletedConfirm": "هل تحذف \"{name}\" من الخادم؟ تبقى الختمة في أرشيفك وأرشيف الأعضاء، ولا يمكن لأحد الانضمام بعد ذلك.",
     "groupGoneNotice": "حذف المشرف مجموعة \"{name}\".",
     "groupRemovedNotice": "أُزِلتَ من مجموعة \"{name}\".",
-    "groupArchivedNotice": "أغلق المشرف مجموعة \"{name}\". تبقى الختمة في أرشيفك."
+    "groupArchivedNotice": "أغلق المشرف مجموعة \"{name}\". تبقى الختمة في أرشيفك.",
+    "joinClosedComplete": "اكتملت هذه الختمة، والانضمام إليها مغلق."
   },
   "folder": {
     "search": "بحث",

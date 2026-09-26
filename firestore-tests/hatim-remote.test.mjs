@@ -11,7 +11,7 @@ import test, { after, before, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { initializeTestEnvironment } from '@firebase/rules-unit-testing';
-import { doc, getDoc, writeBatch } from 'firebase/firestore';
+import { deleteField, doc, getDoc, serverTimestamp, updateDoc, writeBatch } from 'firebase/firestore';
 import { JUZ_CLAIMED, JUZ_DONE, JUZ_FREE, isValidHatimCode } from '../lib/hatim-groups.js';
 import {
     claimJuzRemote,
@@ -268,4 +268,164 @@ test('silme: yalnızca yönetici; sonra kod bulunmaz, katılımcıda grup "gone"
 test('şikâyet: katılmamış biri de gönderebilir', async () => {
     const { hatimId } = await setup();
     assert.equal((await reportHatim(ctxOf(OUTSIDER), hatimId, 'uygunsuz grup adı')).ok, true);
+});
+
+/* ------------------------------------------------------------------ */
+/* Biten cüz sayısı ve katılım kapısı                                  */
+/* ------------------------------------------------------------------ */
+
+/** Kuralları kapatıp hatmi bitmiş hâle getirir: 30 cüz bitti, sayaç 30. */
+async function seedComplete(hatimId, by) {
+    await env.withSecurityRulesDisabled(async (c) => {
+        const db = c.firestore();
+        const batch = writeBatch(db);
+        for (let n = 1; n <= 30; n += 1) {
+            batch.update(doc(db, 'hatims', hatimId, 'juz', String(n)), {
+                state: 'done',
+                by,
+                byName: 'Hoca',
+                claimedAt: new Date(),
+                completedAt: new Date()
+            });
+        }
+        batch.update(doc(db, 'hatims', hatimId), { doneCount: 30, rev: 30 });
+        await batch.commit();
+    });
+}
+
+test('sayaç: bitirme +1, geri alma -1, kapma ve bırakma değiştirmez', async () => {
+    const { hatimId, ctx } = await setup(MEMBER);
+    assert.equal((await serverHatim(hatimId)).doneCount, 0);
+    await claimJuzRemote(ctx[MEMBER], hatimId, 3, 'Ömer');
+    assert.equal((await serverHatim(hatimId)).doneCount, 0);
+    assert.equal((await completeJuzRemote(ctx[MEMBER], hatimId, 3)).ok, true);
+    assert.equal((await serverHatim(hatimId)).doneCount, 1);
+    assert.equal((await uncompleteJuzRemote(ctx[MEMBER], hatimId, 3)).ok, true);
+    assert.equal((await serverHatim(hatimId)).doneCount, 0);
+    assert.equal((await releaseJuzRemote(ctx[MEMBER], hatimId, 3)).ok, true);
+    assert.equal((await serverHatim(hatimId)).doneCount, 0);
+});
+
+test('sayaç: aynı anda iki bitirme kaymaz', async () => {
+    const { hatimId, ctx } = await setup(MEMBER, OTHER);
+    await claimJuzRemote(ctx[MEMBER], hatimId, 1, 'Ömer');
+    await claimJuzRemote(ctx[OTHER], hatimId, 2, 'Ali');
+    const [a, b] = await Promise.all([
+        completeJuzRemote(ctx[MEMBER], hatimId, 1),
+        completeJuzRemote(ctx[OTHER], hatimId, 2)
+    ]);
+    assert.equal(a.ok && b.ok, true);
+    assert.equal((await serverHatim(hatimId)).doneCount, 2);
+});
+
+test('katılma: bitmiş hatme yeni kişi katılamaz, üye kodla geri bulur', async () => {
+    const { hatimId, code, ctx } = await setup(MEMBER);
+    await seedComplete(hatimId, OWNER);
+
+    const outsider = ctxOf(OTHER);
+    const found = await findHatimByCode(outsider, code);
+    assert.equal(found.ok, true);
+    assert.equal(found.complete, true);
+    assert.equal(found.alreadyMember, false);
+    assert.equal((await joinHatim(outsider, hatimId, 'Ali')).reason, 'complete');
+
+    // İstemciyi atlayan doğrudan yazma da kuralda reddedilir.
+    const batch = writeBatch(outsider.db);
+    batch.set(doc(outsider.db, 'hatims', hatimId, 'members', OTHER), {
+        name: 'Ali',
+        joinedAt: serverTimestamp()
+    });
+    batch.update(doc(outsider.db, 'hatims', hatimId), { memberCount: 3 });
+    await assert.rejects(batch.commit());
+
+    // Kontrol: aynı yazma, hatim bitmemişken geçer — ret kapıdandı.
+    await env.withSecurityRulesDisabled(async (c) => {
+        await updateDoc(doc(c.firestore(), 'hatims', hatimId), { doneCount: 29 });
+    });
+    const kontrol = writeBatch(outsider.db);
+    kontrol.set(doc(outsider.db, 'hatims', hatimId, 'members', OTHER), {
+        name: 'Ali',
+        joinedAt: serverTimestamp()
+    });
+    kontrol.update(doc(outsider.db, 'hatims', hatimId), { memberCount: 3 });
+    await kontrol.commit();
+    await env.withSecurityRulesDisabled(async (c) => {
+        await updateDoc(doc(c.firestore(), 'hatims', hatimId), { doneCount: 30 });
+    });
+
+    const again = await findHatimByCode(ctx[MEMBER], code);
+    assert.equal(again.complete, true);
+    assert.equal(again.alreadyMember, true, 'üye kendi hatmini yeniden bulur');
+});
+
+test('katılma: bitmiş hatimde cüz geri alınınca kapı yeniden açılır', async () => {
+    const { hatimId, code, ctx } = await setup(MEMBER);
+    await seedComplete(hatimId, MEMBER);
+    assert.equal((await uncompleteJuzRemote(ctx[MEMBER], hatimId, 7)).ok, true);
+    assert.equal((await serverHatim(hatimId)).doneCount, 29);
+    const outsider = ctxOf(OTHER);
+    assert.equal((await findHatimByCode(outsider, code)).complete, false);
+    assert.equal((await joinHatim(outsider, hatimId, 'Ali')).ok, true);
+});
+
+test('sayaç cüzün gerçek geçişini izler: kapmada artmaz, bitirmede artmadan geçmez', async () => {
+    const { hatimId, ctx } = await setup(MEMBER);
+    const db = ctx[MEMBER].db;
+
+    // Kapma sayacı oynatamaz.
+    let h = await serverHatim(hatimId);
+    const kapma = writeBatch(db);
+    kapma.update(doc(db, 'hatims', hatimId, 'juz', '2'), {
+        state: 'claimed',
+        by: MEMBER,
+        byName: 'Ömer',
+        claimedAt: serverTimestamp()
+    });
+    kapma.update(doc(db, 'hatims', hatimId), { rev: h.rev + 1, doneCount: h.doneCount + 1 });
+    await assert.rejects(kapma.commit());
+    // Kontrol: aynı kapma sayaç oynamadan geçer.
+    const kapmaDogru = writeBatch(db);
+    kapmaDogru.update(doc(db, 'hatims', hatimId, 'juz', '2'), {
+        state: 'claimed',
+        by: MEMBER,
+        byName: 'Ömer',
+        claimedAt: serverTimestamp()
+    });
+    kapmaDogru.update(doc(db, 'hatims', hatimId), { rev: h.rev + 1 });
+    await kapmaDogru.commit();
+
+    // Bitirme sayacı artırmadan geçmez.
+    await claimJuzRemote(ctx[MEMBER], hatimId, 1, 'Ömer');
+    h = await serverHatim(hatimId);
+    const bitirme = writeBatch(db);
+    bitirme.update(doc(db, 'hatims', hatimId, 'juz', '1'), { state: 'done', completedAt: serverTimestamp() });
+    bitirme.update(doc(db, 'hatims', hatimId), { rev: h.rev + 1 });
+    await assert.rejects(bitirme.commit());
+    // Kontrol: aynı bitirme sayaç +1 ile geçer.
+    const bitirmeDogru = writeBatch(db);
+    bitirmeDogru.update(doc(db, 'hatims', hatimId, 'juz', '1'), { state: 'done', completedAt: serverTimestamp() });
+    bitirmeDogru.update(doc(db, 'hatims', hatimId), { rev: h.rev + 1, doneCount: h.doneCount + 1 });
+    await bitirmeDogru.commit();
+    h = await serverHatim(hatimId);
+
+    // Sıçrama yok: tek yazmada 2 artış reddedilir.
+    await assert.rejects(updateDoc(doc(db, 'hatims', hatimId), { rev: h.rev + 1, doneCount: h.doneCount + 2 }));
+});
+
+test('eski grup (sayaçsız): bitirme ve katılma eskisi gibi, sayaç eklenemez', async () => {
+    const { hatimId, code, ctx } = await setup(MEMBER);
+    await env.withSecurityRulesDisabled(async (c) => {
+        await updateDoc(doc(c.firestore(), 'hatims', hatimId), { doneCount: deleteField() });
+    });
+    await claimJuzRemote(ctx[MEMBER], hatimId, 4, 'Ömer');
+    assert.equal((await completeJuzRemote(ctx[MEMBER], hatimId, 4)).ok, true);
+    const h = await serverHatim(hatimId);
+    assert.equal('doneCount' in h, false, 'istemci eski gruba sayaç eklemez');
+    await assert.rejects(
+        updateDoc(doc(ctx[MEMBER].db, 'hatims', hatimId), { rev: h.rev + 1, doneCount: 1 }),
+        'kural da eklemeye izin vermez'
+    );
+    // Kontrol: aynı rev artışı sayaçsız geçer — ret sayaçtandı.
+    await updateDoc(doc(ctx[MEMBER].db, 'hatims', hatimId), { rev: h.rev + 1 });
+    assert.equal((await findHatimByCode(ctxOf(OTHER), code)).complete, false);
 });

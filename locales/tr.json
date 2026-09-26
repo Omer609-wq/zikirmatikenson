@@ -167,7 +167,8 @@
     "deleteCompletedConfirm": "\"{name}\" sunucudan silinsin mi? Hatim senin ve üyelerin arşivinde kalır, gruba artık katılınamaz.",
     "groupGoneNotice": "\"{name}\" grubu yöneticisi tarafından silindi.",
     "groupRemovedNotice": "\"{name}\" grubundan çıkarıldın.",
-    "groupArchivedNotice": "\"{name}\" yöneticisi tarafından kapatıldı. Hatim arşivinde duruyor."
+    "groupArchivedNotice": "\"{name}\" yöneticisi tarafından kapatıldı. Hatim arşivinde duruyor.",
+    "joinClosedComplete": "Bu hatim tamamlandı, yeni katılım kapalı."
   },
   "folder": {
     "search": "Ara",

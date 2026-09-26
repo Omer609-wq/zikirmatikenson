@@ -171,7 +171,8 @@
     "deleteCompletedConfirm": "Delete \"{name}\" from the server? The hatim stays in your and the members' archives, and no one can join anymore.",
     "groupGoneNotice": "\"{name}\" was deleted by its admin.",
     "groupRemovedNotice": "You were removed from \"{name}\".",
-    "groupArchivedNotice": "\"{name}\" was closed by its admin. The hatim stays in your archive."
+    "groupArchivedNotice": "\"{name}\" was closed by its admin. The hatim stays in your archive.",
+    "joinClosedComplete": "This hatim is complete and closed to new members."
   },
   "folder": {
     "search": "Search",

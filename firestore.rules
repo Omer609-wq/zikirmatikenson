@@ -115,19 +115,36 @@ service cloud.firestore {
           && validName(request.resource.data.name, 40);
       }
 
-      // Cüz kapma / bitirme / bırakma: yalnızca rev, tam 1 artar.
+      // Cüz kapma / bitirme / bırakma: rev tam 1 artar. Bitirme ve geri almada
+      // biten cüz sayısı da (doneCount) 1 oynar.
       function tableChange() {
         return exists(memberPath(hatimId, request.auth.uid))
-          && changedKeys().hasOnly(['rev'])
-          && request.resource.data.rev == resource.data.rev + 1;
+          && changedKeys().hasOnly(['rev', 'doneCount'])
+          && request.resource.data.rev == resource.data.rev + 1
+          && doneCountStep();
+      }
+
+      // Biten cüz sayısı en fazla 1 oynar, 0-30 arasında kalır, alanı olmayan eski
+      // gruba eklenemez. Hangi cüzün değiştiğiyle tutarlılığını cüz kuralı denetler.
+      function doneCountStep() {
+        return !changedKeys().hasAny(['doneCount'])
+          || ('doneCount' in resource.data
+            && request.resource.data.doneCount is int
+            && request.resource.data.doneCount >= 0
+            && request.resource.data.doneCount <= 30
+            && (request.resource.data.doneCount == resource.data.doneCount + 1
+              || request.resource.data.doneCount == resource.data.doneCount - 1));
       }
 
       // Kodla katılma: üyelik kaydı aynı yazmada oluşur, sayaç 1 artar.
+      // Bitmiş hatme yeni katılım yok: okunacak cüz kalmadı. Hatim yeniden
+      // açılırsa (cüz geri alınırsa) sayı düşer, kapı kendiliğinden açılır.
       function joining() {
         return !exists(memberPath(hatimId, request.auth.uid))
           && existsAfter(memberPath(hatimId, request.auth.uid))
           && changedKeys().hasOnly(['memberCount'])
-          && request.resource.data.memberCount == resource.data.memberCount + 1;
+          && request.resource.data.memberCount == resource.data.memberCount + 1
+          && resource.data.get('doneCount', 0) < 30;
       }
 
       // Katılımcı ayrılır (§10). Yönetici ayrılamaz, yalnızca grubu siler.
@@ -162,7 +179,8 @@ service cloud.firestore {
 
       // Kod ve yöneticinin üyelik kaydı aynı toplu yazmada oluşmalı.
       allow create: if signedIn()
-        && request.resource.data.keys().hasOnly(['name', 'code', 'ownerUid', 'createdAt', 'rev', 'memberCount'])
+        && request.resource.data.keys().hasOnly(['name', 'code', 'ownerUid', 'createdAt', 'rev', 'memberCount', 'doneCount'])
+        && request.resource.data.get('doneCount', 0) == 0
         && validName(request.resource.data.name, 40)
         && validCode(request.resource.data.code)
         && request.resource.data.ownerUid == request.auth.uid
@@ -292,6 +310,18 @@ service cloud.firestore {
             && becomesFree();
         }
 
+        // Biten cüz sayısı cüzün gerçek geçişini izler: "bitti"ye geçişte +1,
+        // "bitti"den çıkışta -1, başka her geçişte değişmez. Katılım kapısı bu
+        // sayıya bakıyor; keyfi oynarsa bitmemiş hatim kapanır ya da tersi.
+        // Alanı olmayan eski grupta aranmaz.
+        function doneCountFollows() {
+          let before = get(hatimPath(hatimId)).data;
+          let after = getAfter(hatimPath(hatimId)).data;
+          let delta = (request.resource.data.state == 'done' ? 1 : 0)
+            - (resource.data.state == 'done' ? 1 : 0);
+          return !('doneCount' in before) || after.get('doneCount', -1) == before.doneCount + delta;
+        }
+
         allow read: if isMember(hatimId);
 
         // Yalnızca grup kurulurken, boş olarak.
@@ -310,6 +340,7 @@ service cloud.firestore {
         allow update: if signedIn()
           && exists(memberPath(hatimId, request.auth.uid))
           && revBumped(hatimId)
+          && doneCountFollows()
           && (claim() || complete() || uncomplete() || releaseOwn() || forceRelease());
 
         allow delete: if isOwner(hatimId) && hatimDeletedInBatch(hatimId);

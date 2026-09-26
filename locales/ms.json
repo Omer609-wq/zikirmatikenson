@@ -167,7 +167,8 @@
     "deleteCompletedConfirm": "Padam \"{name}\" dari pelayan? Khatam kekal dalam arkib anda dan arkib ahli, dan tiada sesiapa boleh menyertai lagi.",
     "groupGoneNotice": "Kumpulan \"{name}\" dipadam oleh pentadbirnya.",
     "groupRemovedNotice": "Anda telah dikeluarkan dari kumpulan \"{name}\".",
-    "groupArchivedNotice": "Kumpulan \"{name}\" ditutup oleh pentadbirnya. Khatam kekal dalam arkib anda."
+    "groupArchivedNotice": "Kumpulan \"{name}\" ditutup oleh pentadbirnya. Khatam kekal dalam arkib anda.",
+    "joinClosedComplete": "Khatam ini sudah selesai dan ditutup kepada ahli baharu."
   },
   "folder": {
     "search": "Cari",

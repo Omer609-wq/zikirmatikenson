@@ -6590,7 +6590,8 @@ const HATIM_SYNC_REASON_KEYS = {
     done: 'community.juzDoneCannotRelease',
     owner: 'community.ownerCannotLeave',
     notFound: 'community.codeNotFound',
-    invalid: 'community.codeInvalid'
+    invalid: 'community.codeInvalid',
+    complete: 'community.joinClosedComplete'
 };
 
 async function showHatimSyncError(reason) {
@@ -7395,9 +7396,10 @@ function renderHatimGroupView() {
     // gösterilirse yalan söylerler. Geriye tarih, cüz tablosu ve dua kalır.
     const frozen = isHatimFrozen(group);
 
-    // Kişisel hatimde katılma kodu ve paylaşım anlamsız; donmuşta da öyle.
+    // Kişisel hatimde katılma kodu ve paylaşım anlamsız. Bitmiş hatimde de: kod
+    // katılım kabul etmiyor. Cüz geri alınıp hatim yeniden açılırsa kart da döner.
     const shareBtn = document.getElementById('hatimShareBtn');
-    if (shareBtn) shareBtn.hidden = personal || frozen;
+    if (shareBtn) shareBtn.hidden = personal || frozen || isHatimComplete(group);
     const codeValue = document.getElementById('hatimCodeValue');
     if (codeValue) codeValue.textContent = group.code;
 
@@ -7846,6 +7848,12 @@ async function handleJoinHatimGroup() {
     const found = await withHatimBusy(() => findHatimByCode(ctx, code));
     if (!found.ok) {
         await showHatimSyncError(found.reason);
+        return;
+    }
+    // Bitmiş hatme katılım kapalı; ad sormadan söyle. Zaten üye olan (arşivinden
+    // kaldırıp geri isteyen) kişi aşağıdan devam eder.
+    if (found.complete && !found.alreadyMember) {
+        await showAppAlert(t('community.joinClosedComplete'));
         return;
     }
     if (findHatimGroup(found.hatimId)) {
