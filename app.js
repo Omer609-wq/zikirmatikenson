@@ -176,36 +176,16 @@ import {
     memberDiff,
     withSeenMembers
 } from './lib/hatim-remote-map.js';
-import {
-    claimJuzRemote,
-    completeJuzRemote,
-    createSharedHatim,
-    deleteHatim,
-    fetchHatim,
-    findHatimByCode,
-    joinHatim,
-    leaveHatim,
-    listHatimMembers,
-    releaseJuzRemote,
-    removeHatimMember,
-    reportHatim,
-    uncompleteJuzRemote
-} from './lib/hatim-remote.js';
 import { getHatimContext, getHatimSyncAvailability, hatimSessionErrorKey } from './lib/hatim-session.js';
 import { getJuzDetail } from './lib/hatim-juz.js';
 import { HATIM_DUA_PERSONAL, HATIM_DUA_SHARED, getHatimDua } from './lib/hatim-dua.js';
 import { maybeRequestAppReview, recordCompletedRound } from './lib/app-review.js';
 import {
-    downloadBackupPayload,
     getCloudBackupAvailability,
     hasRestorableCloudBackup,
-    resolveCloudBackupSignInErrorKey,
-    maybeUploadCloudBackup,
     normalizeCloudBackupMeta,
-    signInWithGoogleForBackup,
-    signOutCloudBackup,
-    uploadBackupPayload
-} from './lib/cloud-backup.js';
+    resolveCloudBackupSignInErrorKey
+} from './lib/cloud-backup-meta.js';
 import { App } from '@capacitor/app';
 import {
     pickRandomQuoteEntry,
@@ -962,6 +942,72 @@ let currentQuranSurahId = null;
 let currentLibraryGroupId = null;
 /** @type {ReturnType<typeof createHatimGroup>[]} */
 let hatimGroups = [];
+/*
+ * Firebase ana pakette değil (~400 KB): hatim grupları ve bulut yedekleme
+ * modülleri ilk gerçek kullanımda yüklenir. Topluluk'u ve yedeklemeyi açmayan
+ * kullanıcı SDK'yı hiç indirip derlemiyor; bu, eski telefonlarda açılışa
+ * doğrudan yansıyordu.
+ *
+ * Aşağıdaki sarmalayıcıların imzaları modüldekilerle aynı: çağıran farkı görmez.
+ * Yükleme başarısızsa (paket yarıda kalmış vb.) bir sonraki çağrı yeniden dener.
+ */
+function lazyModule(load) {
+    let pending = null;
+    return () => {
+        if (!pending) {
+            pending = load().catch((err) => {
+                pending = null;
+                throw err;
+            });
+        }
+        return pending;
+    };
+}
+
+const loadHatimRemote = lazyModule(() => import('./lib/hatim-remote.js'));
+const loadCloudBackup = lazyModule(() => import('./lib/cloud-backup.js'));
+
+/**
+ * Hatim işlemleri hep `{ ok, reason }` döndürür, fırlatmaz; çağıranlar (iyimser
+ * geri alma dahil) buna güveniyor. Modül yüklenemezse de aynı biçimde dönülür,
+ * yoksa ekran iyimser hâlde takılı kalırdı.
+ */
+function lazyHatim(name) {
+    return async (...args) => {
+        let mod;
+        try {
+            mod = await loadHatimRemote();
+        } catch (err) {
+            console.error('hatim modülü yüklenemedi', err);
+            return { ok: false, reason: 'error' };
+        }
+        return mod[name](...args);
+    };
+}
+const claimJuzRemote = lazyHatim('claimJuzRemote');
+const completeJuzRemote = lazyHatim('completeJuzRemote');
+const createSharedHatim = lazyHatim('createSharedHatim');
+const deleteHatim = lazyHatim('deleteHatim');
+const fetchHatim = lazyHatim('fetchHatim');
+const findHatimByCode = lazyHatim('findHatimByCode');
+const joinHatim = lazyHatim('joinHatim');
+const leaveHatim = lazyHatim('leaveHatim');
+const listHatimMembers = lazyHatim('listHatimMembers');
+const releaseJuzRemote = lazyHatim('releaseJuzRemote');
+const removeHatimMember = lazyHatim('removeHatimMember');
+const reportHatim = lazyHatim('reportHatim');
+const uncompleteJuzRemote = lazyHatim('uncompleteJuzRemote');
+
+/** Yedekleme işlemleri hata fırlatır; çağıranlar zaten try/catch içinde. */
+function lazyBackup(name) {
+    return async (...args) => (await loadCloudBackup())[name](...args);
+}
+const downloadBackupPayload = lazyBackup('downloadBackupPayload');
+const maybeUploadCloudBackup = lazyBackup('maybeUploadCloudBackup');
+const signInWithGoogleForBackup = lazyBackup('signInWithGoogleForBackup');
+const signOutCloudBackup = lazyBackup('signOutCloudBackup');
+const uploadBackupPayload = lazyBackup('uploadBackupPayload');
+
 let currentHatimGroupId = null;
 
 /*
@@ -6663,6 +6709,8 @@ function warmHatimSync() {
     if (hatimSyncWarmed) return;
     hatimSyncWarmed = true;
     void getHatimContextQuiet();
+    // Firestore katmanı da şimdi yüklensin: ilk dokunuş modül derlemesini beklemesin.
+    loadHatimRemote().catch(() => {});
 }
 
 async function syncRemoteHatimsInBackground() {
