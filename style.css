@@ -3055,19 +3055,31 @@ html[lang='ur'] .smart-reminder-weekday {
     font-size: 16px;
 }
 
-/* Dua düğmesi: hatim bitene kadar sönük durur, basılınca kısa bilgi verir.
-   Cüz tablosundan ayrılır, silme düğmesiyle ikili durur. */
-.hatim-dua-btn {
+/* Alt düğmeler (dua, ayrıl, sil): cüz tablosundan ayrılır, kendi aralarında
+   sıkı durur. Boşluk kapta: gizli düğme (ör. yöneticinin "ayrıl"ı) boşluk bırakmaz. */
+.hatim-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
     margin-top: 1.6rem;
 }
+.hatim-actions > .secondary-btn {
+    margin-top: 0;
+}
+.hatim-owner-leave-btn {
+    color: var(--text-gray);
+}
+/* secondary-btn display:flex veriyor; [hidden]'ı ezmesin. */
+.hatim-owner-leave-btn[hidden] {
+    display: none;
+}
+
+/* Dua düğmesi: hatim bitene kadar sönük durur, basılınca kısa bilgi verir. */
 .hatim-dua-btn--locked {
     opacity: 0.45;
 }
 .hatim-dua-btn--locked:active {
     transform: none; /* basılıyor hissi vermesin: açılmadı */
-}
-.hatim-dua-btn + .hatim-delete-btn {
-    margin-top: 0.5rem;
 }
 
 /* "Tamamlananlar (12)" — katlı bölüm başlığı. */

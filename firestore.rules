@@ -176,6 +176,28 @@ service cloud.firestore {
                 && existsAfter(memberPath(hatimId, after)))));
       }
 
+      // Yönetici ayrılır: yöneticilik yedeğe (ilk katılana) geçer; yedek boşsa
+      // (eski grup) kalan bir üyeye. Yeni yedek de kalanlardan biri ya da kimse.
+      // Yönetici tek başınaysa ayrılamaz — devredecek kimse yok, grubu siler.
+      function ownerLeaving() {
+        return resource.data.ownerUid == request.auth.uid
+          && exists(memberPath(hatimId, request.auth.uid))
+          && !existsAfter(memberPath(hatimId, request.auth.uid))
+          && changedKeys().hasOnly(['ownerUid', 'successorUid', 'ownerSeenAt', 'memberCount', 'rev'])
+          && request.resource.data.memberCount == resource.data.memberCount - 1
+          && request.resource.data.memberCount >= 1
+          && request.resource.data.rev >= resource.data.rev
+          && request.resource.data.rev <= resource.data.rev + 1
+          && request.resource.data.ownerUid != request.auth.uid
+          && existsAfter(memberPath(hatimId, request.resource.data.ownerUid))
+          && (resource.data.get('successorUid', null) == null
+            || request.resource.data.ownerUid == resource.data.successorUid)
+          && request.resource.data.ownerSeenAt == request.time
+          && (request.resource.data.get('successorUid', null) == null
+            || (request.resource.data.successorUid != request.resource.data.ownerUid
+              && existsAfter(memberPath(hatimId, request.resource.data.successorUid))));
+      }
+
       // Yönetici gruba baktı: devir sayacı sıfırlanır.
       function ownerSeen() {
         return resource.data.ownerUid == request.auth.uid
@@ -247,7 +269,7 @@ service cloud.firestore {
 
       allow update: if signedIn()
         && (renameByOwner() || tableChange() || joining() || leaving() || removingMember()
-          || ownerSeen() || takeover());
+          || ownerSeen() || takeover() || ownerLeaving());
 
       // Yalnızca yönetici; kod belgesi aynı yazmada silinmeli ki başıboş kod kalmasın.
       // Alt koleksiyonlar da aynı yazmada silinmeli — silinmezse istemci onları
@@ -290,9 +312,16 @@ service cloud.firestore {
           // Grup siliniyor: yönetici bütün kayıtları siler
           (isOwner(hatimId) && hatimDeletedInBatch(hatimId))
           ||
-          // Katılımcı ayrılıyor — yönetici ayrılamaz (§10)
+          // Katılımcı ayrılıyor
           (uid == request.auth.uid
             && get(hatimPath(hatimId)).data.ownerUid != uid
+            && getAfter(hatimPath(hatimId)).data.memberCount
+               == get(hatimPath(hatimId)).data.memberCount - 1)
+          ||
+          // Yönetici ayrılıyor: aynı yazmada yöneticilik başkasına geçmeli
+          (uid == request.auth.uid
+            && get(hatimPath(hatimId)).data.ownerUid == uid
+            && getAfter(hatimPath(hatimId)).data.ownerUid != uid
             && getAfter(hatimPath(hatimId)).data.memberCount
                == get(hatimPath(hatimId)).data.memberCount - 1)
           ||

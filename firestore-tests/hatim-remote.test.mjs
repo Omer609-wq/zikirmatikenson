@@ -215,9 +215,10 @@ test('ayrılma: bitmemiş cüz boşa düşer, bitmiş kalır, sayaç düşer', a
     assert.equal((await serverHatim(hatimId)).memberCount, 1);
 });
 
-test('ayrılma: yönetici ayrılamaz', async () => {
-    const { hatimId, ctx } = await setup(MEMBER);
-    assert.equal((await leaveHatim(ctx[OWNER], hatimId)).reason, 'owner');
+test('ayrılma: yönetici tek başınaysa ayrılamaz, grubu siler', async () => {
+    const { hatimId, ctx } = await setup();
+    assert.equal((await leaveHatim(ctx[OWNER], hatimId)).reason, 'alone');
+    assert.equal((await serverHatim(hatimId)).ownerUid, OWNER);
 });
 
 test('çıkarma: yönetici üyeyi çıkarır, çıkarılan cihaz bunu açılışta fark eder', async () => {
@@ -617,4 +618,47 @@ test('üye sınırı: 30 üyeli gruba katılınamaz, 29 iken katılınır', asyn
     await seedHatim(hatimId, { memberCount: 29 });
     assert.equal((await joinHatim(outsider, hatimId, 'Ali')).ok, true);
     assert.equal((await serverHatim(hatimId)).memberCount, 30);
+});
+
+test('yönetici ayrılır: yöneticilik yedeğe geçer, bitmemiş cüzü boşa düşer', async () => {
+    const { hatimId, ctx } = await setup(MEMBER, OTHER);
+    await claimJuzRemote(ctx[OWNER], hatimId, 11, 'Hoca');
+    await claimJuzRemote(ctx[OWNER], hatimId, 12, 'Hoca');
+    await completeJuzRemote(ctx[OWNER], hatimId, 12);
+
+    const res = await leaveHatim(ctx[OWNER], hatimId);
+    assert.equal(res.ok, true);
+    assert.equal(res.newOwner, MEMBER);
+    assert.deepEqual(res.released, [11]);
+
+    const h = await serverHatim(hatimId);
+    assert.equal(h.ownerUid, MEMBER, 'ilk katılan yönetici olur');
+    assert.equal(h.successorUid, OTHER, 'yeni yedek sıradaki');
+    assert.equal(h.memberCount, 2);
+    assert.equal((await serverJuz(hatimId, 11)).state, JUZ_FREE);
+    assert.equal((await serverJuz(hatimId, 12)).state, JUZ_DONE, 'bitmiş cüz kalır');
+
+    assert.equal((await fetchHatim(ctx[OWNER], hatimId)).reason, 'removed', 'eski yönetici artık üye değil');
+    assert.equal((await renameHatim(ctx[MEMBER], hatimId, 'Yeni yönetimde')).ok, true);
+});
+
+test('yönetici ayrılırken yöneticilik yedekten başkasına verilemez (kural)', async () => {
+    const { hatimId, ctx } = await setup(MEMBER, OTHER);
+    const db = ctx[OWNER].db;
+    const h = await serverHatim(hatimId);
+    const yaz = (heir, successorUid) => {
+        const b = writeBatch(db);
+        b.delete(doc(db, 'hatims', hatimId, 'members', OWNER));
+        b.update(doc(db, 'hatims', hatimId), {
+            memberCount: h.memberCount - 1,
+            ownerUid: heir,
+            successorUid,
+            ownerSeenAt: serverTimestamp()
+        });
+        return b.commit();
+    };
+    await assert.rejects(yaz(OTHER, MEMBER), 'yedek MEMBER iken OTHER yönetici yapılamaz');
+    // Kontrol: yedeğe devrederek aynı ayrılma geçer.
+    await yaz(MEMBER, OTHER);
+    assert.equal((await serverHatim(hatimId)).ownerUid, MEMBER);
 });

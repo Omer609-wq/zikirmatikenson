@@ -183,7 +183,9 @@
     "releaseStaleConfirm": "{name} ne lit plus ce juz depuis plus de {days} jours. Le libérer pour qu’un autre puisse le prendre ?",
     "ownerTookOverNotice": "L’administrateur de « {name} » est absent depuis {days} jours : tu es maintenant l’administrateur.",
     "ownerLostNotice": "Tu étais absent de « {name} » depuis {days} jours : l’administration est passée au plus ancien membre.",
-    "joinClosedFull": "Ce groupe est complet : {max} membres au maximum."
+    "joinClosedFull": "Ce groupe est complet : {max} membres au maximum.",
+    "ownerLeaveConfirm": "Quitter « {name} » ? L’administration passe au plus ancien membre ; les juz que tu n’as pas terminés sont libérés.",
+    "ownerAloneCannotLeave": "Il n’y a pas d’autre membre dans ce groupe. Tu peux supprimer le groupe au lieu de le quitter."
   },
   "folder": {
     "search": "Rechercher",

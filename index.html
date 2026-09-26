@@ -155,13 +155,6 @@
                         <span class="material-icons-outlined">add</span> <span data-i18n="community.newGroup">Hatim Grubu Oluştur</span>
                     </button>
                     <div class="limit-warning" id="hatimLimitWarning" data-i18n="community.groupLimitWarning">Grup sınırına ulaşıldı. Yeni bir gruba katılmak için önce bir gruptan ayrıl.</div>
-                    <!-- Tamamlananlar katlı gelir: liste kuyruğu uzayıp devam edeni bastırmasın. -->
-                    <button type="button" class="hatim-archive__toggle" id="hatimArchiveToggle" aria-expanded="false" aria-controls="hatimArchiveList" hidden>
-                        <span class="material-icons-outlined" aria-hidden="true">expand_more</span>
-                        <span id="hatimArchiveLabel">Tamamlananlar</span>
-                    </button>
-                    <div class="hatim-group-list hatim-archive" id="hatimArchiveList" hidden></div>
-
                     <!-- Kullanıcı içeriği mağaza şartı: kural uyarısı ve şartlara bağlantı,
                          grup adının ve takma adın yazıldığı ekranda dursun. -->
                     <p class="hatim-terms-note" data-i18n="community.ugcNotice">
@@ -171,6 +164,13 @@
                         <span class="material-icons-outlined" aria-hidden="true">gavel</span>
                         <span data-i18n="privacy.termsOfUse">Kullanım şartları</span>
                     </button>
+                    <!-- Tamamlananlar katlı gelir: liste kuyruğu uzayıp devam edeni bastırmasın. -->
+                    <button type="button" class="hatim-archive__toggle" id="hatimArchiveToggle" aria-expanded="false" aria-controls="hatimArchiveList" hidden>
+                        <span class="material-icons-outlined" aria-hidden="true">expand_more</span>
+                        <span id="hatimArchiveLabel">Tamamlananlar</span>
+                    </button>
+                    <div class="hatim-group-list hatim-archive" id="hatimArchiveList" hidden></div>
+
                 </div>
             </section>
         </div>
@@ -237,10 +237,17 @@
                     <li><span class="hatim-legend__dot hatim-legend__dot--done"></span><span data-i18n="community.legendDone">Bitti</span></li>
                 </ul>
 
-                <button type="button" class="secondary-btn hatim-dua-btn" id="hatimDuaBtn" aria-disabled="true" data-i18n="community.duaTitle">Hatim duası</button>
-                <button type="button" class="secondary-btn hatim-delete-btn" id="hatimDeleteGroupBtn">
-                    <span class="material-icons-outlined">delete_outline</span> <span id="hatimDeleteGroupLabel">Grubu Sil</span>
-                </button>
+                <!-- Alt düğmeler bir kapta: boşluğu kap verir, gizli düğme boşluk bırakmaz. -->
+                <div class="hatim-actions">
+                    <button type="button" class="secondary-btn hatim-dua-btn" id="hatimDuaBtn" aria-disabled="true" data-i18n="community.duaTitle">Hatim duası</button>
+                    <!-- Yalnız yöneticide, grupta başka üye varken: yöneticilik yedeğe geçer. -->
+                    <button type="button" class="secondary-btn hatim-owner-leave-btn" id="hatimOwnerLeaveBtn" hidden>
+                        <span class="material-icons-outlined" aria-hidden="true">logout</span> <span data-i18n="community.leaveGroup">Gruptan Ayrıl</span>
+                    </button>
+                    <button type="button" class="secondary-btn hatim-delete-btn" id="hatimDeleteGroupBtn">
+                        <span class="material-icons-outlined">delete_outline</span> <span id="hatimDeleteGroupLabel">Grubu Sil</span>
+                    </button>
+                </div>
                 <button type="button" class="hatim-report-btn" id="hatimReportBtn" hidden>
                     <span class="material-icons-outlined" aria-hidden="true">flag</span>
                     <span data-i18n="community.reportGroup">Grubu şikâyet et</span>

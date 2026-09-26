@@ -316,7 +316,7 @@ test('ayrılma: bitmiş cüz boşa düşürülemez — okuma yapılmıştır', a
     await assertFails(batch.commit());
 });
 
-test('ayrılma: yönetici ayrılamaz, yalnızca grubu siler', async () => {
+test('ayrılma: yönetici yöneticiliği devretmeden ayrılamaz', async () => {
     await seedGroup();
     const s = db(OWNER);
     const batch = writeBatch(s);

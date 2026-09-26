@@ -6598,7 +6598,8 @@ const HATIM_SYNC_REASON_KEYS = {
     notFound: 'community.codeNotFound',
     invalid: 'community.codeInvalid',
     complete: 'community.joinClosedComplete',
-    full: 'community.joinClosedFull'
+    full: 'community.joinClosedFull',
+    alone: 'community.ownerAloneCannotLeave'
 };
 
 async function showHatimSyncError(reason) {
@@ -6941,16 +6942,23 @@ async function handleRemoteHatimJuzAction(group, action) {
 }
 
 /** Paylaşımlı grupta yönetici siler, katılımcı ayrılır (§10). */
-async function handleRemoteHatimDeleteOrLeave(group) {
+/**
+ * @param {{ ownerLeave?: boolean }} [opts] `ownerLeave`: yönetici silmek yerine
+ *   ayrılıyor, yöneticilik yedeğe geçer.
+ */
+async function handleRemoteHatimDeleteOrLeave(group, { ownerLeave = false } = {}) {
     const isOwner = group.ownerId === getHatimUid();
+    const deleting = isOwner && !ownerLeave;
     // Bitmiş grubu silmek yalnız sunucuyu temizler; hatim herkesin arşivinde kalır.
     const complete = isHatimComplete(group);
     const confirmed = await showAppConfirm(
-        isOwner && complete
+        deleting && complete
             ? t('community.deleteCompletedConfirm', { name: group.name })
-            : isOwner
+            : deleting
               ? t('community.deleteSharedConfirm', { name: group.name, count: group.remote.memberCount })
-              : t('community.leaveConfirm', { name: group.name })
+              : isOwner
+                ? t('community.ownerLeaveConfirm', { name: group.name })
+                : t('community.leaveConfirm', { name: group.name })
     );
     if (!confirmed) return;
     if (hatimSyncBusy) return;
@@ -6964,11 +6972,11 @@ async function handleRemoteHatimDeleteOrLeave(group) {
     const res = await withHatimBusy(async () => {
         const ctx = await requireHatimSync();
         if (!ctx) return { ok: false, reason: 'noContext' };
-        return isOwner ? deleteHatim(ctx, group.id) : leaveHatim(ctx, group.id);
+        return deleting ? deleteHatim(ctx, group.id) : leaveHatim(ctx, group.id);
     });
     hatimHiddenIds.delete(group.id);
 
-    if (res.ok && !isOwner) {
+    if (res.ok && !deleting) {
         // Ayrıldı: kendi seçimi, listeden düşer.
         dropHatimLocally(group.id);
     } else if (res.ok || res.reason === 'gone') {
@@ -7434,6 +7442,18 @@ function renderHatimGroupView() {
 
     const renameBtn = document.getElementById('hatimRenameBtn');
     if (renameBtn) renameBtn.hidden = !canRenameHatim(group);
+
+    // Yönetici de ayrılabilir: yöneticilik yedeğe geçer. Grupta tek başınaysa
+    // devredecek kimse yok, yalnız "Grubu Sil" kalır.
+    const ownerLeaveBtn = document.getElementById('hatimOwnerLeaveBtn');
+    if (ownerLeaveBtn) {
+        ownerLeaveBtn.hidden = !(
+            isRemoteHatim(group) &&
+            !frozen &&
+            group.ownerId === getHatimUid() &&
+            group.remote.memberCount > 1
+        );
+    }
 
     // Kişisel hatimde katılma kodu ve paylaşım anlamsız. Bitmiş ya da dolu grupta
     // da: kod katılım kabul etmiyor. Cüz geri alınır ya da biri ayrılırsa kart döner.
@@ -8094,6 +8114,10 @@ function setupHatimListeners() {
     document.getElementById('hatimDuaBtn')?.addEventListener('click', handleHatimDuaButton);
     document.getElementById('hatimRenameBtn')?.addEventListener('click', () => {
         void handleRenameHatim();
+    });
+    document.getElementById('hatimOwnerLeaveBtn')?.addEventListener('click', () => {
+        const group = findHatimGroup(currentHatimGroupId);
+        if (group && isRemoteHatim(group)) void handleRemoteHatimDeleteOrLeave(group, { ownerLeave: true });
     });
     document.getElementById('hatimCompleteDuaBtn')?.addEventListener('click', () => {
         showView('hatimDuaView');
