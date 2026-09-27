@@ -211,7 +211,8 @@
     "planRemindTimeLabel": "Hatırlatma saati",
     "planRemindOn": "Her gün {time} hatırlatılır",
     "planRemindDenied": "Bildirim izni kapalı, hatırlatma gelmeyecek. Telefonun ayarlarından Zikirmatik'in bildirimlerine izin verebilirsin.",
-    "planRemindFailed": "Hatırlatma kurulamadı. Uygulamayı güncelleyip yeniden dene."
+    "planRemindFailed": "Hatırlatma kurulamadı. Uygulamayı güncelleyip yeniden dene.",
+    "planNotifyBody": "Bugünkü pay: %{percent} okundu · {count} sayfa kaldı"
   },
   "folder": {
     "search": "Ara",

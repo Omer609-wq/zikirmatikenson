@@ -211,7 +211,8 @@
     "planRemindTimeLabel": "Waktu peringatan",
     "planRemindOn": "Diingatkan setiap hari pada {time}",
     "planRemindDenied": "Pemberitahuan dimatikan, jadi peringatan tidak akan muncul. Anda boleh membenarkan pemberitahuan Zikirmatik dalam tetapan telefon.",
-    "planRemindFailed": "Peringatan tidak dapat ditetapkan. Kemas kini aplikasi dan cuba lagi."
+    "planRemindFailed": "Peringatan tidak dapat ditetapkan. Kemas kini aplikasi dan cuba lagi.",
+    "planNotifyBody": "Bahagian hari ini: {percent}% dibaca · baki {count} halaman"
   },
   "folder": {
     "search": "Cari",

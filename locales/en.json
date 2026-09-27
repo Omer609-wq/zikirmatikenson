@@ -221,7 +221,9 @@
     "planRemindTimeLabel": "Reminder time",
     "planRemindOn": "Daily reminder at {time}",
     "planRemindDenied": "Notifications are turned off, so reminders won't arrive. You can allow notifications for Zikirmatik in your phone's settings.",
-    "planRemindFailed": "The reminder couldn't be set. Update the app and try again."
+    "planRemindFailed": "The reminder couldn't be set. Update the app and try again.",
+    "planNotifyBody": "Today’s share: {percent}% read · {count} pages left",
+    "planNotifyBody_one": "Today’s share: {percent}% read · {count} page left"
   },
   "folder": {
     "search": "Search",

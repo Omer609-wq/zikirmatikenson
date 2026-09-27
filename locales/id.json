@@ -211,7 +211,8 @@
     "planRemindTimeLabel": "Jam pengingat",
     "planRemindOn": "Diingatkan setiap hari pukul {time}",
     "planRemindDenied": "Notifikasi dimatikan, jadi pengingat tidak akan muncul. Kamu bisa mengizinkan notifikasi Zikirmatik di pengaturan ponsel.",
-    "planRemindFailed": "Pengingat tidak bisa dipasang. Perbarui aplikasi lalu coba lagi."
+    "planRemindFailed": "Pengingat tidak bisa dipasang. Perbarui aplikasi lalu coba lagi.",
+    "planNotifyBody": "Bagian hari ini: {percent}% terbaca · sisa {count} halaman"
   },
   "folder": {
     "search": "Cari",

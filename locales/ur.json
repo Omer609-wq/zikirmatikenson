@@ -215,7 +215,9 @@
     "planRemindTimeLabel": "یاد دہانی کا وقت",
     "planRemindOn": "روزانہ {time} بجے یاد دہانی",
     "planRemindDenied": "اطلاعات بند ہیں، اس لیے یاد دہانی نہیں آئے گی۔ فون کی ترتیبات میں Zikirmatik کی اطلاعات کی اجازت دے سکتے ہیں۔",
-    "planRemindFailed": "یاد دہانی مقرر نہیں ہو سکی۔ ایپ اپ ڈیٹ کر کے دوبارہ کوشش کریں۔"
+    "planRemindFailed": "یاد دہانی مقرر نہیں ہو سکی۔ ایپ اپ ڈیٹ کر کے دوبارہ کوشش کریں۔",
+    "planNotifyBody": "آج کا حصہ: {percent}% پڑھا گیا · {count} صفحات باقی",
+    "planNotifyBody_one": "آج کا حصہ: {percent}% پڑھا گیا · {count} صفحہ باقی"
   },
   "folder": {
     "search": "تلاش",

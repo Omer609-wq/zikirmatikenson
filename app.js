@@ -3702,10 +3702,12 @@ function onPageShowForReminders() {
 }
 
 /**
- * Kişisel hatim hedeflerinin bildirimleri: hatim ve gün başına bir tane,
- * "Bugünkü pay: 21 sayfa · 25 gün kaldı". Gelecek günlerin payı ilerleme
- * olmadığı varsayımıyla yazılır; ilerleme yalnız uygulamada işaretlenebildiği
- * ve her işaretlemede baştan kurulduğu için metin hep o güne göre doğru kalır.
+ * Kişisel hatim hedeflerinin bildirimleri: hatim ve gün başına bir tane.
+ * Başlık "Hatmim · 25 gün kaldı", metin "Bugünkü pay: %57 okundu · 15 sayfa
+ * kaldı" — o gün payın ne kadarının okunduğu ve ne kadarının kaldığı.
+ * Gelecek günlerin payı ilerleme olmadığı varsayımıyla yazılır; ilerleme
+ * yalnız uygulamada işaretlenebildiği ve her işaretlemede baştan kurulduğu
+ * için metin hep o güne göre doğru kalır.
  *
  * @param {{ askPermission?: boolean }} [opts] İzin yalnız kullanıcı
  *   hatırlatmayı açarken sorulur.
@@ -3713,18 +3715,14 @@ function onPageShowForReminders() {
 function syncHatimPlanReminders({ askPermission = false } = {}) {
     if (!isCapacitorNative()) return Promise.resolve({ ok: true });
     const slots = hatimPlanReminderSlots(hatimGroups).map((slot) => {
-        const share =
-            slot.done > 0
-                ? t('community.planTodayPartial', { done: slot.done, count: slot.target })
-                : t('community.planToday', { count: slot.target });
         const left =
             slot.daysLeft === 1
                 ? t('community.planLastDay')
                 : t('community.planDaysLeft', { count: slot.daysLeft });
         return {
             at: slot.at,
-            title: slot.name,
-            body: `${share} · ${left}`,
+            title: `${slot.name} · ${left}`,
+            body: t('community.planNotifyBody', { percent: slot.percent, count: slot.remaining }),
             extra: { openApp: true, view: 'hatimGroupView', groupId: slot.groupId }
         };
     });

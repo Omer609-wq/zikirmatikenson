@@ -222,7 +222,9 @@
     "planRemindTimeLabel": "Heure du rappel",
     "planRemindOn": "Rappel chaque jour à {time}",
     "planRemindDenied": "Les notifications sont désactivées : tu ne recevras pas de rappel. Tu peux les autoriser pour Zikirmatik dans les réglages du téléphone.",
-    "planRemindFailed": "Le rappel n’a pas pu être programmé. Mets l’application à jour et réessaie."
+    "planRemindFailed": "Le rappel n’a pas pu être programmé. Mets l’application à jour et réessaie.",
+    "planNotifyBody": "Part du jour : {percent} % lue · {count} pages restantes",
+    "planNotifyBody_one": "Part du jour : {percent} % lue · {count} page restante"
   },
   "folder": {
     "search": "Rechercher",
