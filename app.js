@@ -8129,6 +8129,7 @@ function updateHatimJuzProgressLabels() {
         value.textContent = started
             ? t('community.whereValuePage', { page: mushafPageLabel(page, appSettings.locale) })
             : t('community.readToNone');
+        value.classList.toggle('hatim-juz-progress__value--none', !started);
     }
     // Sayfa numarası baskıdan baskıya kayabilir; ayet her mushafta aynı.
     const hint = document.getElementById('hatimJuzProgressHint');
