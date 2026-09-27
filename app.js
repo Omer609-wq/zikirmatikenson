@@ -174,8 +174,19 @@ import {
     HATIM_MEMBER_LIMIT,
     isJuzStale,
     HATIM_STALE_CLAIM_DAYS,
-    HATIM_OWNER_TAKEOVER_DAYS
+    HATIM_OWNER_TAKEOVER_DAYS,
+    HATIM_INTENTION_MAX,
+    HATIM_PLAN_MAX_DAYS,
+    setHatimIntention,
+    setHatimPlan
 } from './lib/hatim-groups.js';
+import {
+    HATIM_PLAN_PRESETS,
+    createHatimPlan,
+    hatimPlanEndForDays,
+    hatimPlanStatus
+} from './lib/hatim-plan.js';
+import { addDaysToDateKey, dateKeyOf, daysBetweenDateKeys } from './lib/date-key.js';
 import {
     dropGoneHatims,
     isRemoteHatim,
@@ -7328,11 +7339,21 @@ function hatimRowHtml(group) {
     // Biten hatimde kalan cüz sayısı değil, ne zaman bittiği anlamlı.
     const complete = isHatimComplete(group);
     const doneAt = complete ? hatimCompletedAt(group) : 0;
+    // Kişisel hatimde hedef varsa bugünün payı da: listeden bakınca görünsün.
+    const plan = !complete && isPersonalHatim(group) ? hatimPlanStatus(group) : null;
+    const planNote = !plan
+        ? ''
+        : plan.overdue
+          ? t('community.planOverdue')
+          : plan.todayMet
+            ? t('community.planTodayDoneShort')
+            : t('community.planTodayShort', { count: plan.todayTarget });
     const meta = complete
         ? doneAt
             ? t('community.completedOn', { date: formatHatimDate(doneAt) })
             : t('community.completeTitle')
-        : t('community.groupProgress', { done: progress.done, total: progress.total });
+        : t('community.groupProgress', { done: progress.done, total: progress.total }) +
+          (planNote ? ` · ${planNote}` : '');
     return `
         <button type="button" class="hatim-group-row${complete ? ' hatim-group-row--done' : ''}" data-group-id="${escapeAttr(group.id)}">
             <span class="hatim-group-row__text">
@@ -7453,6 +7474,8 @@ function renderHatimGroupView() {
 
     const renameBtn = document.getElementById('hatimRenameBtn');
     if (renameBtn) renameBtn.hidden = !canRenameHatim(group);
+
+    renderHatimPersonalExtras(group);
 
     // Yönetici de ayrılabilir: yöneticilik yedeğe geçer. Grupta tek başınaysa
     // devredecek kimse yok, yalnız "Grubu Sil" kalır.
@@ -7582,6 +7605,164 @@ function renderHatimGroupView() {
         .join('');
 }
 
+/** Hedef günleri ('YYYY-MM-DD') hatim tarihleriyle aynı biçimde. */
+function formatHatimDateKey(key) {
+    return formatHatimDate(parseDateKey(key).getTime());
+}
+
+/**
+ * Kişisel hatmin niyeti ve hedefi. Ortak hatimde ikisi de yok: niyet kişinin
+ * kendi okuması için, hedefin temposunu da tek kişi belirler.
+ *
+ * Hatim bitince ikisi de buradan kalkar: niyeti tebrik kartı söylüyor (iki
+ * kez yazılmasın), hedefin sonucunu da. Bitmiş hatimde değiştirecek bir şey yok.
+ */
+function renderHatimPersonalExtras(group) {
+    const personal = isPersonalHatim(group);
+    const complete = isHatimComplete(group);
+
+    const intention = personal && !complete ? group.intention || '' : '';
+    const intentionBtn = document.getElementById('hatimIntentionBtn');
+    const intentionText = document.getElementById('hatimIntentionText');
+    if (intentionText) intentionText.textContent = intention;
+    if (intentionBtn) {
+        intentionBtn.hidden = !intention;
+        intentionBtn.setAttribute(
+            'aria-label',
+            `${t('community.intentionLine', { text: intention })}. ${t('community.intentionEditAria')}`
+        );
+    }
+
+    // Biten hatimde hedef kartı yok: sonucu tebrik kartı söylüyor.
+    const status = personal && !complete ? hatimPlanStatus(group) : null;
+    const planCard = document.getElementById('hatimPlanCard');
+    if (planCard) {
+        planCard.hidden = !status;
+        planCard.classList.toggle('hatim-plan--overdue', !!status?.overdue);
+    }
+    if (status) {
+        const left = status.overdue
+            ? t('community.planOverdue')
+            : status.daysLeft === 1
+              ? t('community.planLastDay')
+              : t('community.planDaysLeft', { count: status.daysLeft });
+        const line = document.getElementById('hatimPlanLine');
+        if (line) {
+            line.textContent = `${t('community.planEndsOn', { date: formatHatimDateKey(status.end) })} · ${left}`;
+        }
+        const today = document.getElementById('hatimPlanToday');
+        if (today) {
+            today.textContent = status.overdue
+                ? t('community.planRemaining', { count: status.remainingPages })
+                : status.todayMet
+                  ? t('community.planTodayDone')
+                  : status.doneToday > 0
+                    ? t('community.planTodayPartial', { done: status.doneToday, count: status.todayTarget })
+                    : t('community.planToday', { count: status.todayTarget });
+            today.classList.toggle('hatim-plan__today--done', status.todayMet);
+        }
+    }
+
+    const canAddIntention = personal && !complete && !intention;
+    const canAddPlan = personal && !complete && !status;
+    const addIntention = document.getElementById('hatimAddIntentionBtn');
+    if (addIntention) addIntention.hidden = !canAddIntention;
+    const addPlan = document.getElementById('hatimAddPlanBtn');
+    if (addPlan) addPlan.hidden = !canAddPlan;
+    const extras = document.getElementById('hatimExtras');
+    if (extras) extras.hidden = !canAddIntention && !canAddPlan;
+}
+
+/** Niyet yalnız bu cihazda durur, kimse görmez; süzgeç yok. Boş bırakılırsa kalkar. */
+async function handleEditHatimIntention() {
+    const group = findHatimGroup(currentHatimGroupId);
+    if (!group || !isPersonalHatim(group) || isHatimComplete(group)) return;
+    const input = await showAppPrompt(t('community.intentionPrompt'), group.intention || '', {
+        title: t('community.intentionTitle'),
+        inputLabel: t('community.intentionTitle'),
+        maxLength: HATIM_INTENTION_MAX
+    });
+    if (input == null) return;
+    const latest = findHatimGroup(group.id);
+    if (!latest) return;
+    const next = setHatimIntention(latest, input);
+    if ((next.intention || '') === (latest.intention || '')) return;
+    commitHatimGroup(next);
+    renderHatimGroupView();
+}
+
+/* ---------- Hedef penceresi ---------- */
+
+function openHatimPlanSheet() {
+    const group = findHatimGroup(currentHatimGroupId);
+    if (!group || !isPersonalHatim(group) || isHatimComplete(group)) return;
+    const today = dateKeyOf(Date.now());
+    const input = document.getElementById('hatimPlanDate');
+    if (input) {
+        input.min = today;
+        input.max = addDaysToDateKey(today, HATIM_PLAN_MAX_DAYS - 1);
+    }
+    const presets = document.getElementById('hatimPlanPresets');
+    if (presets) {
+        presets.innerHTML = HATIM_PLAN_PRESETS.map(
+            (days) =>
+                `<button type="button" class="hatim-plan-sheet__preset" data-plan-days="${days}" aria-pressed="false">${escapeHtml(t('community.planDays', { count: days }))}</button>`
+        ).join('');
+    }
+    // Hedef yoksa ya da günü geçtiyse 30 gün: günde bir cüz, en bilinen tempo.
+    const end = group.plan && group.plan.end >= today ? group.plan.end : hatimPlanEndForDays(30);
+    setHatimPlanDraft(end);
+    const removeBtn = document.getElementById('hatimPlanRemoveBtn');
+    if (removeBtn) removeBtn.hidden = !group.plan;
+    openOverlay('hatimPlanOverlay');
+}
+
+/** Seçili gün: tarih kutusu, hazır süre düğmeleri ve günlük pay önizlemesi birlikte güncellenir. */
+function setHatimPlanDraft(end) {
+    const group = findHatimGroup(currentHatimGroupId);
+    const input = document.getElementById('hatimPlanDate');
+    if (input && input.value !== end) input.value = end;
+    const plan = group ? createHatimPlan(end) : null;
+    const days = plan ? daysBetweenDateKeys(plan.start, plan.end) + 1 : 0;
+    document.querySelectorAll('#hatimPlanPresets [data-plan-days]').forEach((btn) => {
+        btn.setAttribute('aria-pressed', String(Number(btn.dataset.planDays) === days));
+    });
+    const status = plan ? hatimPlanStatus({ ...group, plan }) : null;
+    const preview = document.getElementById('hatimPlanPreview');
+    if (preview) {
+        preview.textContent = status
+            ? t('community.planPreview', { count: status.dailyPages })
+            : t('community.planInvalidDate');
+        preview.classList.toggle('hatim-plan-sheet__preview--invalid', !status);
+    }
+    const saveBtn = document.getElementById('hatimPlanSaveBtn');
+    if (saveBtn) saveBtn.disabled = !status;
+}
+
+function closeHatimPlanSheet() {
+    if (!closeOverlayPreferHistory('hatimPlanOverlay')) {
+        document.getElementById('hatimPlanOverlay')?.classList.remove('active');
+    }
+}
+
+/** Hedef değişince başlangıç da bugüne alınır: yeni hedef, yeni tempo. */
+function saveHatimPlanFromSheet() {
+    const group = findHatimGroup(currentHatimGroupId);
+    const plan = createHatimPlan(document.getElementById('hatimPlanDate')?.value);
+    if (!group || !plan) return;
+    commitHatimGroup(setHatimPlan(group, plan));
+    closeHatimPlanSheet();
+    renderHatimGroupView();
+}
+
+function removeHatimPlanFromSheet() {
+    const group = findHatimGroup(currentHatimGroupId);
+    if (!group) return;
+    commitHatimGroup(setHatimPlan(group, null));
+    closeHatimPlanSheet();
+    renderHatimGroupView();
+}
+
 /**
  * Tebrik kartı: hatim bitince grup ekranının tepesinde durur.
  *
@@ -7610,8 +7791,17 @@ function renderHatimCompleteCard(group) {
         if (!personal) {
             const mine = listMemberJuz(group, hatimMemberIdFor(group)).length;
             if (mine > 0) lines.push(t('community.completeStatsMine', { count: mine }));
+        } else if (hatimPlanStatus(group)?.finishedOnTime) {
+            lines.push(t('community.planFinishedOnTime'));
         }
         stats.textContent = lines.join(' ');
+    }
+
+    const intentionEl = document.getElementById('hatimCompleteIntention');
+    if (intentionEl) {
+        const text = personal ? group.intention || '' : '';
+        intentionEl.hidden = !text;
+        intentionEl.textContent = text ? t('community.intentionLine', { text }) : '';
     }
 }
 
@@ -7626,6 +7816,13 @@ function renderHatimDuaView() {
         appSettings.locale,
         personal ? HATIM_DUA_PERSONAL : HATIM_DUA_SHARED
     );
+    // Kişisel hatimde dua kimin için okunuyorsa en üstte o yazar.
+    const intentionEl = document.getElementById('hatimDuaIntention');
+    if (intentionEl) {
+        const text = personal ? group.intention || '' : '';
+        intentionEl.hidden = !text;
+        intentionEl.textContent = text ? t('community.intentionLine', { text }) : '';
+    }
     const arabicEl = document.getElementById('hatimDuaArabic');
     const translitEl = document.getElementById('hatimDuaTranslit');
     const meaningEl = document.getElementById('hatimDuaMeaning');
@@ -8142,6 +8339,26 @@ function setupHatimListeners() {
     document.getElementById('hatimRenameBtn')?.addEventListener('click', () => {
         void handleRenameHatim();
     });
+    for (const id of ['hatimIntentionBtn', 'hatimAddIntentionBtn']) {
+        document.getElementById(id)?.addEventListener('click', () => {
+            void handleEditHatimIntention();
+        });
+    }
+    for (const id of ['hatimPlanCard', 'hatimAddPlanBtn']) {
+        document.getElementById(id)?.addEventListener('click', openHatimPlanSheet);
+    }
+    document.getElementById('hatimPlanPresets')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-plan-days]');
+        if (btn) setHatimPlanDraft(hatimPlanEndForDays(Number(btn.dataset.planDays)));
+    });
+    // Bazı WebView'larda tarih seçici yalnız change üretir.
+    for (const type of ['input', 'change']) {
+        document.getElementById('hatimPlanDate')?.addEventListener(type, (e) => {
+            setHatimPlanDraft(e.target.value);
+        });
+    }
+    document.getElementById('hatimPlanSaveBtn')?.addEventListener('click', saveHatimPlanFromSheet);
+    document.getElementById('hatimPlanRemoveBtn')?.addEventListener('click', removeHatimPlanFromSheet);
     document.getElementById('hatimOwnerLeaveBtn')?.addEventListener('click', () => {
         const group = findHatimGroup(currentHatimGroupId);
         if (group && isRemoteHatim(group)) void handleRemoteHatimDeleteOrLeave(group, { ownerLeave: true });

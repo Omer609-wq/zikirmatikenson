@@ -198,6 +198,7 @@
                     <p class="hatim-done-card__meaning" data-i18n="community.completeDuaMeaning">Rabbimiz! Bizden kabul buyur. Şüphesiz sen hakkıyla işiten, hakkıyla bilensin.</p>
                     <p class="hatim-done-card__ref" id="hatimCompleteDuaRef"></p>
                     <p class="hatim-done-card__stats" id="hatimCompleteStats"></p>
+                    <p class="hatim-done-card__intention" id="hatimCompleteIntention" hidden></p>
                     <button type="button" class="hatim-done-card__link" id="hatimCompleteDuaBtn">
                         <span data-i18n="community.completeDuaReady">Hatim duası açıldı, okuyabilirsin</span>
                         <span class="material-icons-outlined" aria-hidden="true">chevron_right</span>
@@ -205,11 +206,38 @@
                 </section>
 
                 <p class="hatim-meta" id="hatimGroupMeta" hidden></p>
+                <!-- Kişisel hatimde niyet: yalnız sahibi görür. Dokununca değişir. -->
+                <button type="button" class="hatim-intention" id="hatimIntentionBtn" hidden>
+                    <span class="material-icons-outlined hatim-intention__icon" aria-hidden="true">volunteer_activism</span>
+                    <span class="hatim-intention__text" id="hatimIntentionText"></span>
+                    <span class="material-icons-outlined hatim-intention__edit" aria-hidden="true">edit</span>
+                </button>
                 <div class="hatim-summary">
                     <div class="hatim-summary__bar" id="hatimSummaryBar" role="progressbar" aria-valuemin="0" aria-valuemax="30" aria-valuenow="0">
                         <span class="hatim-summary__fill" id="hatimSummaryFill"></span>
                     </div>
                     <p class="hatim-summary__text" id="hatimSummaryText"></p>
+                </div>
+
+                <!-- Kişisel hatim hedefi: bitiş günü ve bugünkü pay. Dokununca hedef penceresi. -->
+                <button type="button" class="hatim-plan" id="hatimPlanCard" hidden>
+                    <span class="material-icons-outlined hatim-plan__icon" aria-hidden="true">flag</span>
+                    <span class="hatim-plan__text">
+                        <span class="hatim-plan__line" id="hatimPlanLine"></span>
+                        <span class="hatim-plan__today" id="hatimPlanToday"></span>
+                    </span>
+                    <span class="material-icons-outlined hatim-plan__chevron" aria-hidden="true">chevron_right</span>
+                </button>
+                <!-- Kişisel hatimde eksik olanı eklemek için: niyet, hedef tarih. -->
+                <div class="hatim-extras" id="hatimExtras" hidden>
+                    <button type="button" class="hatim-chip" id="hatimAddIntentionBtn">
+                        <span class="material-icons-outlined" aria-hidden="true">add</span>
+                        <span data-i18n="community.intentionAdd">Niyet ekle</span>
+                    </button>
+                    <button type="button" class="hatim-chip" id="hatimAddPlanBtn">
+                        <span class="material-icons-outlined" aria-hidden="true">add</span>
+                        <span data-i18n="community.planAdd">Hedef tarih koy</span>
+                    </button>
                 </div>
 
                 <button type="button" class="hatim-code" id="hatimShareBtn">
@@ -264,6 +292,8 @@
             </header>
 
             <section class="main-content scrollable hatim-dua-page">
+                <!-- Kişisel hatmin niyeti: dua kimin için okunuyor. -->
+                <p class="hatim-dua__intention" id="hatimDuaIntention" hidden></p>
                 <p class="hatim-dua__ar" id="hatimDuaArabic" dir="rtl" lang="ar"></p>
                 <p class="hatim-dua__lat" id="hatimDuaTranslit"></p>
                 <button type="button" class="hatim-dua__toggle" id="hatimDuaMealToggle" aria-expanded="false" aria-controls="hatimDuaMeaning">
@@ -1957,6 +1987,29 @@
             <div class="modal-body">
                 <p class="hatim-members__status" id="hatimMembersStatus" hidden></p>
                 <ul class="hatim-members" id="hatimMembersList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kişisel hatim hedefi: hazır süreler ya da takvimden bir gün -->
+    <div class="modal-overlay" id="hatimPlanOverlay" role="dialog" aria-modal="true" aria-labelledby="hatimPlanTitle">
+        <div class="modal glass-modal">
+            <div class="modal-header">
+                <h2 id="hatimPlanTitle" data-i18n="community.planTitle">Hedef tarih</h2>
+                <button class="icon-btn closeModalBtn" data-modal="hatimPlanOverlay" data-i18n="community.close" data-i18n-attr="aria-label" aria-label="Kapat"><span class="material-icons-outlined">close</span></button>
+            </div>
+            <div class="modal-body">
+                <p class="hatim-plan-sheet__hint" data-i18n="community.planHint">Hatmi kaç günde bitirmek istersin?</p>
+                <div class="hatim-plan-sheet__presets" id="hatimPlanPresets"></div>
+                <label class="hatim-plan-sheet__date" for="hatimPlanDate">
+                    <span data-i18n="community.planEndLabel">Bitiş tarihi</span>
+                    <input type="date" id="hatimPlanDate" />
+                </label>
+                <p class="hatim-plan-sheet__preview" id="hatimPlanPreview" aria-live="polite"></p>
+            </div>
+            <div class="modal-footer hatim-juz-actions">
+                <button type="button" class="primary-btn full-width" id="hatimPlanSaveBtn" data-i18n="community.planSave">Kaydet</button>
+                <button type="button" class="secondary-btn full-width" id="hatimPlanRemoveBtn" data-i18n="community.planRemove" hidden>Hedefi kaldır</button>
             </div>
         </div>
     </div>
