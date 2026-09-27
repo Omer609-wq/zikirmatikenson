@@ -217,7 +217,12 @@
     "planTodayShort": "aujourd’hui {count} pages",
     "planTodayShort_one": "aujourd’hui {count} page",
     "planTodayDoneShort": "part du jour faite",
-    "planFinishedOnTime": "Tu as terminé à la date prévue."
+    "planFinishedOnTime": "Tu as terminé à la date prévue.",
+    "planRemindLabel": "Me le rappeler chaque jour",
+    "planRemindTimeLabel": "Heure du rappel",
+    "planRemindOn": "Rappel chaque jour à {time}",
+    "planRemindDenied": "Les notifications sont désactivées : tu ne recevras pas de rappel. Tu peux les autoriser pour Zikirmatik dans les réglages du téléphone.",
+    "planRemindFailed": "Le rappel n’a pas pu être programmé. Mets l’application à jour et réessaie."
   },
   "folder": {
     "search": "Rechercher",

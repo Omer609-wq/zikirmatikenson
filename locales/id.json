@@ -206,7 +206,12 @@
     "planRemaining": "Sisa: {count} halaman",
     "planTodayShort": "hari ini {count} halaman",
     "planTodayDoneShort": "bagian hari ini selesai",
-    "planFinishedOnTime": "Kamu khatam tepat pada target."
+    "planFinishedOnTime": "Kamu khatam tepat pada target.",
+    "planRemindLabel": "Ingatkan setiap hari",
+    "planRemindTimeLabel": "Jam pengingat",
+    "planRemindOn": "Diingatkan setiap hari pukul {time}",
+    "planRemindDenied": "Notifikasi dimatikan, jadi pengingat tidak akan muncul. Kamu bisa mengizinkan notifikasi Zikirmatik di pengaturan ponsel.",
+    "planRemindFailed": "Pengingat tidak bisa dipasang. Perbarui aplikasi lalu coba lagi."
   },
   "folder": {
     "search": "Cari",

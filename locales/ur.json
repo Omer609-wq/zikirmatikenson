@@ -210,7 +210,12 @@
     "planTodayShort": "آج {count} صفحات",
     "planTodayShort_one": "آج {count} صفحہ",
     "planTodayDoneShort": "آج کا حصہ مکمل",
-    "planFinishedOnTime": "آپ نے ہدف کی تاریخ تک ختم مکمل کر لیا۔"
+    "planFinishedOnTime": "آپ نے ہدف کی تاریخ تک ختم مکمل کر لیا۔",
+    "planRemindLabel": "روزانہ یاد دلائیں",
+    "planRemindTimeLabel": "یاد دہانی کا وقت",
+    "planRemindOn": "روزانہ {time} بجے یاد دہانی",
+    "planRemindDenied": "اطلاعات بند ہیں، اس لیے یاد دہانی نہیں آئے گی۔ فون کی ترتیبات میں Zikirmatik کی اطلاعات کی اجازت دے سکتے ہیں۔",
+    "planRemindFailed": "یاد دہانی مقرر نہیں ہو سکی۔ ایپ اپ ڈیٹ کر کے دوبارہ کوشش کریں۔"
   },
   "folder": {
     "search": "تلاش",

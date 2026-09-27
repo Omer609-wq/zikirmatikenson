@@ -206,7 +206,12 @@
     "planRemaining": "Kalan: {count} sayfa",
     "planTodayShort": "bugün {count} sayfa",
     "planTodayDoneShort": "bugünkü pay tamam",
-    "planFinishedOnTime": "Hedeflediğin tarihte tamamladın."
+    "planFinishedOnTime": "Hedeflediğin tarihte tamamladın.",
+    "planRemindLabel": "Her gün hatırlat",
+    "planRemindTimeLabel": "Hatırlatma saati",
+    "planRemindOn": "Her gün {time} hatırlatılır",
+    "planRemindDenied": "Bildirim izni kapalı, hatırlatma gelmeyecek. Telefonun ayarlarından Zikirmatik'in bildirimlerine izin verebilirsin.",
+    "planRemindFailed": "Hatırlatma kurulamadı. Uygulamayı güncelleyip yeniden dene."
   },
   "folder": {
     "search": "Ara",

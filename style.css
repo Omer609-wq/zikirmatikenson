@@ -2799,6 +2799,14 @@ html[lang='ur'] .smart-reminder-weekday {
     font-size: 20px;
     color: var(--text-gray);
 }
+.hatim-plan__bell {
+    flex: 0 0 auto;
+    font-size: 18px;
+    color: var(--text-gray);
+}
+.hatim-plan__bell[hidden] {
+    display: none;
+}
 
 /* Eksik olanı eklemek için küçük kesikli düğmeler: niyet, hedef tarih. */
 .hatim-extras {
@@ -2896,6 +2904,58 @@ html[lang='ur'] .smart-reminder-weekday {
     text-align: center;
     color: var(--hatim-done-fg);
 }
+/* Hatırlatma: üstte etiket ve anahtar, açıkken altında saat. Tek satırda
+   etiket, saat ve anahtar dar ekranda sığmıyor, etiket ikiye bölünüyordu. */
+.hatim-plan-sheet__remind {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.6rem 0.75rem;
+    margin-top: 1rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--surface-border);
+}
+.hatim-plan-sheet__remind[hidden] {
+    display: none;
+}
+.hatim-plan-sheet__remind-label {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: var(--text-sm);
+    color: var(--text-white);
+    cursor: pointer;
+}
+.hatim-plan-sheet__remind-label .material-icons-outlined {
+    font-size: 19px;
+    color: var(--text-gray);
+}
+.hatim-plan-sheet__remind-time {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-inline-start: calc(19px + 0.45rem);
+    font-size: var(--text-sm);
+    color: var(--text-gray);
+}
+.hatim-plan-sheet__remind-time[hidden] {
+    display: none;
+}
+.hatim-plan-sheet__remind input[type="time"] {
+    flex: 0 0 auto;
+    width: auto;
+    padding: 0.4rem 0.55rem;
+    border: 1px solid var(--surface-border);
+    border-radius: 8px;
+    background: var(--input-bg, rgba(0, 0, 0, 0.32));
+    color: var(--input-text, #fff);
+    font: inherit;
+    font-size: var(--text-sm);
+    color-scheme: dark;
+}
+
 .hatim-plan-sheet__preview--invalid {
     font-weight: 400;
     font-size: var(--text-sm);

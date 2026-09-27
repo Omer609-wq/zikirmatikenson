@@ -27,7 +27,7 @@ const enqueueDailyReminderSync = createAsyncSerial();
 const enqueueSmartReminderSync = createAsyncSerial();
 
 /** Android bildirim ikonları — res/drawable altında */
-const ANDROID_NOTIFICATION_ICONS = {
+export const ANDROID_NOTIFICATION_ICONS = {
     smallIcon: 'ic_stat_notification',
     largeIcon: 'ic_notification_large',
     iconColor: '#0f2918'
@@ -166,16 +166,38 @@ async function cancelReminderSlots() {
 
 export const WEEKLY_REPORT_NOTIFICATION_ID = 9200;
 
+/**
+ * Kişisel hatim hedefi: hatim ve gün başına bir bildirim (lib/hatim-plan-notify.js).
+ * Akıllı hatırlatıcıların iptal aralığının (9100-9599) dışında.
+ */
+export const HATIM_PLAN_NOTIFICATION_BASE_ID = 9700;
+export const HATIM_PLAN_NOTIFICATION_COUNT = 40;
+
 export function isWeeklyReportNotificationId(id) {
     return Number(id) === WEEKLY_REPORT_NOTIFICATION_ID;
 }
 
+export function isHatimPlanNotificationId(id) {
+    const n = Number(id);
+    return (
+        Number.isFinite(n) &&
+        n >= HATIM_PLAN_NOTIFICATION_BASE_ID &&
+        n < HATIM_PLAN_NOTIFICATION_BASE_ID + HATIM_PLAN_NOTIFICATION_COUNT
+    );
+}
+
+/*
+ * Dokununca uygulamayı açan bütün bildirimler tek dinleyiciden geçer: soğuk
+ * açılışta eklenti olayı ilk dinleyiciye verip tüketiyor, ikinci bir dinleyici
+ * o dokunuşu hiç görmezdi.
+ */
 export function isReminderNotificationId(id) {
     const n = Number(id);
     return (
         (Number.isFinite(n) && n >= REMINDER_BASE_ID && n < REMINDER_BASE_ID + REMINDER_CANCEL_COUNT) ||
         isSmartReminderNotificationId(id) ||
-        isWeeklyReportNotificationId(id)
+        isWeeklyReportNotificationId(id) ||
+        isHatimPlanNotificationId(id)
     );
 }
 

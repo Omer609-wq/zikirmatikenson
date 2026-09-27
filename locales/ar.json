@@ -254,7 +254,12 @@
     "planTodayShort_few": "اليوم {count} صفحات",
     "planTodayShort_many": "اليوم {count} صفحة",
     "planTodayDoneShort": "تمَّ ورد اليوم",
-    "planFinishedOnTime": "ختمت في الموعد الذي حددته."
+    "planFinishedOnTime": "ختمت في الموعد الذي حددته.",
+    "planRemindLabel": "ذكِّرني كل يوم",
+    "planRemindTimeLabel": "وقت التذكير",
+    "planRemindOn": "تذكير يومي الساعة {time}",
+    "planRemindDenied": "الإشعارات متوقفة، لذلك لن يصلك التذكير. يمكنك السماح بإشعارات Zikirmatik من إعدادات الهاتف.",
+    "planRemindFailed": "تعذّر ضبط التذكير. حدِّث التطبيق وحاول مرة أخرى."
   },
   "folder": {
     "search": "بحث",

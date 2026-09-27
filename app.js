@@ -94,6 +94,7 @@ import {
     folderIdFromUsageArea
 } from './lib/usage-areas.js';
 import { syncNativeWeeklyReport } from './lib/weekly-report-notify.js';
+import { syncNativeHatimPlanReminders } from './lib/hatim-plan-notify.js';
 import { getRuntimeFlags, loadRuntimeFlags } from './lib/runtime-flags.js';
 import { migrateKnownTextPrefix } from './lib/text-sync.js';
 import { hideNativeSplashWhenReady } from './lib/native-splash.js';
@@ -182,8 +183,10 @@ import {
 } from './lib/hatim-groups.js';
 import {
     HATIM_PLAN_PRESETS,
+    HATIM_PLAN_REMIND_DEFAULT,
     createHatimPlan,
     hatimPlanEndForDays,
+    hatimPlanReminderSlots,
     hatimPlanStatus
 } from './lib/hatim-plan.js';
 import { addDaysToDateKey, dateKeyOf, daysBetweenDateKeys } from './lib/date-key.js';
@@ -1790,6 +1793,7 @@ async function init() {
     }
     ensureSmartReminderSchedule().catch(console.error);
     ensureWeeklyReportSchedule().catch(console.error);
+    syncHatimPlanReminders().catch(console.error);
     void maybeRunAutoCloudBackup();
     refreshRemoteHomeContent();
     // Dil id/ms/bn/ur ise ilk kez samimi çeviri notu (home boyandıktan sonra).
@@ -3497,6 +3501,15 @@ function openAppFromReminderNotification(extra) {
         showView('premiumFeatureWeeklyView', null, { push: false });
         return;
     }
+    // Hatim hedefi bildirimi o hatmi açar; hatim bu arada silindiyse ana ekran.
+    if (extra && extra.view === 'hatimGroupView') {
+        if (extra.groupId && findHatimGroup(extra.groupId)) {
+            showView('hatimGroupView', extra.groupId, { push: false });
+        } else {
+            showView('homeView', null, { push: false });
+        }
+        return;
+    }
     const view = extra && extra.view === 'counterView' && extra.zikirId ? 'counterView' : 'homeView';
     const param = view === 'counterView' ? extra.zikirId : null;
     if (view === 'counterView' && param && !zikirs.some((z) => z.id === param)) {
@@ -3676,6 +3689,7 @@ function onAppBecameVisibleForReminders() {
     }
     ensureSmartReminderSchedule().catch(console.error);
     ensureWeeklyReportSchedule().catch(console.error);
+    syncHatimPlanReminders().catch(console.error);
 }
 
 function onPageShowForReminders() {
@@ -3684,6 +3698,37 @@ function onPageShowForReminders() {
     }
     ensureSmartReminderSchedule().catch(console.error);
     ensureWeeklyReportSchedule().catch(console.error);
+    syncHatimPlanReminders().catch(console.error);
+}
+
+/**
+ * Kişisel hatim hedeflerinin bildirimleri: hatim ve gün başına bir tane,
+ * "Bugünkü pay: 21 sayfa · 25 gün kaldı". Gelecek günlerin payı ilerleme
+ * olmadığı varsayımıyla yazılır; ilerleme yalnız uygulamada işaretlenebildiği
+ * ve her işaretlemede baştan kurulduğu için metin hep o güne göre doğru kalır.
+ *
+ * @param {{ askPermission?: boolean }} [opts] İzin yalnız kullanıcı
+ *   hatırlatmayı açarken sorulur.
+ */
+function syncHatimPlanReminders({ askPermission = false } = {}) {
+    if (!isCapacitorNative()) return Promise.resolve({ ok: true });
+    const slots = hatimPlanReminderSlots(hatimGroups).map((slot) => {
+        const share =
+            slot.done > 0
+                ? t('community.planTodayPartial', { done: slot.done, count: slot.target })
+                : t('community.planToday', { count: slot.target });
+        const left =
+            slot.daysLeft === 1
+                ? t('community.planLastDay')
+                : t('community.planDaysLeft', { count: slot.daysLeft });
+        return {
+            at: slot.at,
+            title: slot.name,
+            body: `${share} · ${left}`,
+            extra: { openApp: true, view: 'hatimGroupView', groupId: slot.groupId }
+        };
+    });
+    return syncNativeHatimPlanReminders(slots, { askPermission });
 }
 
 function initUsageTracker() {
@@ -4307,6 +4352,7 @@ function applySanitizedBackupToApp(sanitized) {
     ensureReminderSchedule().catch(console.error);
     ensureSmartReminderSchedule().catch(console.error);
     ensureWeeklyReportSchedule().catch(console.error);
+    syncHatimPlanReminders().catch(console.error);
 
     const viewId = currentViewId || 'homeView';
     showView(viewId, null, { push: false });
@@ -7174,6 +7220,8 @@ function commitHatimGroup(next, { defer = false } = {}) {
     hatimGroups[idx] = next;
     if (defer) scheduleSave();
     else saveData();
+    // Kişisel hatimde cüz, ad ya da hedef değişince bildirimlerin payı ve adı da değişir.
+    if (isPersonalHatim(next)) syncHatimPlanReminders().catch(console.error);
 }
 
 function hatimSurahName(n) {
@@ -7640,6 +7688,13 @@ function renderHatimPersonalExtras(group) {
         planCard.hidden = !status;
         planCard.classList.toggle('hatim-plan--overdue', !!status?.overdue);
     }
+    const bell = document.getElementById('hatimPlanBell');
+    if (bell) {
+        bell.hidden = !status?.remindAt;
+        if (status?.remindAt) {
+            bell.setAttribute('aria-label', t('community.planRemindOn', { time: status.remindAt }));
+        }
+    }
     if (status) {
         const left = status.overdue
             ? t('community.planOverdue')
@@ -7712,9 +7767,27 @@ function openHatimPlanSheet() {
     // Hedef yoksa ya da günü geçtiyse 30 gün: günde bir cüz, en bilinen tempo.
     const end = group.plan && group.plan.end >= today ? group.plan.end : hatimPlanEndForDays(30);
     setHatimPlanDraft(end);
+
+    // Yeni hedefte hatırlatma açık gelir; var olan hedefte kişinin seçimi korunur.
+    const remindAt = group.plan ? group.plan.remindAt || null : HATIM_PLAN_REMIND_DEFAULT;
+    const remindRow = document.getElementById('hatimPlanRemindRow');
+    if (remindRow) remindRow.hidden = !isCapacitorNative();
+    const remind = document.getElementById('hatimPlanRemind');
+    if (remind) remind.checked = !!remindAt;
+    const remindTime = document.getElementById('hatimPlanRemindTime');
+    if (remindTime) remindTime.value = remindAt || HATIM_PLAN_REMIND_DEFAULT;
+    syncHatimPlanRemindControls();
+
     const removeBtn = document.getElementById('hatimPlanRemoveBtn');
     if (removeBtn) removeBtn.hidden = !group.plan;
     openOverlay('hatimPlanOverlay');
+}
+
+/** Hatırlatma kapalıyken saat satırı gizli: seçilecek bir şey yok. */
+function syncHatimPlanRemindControls() {
+    const remind = document.getElementById('hatimPlanRemind');
+    const timeRow = document.getElementById('hatimPlanRemindTimeRow');
+    if (timeRow) timeRow.hidden = !remind?.checked;
 }
 
 /** Seçili gün: tarih kutusu, hazır süre düğmeleri ve günlük pay önizlemesi birlikte güncellenir. */
@@ -7730,8 +7803,10 @@ function setHatimPlanDraft(end) {
     const status = plan ? hatimPlanStatus({ ...group, plan }) : null;
     const preview = document.getElementById('hatimPlanPreview');
     if (preview) {
+        // Gün sayısı da yazar: takvimden hazır sürelere uymayan bir gün seçilince
+        // hiçbir düğme yanmıyor, kaç gün ettiği başka yerden okunmuyor.
         preview.textContent = status
-            ? t('community.planPreview', { count: status.dailyPages })
+            ? `${t('community.planDays', { count: days })} · ${t('community.planPreview', { count: status.dailyPages })}`
             : t('community.planInvalidDate');
         preview.classList.toggle('hatim-plan-sheet__preview--invalid', !status);
     }
@@ -7746,13 +7821,27 @@ function closeHatimPlanSheet() {
 }
 
 /** Hedef değişince başlangıç da bugüne alınır: yeni hedef, yeni tempo. */
-function saveHatimPlanFromSheet() {
+async function saveHatimPlanFromSheet() {
     const group = findHatimGroup(currentHatimGroupId);
-    const plan = createHatimPlan(document.getElementById('hatimPlanDate')?.value);
+    const remind = isCapacitorNative() && document.getElementById('hatimPlanRemind')?.checked;
+    const remindAt = remind
+        ? document.getElementById('hatimPlanRemindTime')?.value || HATIM_PLAN_REMIND_DEFAULT
+        : null;
+    const plan = createHatimPlan(document.getElementById('hatimPlanDate')?.value, Date.now(), { remindAt });
     if (!group || !plan) return;
     commitHatimGroup(setHatimPlan(group, plan));
     closeHatimPlanSheet();
     renderHatimGroupView();
+    if (!plan.remindAt) return;
+
+    // Hatırlatma açıldı: izin burada sorulur. Reddedilirse hedef yine kaydolur,
+    // yalnız bildirim gelmeyeceği söylenir.
+    const res = await syncHatimPlanReminders({ askPermission: true });
+    if (res.ok) return;
+    await showAppAlert(
+        t(res.reason === 'schedule' ? 'community.planRemindFailed' : 'community.planRemindDenied'),
+        { title: t('reminderDialog.notificationPermTitle') }
+    );
 }
 
 function removeHatimPlanFromSheet() {
@@ -8307,6 +8396,7 @@ async function handleDeleteHatimGroup() {
     if (!ok) return;
     hatimGroups = hatimGroups.filter((g) => g.id !== group.id);
     saveData();
+    if (isPersonalHatim(group)) syncHatimPlanReminders().catch(console.error);
     currentHatimGroupId = null;
     renderCommunityCardSummary();
     showView('communityView');
@@ -8357,7 +8447,10 @@ function setupHatimListeners() {
             setHatimPlanDraft(e.target.value);
         });
     }
-    document.getElementById('hatimPlanSaveBtn')?.addEventListener('click', saveHatimPlanFromSheet);
+    document.getElementById('hatimPlanRemind')?.addEventListener('change', syncHatimPlanRemindControls);
+    document.getElementById('hatimPlanSaveBtn')?.addEventListener('click', () => {
+        void saveHatimPlanFromSheet();
+    });
     document.getElementById('hatimPlanRemoveBtn')?.addEventListener('click', removeHatimPlanFromSheet);
     document.getElementById('hatimOwnerLeaveBtn')?.addEventListener('click', () => {
         const group = findHatimGroup(currentHatimGroupId);
@@ -11033,6 +11126,7 @@ function setupEventListeners() {
             if (reminderSettings.enabled) {
                 ensureReminderSchedule().catch(console.error);
             }
+            syncHatimPlanReminders().catch(console.error); // bildirim metni yeni dilde
             setLocalePickerOpen(false);
             maybeShowLocaleWelcome(choice);
         });

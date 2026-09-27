@@ -216,7 +216,12 @@
     "planTodayShort": "today {count} pages",
     "planTodayShort_one": "today {count} page",
     "planTodayDoneShort": "today’s share done",
-    "planFinishedOnTime": "You finished by your target date."
+    "planFinishedOnTime": "You finished by your target date.",
+    "planRemindLabel": "Remind me daily",
+    "planRemindTimeLabel": "Reminder time",
+    "planRemindOn": "Daily reminder at {time}",
+    "planRemindDenied": "Notifications are turned off, so reminders won't arrive. You can allow notifications for Zikirmatik in your phone's settings.",
+    "planRemindFailed": "The reminder couldn't be set. Update the app and try again."
   },
   "folder": {
     "search": "Search",
