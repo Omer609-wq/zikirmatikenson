@@ -185,7 +185,8 @@
     "ownerLostNotice": "Tu étais absent de « {name} » depuis {days} jours : l’administration est passée au plus ancien membre.",
     "joinClosedFull": "Ce groupe est complet : {max} membres au maximum.",
     "ownerLeaveConfirm": "Quitter « {name} » ? L’administration passe au plus ancien membre ; les juz que tu n’as pas terminés sont libérés.",
-    "ownerAloneCannotLeave": "Il n’y a pas d’autre membre dans ce groupe. Tu peux supprimer le groupe au lieu de le quitter."
+    "ownerAloneCannotLeave": "Il n’y a pas d’autre membre dans ce groupe. Tu peux supprimer le groupe au lieu de le quitter.",
+    "nameNotAllowed": "Ce nom n’est pas autorisé. Choisis-en un autre."
   },
   "folder": {
     "search": "Rechercher",

@@ -180,7 +180,8 @@
     "ownerLostNotice": "Kamu tidak terlihat di grup \"{name}\" selama {days} hari, jadi hak admin pindah ke anggota terlama.",
     "joinClosedFull": "Grup ini penuh: satu grup maksimal {max} anggota.",
     "ownerLeaveConfirm": "Keluar dari grup \"{name}\"? Hak admin pindah ke anggota terlama; juz yang belum kamu selesaikan dikosongkan.",
-    "ownerAloneCannotLeave": "Tidak ada anggota lain di grup ini. Kamu bisa menghapus grup alih-alih keluar."
+    "ownerAloneCannotLeave": "Tidak ada anggota lain di grup ini. Kamu bisa menghapus grup alih-alih keluar.",
+    "nameNotAllowed": "Nama ini tidak diizinkan. Silakan pilih nama lain."
   },
   "folder": {
     "search": "Cari",

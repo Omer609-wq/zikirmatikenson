@@ -184,7 +184,8 @@
     "ownerLostNotice": "You weren't seen in \"{name}\" for {days} days, so admin rights passed to the earliest member.",
     "joinClosedFull": "This group is full: a group can have at most {max} members.",
     "ownerLeaveConfirm": "Leave \"{name}\"? Admin rights pass to the earliest member; juz you haven't finished are freed up.",
-    "ownerAloneCannotLeave": "There are no other members in this group. You can delete the group instead of leaving."
+    "ownerAloneCannotLeave": "There are no other members in this group. You can delete the group instead of leaving.",
+    "nameNotAllowed": "This name isn't allowed. Please choose another one."
   },
   "folder": {
     "search": "Search",

@@ -10,6 +10,7 @@ import {
 } from './native-reminders.js';
 import { IN_APP_OVERLAY_IDS } from './lib/overlay-registry.js';
 import { truncateText } from './lib/coerce.js';
+import { isNameAllowed } from './lib/name-filter.js';
 import { buildHatimInvite, isShareCancelled } from './lib/hatim-invite.js';
 import {
     clampPageIndex,
@@ -6660,23 +6661,33 @@ async function getHatimContextQuiet() {
 /** Grupta görünecek ad ya da cüz alırken sorulan ad. Son kullanılanla dolu gelir. */
 async function askHatimName(kind) {
     const isClaim = kind === 'claim';
-    const name = await showAppPrompt(
-        t(isClaim ? 'community.claimNamePrompt' : 'community.displayNamePrompt'),
-        getLocalMemberName(),
-        {
-            title: t(isClaim ? 'community.claimNameTitle' : 'community.displayNameTitle'),
-            inputLabel: t('community.claimNameLabel'),
-            maxLength: HATIM_MEMBER_NAME_MAX
+    let prefill = getLocalMemberName();
+    // Ad gruptaki herkese görünür: süzgeçten geçmezse sebebi söylenip yazılanla
+    // birlikte yeniden sorulur, kişi düzeltebilsin.
+    for (;;) {
+        const name = await showAppPrompt(
+            t(isClaim ? 'community.claimNamePrompt' : 'community.displayNamePrompt'),
+            prefill,
+            {
+                title: t(isClaim ? 'community.claimNameTitle' : 'community.displayNameTitle'),
+                inputLabel: t('community.claimNameLabel'),
+                maxLength: HATIM_MEMBER_NAME_MAX
+            }
+        );
+        if (name == null) return null;
+        const trimmed = truncateText(String(name).trim(), HATIM_MEMBER_NAME_MAX).trimEnd();
+        if (!trimmed) {
+            await showAppAlert(t('community.claimNameRequired'));
+            return null;
         }
-    );
-    if (name == null) return null;
-    const trimmed = truncateText(String(name).trim(), HATIM_MEMBER_NAME_MAX).trimEnd();
-    if (!trimmed) {
-        await showAppAlert(t('community.claimNameRequired'));
-        return null;
+        if (!isNameAllowed(trimmed)) {
+            await showAppAlert(t('community.nameNotAllowed'));
+            prefill = trimmed;
+            continue;
+        }
+        setLocalMemberName(trimmed);
+        return trimmed;
     }
-    setLocalMemberName(trimmed);
-    return trimmed;
 }
 
 /**
@@ -7821,6 +7832,10 @@ async function handleHatimJuzAction(action) {
             await showAppAlert(t('community.claimNameRequired'));
             return;
         }
+        if (!isNameAllowed(trimmed)) {
+            await showAppAlert(t('community.nameNotAllowed'));
+            return;
+        }
         setLocalMemberName(trimmed);
         res = claimJuz(group, currentHatimJuzN, me, { memberName: trimmed });
     }
@@ -7853,12 +7868,18 @@ async function handleHatimJuzAction(action) {
 
 async function handleCreateHatimGroup() {
     if (isHatimLimitReached(hatimGroups, HATIM_KIND_SHARED)) return;
-    const name = await showAppPrompt(t('community.newGroupPrompt'), '', {
-        title: t('community.newGroupTitle'),
-        inputLabel: t('community.groupNameLabel'),
-        maxLength: HATIM_GROUP_NAME_MAX
-    });
-    if (name == null || !name.trim()) return;
+    // Grup adını kodu olan herkes görür: süzgeçten geçmezse yeniden sorulur.
+    let name = '';
+    for (;;) {
+        name = await showAppPrompt(t('community.newGroupPrompt'), name, {
+            title: t('community.newGroupTitle'),
+            inputLabel: t('community.groupNameLabel'),
+            maxLength: HATIM_GROUP_NAME_MAX
+        });
+        if (name == null || !name.trim()) return;
+        if (isNameAllowed(name)) break;
+        await showAppAlert(t('community.nameNotAllowed'));
+    }
     const memberName = await askHatimName('display');
     if (!memberName) return;
     const ctx = await requireHatimSync();
@@ -8016,17 +8037,23 @@ async function handleRenameHatim() {
     const group = findHatimGroup(currentHatimGroupId);
     if (!canRenameHatim(group)) return;
     const personal = isPersonalHatim(group);
-    const input = await showAppPrompt(
-        t(personal ? 'community.renamePromptPersonal' : 'community.renamePromptShared'),
-        group.name,
-        {
-            title: t('community.renameTitle'),
-            inputLabel: t(personal ? 'community.hatimNameLabel' : 'community.groupNameLabel'),
-            maxLength: HATIM_GROUP_NAME_MAX
-        }
-    );
-    if (input == null) return;
-    const name = truncateText(String(input).trim(), HATIM_GROUP_NAME_MAX).trimEnd();
+    // Grup adı herkese görünür, süzgeçten geçer; kişisel hatim adını kimse görmez.
+    let name = group.name;
+    for (;;) {
+        const input = await showAppPrompt(
+            t(personal ? 'community.renamePromptPersonal' : 'community.renamePromptShared'),
+            name,
+            {
+                title: t('community.renameTitle'),
+                inputLabel: t(personal ? 'community.hatimNameLabel' : 'community.groupNameLabel'),
+                maxLength: HATIM_GROUP_NAME_MAX
+            }
+        );
+        if (input == null) return;
+        name = truncateText(String(input).trim(), HATIM_GROUP_NAME_MAX).trimEnd();
+        if (personal || isNameAllowed(name)) break;
+        await showAppAlert(t('community.nameNotAllowed'));
+    }
     if (!name || name === group.name) return;
 
     if (!isRemoteHatim(group)) {

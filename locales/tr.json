@@ -180,7 +180,8 @@
     "ownerLostNotice": "\"{name}\" grubunda {days} gün görünmediğin için yöneticilik ilk katılan üyeye geçti.",
     "joinClosedFull": "Bu grup dolu: bir grupta en fazla {max} üye olabilir.",
     "ownerLeaveConfirm": "\"{name}\" grubundan ayrılmak istiyor musun? Yöneticilik gruba ilk katılan üyeye geçer; bitirmediğin cüzler boşa düşer.",
-    "ownerAloneCannotLeave": "Grupta senden başka üye yok. Ayrılmak yerine grubu silebilirsin."
+    "ownerAloneCannotLeave": "Grupta senden başka üye yok. Ayrılmak yerine grubu silebilirsin.",
+    "nameNotAllowed": "Bu ad uygun değil. Lütfen başka bir ad yaz."
   },
   "folder": {
     "search": "Ara",

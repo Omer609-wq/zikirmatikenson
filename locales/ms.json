@@ -180,7 +180,8 @@
     "ownerLostNotice": "Anda tidak kelihatan dalam kumpulan \"{name}\" selama {days} hari, jadi hak pentadbir berpindah kepada ahli terawal.",
     "joinClosedFull": "Kumpulan ini penuh: satu kumpulan maksimum {max} ahli.",
     "ownerLeaveConfirm": "Keluar dari kumpulan \"{name}\"? Hak pentadbir berpindah kepada ahli terawal; juzuk yang belum anda selesaikan dikosongkan.",
-    "ownerAloneCannotLeave": "Tiada ahli lain dalam kumpulan ini. Anda boleh memadam kumpulan dan bukannya keluar."
+    "ownerAloneCannotLeave": "Tiada ahli lain dalam kumpulan ini. Anda boleh memadam kumpulan dan bukannya keluar.",
+    "nameNotAllowed": "Nama ini tidak dibenarkan. Sila pilih nama lain."
   },
   "folder": {
     "search": "Cari",
