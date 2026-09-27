@@ -202,6 +202,7 @@ import {
 } from './lib/hatim-remote-map.js';
 import { getHatimContext, getHatimSyncAvailability, hatimSessionErrorKey } from './lib/hatim-session.js';
 import { getJuzDetail } from './lib/hatim-juz.js';
+import { setJuzLocale } from './lib/juz-boundaries.js';
 import { HATIM_DUA_PERSONAL, HATIM_DUA_SHARED, getHatimDua } from './lib/hatim-dua.js';
 import { maybeRequestAppReview, recordCompletedRound } from './lib/app-review.js';
 import {
@@ -2554,6 +2555,9 @@ function syncTickSoundSettingVisibility() {
 
 function applyAppLocale(locale) {
     appSettings.locale = normalizeAppLocale(locale);
+    // Cüz sınırı dile bağlı (Türk baskısında 26. cüz sayfa başından); okuyucu
+    // ve hatim çizilmeden önce seçilmeli.
+    setJuzLocale(appSettings.locale);
     // Başlık anahtarı çeviriden önce ayarlanmalı; sonra yapılırsa eski metin kalır.
     syncCommunityUI();
     applyLocaleToDocument(appSettings.locale);
@@ -8097,6 +8101,25 @@ function renderHatimJuzDetail() {
 /* ---------- Son okunan sayfa (kişisel hatim) ---------- */
 
 /**
+ * Cüzün ekranda sayılan sayfaları (mushaf sayfası, 604'lük düzen).
+ * Türk baskısında Fatiha ile Bakara'nın ilk sayfası tek sayfa: 1. cüzde ilk
+ * sayılan sayfa ikisinin birlikte "1" olduğu sayfa, cüz de 20 sayfa.
+ * `none`: kaydırıcının "başlamadın" değeri.
+ */
+function hatimJuzPageBounds(detail) {
+    const label = (p) => mushafPageLabel(p, appSettings.locale);
+    const merged = label(detail.startPage) === label(detail.startPage + 1);
+    const first = merged ? detail.startPage + 1 : detail.startPage;
+    return {
+        first,
+        last: detail.endPage,
+        none: first - 1,
+        count: label(detail.endPage) - label(first) + 1,
+        read: (page) => (page >= first ? label(page) - label(first) + 1 : 0)
+    };
+}
+
+/**
  * Cüz penceresindeki sayfa kaydırıcısı. En soldaki değer (cüzün ilk
  * sayfasından bir önce) "başlamadın" demek; en sağdaki cüzün son sayfası,
  * kaydedince cüz biter. Kayıtlı değer `dataset.saved`'da: değişmeden Kaydet sönük.
@@ -8108,9 +8131,10 @@ function renderHatimJuzProgress(juz, detail) {
     if (!section || !range) return;
     section.hidden = !juz;
     if (!juz) return;
-    const saved = juz.state === JUZ_CLAIMED && juz.readTo ? juz.readTo : detail.startPage - 1;
-    range.min = String(detail.startPage - 1);
-    range.max = String(detail.endPage);
+    const bounds = hatimJuzPageBounds(detail);
+    const saved = juz.state === JUZ_CLAIMED && juz.readTo >= bounds.first ? juz.readTo : bounds.none;
+    range.min = String(bounds.none);
+    range.max = String(bounds.last);
     range.value = String(saved);
     range.dataset.saved = String(saved);
     updateHatimJuzProgressLabels();
@@ -8122,7 +8146,8 @@ function updateHatimJuzProgressLabels() {
     const detail = getJuzDetail(currentHatimJuzN);
     if (!range || !detail) return;
     const page = Number(range.value);
-    const started = page >= detail.startPage;
+    const bounds = hatimJuzPageBounds(detail);
+    const started = page >= bounds.first;
 
     const value = document.getElementById('hatimJuzProgressValue');
     if (value) {
@@ -8134,7 +8159,6 @@ function updateHatimJuzProgressLabels() {
     // Sayfa numarası baskıdan baskıya kayabilir; ayet her mushafta aynı.
     const hint = document.getElementById('hatimJuzProgressHint');
     if (hint) {
-        const read = started ? page - detail.startPage + 1 : 0;
         const parts = [];
         // Cüzün son sayfası bir sonraki cüzün başını da taşıyabilir: orada
         // sayfanın değil cüzün bittiği ayet yazar.
@@ -8144,7 +8168,7 @@ function updateHatimJuzProgressLabels() {
               ? { s: detail.end.surah, a: detail.end.ayah }
               : getPageEndAyah(page);
         if (end) parts.push(t('community.readToEndsAt', { ref: `${hatimSurahName(end.s)} ${end.a}` }));
-        parts.push(t('community.readToProgress', { done: read, count: detail.pageCount }));
+        parts.push(t('community.readToProgress', { done: bounds.read(page), count: bounds.count }));
         hint.textContent = parts.join(' · ');
     }
     const back = document.getElementById('hatimJuzProgressBack');
@@ -8170,8 +8194,13 @@ function stepHatimJuzProgress(delta) {
 function saveHatimJuzProgress() {
     const group = findHatimGroup(currentHatimGroupId);
     const range = document.getElementById('hatimJuzProgressRange');
-    if (!group || !range || !isPersonalHatim(group) || isHatimFrozen(group)) return;
-    const res = setJuzReadTo(group, currentHatimJuzN, getLocalMemberId(), Number(range.value));
+    const detail = getJuzDetail(currentHatimJuzN);
+    if (!group || !range || !detail || !isPersonalHatim(group) || isHatimFrozen(group)) return;
+    // "Başlamadın" değeri Türk baskısının 1. cüzünde Fatiha sayfası; kayda
+    // her zaman cüzün ilk sayfasından öncesi olarak geçer.
+    const value = Number(range.value);
+    const page = value > hatimJuzPageBounds(detail).none ? value : detail.startPage - 1;
+    const res = setJuzReadTo(group, currentHatimJuzN, getLocalMemberId(), page);
     if (!res.ok) return;
     commitHatimGroup(res.group);
     renderHatimGroupView();
