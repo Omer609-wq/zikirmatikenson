@@ -229,6 +229,13 @@
                     <span class="material-icons-outlined hatim-plan__bell" id="hatimPlanBell" role="img" hidden>notifications_active</span>
                     <span class="material-icons-outlined hatim-plan__chevron" aria-hidden="true">chevron_right</span>
                 </button>
+                <!-- Kişisel hatimde: okunan cüzün penceresini açar, son okunan sayfa işaretlenir. -->
+                <button type="button" class="hatim-where" id="hatimWhereBtn" hidden>
+                    <span class="material-icons-outlined hatim-where__icon" aria-hidden="true">bookmark_border</span>
+                    <span class="hatim-where__label" data-i18n="community.whereTitle">Nerede kaldın?</span>
+                    <span class="hatim-where__value" id="hatimWhereValue"></span>
+                    <span class="material-icons-outlined hatim-where__chevron" aria-hidden="true">chevron_right</span>
+                </button>
                 <!-- Kişisel hatimde eksik olanı eklemek için: niyet, hedef tarih. -->
                 <div class="hatim-extras" id="hatimExtras" hidden>
                     <button type="button" class="hatim-chip" id="hatimAddIntentionBtn">
@@ -1971,6 +1978,25 @@
             </div>
             <div class="modal-body">
                 <p class="hatim-juz-state" id="hatimJuzState"></p>
+                <!-- Kişisel hatimde: kâğıt mushaftan okuyan son okuduğu sayfayı işaretler.
+                     Sayfa numarası baskıya göre değişebilir; sayfanın bittiği ayet de yazar. -->
+                <section class="hatim-juz-progress" id="hatimJuzProgress" hidden>
+                    <div class="hatim-juz-progress__head">
+                        <span data-i18n="community.readToLabel">Son okuduğun sayfa</span>
+                        <strong class="hatim-juz-progress__value" id="hatimJuzProgressValue"></strong>
+                    </div>
+                    <div class="hatim-juz-progress__control">
+                        <button type="button" class="icon-btn hatim-juz-progress__step" id="hatimJuzProgressBack" data-i18n="community.readToBack" data-i18n-attr="aria-label" aria-label="Bir sayfa geri">
+                            <span class="material-icons-outlined" aria-hidden="true">remove</span>
+                        </button>
+                        <input type="range" class="hatim-juz-progress__range" id="hatimJuzProgressRange" step="1" data-i18n="community.readToLabel" data-i18n-attr="aria-label" aria-label="Son okuduğun sayfa" />
+                        <button type="button" class="icon-btn hatim-juz-progress__step" id="hatimJuzProgressForward" data-i18n="community.readToForward" data-i18n-attr="aria-label" aria-label="Bir sayfa ileri">
+                            <span class="material-icons-outlined" aria-hidden="true">add</span>
+                        </button>
+                    </div>
+                    <p class="hatim-juz-progress__hint" id="hatimJuzProgressHint"></p>
+                    <button type="button" class="primary-btn full-width" id="hatimJuzProgressSave">Kaydet</button>
+                </section>
                 <dl class="hatim-juz-facts" id="hatimJuzFacts"></dl>
                 <div class="hatim-juz-surahs" id="hatimJuzSurahs"></div>
             </div>

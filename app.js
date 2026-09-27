@@ -178,8 +178,10 @@ import {
     HATIM_OWNER_TAKEOVER_DAYS,
     HATIM_INTENTION_MAX,
     HATIM_PLAN_MAX_DAYS,
+    currentReadingJuz,
     setHatimIntention,
-    setHatimPlan
+    setHatimPlan,
+    setJuzReadTo
 } from './lib/hatim-groups.js';
 import {
     HATIM_PLAN_PRESETS,
@@ -187,7 +189,9 @@ import {
     createHatimPlan,
     hatimPlanEndForDays,
     hatimPlanReminderSlots,
-    hatimPlanStatus
+    hatimPlanStatus,
+    juzReadPages,
+    withReadingLog
 } from './lib/hatim-plan.js';
 import { addDaysToDateKey, dateKeyOf, daysBetweenDateKeys } from './lib/date-key.js';
 import {
@@ -296,7 +300,7 @@ import {
     getVisibleSurahNumber,
     setQuranVisibleSurahChangeHandler
 } from './quran.js';
-import { getPageStartAyah } from './lib/quran-pages.js';
+import { getPageEndAyah, getPageStartAyah } from './lib/quran-pages.js';
 import { mushafPageLabel } from './lib/mushaf-page-label.js';
 import {
     getMushafNavOptsForRerender,
@@ -7215,6 +7219,9 @@ function findHatimGroup(id) {
 function commitHatimGroup(next, { defer = false } = {}) {
     const idx = hatimGroups.findIndex((g) => g.id === next.id);
     if (idx < 0) return;
+    // Kişisel hatimde okunan sayfa farkı günün okumasına yazılır: hedefin
+    // "bugün okuduğun"u buradan gelir (cüz bitirme, sayfa işareti, geri alma).
+    if (isPersonalHatim(next)) next = withReadingLog(hatimGroups[idx], next);
     hatimGroups[idx] = next;
     if (defer) scheduleSave();
     else saveData();
@@ -7637,6 +7644,9 @@ function renderHatimGroupView() {
             // Kişisel hatimde bütün cüzler kullanıcının; isim yazmak gürültü olur.
             const who =
                 personal || juz.state === JUZ_FREE ? '' : juz.byName || t('community.someone');
+            // Okunan cüzde işaretlenen sayfaya kadarı hücrenin altında çizgi.
+            const read = personal && juz.state === JUZ_CLAIMED ? juzReadPages(juz) : 0;
+            const readPct = read ? Math.round((read / (getJuzDetail(juz.n)?.pageCount || 1)) * 100) : 0;
             return `
                 <button type="button"
                     class="hatim-cell hatim-cell--${cls}${isMine ? ' hatim-cell--mine' : ''}${pending}"
@@ -7645,6 +7655,7 @@ function renderHatimGroupView() {
                     ${icon ? `<span class="hatim-cell__icon material-icons-outlined" aria-hidden="true">${icon}</span>` : ''}
                     <span class="hatim-cell__num">${juz.n}</span>
                     ${who ? `<span class="hatim-cell__name">${escapeHtml(who)}</span>` : ''}
+                    ${readPct ? `<span class="hatim-cell__bar" style="--read:${readPct}%" aria-hidden="true"></span>` : ''}
                 </button>
             `;
         })
@@ -7714,6 +7725,20 @@ function renderHatimPersonalExtras(group) {
                     : t('community.planToday', { count: status.todayTarget });
             today.classList.toggle('hatim-plan__today--done', status.todayMet);
         }
+    }
+
+    // "Nerede kaldın?": okunan cüzün penceresini açar. Bitmiş hatimde yok.
+    const whereJuz = personal && !complete ? currentReadingJuz(group) : null;
+    const whereBtn = document.getElementById('hatimWhereBtn');
+    if (whereBtn) {
+        whereBtn.hidden = !whereJuz;
+        whereBtn.dataset.juz = whereJuz ? String(whereJuz.n) : '';
+    }
+    const whereValue = document.getElementById('hatimWhereValue');
+    if (whereValue && whereJuz) {
+        whereValue.textContent = whereJuz.readTo
+            ? t('community.whereValuePage', { page: mushafPageLabel(whereJuz.readTo, appSettings.locale) })
+            : hatimJuzLabel(whereJuz.n);
     }
 
     const canAddIntention = personal && !complete && !intention;
@@ -8024,18 +8049,24 @@ function renderHatimJuzDetail() {
         `;
     }
 
+    // Kişisel hatimde bitmemiş cüzde asıl iş sayfa işaretlemek; o varken
+    // "Okumaya başla" ve "Bitirdim" ikincil düğme olur.
+    const showProgress = personal && juz.state !== JUZ_DONE && !isHatimFrozen(group);
+    renderHatimJuzProgress(showProgress ? juz : null, detail);
+
     const actions = document.getElementById('hatimJuzActions');
     if (!actions) return;
     const buttons = [];
+    const mainBtn = showProgress ? 'secondary-btn' : 'primary-btn';
     // Donmuş hatim bir kayıt: cüz durumu değişmez. Değişseydi sunucuya gider ama
     // öbür üyelerin donmuş kopyası bunu hiç görmez, hatim kimisinde bitmiş
     // kimisinde bitmemiş kalırdı. Okumak serbest — durumu değiştirmiyor.
     if (!isHatimFrozen(group)) {
         if (juz.state === JUZ_FREE) {
             const claimLabel = personal ? t('community.claimJuzPersonal') : t('community.claimJuz');
-            buttons.push(`<button type="button" class="primary-btn full-width" data-hatim-action="claim">${escapeHtml(claimLabel)}</button>`);
+            buttons.push(`<button type="button" class="${mainBtn} full-width" data-hatim-action="claim">${escapeHtml(claimLabel)}</button>`);
         } else if (juz.by === me && juz.state === JUZ_CLAIMED) {
-            buttons.push(`<button type="button" class="primary-btn full-width" data-hatim-action="complete">${escapeHtml(t('community.completeJuz'))}</button>`);
+            buttons.push(`<button type="button" class="${mainBtn} full-width" data-hatim-action="complete">${escapeHtml(t('community.completeJuz'))}</button>`);
             buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="release">${escapeHtml(t('community.releaseJuz'))}</button>`);
         } else if (juz.by === me && juz.state === JUZ_DONE) {
             buttons.push(`<button type="button" class="secondary-btn full-width" data-hatim-action="uncomplete">${escapeHtml(t('community.uncompleteJuz'))}</button>`);
@@ -8059,6 +8090,99 @@ function renderHatimJuzDetail() {
     if (hatimPendingJuz?.groupId === group.id && hatimPendingJuz.n === juz.n) {
         actions.querySelectorAll('[data-hatim-action]').forEach((btn) => {
             if (btn.dataset.hatimAction !== 'read') btn.disabled = true;
+        });
+    }
+}
+
+/* ---------- Son okunan sayfa (kişisel hatim) ---------- */
+
+/**
+ * Cüz penceresindeki sayfa kaydırıcısı. En soldaki değer (cüzün ilk
+ * sayfasından bir önce) "başlamadın" demek; en sağdaki cüzün son sayfası,
+ * kaydedince cüz biter. Kayıtlı değer `dataset.saved`'da: değişmeden Kaydet sönük.
+ * @param {object | null} juz Gösterilmeyecekse null.
+ */
+function renderHatimJuzProgress(juz, detail) {
+    const section = document.getElementById('hatimJuzProgress');
+    const range = document.getElementById('hatimJuzProgressRange');
+    if (!section || !range) return;
+    section.hidden = !juz;
+    if (!juz) return;
+    const saved = juz.state === JUZ_CLAIMED && juz.readTo ? juz.readTo : detail.startPage - 1;
+    range.min = String(detail.startPage - 1);
+    range.max = String(detail.endPage);
+    range.value = String(saved);
+    range.dataset.saved = String(saved);
+    updateHatimJuzProgressLabels();
+}
+
+/** Kaydırıcı her oynadığında: sayfa numarası, sayfanın bittiği ayet, cüzdeki ilerleme. */
+function updateHatimJuzProgressLabels() {
+    const range = document.getElementById('hatimJuzProgressRange');
+    const detail = getJuzDetail(currentHatimJuzN);
+    if (!range || !detail) return;
+    const page = Number(range.value);
+    const started = page >= detail.startPage;
+
+    const value = document.getElementById('hatimJuzProgressValue');
+    if (value) {
+        value.textContent = started
+            ? t('community.whereValuePage', { page: mushafPageLabel(page, appSettings.locale) })
+            : t('community.readToNone');
+    }
+    // Sayfa numarası baskıdan baskıya kayabilir; ayet her mushafta aynı.
+    const hint = document.getElementById('hatimJuzProgressHint');
+    if (hint) {
+        const read = started ? page - detail.startPage + 1 : 0;
+        const parts = [];
+        // Cüzün son sayfası bir sonraki cüzün başını da taşıyabilir: orada
+        // sayfanın değil cüzün bittiği ayet yazar.
+        const end = !started
+            ? null
+            : page >= detail.endPage
+              ? { s: detail.end.surah, a: detail.end.ayah }
+              : getPageEndAyah(page);
+        if (end) parts.push(t('community.readToEndsAt', { ref: `${hatimSurahName(end.s)} ${end.a}` }));
+        parts.push(t('community.readToProgress', { done: read, count: detail.pageCount }));
+        hint.textContent = parts.join(' · ');
+    }
+    const back = document.getElementById('hatimJuzProgressBack');
+    if (back) back.disabled = page <= Number(range.min);
+    const forward = document.getElementById('hatimJuzProgressForward');
+    if (forward) forward.disabled = page >= Number(range.max);
+    const save = document.getElementById('hatimJuzProgressSave');
+    if (save) {
+        save.disabled = String(page) === range.dataset.saved;
+        // Son sayfa cüzü bitirir: düğme bunu söylesin.
+        save.textContent = page >= detail.endPage ? t('community.completeJuz') : t('community.planSave');
+    }
+}
+
+function stepHatimJuzProgress(delta) {
+    const range = document.getElementById('hatimJuzProgressRange');
+    if (!range) return;
+    const next = Math.min(Number(range.max), Math.max(Number(range.min), Number(range.value) + delta));
+    range.value = String(next);
+    updateHatimJuzProgressLabels();
+}
+
+function saveHatimJuzProgress() {
+    const group = findHatimGroup(currentHatimGroupId);
+    const range = document.getElementById('hatimJuzProgressRange');
+    if (!group || !range || !isPersonalHatim(group) || isHatimFrozen(group)) return;
+    const res = setJuzReadTo(group, currentHatimJuzN, getLocalMemberId(), Number(range.value));
+    if (!res.ok) return;
+    commitHatimGroup(res.group);
+    renderHatimGroupView();
+    renderCommunityCardSummary();
+    // İşaret konunca pencerenin işi bitti: hatim ekranında bugünkü pay güncel.
+    closeHatimJuzDetail();
+    if (isHatimComplete(res.group)) {
+        requestAnimationFrame(() => {
+            document.getElementById('hatimCompleteCard')?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
         });
     }
 }
@@ -8501,6 +8625,14 @@ function setupHatimListeners() {
     document.getElementById('hatimJuzActions')?.addEventListener('click', (e) => {
         const btn = e.target.closest('[data-hatim-action]');
         if (btn) void handleHatimJuzAction(btn.dataset.hatimAction);
+    });
+    document.getElementById('hatimJuzProgressRange')?.addEventListener('input', updateHatimJuzProgressLabels);
+    document.getElementById('hatimJuzProgressBack')?.addEventListener('click', () => stepHatimJuzProgress(-1));
+    document.getElementById('hatimJuzProgressForward')?.addEventListener('click', () => stepHatimJuzProgress(1));
+    document.getElementById('hatimJuzProgressSave')?.addEventListener('click', saveHatimJuzProgress);
+    document.getElementById('hatimWhereBtn')?.addEventListener('click', (e) => {
+        const n = Number(e.currentTarget.dataset.juz);
+        if (n) openHatimJuzDetail(n);
     });
 }
 

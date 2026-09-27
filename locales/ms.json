@@ -212,7 +212,15 @@
     "planRemindOn": "Diingatkan setiap hari pada {time}",
     "planRemindDenied": "Pemberitahuan dimatikan, jadi peringatan tidak akan muncul. Anda boleh membenarkan pemberitahuan Zikirmatik dalam tetapan telefon.",
     "planRemindFailed": "Peringatan tidak dapat ditetapkan. Kemas kini aplikasi dan cuba lagi.",
-    "planNotifyBody": "Bahagian hari ini: {percent}% dibaca · baki {count} halaman"
+    "planNotifyBody": "Bahagian hari ini: {percent}% dibaca · baki {count} halaman",
+    "whereTitle": "Sampai mana bacaan anda?",
+    "whereValuePage": "Halaman {page}",
+    "readToLabel": "Halaman terakhir yang dibaca",
+    "readToNone": "Belum mula",
+    "readToEndsAt": "Halaman ini berakhir pada {ref}",
+    "readToProgress": "{done}/{count} halaman dalam juzuk ini",
+    "readToBack": "Undur satu halaman",
+    "readToForward": "Maju satu halaman"
   },
   "folder": {
     "search": "Cari",

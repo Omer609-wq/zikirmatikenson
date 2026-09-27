@@ -212,7 +212,15 @@
     "planRemindOn": "Her gün {time} hatırlatılır",
     "planRemindDenied": "Bildirim izni kapalı, hatırlatma gelmeyecek. Telefonun ayarlarından Zikirmatik'in bildirimlerine izin verebilirsin.",
     "planRemindFailed": "Hatırlatma kurulamadı. Uygulamayı güncelleyip yeniden dene.",
-    "planNotifyBody": "Bugünkü pay: %{percent} okundu · {count} sayfa kaldı"
+    "planNotifyBody": "Bugünkü pay: %{percent} okundu · {count} sayfa kaldı",
+    "whereTitle": "Nerede kaldın?",
+    "whereValuePage": "Sayfa {page}",
+    "readToLabel": "Son okuduğun sayfa",
+    "readToNone": "Başlamadın",
+    "readToEndsAt": "Bu sayfa {ref} ile biter",
+    "readToProgress": "Bu cüzde {done}/{count} sayfa",
+    "readToBack": "Bir sayfa geri",
+    "readToForward": "Bir sayfa ileri"
   },
   "folder": {
     "search": "Ara",

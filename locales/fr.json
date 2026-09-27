@@ -224,7 +224,15 @@
     "planRemindDenied": "Les notifications sont désactivées : tu ne recevras pas de rappel. Tu peux les autoriser pour Zikirmatik dans les réglages du téléphone.",
     "planRemindFailed": "Le rappel n’a pas pu être programmé. Mets l’application à jour et réessaie.",
     "planNotifyBody": "Part du jour : {percent} % lue · {count} pages restantes",
-    "planNotifyBody_one": "Part du jour : {percent} % lue · {count} page restante"
+    "planNotifyBody_one": "Part du jour : {percent} % lue · {count} page restante",
+    "whereTitle": "Où t’es-tu arrêté ?",
+    "whereValuePage": "Page {page}",
+    "readToLabel": "Dernière page lue",
+    "readToNone": "Pas commencé",
+    "readToEndsAt": "Cette page se termine par {ref}",
+    "readToProgress": "{done}/{count} pages de ce juz",
+    "readToBack": "Une page en arrière",
+    "readToForward": "Une page en avant"
   },
   "folder": {
     "search": "Rechercher",

@@ -223,7 +223,15 @@
     "planRemindDenied": "Notifications are turned off, so reminders won't arrive. You can allow notifications for Zikirmatik in your phone's settings.",
     "planRemindFailed": "The reminder couldn't be set. Update the app and try again.",
     "planNotifyBody": "Today’s share: {percent}% read · {count} pages left",
-    "planNotifyBody_one": "Today’s share: {percent}% read · {count} page left"
+    "planNotifyBody_one": "Today’s share: {percent}% read · {count} page left",
+    "whereTitle": "Where did you stop?",
+    "whereValuePage": "Page {page}",
+    "readToLabel": "Last page you read",
+    "readToNone": "Not started",
+    "readToEndsAt": "This page ends with {ref}",
+    "readToProgress": "{done}/{count} pages of this juz",
+    "readToBack": "One page back",
+    "readToForward": "One page forward"
   },
   "folder": {
     "search": "Search",

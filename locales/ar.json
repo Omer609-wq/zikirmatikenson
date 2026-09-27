@@ -264,7 +264,15 @@
     "planNotifyBody_one": "ورد اليوم: قُرئ {percent}% · بقيت صفحة واحدة",
     "planNotifyBody_two": "ورد اليوم: قُرئ {percent}% · بقيت صفحتان",
     "planNotifyBody_few": "ورد اليوم: قُرئ {percent}% · بقيت {count} صفحات",
-    "planNotifyBody_many": "ورد اليوم: قُرئ {percent}% · بقيت {count} صفحة"
+    "planNotifyBody_many": "ورد اليوم: قُرئ {percent}% · بقيت {count} صفحة",
+    "whereTitle": "أين توقفت؟",
+    "whereValuePage": "صفحة {page}",
+    "readToLabel": "آخر صفحة قرأتها",
+    "readToNone": "لم تبدأ بعد",
+    "readToEndsAt": "تنتهي هذه الصفحة عند {ref}",
+    "readToProgress": "{done}/{count} صفحة من هذا الجزء",
+    "readToBack": "صفحة إلى الوراء",
+    "readToForward": "صفحة إلى الأمام"
   },
   "folder": {
     "search": "بحث",

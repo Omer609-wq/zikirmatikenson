@@ -2808,6 +2808,63 @@ html[lang='ur'] .smart-reminder-weekday {
     display: none;
 }
 
+/* "Nerede kaldın?" — kişisel hatimde günün asıl işi: kâğıt mushafta kalınan sayfa. */
+.hatim-where {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    margin: 0 0 1rem;
+    border: 1px solid var(--hatim-claimed-border);
+    border-radius: var(--surface-radius);
+    background: var(--hatim-claimed-bg);
+    color: var(--text-white);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.hatim-where[hidden] {
+    display: none;
+}
+.hatim-where__icon {
+    flex: 0 0 auto;
+    font-size: 21px;
+    color: var(--hatim-claimed-fg);
+}
+.hatim-where__label {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: var(--text-base);
+    font-weight: 600;
+}
+.hatim-where__value {
+    flex: 0 0 auto;
+    font-size: var(--text-sm);
+    color: var(--hatim-claimed-fg);
+}
+.hatim-where__chevron {
+    flex: 0 0 auto;
+    font-size: 20px;
+    color: var(--text-gray);
+}
+
+/* Okunan cüz hücresinin altında okunan kısım. */
+.hatim-cell__bar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: var(--read, 0%);
+    background: var(--hatim-claimed-fg);
+    opacity: 0.85;
+}
+[dir="rtl"] .hatim-cell__bar {
+    left: auto;
+    right: 0;
+}
+
 /* Eksik olanı eklemek için küçük kesikli düğmeler: niyet, hedef tarih. */
 .hatim-extras {
     display: flex;
@@ -3544,6 +3601,51 @@ html[lang='ur'] .smart-reminder-weekday {
     background: var(--hatim-done-bg);
     border-color: var(--hatim-done-border);
     color: var(--hatim-done-fg);
+}
+
+/* Cüz penceresinde son okunan sayfa: kaydırıcı ve tek sayfa adımları. */
+.hatim-juz-progress {
+    margin-top: 0.85rem;
+    padding: 0.8rem 0.85rem 0.85rem;
+    border: 1px solid var(--surface-border);
+    border-radius: 12px;
+    background: var(--hatim-free-bg);
+}
+.hatim-juz-progress[hidden] {
+    display: none;
+}
+.hatim-juz-progress__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: var(--text-sm);
+    color: var(--text-gray);
+}
+.hatim-juz-progress__value {
+    font-size: var(--text-md);
+    color: var(--hatim-claimed-fg);
+}
+.hatim-juz-progress__control {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+}
+.hatim-juz-progress__step {
+    flex: 0 0 auto;
+}
+.hatim-juz-progress__range {
+    flex: 1 1 auto;
+    min-width: 0;
+    accent-color: var(--hatim-claimed-fg);
+}
+.hatim-juz-progress__hint {
+    min-height: 1.45em;
+    margin: 0.35rem 0 0.75rem;
+    font-size: var(--text-xs);
+    line-height: var(--leading-body);
+    color: var(--text-gray);
 }
 
 .hatim-juz-facts {
