@@ -3373,6 +3373,30 @@ html[lang='ur'] .smart-reminder-weekday {
     font-size: var(--text-xs);
     cursor: pointer;
 }
+/* Grup ekranının en altında: baskı farkı olan üyeye kısa açıklama. */
+.hatim-mushaf-note {
+    margin: 0.75rem 0.25rem 0;
+    font-size: var(--text-xs);
+    line-height: var(--leading-body);
+    text-align: center;
+    color: var(--text-gray);
+}
+.hatim-mushaf-note[hidden] {
+    display: none;
+}
+/* Cüz penceresinde: bu cüzün sınırı kişinin mushafından farklı. */
+.hatim-juz-note {
+    margin: 0.6rem 0 0;
+    padding: 0.55rem 0.75rem;
+    border-radius: 10px;
+    border: 1px dashed var(--hatim-claimed-border);
+    font-size: var(--text-xs);
+    line-height: var(--leading-body);
+    color: var(--text-arabic);
+}
+.hatim-juz-note[hidden] {
+    display: none;
+}
 .hatim-report-btn[hidden] {
     display: none;
 }

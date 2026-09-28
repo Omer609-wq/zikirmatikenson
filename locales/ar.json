@@ -272,7 +272,10 @@
     "readToEndsAt": "تنتهي هذه الصفحة عند {ref}",
     "readToProgress": "{done}/{count} صفحة من هذا الجزء",
     "readToBack": "صفحة إلى الوراء",
-    "readToForward": "صفحة إلى الأمام"
+    "readToForward": "صفحة إلى الأمام",
+    "groupMushafNote": "في ختمات المجموعة يبدأ كل جزء من أعلى الصفحة كما في الطبعة التركية. وحيث يختلف ذلك عن مصحفك تظهر ملاحظة في صفحة الجزء.",
+    "juzStartDiffers": "في هذه المجموعة يبدأ الجزء من {group}. في مصحفك: {mine}.",
+    "juzEndDiffers": "في هذه المجموعة ينتهي الجزء عند {group}. في مصحفك: {mine}."
   },
   "folder": {
     "search": "بحث",
@@ -503,7 +506,10 @@
     "folderAddMaxAyahs": "يمكنك إضافة 3 آيات كحد أقصى.",
     "folderAddInvalidAyah": "أدخل رقم آية صالحًا (1–{max}).",
     "prevSurahAria": "السورة السابقة",
-    "nextSurahAria": "السورة التالية"
+    "nextSurahAria": "السورة التالية",
+    "mushafEditionTitle": "طبعة المصحف",
+    "mushafEditionTurkish": "الطبعة التركية",
+    "mushafEditionMedina": "المدينة"
   },
   "settings": {
     "title": "الإعدادات",

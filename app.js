@@ -191,6 +191,8 @@ import {
     hatimPlanReminderSlots,
     hatimPlanStatus,
     juzReadPages,
+    juzReadToForPage,
+    juzReadToPage,
     withReadingLog
 } from './lib/hatim-plan.js';
 import { addDaysToDateKey, dateKeyOf, daysBetweenDateKeys } from './lib/date-key.js';
@@ -202,7 +204,13 @@ import {
 } from './lib/hatim-remote-map.js';
 import { getHatimContext, getHatimSyncAvailability, hatimSessionErrorKey } from './lib/hatim-session.js';
 import { getJuzDetail } from './lib/hatim-juz.js';
-import { setJuzLocale } from './lib/juz-boundaries.js';
+import {
+    MUSHAF_TURKISH,
+    defaultMushafForLocale,
+    getCurrentMushaf,
+    normalizeMushaf,
+    setCurrentMushaf
+} from './lib/mushaf.js';
 import { HATIM_DUA_PERSONAL, HATIM_DUA_SHARED, getHatimDua } from './lib/hatim-dua.js';
 import { maybeRequestAppReview, recordCompletedRound } from './lib/app-review.js';
 import {
@@ -301,8 +309,7 @@ import {
     getVisibleSurahNumber,
     setQuranVisibleSurahChangeHandler
 } from './quran.js';
-import { getPageEndAyah, getPageStartAyah } from './lib/quran-pages.js';
-import { mushafPageLabel } from './lib/mushaf-page-label.js';
+import { getPageStartAyah } from './lib/quran-pages.js';
 import {
     getMushafNavOptsForRerender,
     getNavOptsForSurahOpen,
@@ -933,6 +940,8 @@ function createDefaultAppSettings() {
         quranReaderLayout: 'scroll',
         quranMushafRememberPage: false,
         quranMushafSavedPage: 1,
+        /** "Mushafım": 'tr' | 'medina'; null = dile göre (Türkçede Türk baskısı). */
+        mushaf: null,
         dailyZikirGoal: 0,
         weeklyReportEnabled: true
     };
@@ -2553,11 +2562,54 @@ function syncTickSoundSettingVisibility() {
     if (!show) setTickSoundPickerOpen(false);
 }
 
+/** Kullanıcının mushafı: ayarladıysa o, yoksa dile göre. */
+function effectiveMushaf() {
+    return normalizeMushaf(appSettings.mushaf) || defaultMushafForLocale(appSettings.locale);
+}
+
+function syncMushafEditionUI() {
+    const current = effectiveMushaf();
+    document.querySelectorAll('#quranMushafEditionList [data-mushaf]').forEach((btn) => {
+        const on = btn.dataset.mushaf === current;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
+}
+
+/**
+ * "Mushafım" değişti: sayfa numaraları, cüz sınırları ve kişisel hatmin sayfa
+ * hesabı yeni baskıya göre. Açık okuyucu ve hatim ekranı yeniden çizilir.
+ */
+function setMushafEdition(mushaf) {
+    const next = normalizeMushaf(mushaf);
+    if (!next || next === effectiveMushaf()) return;
+    appSettings.mushaf = next;
+    saveData();
+    setCurrentMushaf(next);
+    syncMushafEditionUI();
+    clearQuranSurahCache();
+    const qsv = document.getElementById('quranSurahView');
+    if (qsv && qsv.classList.contains('active') && currentQuranSurahId != null) {
+        currentQuranSurahId = getActiveQuranSurahId();
+        void renderQuranSurahDetail(
+            currentQuranSurahId,
+            appSettings.quranMeal,
+            appSettings.quranReadMode,
+            null,
+            appSettings.quranReaderLayout,
+            mushafNavOptsForRerender()
+        );
+    }
+    if (currentViewId === 'hatimGroupView') renderHatimGroupView();
+    syncHatimPlanReminders().catch(console.error);
+}
+
 function applyAppLocale(locale) {
     appSettings.locale = normalizeAppLocale(locale);
-    // Cüz sınırı dile bağlı (Türk baskısında 26. cüz sayfa başından); okuyucu
-    // ve hatim çizilmeden önce seçilmeli.
-    setJuzLocale(appSettings.locale);
+    // Baskı ("Mushafım") seçilmediyse dile göre; okuyucu ve hatim çizilmeden
+    // önce seçilmeli — sayfa numarası ve cüz sınırları buna bağlı.
+    setCurrentMushaf(effectiveMushaf());
+    syncMushafEditionUI();
     // Başlık anahtarı çeviriden önce ayarlanmalı; sonra yapılırsa eski metin kalır.
     syncCommunityUI();
     applyLocaleToDocument(appSettings.locale);
@@ -7608,6 +7660,9 @@ function renderHatimGroupView() {
     if (leftDot) leftDot.hidden = !changes || changes.left.length === 0;
     const reportBtn = document.getElementById('hatimReportBtn');
     if (reportBtn) reportBtn.hidden = !remote || group.ownerId === me;
+    // Grup hatiminde cüz sınırı Türk baskısı; mushafı başka olana bir kez söylenir.
+    const mushafNote = document.getElementById('hatimMushafNote');
+    if (mushafNote) mushafNote.hidden = personal || getCurrentMushaf() === MUSHAF_TURKISH;
 
     const progress = getHatimProgress(group);
     const fill = document.getElementById('hatimSummaryFill');
@@ -7741,7 +7796,7 @@ function renderHatimPersonalExtras(group) {
     const whereValue = document.getElementById('hatimWhereValue');
     if (whereValue && whereJuz) {
         whereValue.textContent = whereJuz.readTo
-            ? t('community.whereValuePage', { page: mushafPageLabel(whereJuz.readTo, appSettings.locale) })
+            ? t('community.whereValuePage', { page: juzReadToPage(whereJuz) })
             : hatimJuzLabel(whereJuz.n);
     }
 
@@ -7987,10 +8042,45 @@ function toggleHatimDuaMeaning() {
 
 /* ---------- Cüz detayı ---------- */
 
+/**
+ * Hatmin cüz aralığı. Grup hatiminde sınır her zaman Türk baskısı — herkes
+ * aynı aralığı görsün, karışık baskılı grupta ayet arada kalmasın; sayfa
+ * numarası ise okuyanın kendi mushafı. Kişisel hatim tamamen kişinin mushafı.
+ */
+function hatimJuzDetailFor(group, juzN) {
+    return isPersonalHatim(group) ? getJuzDetail(juzN) : getJuzDetail(juzN, { juzMushaf: MUSHAF_TURKISH });
+}
+
+/**
+ * Grup hatiminde cüz sınırı kişinin mushafındakinden farklıysa (Medine'de
+ * 3/4, 6/7, 10/11, 25/26. cüzler) cüz penceresinde not. Aynıysa boş.
+ */
+function hatimJuzMushafNote(group, detail) {
+    if (isPersonalHatim(group) || getCurrentMushaf() === MUSHAF_TURKISH) return '';
+    const own = getJuzDetail(detail.juz);
+    if (!own) return '';
+    const same = (a, b) => a.surah === b.surah && a.ayah === b.ayah;
+    const notes = [];
+    if (!same(own.start, detail.start)) {
+        notes.push(t('community.juzStartDiffers', { group: hatimAyahRef(detail.start), mine: hatimAyahRef(own.start) }));
+    }
+    if (!same(own.end, detail.end)) {
+        notes.push(t('community.juzEndDiffers', { group: hatimAyahRef(detail.end), mine: hatimAyahRef(own.end) }));
+    }
+    return notes.join(' ');
+}
+
 function renderHatimJuzDetail() {
     const group = findHatimGroup(currentHatimGroupId);
-    const detail = getJuzDetail(currentHatimJuzN);
+    const detail = group ? hatimJuzDetailFor(group, currentHatimJuzN) : null;
     if (!group || !detail) return;
+
+    const mushafNote = document.getElementById('hatimJuzMushafNote');
+    if (mushafNote) {
+        const text = hatimJuzMushafNote(group, detail);
+        mushafNote.hidden = !text;
+        mushafNote.textContent = text;
+    }
 
     const juz = group.juz.find((x) => x.n === detail.juz);
     const me = hatimMemberIdFor(group);
@@ -8022,10 +8112,7 @@ function renderHatimJuzDetail() {
         const rows = [
             [t('community.factStart'), hatimAyahRef(detail.start)],
             [t('community.factEnd'), hatimAyahRef(detail.end)],
-            [
-                t('community.factPages'),
-                `${mushafPageLabel(detail.startPage, appSettings.locale)}–${mushafPageLabel(detail.endPage, appSettings.locale)}`
-            ],
+            [t('community.factPages'), `${detail.startPage}–${detail.endPage}`],
             [t('community.factAyahs'), String(detail.ayahCount)],
             [t('community.factSurahs'), String(detail.surahCount)]
         ];
@@ -8101,28 +8188,10 @@ function renderHatimJuzDetail() {
 /* ---------- Son okunan sayfa (kişisel hatim) ---------- */
 
 /**
- * Cüzün ekranda sayılan sayfaları (mushaf sayfası, 604'lük düzen).
- * Türk baskısında Fatiha ile Bakara'nın ilk sayfası tek sayfa: 1. cüzde ilk
- * sayılan sayfa ikisinin birlikte "1" olduğu sayfa, cüz de 20 sayfa.
- * `none`: kaydırıcının "başlamadın" değeri.
- */
-function hatimJuzPageBounds(detail) {
-    const label = (p) => mushafPageLabel(p, appSettings.locale);
-    const merged = label(detail.startPage) === label(detail.startPage + 1);
-    const first = merged ? detail.startPage + 1 : detail.startPage;
-    return {
-        first,
-        last: detail.endPage,
-        none: first - 1,
-        count: label(detail.endPage) - label(first) + 1,
-        read: (page) => (page >= first ? label(page) - label(first) + 1 : 0)
-    };
-}
-
-/**
- * Cüz penceresindeki sayfa kaydırıcısı. En soldaki değer (cüzün ilk
- * sayfasından bir önce) "başlamadın" demek; en sağdaki cüzün son sayfası,
- * kaydedince cüz biter. Kayıtlı değer `dataset.saved`'da: değişmeden Kaydet sönük.
+ * Cüz penceresindeki sayfa kaydırıcısı: kişinin mushafının sayfa numaraları.
+ * En soldaki değer (cüzün ilk sayfasından bir önce) "başlamadın"; en sağdaki
+ * cüzün son sayfası, kaydedince cüz biter. Kayıtlı değer `dataset.saved`'da:
+ * değişmeden Kaydet sönük.
  * @param {object | null} juz Gösterilmeyecekse null.
  */
 function renderHatimJuzProgress(juz, detail) {
@@ -8131,10 +8200,9 @@ function renderHatimJuzProgress(juz, detail) {
     if (!section || !range) return;
     section.hidden = !juz;
     if (!juz) return;
-    const bounds = hatimJuzPageBounds(detail);
-    const saved = juz.state === JUZ_CLAIMED && juz.readTo >= bounds.first ? juz.readTo : bounds.none;
-    range.min = String(bounds.none);
-    range.max = String(bounds.last);
+    const saved = juzReadToPage(juz);
+    range.min = String(detail.startPage - 1);
+    range.max = String(detail.endPage);
     range.value = String(saved);
     range.dataset.saved = String(saved);
     updateHatimJuzProgressLabels();
@@ -8146,29 +8214,26 @@ function updateHatimJuzProgressLabels() {
     const detail = getJuzDetail(currentHatimJuzN);
     if (!range || !detail) return;
     const page = Number(range.value);
-    const bounds = hatimJuzPageBounds(detail);
-    const started = page >= bounds.first;
+    const started = page >= detail.startPage;
 
     const value = document.getElementById('hatimJuzProgressValue');
     if (value) {
         value.textContent = started
-            ? t('community.whereValuePage', { page: mushafPageLabel(page, appSettings.locale) })
+            ? t('community.whereValuePage', { page })
             : t('community.readToNone');
         value.classList.toggle('hatim-juz-progress__value--none', !started);
     }
     // Sayfa numarası baskıdan baskıya kayabilir; ayet her mushafta aynı.
+    // Cüzün son sayfası bir sonraki cüzün başını taşıyabilir: orada cüzün
+    // bittiği ayet yazar.
     const hint = document.getElementById('hatimJuzProgressHint');
     if (hint) {
         const parts = [];
-        // Cüzün son sayfası bir sonraki cüzün başını da taşıyabilir: orada
-        // sayfanın değil cüzün bittiği ayet yazar.
-        const end = !started
-            ? null
-            : page >= detail.endPage
-              ? { s: detail.end.surah, a: detail.end.ayah }
-              : getPageEndAyah(page);
+        const target = started ? juzReadToForPage(detail.juz, page) : null;
+        const end = target?.complete ? { s: detail.end.surah, a: detail.end.ayah } : target?.readTo;
         if (end) parts.push(t('community.readToEndsAt', { ref: `${hatimSurahName(end.s)} ${end.a}` }));
-        parts.push(t('community.readToProgress', { done: bounds.read(page), count: bounds.count }));
+        const done = started ? page - detail.startPage + 1 : 0;
+        parts.push(t('community.readToProgress', { done, count: detail.pageCount }));
         hint.textContent = parts.join(' · ');
     }
     const back = document.getElementById('hatimJuzProgressBack');
@@ -8194,13 +8259,10 @@ function stepHatimJuzProgress(delta) {
 function saveHatimJuzProgress() {
     const group = findHatimGroup(currentHatimGroupId);
     const range = document.getElementById('hatimJuzProgressRange');
-    const detail = getJuzDetail(currentHatimJuzN);
-    if (!group || !range || !detail || !isPersonalHatim(group) || isHatimFrozen(group)) return;
-    // "Başlamadın" değeri Türk baskısının 1. cüzünde Fatiha sayfası; kayda
-    // her zaman cüzün ilk sayfasından öncesi olarak geçer.
-    const value = Number(range.value);
-    const page = value > hatimJuzPageBounds(detail).none ? value : detail.startPage - 1;
-    const res = setJuzReadTo(group, currentHatimJuzN, getLocalMemberId(), page);
+    if (!group || !range || !isPersonalHatim(group) || isHatimFrozen(group)) return;
+    // Sayfa değil o sayfanın son ayeti saklanır: baskı değişse de yer kaymaz.
+    const { complete, readTo } = juzReadToForPage(currentHatimJuzN, Number(range.value));
+    const res = setJuzReadTo(group, currentHatimJuzN, getLocalMemberId(), readTo, { complete });
     if (!res.ok) return;
     commitHatimGroup(res.group);
     renderHatimGroupView();
@@ -8237,7 +8299,7 @@ async function handleHatimJuzAction(action) {
     const me = getLocalMemberId();
 
     if (action === 'read') {
-        const detail = getJuzDetail(currentHatimJuzN);
+        const detail = hatimJuzDetailFor(group, currentHatimJuzN);
         if (!detail) return;
         closeHatimJuzDetail();
         showView('quranSurahView', { surah: detail.start.surah, ayah: detail.start.ayah });
@@ -8660,6 +8722,10 @@ function setupHatimListeners() {
     document.getElementById('hatimJuzProgressBack')?.addEventListener('click', () => stepHatimJuzProgress(-1));
     document.getElementById('hatimJuzProgressForward')?.addEventListener('click', () => stepHatimJuzProgress(1));
     document.getElementById('hatimJuzProgressSave')?.addEventListener('click', saveHatimJuzProgress);
+    document.getElementById('quranMushafEditionList')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-mushaf]');
+        if (btn) setMushafEdition(btn.dataset.mushaf);
+    });
     document.getElementById('hatimWhereBtn')?.addEventListener('click', (e) => {
         const n = Number(e.currentTarget.dataset.juz);
         if (n) openHatimJuzDetail(n);

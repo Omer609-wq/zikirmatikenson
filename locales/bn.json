@@ -220,7 +220,10 @@
     "readToEndsAt": "এই পৃষ্ঠা শেষ হয় {ref}-এ",
     "readToProgress": "এই পারায় {done}/{count} পৃষ্ঠা",
     "readToBack": "এক পৃষ্ঠা পেছনে",
-    "readToForward": "এক পৃষ্ঠা সামনে"
+    "readToForward": "এক পৃষ্ঠা সামনে",
+    "groupMushafNote": "গ্রুপ খতমে প্রতিটি পারা তুর্কি ছাপার মতো পৃষ্ঠার শুরু থেকে শুরু হয়। তোমার মুসহাফের সাথে পার্থক্য থাকলে পারার পৃষ্ঠায় একটি নোট দেখবে।",
+    "juzStartDiffers": "এই গ্রুপে পারা শুরু হয় {group} থেকে। তোমার মুসহাফে: {mine}।",
+    "juzEndDiffers": "এই গ্রুপে পারা শেষ হয় {group}-এ। তোমার মুসহাফে: {mine}।"
   },
   "folder": {
     "search": "খুঁজুন",
@@ -420,7 +423,10 @@
     "folderAddMaxAyahs": "সর্বোচ্চ ৩টি আয়াত যোগ করতে পারেন।",
     "folderAddInvalidAyah": "বৈধ আয়াত নম্বর লিখুন (1–{max})।",
     "prevSurahAria": "পূর্ববর্তী সূরা",
-    "nextSurahAria": "পরবর্তী সূরা"
+    "nextSurahAria": "পরবর্তী সূরা",
+    "mushafEditionTitle": "মুসহাফের সংস্করণ",
+    "mushafEditionTurkish": "তুর্কি ছাপা",
+    "mushafEditionMedina": "মদিনা"
   },
   "settings": {
     "title": "সেটিংস",

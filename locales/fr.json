@@ -232,7 +232,10 @@
     "readToEndsAt": "Cette page se termine par {ref}",
     "readToProgress": "{done}/{count} pages de ce juz",
     "readToBack": "Une page en arrière",
-    "readToForward": "Une page en avant"
+    "readToForward": "Une page en avant",
+    "groupMushafNote": "Dans les khatms de groupe, chaque juz commence en haut de page, comme dans l’édition turque. Là où ton mushaf diffère, une note apparaît sur la page du juz.",
+    "juzStartDiffers": "Dans ce groupe, le juz commence à {group}. Dans ton mushaf : {mine}.",
+    "juzEndDiffers": "Dans ce groupe, le juz se termine à {group}. Dans ton mushaf : {mine}."
   },
   "folder": {
     "search": "Rechercher",
@@ -435,7 +438,10 @@
     "folderAddMaxAyahs": "Vous pouvez ajouter au maximum 3 versets.",
     "folderAddInvalidAyah": "Saisissez un numéro de verset valide (1–{max}).",
     "prevSurahAria": "Sourate précédente",
-    "nextSurahAria": "Sourate suivante"
+    "nextSurahAria": "Sourate suivante",
+    "mushafEditionTitle": "Édition du mushaf",
+    "mushafEditionTurkish": "Édition turque",
+    "mushafEditionMedina": "Médine"
   },
   "settings": {
     "title": "Paramètres",

@@ -225,7 +225,10 @@
     "readToEndsAt": "یہ صفحہ {ref} پر ختم ہوتا ہے",
     "readToProgress": "اس پارے کے {done}/{count} صفحات",
     "readToBack": "ایک صفحہ پیچھے",
-    "readToForward": "ایک صفحہ آگے"
+    "readToForward": "ایک صفحہ آگے",
+    "groupMushafNote": "گروپ ختم میں ہر پارہ ترکی طباعت کی طرح صفحے کے شروع سے شروع ہوتا ہے۔ جہاں آپ کے مصحف سے فرق ہو، پارے کے صفحے پر نوٹ نظر آئے گا۔",
+    "juzStartDiffers": "اس گروپ میں پارہ {group} سے شروع ہوتا ہے۔ آپ کے مصحف میں: {mine}۔",
+    "juzEndDiffers": "اس گروپ میں پارہ {group} پر ختم ہوتا ہے۔ آپ کے مصحف میں: {mine}۔"
   },
   "folder": {
     "search": "تلاش",
@@ -425,7 +428,10 @@
     "folderAddMaxAyahs": "زیادہ سے زیادہ ۳ آیات شامل کر سکتے ہیں۔",
     "folderAddInvalidAyah": "درست آیت نمبر (۱–{max}) درج کریں۔",
     "prevSurahAria": "پچھلی سورت",
-    "nextSurahAria": "اگلی سورت"
+    "nextSurahAria": "اگلی سورت",
+    "mushafEditionTitle": "مصحف کی طباعت",
+    "mushafEditionTurkish": "ترکی طباعت",
+    "mushafEditionMedina": "مدینہ"
   },
   "settings": {
     "title": "ترتیبات",

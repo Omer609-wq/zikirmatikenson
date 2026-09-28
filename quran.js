@@ -1522,7 +1522,7 @@ function formatMushafMetaLine(pageNum) {
     const ayahs = listAyahsOnPage(page);
     const juz = ayahs.length ? getJuzForAyah(ayahs[0].s, ayahs[0].a) : 1;
     const juzPart = t('quran.mushafMetaJuz', { n: juz });
-    const pagePart = t('quran.mushafMetaPage', { n: mushafPageLabel(page, locale) });
+    const pagePart = t('quran.mushafMetaPage', { n: mushafPageLabel(page) });
     const surahPart = getPageSegments(page)
         .map((seg) => {
             const meta = surahMeta(seg.s);
@@ -1772,7 +1772,7 @@ async function populateMushafPageContent(parts, pageNum, meal, readMode) {
     parts.head.replaceChildren();
     parts.body.replaceChildren();
     parts.subs.replaceChildren();
-    if (parts.foot) parts.foot.textContent = toArabicIndicNumber(mushafPageLabel(page, locale));
+    if (parts.foot) parts.foot.textContent = toArabicIndicNumber(mushafPageLabel(page));
 
     const firstSeg = segments[0];
     if (firstSeg) {

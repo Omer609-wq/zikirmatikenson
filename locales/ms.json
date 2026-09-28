@@ -220,7 +220,10 @@
     "readToEndsAt": "Halaman ini berakhir pada {ref}",
     "readToProgress": "{done}/{count} halaman dalam juzuk ini",
     "readToBack": "Undur satu halaman",
-    "readToForward": "Maju satu halaman"
+    "readToForward": "Maju satu halaman",
+    "groupMushafNote": "Dalam khatam kumpulan, setiap juzuk bermula di awal halaman seperti cetakan Turki. Jika berbeza dengan mushaf anda, ada nota di halaman juzuk.",
+    "juzStartDiffers": "Dalam kumpulan ini juzuk bermula pada {group}. Dalam mushaf anda: {mine}.",
+    "juzEndDiffers": "Dalam kumpulan ini juzuk berakhir pada {group}. Dalam mushaf anda: {mine}."
   },
   "folder": {
     "search": "Cari",
@@ -420,7 +423,10 @@
     "folderAddMaxAyahs": "Anda boleh tambah maksimum 3 ayat.",
     "folderAddInvalidAyah": "Masukkan nombor ayat yang sah (1–{max}).",
     "prevSurahAria": "Surah sebelumnya",
-    "nextSurahAria": "Surah seterusnya"
+    "nextSurahAria": "Surah seterusnya",
+    "mushafEditionTitle": "Edisi mushaf",
+    "mushafEditionTurkish": "Cetakan Turki",
+    "mushafEditionMedina": "Madinah"
   },
   "settings": {
     "title": "Tetapan",

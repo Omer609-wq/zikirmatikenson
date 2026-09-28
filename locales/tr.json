@@ -220,7 +220,10 @@
     "readToEndsAt": "Bu sayfa {ref} ile biter",
     "readToProgress": "Bu cüzde {done}/{count} sayfa",
     "readToBack": "Bir sayfa geri",
-    "readToForward": "Bir sayfa ileri"
+    "readToForward": "Bir sayfa ileri",
+    "groupMushafNote": "Grup hatimlerinde cüzler Türk baskısına göre sayfa başından başlar. Mushafından farklı olan cüzlerde cüz sayfasında not görürsün.",
+    "juzStartDiffers": "Bu grupta cüz {group} ile başlıyor. Senin mushafında: {mine}.",
+    "juzEndDiffers": "Bu grupta cüz {group} ile bitiyor. Senin mushafında: {mine}."
   },
   "folder": {
     "search": "Ara",
@@ -420,7 +423,10 @@
     "folderAddMaxAyahs": "En fazla 3 ayet ekleyebilirsiniz.",
     "folderAddInvalidAyah": "Geçerli ayet numarası girin (1–{max}).",
     "prevSurahAria": "Önceki sure",
-    "nextSurahAria": "Sonraki sure"
+    "nextSurahAria": "Sonraki sure",
+    "mushafEditionTitle": "Mushaf baskısı",
+    "mushafEditionTurkish": "Türk baskısı",
+    "mushafEditionMedina": "Medine"
   },
   "settings": {
     "title": "Ayarlar",

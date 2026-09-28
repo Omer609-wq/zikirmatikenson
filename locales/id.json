@@ -220,7 +220,10 @@
     "readToEndsAt": "Halaman ini berakhir di {ref}",
     "readToProgress": "{done}/{count} halaman di juz ini",
     "readToBack": "Mundur satu halaman",
-    "readToForward": "Maju satu halaman"
+    "readToForward": "Maju satu halaman",
+    "groupMushafNote": "Dalam khataman grup, setiap juz dimulai di awal halaman seperti cetakan Turki. Jika berbeda dengan mushafmu, ada catatan di halaman juz.",
+    "juzStartDiffers": "Di grup ini juz dimulai dari {group}. Di mushafmu: {mine}.",
+    "juzEndDiffers": "Di grup ini juz berakhir di {group}. Di mushafmu: {mine}."
   },
   "folder": {
     "search": "Cari",
@@ -420,7 +423,10 @@
     "folderAddMaxAyahs": "Anda dapat menambahkan maksimal 3 ayat.",
     "folderAddInvalidAyah": "Masukkan nomor ayat yang valid (1–{max}).",
     "prevSurahAria": "Surah sebelumnya",
-    "nextSurahAria": "Surah berikutnya"
+    "nextSurahAria": "Surah berikutnya",
+    "mushafEditionTitle": "Edisi mushaf",
+    "mushafEditionTurkish": "Cetakan Turki",
+    "mushafEditionMedina": "Madinah"
   },
   "settings": {
     "title": "Pengaturan",

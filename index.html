@@ -288,6 +288,8 @@
                     <span class="material-icons-outlined" aria-hidden="true">flag</span>
                     <span data-i18n="community.reportGroup">Grubu şikâyet et</span>
                 </button>
+                <!-- Grup hatiminde, mushafı Türk baskısı olmayanlara: cüz sınırları farklı olabilir. -->
+                <p class="hatim-mushaf-note" id="hatimMushafNote" data-i18n="community.groupMushafNote" hidden>Grup hatimlerinde cüzler Türk baskısına göre sayfa başından başlar. Mushafından farklı olan cüzlerde cüz sayfasında not görürsün.</p>
             </section>
         </div>
 
@@ -882,6 +884,16 @@
                         </button>
                         <button type="button" class="quran-read-mode-option" data-reader-layout="mushaf" role="radio" aria-checked="false">
                             <span class="quran-read-mode-option__label" data-i18n="quran.readerLayoutMushaf">Mushaf sayfa</span>
+                        </button>
+                    </div>
+                    <!-- Sayfa numaraları ve cüz sınırları hangi baskıya göre; kişisel hatim de bunu kullanır. -->
+                    <h2 id="quranMushafEditionTitle" class="quran-reader-drawer__title quran-reader-drawer__title--section" data-i18n="quran.mushafEditionTitle">Mushaf baskısı</h2>
+                    <div class="quran-read-mode-list quran-read-mode-list--seg" id="quranMushafEditionList" role="radiogroup" aria-labelledby="quranMushafEditionTitle">
+                        <button type="button" class="quran-read-mode-option" data-mushaf="tr" role="radio" aria-checked="false">
+                            <span class="quran-read-mode-option__label" data-i18n="quran.mushafEditionTurkish">Türk baskısı</span>
+                        </button>
+                        <button type="button" class="quran-read-mode-option" data-mushaf="medina" role="radio" aria-checked="false">
+                            <span class="quran-read-mode-option__label" data-i18n="quran.mushafEditionMedina">Medine</span>
                         </button>
                     </div>
                 </aside>
@@ -1978,6 +1990,8 @@
             </div>
             <div class="modal-body">
                 <p class="hatim-juz-state" id="hatimJuzState"></p>
+                <!-- Grup hatiminde cüz sınırı kişinin mushafındakinden farklıysa. -->
+                <p class="hatim-juz-note" id="hatimJuzMushafNote" hidden></p>
                 <!-- Kişisel hatimde: kâğıt mushaftan okuyan son okuduğu sayfayı işaretler.
                      Sayfa numarası baskıya göre değişebilir; sayfanın bittiği ayet de yazar. -->
                 <section class="hatim-juz-progress" id="hatimJuzProgress" hidden>
