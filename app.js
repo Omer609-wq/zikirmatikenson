@@ -205,9 +205,12 @@ import {
 import { getHatimContext, getHatimSyncAvailability, hatimSessionErrorKey } from './lib/hatim-session.js';
 import { getJuzDetail } from './lib/hatim-juz.js';
 import {
+    MUSHAF_MEDINA,
     MUSHAF_TURKISH,
     defaultMushafForLocale,
     getCurrentMushaf,
+    mushafPage,
+    mushafPageOfAyah,
     normalizeMushaf,
     setCurrentMushaf
 } from './lib/mushaf.js';
@@ -940,6 +943,8 @@ function createDefaultAppSettings() {
         quranReaderLayout: 'scroll',
         quranMushafRememberPage: false,
         quranMushafSavedPage: 1,
+        /** Kayıtlı sayfanın hangi baskının numarası olduğu; eski kayıtlarda yok (Medine). */
+        quranMushafSavedPageMushaf: null,
         /** "Mushafım": 'tr' | 'medina'; null = dile göre (Türkçede Türk baskısı). */
         mushaf: null,
         dailyZikirGoal: 0,
@@ -2577,29 +2582,58 @@ function syncMushafEditionUI() {
 }
 
 /**
- * "Mushafım" değişti: sayfa numaraları, cüz sınırları ve kişisel hatmin sayfa
- * hesabı yeni baskıya göre. Açık okuyucu ve hatim ekranı yeniden çizilir.
+ * Seçili baskıyı uygular. Okuyucunun sayfaları o baskının sayfaları olduğu
+ * için sayfa numarası anlam değiştirir (Türk sayfa N = Medine N+1): kayıtlı
+ * "kaldığım sayfa" aynı ayetin yeni baskıdaki sayfasına taşınır. Eski
+ * kayıtların baskısı yazılı değil; onlar Medine sayfasıydı.
+ *
+ * @returns {{ s: number, a: number } | null} Baskı değiştiyse ve mushaf
+ *   sayfası açıksa, açık sayfanın ilk ayeti — okuyucu aynı yerde açılsın diye.
+ */
+function applyMushafEdition(next) {
+    const prev = getCurrentMushaf();
+    const openPage = appSettings.quranReaderLayout === 'mushaf' ? getMushafCurrentPage() : 0;
+    const anchor = prev !== next && openPage >= 1 ? mushafPage(openPage, prev)?.first || null : null;
+    setCurrentMushaf(next);
+    syncMushafEditionUI();
+
+    const savedIn = normalizeMushaf(appSettings.quranMushafSavedPageMushaf) || MUSHAF_MEDINA;
+    if (savedIn !== next) {
+        const first = mushafPage(Number(appSettings.quranMushafSavedPage) || 1, savedIn)?.first;
+        if (first) appSettings.quranMushafSavedPage = mushafPageOfAyah(first.s, first.a, next);
+        appSettings.quranMushafSavedPageMushaf = next;
+        saveData();
+    }
+    return anchor;
+}
+
+/** Açık okuyucuyu yeniden çizer; baskı değiştiyse açık sayfanın ilk ayetinde. */
+function rerenderOpenQuranReader(anchor = null) {
+    const qsv = document.getElementById('quranSurahView');
+    if (!qsv || !qsv.classList.contains('active') || currentQuranSurahId == null) return;
+    currentQuranSurahId = anchor ? anchor.s : getActiveQuranSurahId();
+    void renderQuranSurahDetail(
+        currentQuranSurahId,
+        appSettings.quranMeal,
+        appSettings.quranReadMode,
+        anchor ? anchor.a : null,
+        appSettings.quranReaderLayout,
+        anchor ? {} : mushafNavOptsForRerender()
+    );
+}
+
+/**
+ * "Mushafım" değişti: okuyucunun sayfaları, sayfa numaraları, cüz sınırları
+ * ve kişisel hatmin sayfa hesabı yeni baskıya göre.
  */
 function setMushafEdition(mushaf) {
     const next = normalizeMushaf(mushaf);
     if (!next || next === effectiveMushaf()) return;
     appSettings.mushaf = next;
     saveData();
-    setCurrentMushaf(next);
-    syncMushafEditionUI();
+    const anchor = applyMushafEdition(next);
     clearQuranSurahCache();
-    const qsv = document.getElementById('quranSurahView');
-    if (qsv && qsv.classList.contains('active') && currentQuranSurahId != null) {
-        currentQuranSurahId = getActiveQuranSurahId();
-        void renderQuranSurahDetail(
-            currentQuranSurahId,
-            appSettings.quranMeal,
-            appSettings.quranReadMode,
-            null,
-            appSettings.quranReaderLayout,
-            mushafNavOptsForRerender()
-        );
-    }
+    rerenderOpenQuranReader(anchor);
     if (currentViewId === 'hatimGroupView') renderHatimGroupView();
     syncHatimPlanReminders().catch(console.error);
 }
@@ -2607,9 +2641,8 @@ function setMushafEdition(mushaf) {
 function applyAppLocale(locale) {
     appSettings.locale = normalizeAppLocale(locale);
     // Baskı ("Mushafım") seçilmediyse dile göre; okuyucu ve hatim çizilmeden
-    // önce seçilmeli — sayfa numarası ve cüz sınırları buna bağlı.
-    setCurrentMushaf(effectiveMushaf());
-    syncMushafEditionUI();
+    // önce seçilmeli — sayfalar, sayfa numarası ve cüz sınırları buna bağlı.
+    const readerAnchor = applyMushafEdition(effectiveMushaf());
     // Başlık anahtarı çeviriden önce ayarlanmalı; sonra yapılırsa eski metin kalır.
     syncCommunityUI();
     applyLocaleToDocument(appSettings.locale);
@@ -2630,18 +2663,7 @@ function applyAppLocale(locale) {
             renderQuranSurahList();
         }
     }
-    const qsv = document.getElementById('quranSurahView');
-    if (qsv && qsv.classList.contains('active') && currentQuranSurahId != null) {
-        currentQuranSurahId = getActiveQuranSurahId();
-        void renderQuranSurahDetail(
-            currentQuranSurahId,
-            appSettings.quranMeal,
-            appSettings.quranReadMode,
-            null,
-            appSettings.quranReaderLayout,
-            mushafNavOptsForRerender()
-        );
-    }
+    rerenderOpenQuranReader(readerAnchor);
     const statsView = document.getElementById('statsView');
     if (statsView && !statsView.classList.contains('hidden')) renderStats();
     if (zikirStatsOverlay && zikirStatsOverlay.classList.contains('active')) renderZikirStats();
@@ -10830,6 +10852,8 @@ function setupEventListeners() {
         onPageSaved: (page) => {
             const p = Math.max(1, Math.min(604, Number(page) || 1));
             appSettings.quranMushafSavedPage = p;
+            // Sayfa numarası baskıya bağlı: hangi baskının sayfası olduğu da yazılır.
+            appSettings.quranMushafSavedPageMushaf = getCurrentMushaf();
             saveData();
         }
     });
