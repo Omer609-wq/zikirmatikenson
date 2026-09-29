@@ -2710,6 +2710,34 @@ html[lang='ur'] .smart-reminder-weekday {
     display: none;
 }
 
+/* Kişisel hatmin baskısı: tarihin altında küçük satır. Okumaya başlanınca
+   değiştirme işareti gizlenir (dokununca neden değişmediği söylenir). */
+.hatim-edition {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    margin: -0.55rem auto 0.7rem;
+    padding: 0.2rem 0.5rem;
+    background: none;
+    border: 0;
+    color: var(--text-gray);
+    font: inherit;
+    font-size: var(--text-xs);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.hatim-edition[hidden] {
+    display: none;
+}
+.hatim-edition__icon,
+.hatim-edition__swap {
+    font-size: 15px;
+}
+.hatim-edition--locked .hatim-edition__swap {
+    display: none;
+}
+
 /* Kişisel hatmin niyeti: tarihin altında, ortada. Metin gibi durur, dokununca
    değişir; kalem bunun ipucu. Hatim bitince tebrik kartına geçer. */
 .hatim-intention {

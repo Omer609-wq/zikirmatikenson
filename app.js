@@ -179,6 +179,9 @@ import {
     HATIM_INTENTION_MAX,
     HATIM_PLAN_MAX_DAYS,
     currentReadingJuz,
+    hatimHasProgress,
+    hatimMushafOf,
+    setHatimMushaf,
     setHatimIntention,
     setHatimPlan,
     setJuzReadTo
@@ -2572,6 +2575,21 @@ function effectiveMushaf() {
     return normalizeMushaf(appSettings.mushaf) || defaultMushafForLocale(appSettings.locale);
 }
 
+/**
+ * Baskısı yazılı olmayan kişisel hatimlere (bu alandan önce kurulanlar) o
+ * anki "Mushafım" yazılır; bundan sonra genel ayar değişse de kaymazlar.
+ * @returns {boolean} bir şey değişti mi
+ */
+function assignPersonalHatimMushafs() {
+    let changed = false;
+    hatimGroups = hatimGroups.map((g) => {
+        if (!isPersonalHatim(g) || normalizeMushaf(g.mushaf)) return g;
+        changed = true;
+        return { ...g, mushaf: effectiveMushaf() };
+    });
+    return changed;
+}
+
 function syncMushafEditionUI() {
     const current = effectiveMushaf();
     document.querySelectorAll('#quranMushafEditionList [data-mushaf]').forEach((btn) => {
@@ -2830,6 +2848,7 @@ function loadData() {
         // Ordering (folders + zikirs)
         let touched = false;
         if (ensureInstalledAt()) touched = true;
+        if (assignPersonalHatimMushafs()) touched = true;
         folders.forEach((f, idx) => {
             if (typeof f.order !== 'number') { f.order = idx; touched = true; }
         });
@@ -4422,6 +4441,7 @@ function applySanitizedBackupToApp(sanitized) {
     lifetimeTotal = sanitized.lifetimeTotal || 0;
     lifetimeByZikir = sanitized.lifetimeByZikir || {};
     hatimGroups = sanitized.hatimGroups || [];
+    assignPersonalHatimMushafs();
     entitlements = localEntitlements;
     if (localCloudBackup) patchCloudBackupMeta(localCloudBackup);
 
@@ -7726,8 +7746,8 @@ function renderHatimGroupView() {
             const who =
                 personal || juz.state === JUZ_FREE ? '' : juz.byName || t('community.someone');
             // Okunan cüzde işaretlenen sayfaya kadarı hücrenin altında çizgi.
-            const read = personal && juz.state === JUZ_CLAIMED ? juzReadPages(juz) : 0;
-            const readPct = read ? Math.round((read / (getJuzDetail(juz.n)?.pageCount || 1)) * 100) : 0;
+            const read = personal && juz.state === JUZ_CLAIMED ? juzReadPages(juz, hatimMushafOf(group)) : 0;
+            const readPct = read ? Math.round((read / (hatimJuzDetailFor(group, juz.n)?.pageCount || 1)) * 100) : 0;
             return `
                 <button type="button"
                     class="hatim-cell hatim-cell--${cls}${isMine ? ' hatim-cell--mine' : ''}${pending}"
@@ -7818,8 +7838,27 @@ function renderHatimPersonalExtras(group) {
     const whereValue = document.getElementById('hatimWhereValue');
     if (whereValue && whereJuz) {
         whereValue.textContent = whereJuz.readTo
-            ? t('community.whereValuePage', { page: juzReadToPage(whereJuz) })
+            ? t('community.whereValuePage', { page: juzReadToPage(whereJuz, hatimMushafOf(group)) })
             : hatimJuzLabel(whereJuz.n);
+    }
+
+    // Hatmin baskısı: hatim boyunca sabit, okumaya başlanmadıysa dokununca değişir.
+    const editionBtn = document.getElementById('hatimEditionBtn');
+    if (editionBtn) {
+        editionBtn.hidden = !personal || complete;
+        const edition = hatimMushafOf(group);
+        const text = document.getElementById('hatimEditionText');
+        if (text) {
+            text.textContent = t(
+                edition === MUSHAF_TURKISH ? 'community.hatimEditionTurkish' : 'community.hatimEditionMedina'
+            );
+        }
+        const changeable = !hatimHasProgress(group);
+        editionBtn.classList.toggle('hatim-edition--locked', !changeable);
+        editionBtn.setAttribute(
+            'aria-label',
+            changeable ? `${text?.textContent || ''}. ${t('community.hatimEditionChange')}` : text?.textContent || ''
+        );
     }
 
     const canAddIntention = personal && !complete && !intention;
@@ -8070,7 +8109,26 @@ function toggleHatimDuaMeaning() {
  * numarası ise okuyanın kendi mushafı. Kişisel hatim tamamen kişinin mushafı.
  */
 function hatimJuzDetailFor(group, juzN) {
-    return isPersonalHatim(group) ? getJuzDetail(juzN) : getJuzDetail(juzN, { juzMushaf: MUSHAF_TURKISH });
+    if (!isPersonalHatim(group)) return getJuzDetail(juzN, { juzMushaf: MUSHAF_TURKISH });
+    const mushaf = hatimMushafOf(group);
+    return getJuzDetail(juzN, { juzMushaf: mushaf, pageMushaf: mushaf });
+}
+
+/**
+ * Hatim satırındaki baskıya dokunuş: okumaya başlanmadıysa öbür baskıya geçer,
+ * başlandıysa neden değişmediği söylenir.
+ */
+function handleHatimEditionTap() {
+    const group = findHatimGroup(currentHatimGroupId);
+    if (!group || !isPersonalHatim(group)) return;
+    const next = hatimMushafOf(group) === MUSHAF_TURKISH ? MUSHAF_MEDINA : MUSHAF_TURKISH;
+    const res = setHatimMushaf(group, next);
+    if (!res.ok) {
+        if (res.reason === 'started') showTransientNote(t('community.hatimEditionLocked'), 3200);
+        return;
+    }
+    commitHatimGroup(res.group);
+    renderHatimGroupView();
 }
 
 /**
@@ -8222,7 +8280,7 @@ function renderHatimJuzProgress(juz, detail) {
     if (!section || !range) return;
     section.hidden = !juz;
     if (!juz) return;
-    const saved = juzReadToPage(juz);
+    const saved = juzReadToPage(juz, hatimMushafOf(findHatimGroup(currentHatimGroupId)));
     range.min = String(detail.startPage - 1);
     range.max = String(detail.endPage);
     range.value = String(saved);
@@ -8233,8 +8291,10 @@ function renderHatimJuzProgress(juz, detail) {
 /** Kaydırıcı her oynadığında: sayfa numarası, sayfanın bittiği ayet, cüzdeki ilerleme. */
 function updateHatimJuzProgressLabels() {
     const range = document.getElementById('hatimJuzProgressRange');
-    const detail = getJuzDetail(currentHatimJuzN);
+    const group = findHatimGroup(currentHatimGroupId);
+    const detail = group ? hatimJuzDetailFor(group, currentHatimJuzN) : null;
     if (!range || !detail) return;
+    const mushaf = hatimMushafOf(group);
     const page = Number(range.value);
     const started = page >= detail.startPage;
 
@@ -8251,7 +8311,7 @@ function updateHatimJuzProgressLabels() {
     const hint = document.getElementById('hatimJuzProgressHint');
     if (hint) {
         const parts = [];
-        const target = started ? juzReadToForPage(detail.juz, page) : null;
+        const target = started ? juzReadToForPage(detail.juz, page, mushaf) : null;
         const end = target?.complete ? { s: detail.end.surah, a: detail.end.ayah } : target?.readTo;
         if (end) parts.push(t('community.readToEndsAt', { ref: `${hatimSurahName(end.s)} ${end.a}` }));
         const done = started ? page - detail.startPage + 1 : 0;
@@ -8283,7 +8343,7 @@ function saveHatimJuzProgress() {
     const range = document.getElementById('hatimJuzProgressRange');
     if (!group || !range || !isPersonalHatim(group) || isHatimFrozen(group)) return;
     // Sayfa değil o sayfanın son ayeti saklanır: baskı değişse de yer kaymaz.
-    const { complete, readTo } = juzReadToForPage(currentHatimJuzN, Number(range.value));
+    const { complete, readTo } = juzReadToForPage(currentHatimJuzN, Number(range.value), hatimMushafOf(group));
     const res = setJuzReadTo(group, currentHatimJuzN, getLocalMemberId(), readTo, { complete });
     if (!res.ok) return;
     commitHatimGroup(res.group);
@@ -8422,11 +8482,13 @@ async function handleCreateHatimGroup() {
 /** Kişisel hatim: ad sorulmaz, kod gösterilmez — tek dokunuşla başlar. */
 async function handleCreatePersonalHatim() {
     if (isHatimLimitReached(hatimGroups, HATIM_KIND_PERSONAL)) return;
+    // Hatim o anki "Mushafım" ile başlar ve bitene kadar ona bağlı kalır.
     const group = createHatimGroup({
         name: nextPersonalHatimName(),
         kind: HATIM_KIND_PERSONAL,
         ownerId: getLocalMemberId(),
-        order: hatimGroups.length
+        order: hatimGroups.length,
+        mushaf: effectiveMushaf()
     });
     hatimGroups.push(group);
     saveData();
@@ -8744,6 +8806,7 @@ function setupHatimListeners() {
     document.getElementById('hatimJuzProgressBack')?.addEventListener('click', () => stepHatimJuzProgress(-1));
     document.getElementById('hatimJuzProgressForward')?.addEventListener('click', () => stepHatimJuzProgress(1));
     document.getElementById('hatimJuzProgressSave')?.addEventListener('click', saveHatimJuzProgress);
+    document.getElementById('hatimEditionBtn')?.addEventListener('click', handleHatimEditionTap);
     document.getElementById('quranMushafEditionList')?.addEventListener('click', (e) => {
         const btn = e.target.closest('[data-mushaf]');
         if (btn) setMushafEdition(btn.dataset.mushaf);

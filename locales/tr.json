@@ -223,7 +223,11 @@
     "readToForward": "Bir sayfa ileri",
     "groupMushafNote": "Grup hatimlerinde cüzler Türk baskısına göre sayfa başından başlar. Mushafından farklı olan cüzlerde cüz sayfasında not görürsün.",
     "juzStartDiffers": "Bu grupta cüz {group} ile başlıyor. Senin mushafında: {mine}.",
-    "juzEndDiffers": "Bu grupta cüz {group} ile bitiyor. Senin mushafında: {mine}."
+    "juzEndDiffers": "Bu grupta cüz {group} ile bitiyor. Senin mushafında: {mine}.",
+    "hatimEditionTurkish": "Türk baskısına göre",
+    "hatimEditionMedina": "Medine mushafına göre",
+    "hatimEditionChange": "Baskıyı değiştir",
+    "hatimEditionLocked": "Okumaya başladıktan sonra hatmin baskısı değişmez. Mushaf ayarı yeni hatimlerde geçerli olur."
   },
   "folder": {
     "search": "Ara",

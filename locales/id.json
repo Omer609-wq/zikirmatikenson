@@ -223,7 +223,11 @@
     "readToForward": "Maju satu halaman",
     "groupMushafNote": "Dalam khataman grup, setiap juz dimulai di awal halaman seperti cetakan Turki. Jika berbeda dengan mushafmu, ada catatan di halaman juz.",
     "juzStartDiffers": "Di grup ini juz dimulai dari {group}. Di mushafmu: {mine}.",
-    "juzEndDiffers": "Di grup ini juz berakhir di {group}. Di mushafmu: {mine}."
+    "juzEndDiffers": "Di grup ini juz berakhir di {group}. Di mushafmu: {mine}.",
+    "hatimEditionTurkish": "Mengikuti cetakan Turki",
+    "hatimEditionMedina": "Mengikuti mushaf Madinah",
+    "hatimEditionChange": "Ganti edisi",
+    "hatimEditionLocked": "Setelah mulai membaca, edisi khataman tidak berubah. Pengaturan mushaf berlaku untuk khataman baru."
   },
   "folder": {
     "search": "Cari",

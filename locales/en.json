@@ -234,7 +234,11 @@
     "readToForward": "One page forward",
     "groupMushafNote": "In group hatims, each juz starts at the top of a page, as in the Turkish print. Where this differs from your mushaf, the juz page shows a note.",
     "juzStartDiffers": "In this group the juz starts at {group}. In your mushaf: {mine}.",
-    "juzEndDiffers": "In this group the juz ends at {group}. In your mushaf: {mine}."
+    "juzEndDiffers": "In this group the juz ends at {group}. In your mushaf: {mine}.",
+    "hatimEditionTurkish": "Following the Turkish print",
+    "hatimEditionMedina": "Following the Medina mushaf",
+    "hatimEditionChange": "Change edition",
+    "hatimEditionLocked": "Once you start reading, the hatim's edition stays the same. Your mushaf setting applies to new hatims."
   },
   "folder": {
     "search": "Search",

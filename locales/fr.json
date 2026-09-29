@@ -235,7 +235,11 @@
     "readToForward": "Une page en avant",
     "groupMushafNote": "Dans les khatms de groupe, chaque juz commence en haut de page, comme dans l’édition turque. Là où ton mushaf diffère, une note apparaît sur la page du juz.",
     "juzStartDiffers": "Dans ce groupe, le juz commence à {group}. Dans ton mushaf : {mine}.",
-    "juzEndDiffers": "Dans ce groupe, le juz se termine à {group}. Dans ton mushaf : {mine}."
+    "juzEndDiffers": "Dans ce groupe, le juz se termine à {group}. Dans ton mushaf : {mine}.",
+    "hatimEditionTurkish": "Selon l’édition turque",
+    "hatimEditionMedina": "Selon le mushaf de Médine",
+    "hatimEditionChange": "Changer d’édition",
+    "hatimEditionLocked": "Une fois la lecture commencée, l’édition du khatm ne change plus. Ton réglage de mushaf s’applique aux nouveaux khatms."
   },
   "folder": {
     "search": "Rechercher",
