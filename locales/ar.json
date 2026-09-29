@@ -453,6 +453,7 @@
     "mushafMetaSep": " · ",
     "mushafMetaSurahSep": " · ",
     "mushafMetaJuz": "الجزء {n}",
+    "mushafMetaJuzRange": "الجزء {from}–{to}",
     "mushafMetaPage": "صفحة {n}",
     "mushafPagePrev": "الصفحة السابقة",
     "mushafPageNext": "الصفحة التالية",

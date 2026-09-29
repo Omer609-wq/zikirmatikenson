@@ -389,6 +389,7 @@
     "mushafMetaSep": " · ",
     "mushafMetaSurahSep": " · ",
     "mushafMetaJuz": "پارہ {n}",
+    "mushafMetaJuzRange": "پارہ {from}–{to}",
     "mushafMetaPage": "صفحہ {n}",
     "mushafPagePrev": "پچھلا صفحہ",
     "mushafPageNext": "اگلا صفحہ",

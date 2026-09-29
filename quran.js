@@ -1520,8 +1520,13 @@ function formatMushafMetaLine(pageNum) {
     if (!Number.isFinite(page)) return '';
     const locale = getLocale();
     const ayahs = listAyahsOnPage(page);
-    const juz = ayahs.length ? getJuzForAyah(ayahs[0].s, ayahs[0].a) : 1;
-    const juzPart = t('quran.mushafMetaJuz', { n: juz });
+    // Medine'de dört cüz sayfanın ortasında başlar (4, 7, 11, 26): o sayfada iki cüz yazar.
+    const juzFrom = ayahs.length ? getJuzForAyah(ayahs[0].s, ayahs[0].a) : 1;
+    const juzTo = ayahs.length ? getJuzForAyah(ayahs[ayahs.length - 1].s, ayahs[ayahs.length - 1].a) : juzFrom;
+    const juzPart =
+        juzFrom === juzTo
+            ? t('quran.mushafMetaJuz', { n: juzFrom })
+            : t('quran.mushafMetaJuzRange', { from: juzFrom, to: juzTo });
     // Sayfalar seçili baskının sayfaları: numara da o baskının (lib/quran-pages.js).
     const pagePart = t('quran.mushafMetaPage', { n: page });
     const surahPart = getPageSegments(page)
@@ -1775,6 +1780,10 @@ async function populateMushafPageContent(parts, pageNum, meal, readMode) {
     parts.subs.replaceChildren();
     if (parts.foot) parts.foot.textContent = toArabicIndicNumber(page);
 
+    // Cüz başı sayfanın ilk ayetiyse çizgi sayfanın başında (Türk baskısında hep
+    // böyle). Medine'de dört cüz sayfanın ortasında başlar (4. cüz Âl-i İmrân 93,
+    // 7. Mâide 82, 11. Tevbe 93, 26. Ahkâf 1): çizgi o ayetin hemen önüne girer,
+    // basılı mushaftaki ۞ ve kenar notu gibi.
     const firstSeg = segments[0];
     if (firstSeg) {
         const juzStart = getJuzAtStart(firstSeg.s, firstSeg.a1);
@@ -1782,6 +1791,11 @@ async function populateMushafPageContent(parts, pageNum, meal, readMode) {
             parts.head.appendChild(createJuzDivider(juzStart));
         }
     }
+    const midPageJuzStart = (surahN, ayahN) => {
+        if (firstSeg && surahN === firstSeg.s && ayahN === firstSeg.a1) return null;
+        const juz = getJuzAtStart(surahN, ayahN);
+        return juz && juz > 1 ? juz : null;
+    };
 
     const surahNums = [...new Set(segments.map((seg) => seg.s))];
     const surahMap = new Map();
@@ -1802,16 +1816,22 @@ async function populateMushafPageContent(parts, pageNum, meal, readMode) {
         const surahBlock = document.createElement('div');
         surahBlock.className = 'quran-mushaf-surah-block';
 
-        if (seg.a1 === 1 && meta) {
-            surahBlock.appendChild(createMushafSurahHead(meta));
-        }
-
         const subsBlock = showSubs ? document.createElement('div') : null;
         if (subsBlock) subsBlock.className = 'quran-mushaf-subs-block';
 
         for (let ayahN = seg.a1; ayahN <= seg.a2; ayahN += 1) {
             const ayah = findAyahInSurah(surah, ayahN);
             if (!ayah) continue;
+
+            // Sayfa ortasında yeni cüz: çizgi ayetin (sure başıysa başlığın) önünde.
+            const juzHere = midPageJuzStart(seg.s, ayahN);
+            if (juzHere) {
+                surahBlock.appendChild(createJuzDivider(juzHere));
+                if (subsBlock) subsBlock.appendChild(createJuzDivider(juzHere));
+            }
+            if (ayahN === 1 && meta) {
+                surahBlock.appendChild(createMushafSurahHead(meta));
+            }
 
             if (ayah.bismillah && ayahN === 1 && seg.s !== 1 && seg.s !== 9) {
                 const bism = document.createElement('p');

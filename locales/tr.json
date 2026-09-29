@@ -384,6 +384,7 @@
     "mushafMetaSep": " · ",
     "mushafMetaSurahSep": " · ",
     "mushafMetaJuz": "{n}. cüz",
+    "mushafMetaJuzRange": "{from}–{to}. cüz",
     "mushafMetaPage": "Sayfa {n}",
     "mushafPagePrev": "Önceki sayfa",
     "mushafPageNext": "Sonraki sayfa",

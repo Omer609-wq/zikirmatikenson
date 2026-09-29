@@ -370,6 +370,7 @@
     "mushafMetaSep": " · ",
     "mushafMetaSurahSep": " · ",
     "mushafMetaJuz": "পারা {n}",
+    "mushafMetaJuzRange": "পারা {from}–{to}",
     "mushafMetaPage": "পৃষ্ঠা {n}",
     "mushafPagePrev": "আগের পৃষ্ঠা",
     "mushafPageNext": "পরের পৃষ্ঠা",

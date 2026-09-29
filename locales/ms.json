@@ -370,6 +370,7 @@
     "mushafMetaSep": " · ",
     "mushafMetaSurahSep": " · ",
     "mushafMetaJuz": "Juz {n}",
+    "mushafMetaJuzRange": "Juz {from}–{to}",
     "mushafMetaPage": "Halaman {n}",
     "mushafPagePrev": "Halaman sebelumnya",
     "mushafPageNext": "Halaman seterusnya",

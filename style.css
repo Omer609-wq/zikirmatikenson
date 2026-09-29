@@ -7120,6 +7120,11 @@ html.quran-mushaf-immersive.quran-mushaf-chrome--visible #quranSurahView.view.ac
 .quran-mushaf-page__head .quran-juz-divider {
     margin: 0 0 0.65rem;
 }
+/* Sayfa ortasında başlayan cüz (Medine: 4, 7, 11, 26): çizgi o ayetin önünde. */
+.quran-mushaf-surah-block .quran-juz-divider,
+.quran-mushaf-subs-block .quran-juz-divider {
+    margin: 0.6rem 0;
+}
 .quran-mushaf-surah-block + .quran-mushaf-surah-block {
     margin-top: 1.1rem;
 }

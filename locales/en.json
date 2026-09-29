@@ -401,6 +401,7 @@
     "mushafMetaSep": " · ",
     "mushafMetaSurahSep": " · ",
     "mushafMetaJuz": "Juz {n}",
+    "mushafMetaJuzRange": "Juz {from}–{to}",
     "mushafMetaPage": "Page {n}",
     "mushafPagePrev": "Previous page",
     "mushafPageNext": "Next page",
