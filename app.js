@@ -8421,6 +8421,30 @@ function openHatimJuzDetail(juzN) {
     openOverlay('hatimJuzOverlay');
 }
 
+/**
+ * Cüz penceresinden başka bir ekrana geçer. Pencereyi geçmişte geri giderek
+ * kapatmak (closeOverlayPreferHistory) gecikmeli bir popstate doğuruyor; o da
+ * yeni açılan ekranı hemen hatim ekranına döndürüyordu — "Cüzü Oku" okuyucuyu
+ * açmıyordu. Burada pencerenin geçmiş kaydı yeni ekranın kaydıyla değiştirilir:
+ * Geri'ye basınca yine hatim ekranına dönülür.
+ */
+function leaveHatimJuzDetailTo(viewId, param) {
+    document.getElementById('hatimJuzOverlay')?.classList.remove('active');
+    const next = getViewState(viewId, param);
+    try {
+        const st = window.history.state;
+        if (isOverlayState(st) && st.overlayId === 'hatimJuzOverlay') {
+            window.history.replaceState(next, '');
+            pushInAppStack(next);
+            showView(viewId, param, { push: false });
+            return;
+        }
+    } catch (_) {
+        /* bazı WebView'lar geçmişi kısıtlayabilir */
+    }
+    showView(viewId, param);
+}
+
 function closeHatimJuzDetail() {
     if (!closeOverlayPreferHistory('hatimJuzOverlay')) {
         document.getElementById('hatimJuzOverlay')?.classList.remove('active');
@@ -8437,8 +8461,21 @@ async function handleHatimJuzAction(action) {
     if (action === 'read') {
         const detail = hatimJuzDetailFor(group, currentHatimJuzN);
         if (!detail) return;
-        closeHatimJuzDetail();
-        showView('quranSurahView', { surah: detail.start.surah, ayah: detail.start.ayah });
+        // Kişisel hatim kendi baskısıyla okunur: okuyucu da o baskıya geçer,
+        // sayfa numarası ve cüz çizgileri hatimdekiyle aynı olsun.
+        if (isPersonalHatim(group)) {
+            const edition = hatimMushafOf(group);
+            if (edition !== effectiveMushaf()) {
+                setMushafEdition(edition);
+                showTransientNote(
+                    t('community.readerEditionSwitched', {
+                        edition: t(edition === MUSHAF_TURKISH ? 'quran.mushafEditionTurkish' : 'quran.mushafEditionMedina')
+                    }),
+                    3200
+                );
+            }
+        }
+        leaveHatimJuzDetailTo('quranSurahView', { surah: detail.start.surah, ayah: detail.start.ayah });
         return;
     }
 

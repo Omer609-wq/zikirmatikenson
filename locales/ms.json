@@ -233,7 +233,8 @@
     "juzDiffStart": "mula {ref}",
     "juzDiffEnd": "akhir {ref}",
     "juzDiffPages": "{count} halaman",
-    "hatimEditionHelp": "Perbezaan kedua-dua edisi"
+    "hatimEditionHelp": "Perbezaan kedua-dua edisi",
+    "readerEditionSwitched": "Pembaca al-Quran bertukar ke edisi khatam ini: {edition}"
   },
   "folder": {
     "search": "Cari",

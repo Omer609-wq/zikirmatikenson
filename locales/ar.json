@@ -289,7 +289,8 @@
     "juzDiffPages_two": "صفحتان",
     "juzDiffPages_few": "{count} صفحات",
     "juzDiffPages_many": "{count} صفحة",
-    "hatimEditionHelp": "الفروق بين الطبعتين"
+    "hatimEditionHelp": "الفروق بين الطبعتين",
+    "readerEditionSwitched": "انتقل قارئ القرآن إلى طبعة هذه الختمة: {edition}"
   },
   "folder": {
     "search": "بحث",

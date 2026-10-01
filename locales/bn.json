@@ -233,7 +233,8 @@
     "juzDiffStart": "শুরু {ref}",
     "juzDiffEnd": "শেষ {ref}",
     "juzDiffPages": "{count} পৃষ্ঠা",
-    "hatimEditionHelp": "দুই সংস্করণের পার্থক্য"
+    "hatimEditionHelp": "দুই সংস্করণের পার্থক্য",
+    "readerEditionSwitched": "কুরআন রিডার এই খতমের সংস্করণে চলে গেছে: {edition}"
   },
   "folder": {
     "search": "খুঁজুন",

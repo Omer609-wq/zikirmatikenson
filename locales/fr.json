@@ -246,7 +246,8 @@
     "juzDiffEnd": "fin {ref}",
     "juzDiffPages": "{count} pages",
     "juzDiffPages_one": "{count} page",
-    "hatimEditionHelp": "Différences entre les deux éditions"
+    "hatimEditionHelp": "Différences entre les deux éditions",
+    "readerEditionSwitched": "Le lecteur du Coran suit maintenant l’édition de ce khatm : {edition}"
   },
   "folder": {
     "search": "Rechercher",

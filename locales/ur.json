@@ -239,7 +239,8 @@
     "juzDiffEnd": "اختتام {ref}",
     "juzDiffPages": "{count} صفحات",
     "juzDiffPages_one": "{count} صفحہ",
-    "hatimEditionHelp": "دونوں طباعتوں کا فرق"
+    "hatimEditionHelp": "دونوں طباعتوں کا فرق",
+    "readerEditionSwitched": "قرآن ریڈر اس ختم کی طباعت پر منتقل ہو گیا: {edition}"
   },
   "folder": {
     "search": "تلاش",
