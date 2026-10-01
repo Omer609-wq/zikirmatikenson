@@ -991,6 +991,14 @@
             </header>
 
             <section class="main-content scrollable">
+                <!-- Kişisel hatmin baskısı okuyucununkinden farklıysa: sayfa numaraları tutmaz. -->
+                <div class="quran-edition-warn" id="quranEditionWarn" role="status" hidden>
+                    <span class="material-icons-outlined quran-edition-warn__icon" aria-hidden="true">info</span>
+                    <p class="quran-edition-warn__text" id="quranEditionWarnText"></p>
+                    <button type="button" class="icon-btn quran-edition-warn__close" id="quranEditionWarnClose" data-i18n="quran.editionWarnClose" data-i18n-attr="aria-label" aria-label="Uyarıyı kapat">
+                        <span class="material-icons-outlined" aria-hidden="true">close</span>
+                    </button>
+                </div>
                 <div class="stats-tabs" id="quranViewTabs">
                     <button type="button" class="tab-btn active" data-quran-tab="surahs" data-i18n="quran.tabSurahs">Sureler</button>
                     <button type="button" class="tab-btn" data-quran-tab="favorites" data-i18n="quran.tabFavorites">Favoriler</button>

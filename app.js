@@ -2620,6 +2620,56 @@ function mushafEditionDifferencesNote({ asterisk = true } = {}) {
     return asterisk ? `* ${text}` : text;
 }
 
+/**
+ * Kuran girişindeki uyarı: bitmemiş bir kişisel hatmin baskısı okuyucununkinden
+ * farklıysa sayfa numaraları tutmaz (Türk 598 Beyyine 8'de, Medine 598 Beyyine
+ * 7'de biter); hatimde okuyucudaki numarayla işaretleyen yanlış sayardı.
+ * Çarpıyla kapatılınca o durum (okuyucu baskısı + o hatimler) saklanır; durum
+ * değişince uyarı yeniden çıkar.
+ * @returns {{ signature: string, names: string[], hatimEdition: string } | null}
+ */
+function quranEditionMismatch() {
+    const reader = effectiveMushaf();
+    const differing = hatimGroups.filter(
+        (g) => isPersonalHatim(g) && !isHatimComplete(g) && hatimMushafOf(g) !== reader
+    );
+    if (!differing.length) return null;
+    return {
+        signature: `${reader}|${differing.map((g) => g.id).sort().join(',')}`,
+        names: differing.map((g) => g.name),
+        hatimEdition: hatimMushafOf(differing[0])
+    };
+}
+
+function renderQuranEditionWarn() {
+    const box = document.getElementById('quranEditionWarn');
+    if (!box) return;
+    const mismatch = quranEditionMismatch();
+    const show = !!mismatch && appMeta?.editionWarnDismissed !== mismatch.signature;
+    box.hidden = !show;
+    if (!show) return;
+    const text = document.getElementById('quranEditionWarnText');
+    if (text) {
+        const hatimPhrase = t(
+            mismatch.hatimEdition === MUSHAF_TURKISH ? 'community.hatimEditionTurkish' : 'community.hatimEditionMedina'
+        );
+        const readerPhrase = t(
+            effectiveMushaf() === MUSHAF_TURKISH ? 'quran.editionWarnReaderTurkish' : 'quran.editionWarnReaderMedina'
+        );
+        text.textContent = `${mismatch.names.join(', ')}: ${hatimPhrase}. ${readerPhrase} ${t('quran.editionWarnAdvice', { button: t('community.readJuz') })}`;
+    }
+}
+
+function dismissQuranEditionWarn() {
+    const mismatch = quranEditionMismatch();
+    if (mismatch) {
+        if (!appMeta || typeof appMeta !== 'object') appMeta = { installedAt: null };
+        appMeta.editionWarnDismissed = mismatch.signature;
+        saveData();
+    }
+    renderQuranEditionWarn();
+}
+
 /** Hatim ekranındaki "?" notu: hatme her girişte kapalı başlar. */
 let hatimEditionHelpOpen = false;
 
@@ -2689,6 +2739,7 @@ function setMushafEdition(mushaf) {
     clearQuranSurahCache();
     rerenderOpenQuranReader(anchor);
     if (currentViewId === 'hatimGroupView') renderHatimGroupView();
+    if (currentViewId === 'quranView') renderQuranEditionWarn();
     syncHatimPlanReminders().catch(console.error);
 }
 
@@ -5890,6 +5941,7 @@ function showView(viewId, param = null, options = {}) {
         currentLibraryGroupId = param;
         renderLibraryGroupDetail();
     } else if (viewId === 'quranView') {
+        renderQuranEditionWarn();
         if (getQuranViewTab() === 'favorites') {
             void renderQuranFavoritesList(appSettings.quranMeal, quranAyahFavorites);
         } else {
@@ -8898,6 +8950,7 @@ function setupHatimListeners() {
     document.getElementById('hatimJuzProgressForward')?.addEventListener('click', () => stepHatimJuzProgress(1));
     document.getElementById('hatimJuzProgressSave')?.addEventListener('click', saveHatimJuzProgress);
     document.getElementById('hatimEditionBtn')?.addEventListener('click', handleHatimEditionTap);
+    document.getElementById('quranEditionWarnClose')?.addEventListener('click', dismissQuranEditionWarn);
     document.getElementById('hatimEditionHelpBtn')?.addEventListener('click', () => {
         hatimEditionHelpOpen = !hatimEditionHelpOpen;
         syncHatimEditionHelp();
