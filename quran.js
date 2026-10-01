@@ -1,6 +1,7 @@
 import surahIndex from './data/quran/index.json';
 import mealsIndex from './data/quran/meals/index.json';
 import { getJuzAtStart, getJuzDividerBeforeAyah, getJuzForAyah } from './lib/juz.js';
+import { getCurrentMushaf } from './lib/mushaf.js';
 import {
     MUSHAF_PAGE_COUNT,
     getPageForAyah,
@@ -1912,6 +1913,7 @@ function initMushafPager(mealId, readMode, readerLayout) {
         pager.dataset.mealId = meal || '';
         pager.dataset.readMode = mode;
         pager.dataset.readerLayout = layout;
+        pager.dataset.mushaf = getCurrentMushaf();
     }
 
     const meta = document.getElementById('quranMushafMeta');
@@ -2161,6 +2163,9 @@ function renderMushafShells(mealId, readMode, readerLayout = 'scroll') {
     list.dataset.mealId = meal || '';
     list.dataset.readMode = mode;
     list.dataset.readerLayout = layout;
+    // Cüz çizgileri bölüm doldurulurken baskıya göre konuyor (Türk baskısında
+    // 4. cüz Âl-i İmrân 92, Medine'de 93): baskı değişince bölümler baştan çizilir.
+    list.dataset.mushaf = getCurrentMushaf();
     list.hidden = false;
 }
 
@@ -2531,6 +2536,8 @@ export async function renderQuranSurahDetail(
     const sameMeal = hasShells && (store?.dataset.mealId || '') === (meal || '');
     const sameMode = sameMeal && store?.dataset.readMode === mode;
     const sameLayout = sameMeal && store?.dataset.readerLayout === layout;
+    // Baskı değiştiyse yüklü bölümler eski cüz çizgilerini taşır, yeniden kullanılmaz.
+    const sameMushaf = sameMeal && store?.dataset.mushaf === getCurrentMushaf();
 
     const mushafOpts = {
         forceSurahStart: !!mushafNav.forceSurahStart,
@@ -2583,7 +2590,7 @@ export async function renderQuranSurahDetail(
         updateSurahJumpNav();
     };
 
-    if (!forceShell && !layoutChanged && sameMeal && sameMode && sameLayout) {
+    if (!forceShell && !layoutChanged && sameMeal && sameMode && sameLayout && sameMushaf) {
         if (isMushaf) {
             if (list) list.hidden = true;
             if (pager) pager.hidden = false;
@@ -2604,7 +2611,7 @@ export async function renderQuranSurahDetail(
         return;
     }
 
-    if (!forceShell && !layoutChanged && sameMeal && sameLayout && !sameMode) {
+    if (!forceShell && !layoutChanged && sameMeal && sameLayout && sameMushaf && !sameMode) {
         refreshLoadedSections(mode, layout);
         setSurahLoading(false);
         setupLazyObserver(meal, mode, layout);
