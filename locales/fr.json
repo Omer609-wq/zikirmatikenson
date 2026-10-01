@@ -239,7 +239,13 @@
     "hatimEditionTurkish": "Selon l’édition turque",
     "hatimEditionMedina": "Selon le mushaf de Médine",
     "hatimEditionChange": "Changer d’édition",
-    "hatimEditionLocked": "Une fois la lecture commencée, l’édition du khatm ne change plus. Ton réglage de mushaf s’applique aux nouveaux khatms."
+    "hatimEditionLocked": "Une fois la lecture commencée, l’édition du khatm ne change plus. Ton réglage de mushaf s’applique aux nouveaux khatms.",
+    "juzDiffTurkish": "Dans l’édition turque :",
+    "juzDiffMedina": "Dans le mushaf de Médine :",
+    "juzDiffStart": "début {ref}",
+    "juzDiffEnd": "fin {ref}",
+    "juzDiffPages": "{count} pages",
+    "juzDiffPages_one": "{count} page"
   },
   "folder": {
     "search": "Rechercher",
@@ -446,7 +452,10 @@
     "nextSurahAria": "Sourate suivante",
     "mushafEditionTitle": "Édition du mushaf",
     "mushafEditionTurkish": "Édition turque",
-    "mushafEditionMedina": "Médine"
+    "mushafEditionMedina": "Médine",
+    "mushafDiffIntro": "Les deux éditions diffèrent ici (édition turque / Médine) :",
+    "mushafDiffJuz": "le juz {n} commence à {tr} / {medina}",
+    "mushafDiffPages": "Dans l’édition turque, Al-Fatiha et le début d’Al-Baqara forment la page 1 et les numéros suivants sont inférieurs d’un à ceux de Médine ; le juz 30 compte 24 pages (23 à Médine)."
   },
   "settings": {
     "title": "Paramètres",

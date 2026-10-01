@@ -227,7 +227,12 @@
     "hatimEditionTurkish": "Mengikuti cetakan Turki",
     "hatimEditionMedina": "Mengikuti mushaf Madinah",
     "hatimEditionChange": "Ganti edisi",
-    "hatimEditionLocked": "Setelah mulai membaca, edisi khataman tidak berubah. Pengaturan mushaf berlaku untuk khataman baru."
+    "hatimEditionLocked": "Setelah mulai membaca, edisi khataman tidak berubah. Pengaturan mushaf berlaku untuk khataman baru.",
+    "juzDiffTurkish": "Dalam cetakan Turki:",
+    "juzDiffMedina": "Dalam mushaf Madinah:",
+    "juzDiffStart": "awal {ref}",
+    "juzDiffEnd": "akhir {ref}",
+    "juzDiffPages": "{count} halaman"
   },
   "folder": {
     "search": "Cari",
@@ -431,7 +436,10 @@
     "nextSurahAria": "Surah berikutnya",
     "mushafEditionTitle": "Edisi mushaf",
     "mushafEditionTurkish": "Cetakan Turki",
-    "mushafEditionMedina": "Madinah"
+    "mushafEditionMedina": "Madinah",
+    "mushafDiffIntro": "Kedua edisi berbeda di sini (cetakan Turki / Madinah):",
+    "mushafDiffJuz": "juz {n} dimulai di {tr} / {medina}",
+    "mushafDiffPages": "Dalam cetakan Turki, Al-Fatihah dan awal Al-Baqarah berada di halaman 1 dan nomor halaman berikutnya satu lebih kecil daripada Madinah; juz 30 berisi 24 halaman (23 di Madinah)."
   },
   "settings": {
     "title": "Pengaturan",

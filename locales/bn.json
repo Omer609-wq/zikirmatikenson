@@ -227,7 +227,12 @@
     "hatimEditionTurkish": "তুর্কি ছাপা অনুযায়ী",
     "hatimEditionMedina": "মদিনা মুসহাফ অনুযায়ী",
     "hatimEditionChange": "সংস্করণ বদলাও",
-    "hatimEditionLocked": "পড়া শুরু করার পর খতমের সংস্করণ বদলায় না। মুসহাফের সেটিং নতুন খতমে প্রযোজ্য হবে।"
+    "hatimEditionLocked": "পড়া শুরু করার পর খতমের সংস্করণ বদলায় না। মুসহাফের সেটিং নতুন খতমে প্রযোজ্য হবে।",
+    "juzDiffTurkish": "তুর্কি ছাপায়:",
+    "juzDiffMedina": "মদিনা মুসহাফে:",
+    "juzDiffStart": "শুরু {ref}",
+    "juzDiffEnd": "শেষ {ref}",
+    "juzDiffPages": "{count} পৃষ্ঠা"
   },
   "folder": {
     "search": "খুঁজুন",
@@ -431,7 +436,10 @@
     "nextSurahAria": "পরবর্তী সূরা",
     "mushafEditionTitle": "মুসহাফের সংস্করণ",
     "mushafEditionTurkish": "তুর্কি ছাপা",
-    "mushafEditionMedina": "মদিনা"
+    "mushafEditionMedina": "মদিনা",
+    "mushafDiffIntro": "দুই সংস্করণে এখানে পার্থক্য আছে (তুর্কি ছাপা / মদিনা):",
+    "mushafDiffJuz": "পারা {n} শুরু {tr} / {medina}",
+    "mushafDiffPages": "তুর্কি ছাপায় সূরা ফাতিহা ও বাকারার শুরু একই পৃষ্ঠায় (১), পরের পৃষ্ঠা নম্বরগুলো মদিনার চেয়ে এক কম; ৩০তম পারা ২৪ পৃষ্ঠা (মদিনায় ২৩)।"
   },
   "settings": {
     "title": "সেটিংস",

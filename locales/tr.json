@@ -227,7 +227,12 @@
     "hatimEditionTurkish": "Türk baskısına göre",
     "hatimEditionMedina": "Medine mushafına göre",
     "hatimEditionChange": "Baskıyı değiştir",
-    "hatimEditionLocked": "Okumaya başladıktan sonra hatmin baskısı değişmez. Mushaf ayarı yeni hatimlerde geçerli olur."
+    "hatimEditionLocked": "Okumaya başladıktan sonra hatmin baskısı değişmez. Mushaf ayarı yeni hatimlerde geçerli olur.",
+    "juzDiffTurkish": "Türk baskısında:",
+    "juzDiffMedina": "Medine mushafında:",
+    "juzDiffStart": "başı {ref}",
+    "juzDiffEnd": "sonu {ref}",
+    "juzDiffPages": "{count} sayfa"
   },
   "folder": {
     "search": "Ara",
@@ -431,7 +436,10 @@
     "nextSurahAria": "Sonraki sure",
     "mushafEditionTitle": "Mushaf baskısı",
     "mushafEditionTurkish": "Türk baskısı",
-    "mushafEditionMedina": "Medine"
+    "mushafEditionMedina": "Medine",
+    "mushafDiffIntro": "İki baskı şu yerlerde ayrılır (Türk baskısı / Medine):",
+    "mushafDiffJuz": "{n}. cüz başı {tr} / {medina}",
+    "mushafDiffPages": "Türk baskısında Fatiha ile Bakara'nın başı tek sayfadır, sonraki sayfa numaraları Medine'den bir eksiktir; 30. cüz 24 sayfadır (Medine'de 23)."
   },
   "settings": {
     "title": "Ayarlar",

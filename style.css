@@ -3414,16 +3414,32 @@ html[lang='ur'] .smart-reminder-weekday {
 }
 /* Cüz penceresinde: bu cüzün sınırı kişinin mushafından farklı. */
 .hatim-juz-note {
-    margin: 0.6rem 0 0;
-    padding: 0.55rem 0.75rem;
-    border-radius: 10px;
-    border: 1px dashed var(--hatim-claimed-border);
+    margin: -0.35rem 0 0.7rem;
     font-size: var(--text-xs);
     line-height: var(--leading-body);
-    color: var(--text-arabic);
+    color: var(--text-gray);
 }
 .hatim-juz-note[hidden] {
     display: none;
+}
+/* "Mushaf baskısı *" ve "Türk baskısına göre *": altta küçük yıldızlı not var. */
+#quranMushafEditionTitle::after,
+#hatimEditionText::after {
+    content: ' *';
+    color: var(--text-gray);
+}
+.mushaf-edition-note {
+    margin: 0.5rem 0 0;
+    font-size: 0.6875rem;
+    line-height: var(--leading-body);
+    color: var(--text-gray);
+}
+.mushaf-edition-note[hidden] {
+    display: none;
+}
+.hatim-edition-note {
+    margin: -0.55rem 0 0.8rem;
+    text-align: center;
 }
 .hatim-report-btn[hidden] {
     display: none;

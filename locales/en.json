@@ -238,7 +238,13 @@
     "hatimEditionTurkish": "Following the Turkish print",
     "hatimEditionMedina": "Following the Medina mushaf",
     "hatimEditionChange": "Change edition",
-    "hatimEditionLocked": "Once you start reading, the hatim's edition stays the same. Your mushaf setting applies to new hatims."
+    "hatimEditionLocked": "Once you start reading, the hatim's edition stays the same. Your mushaf setting applies to new hatims.",
+    "juzDiffTurkish": "In the Turkish print:",
+    "juzDiffMedina": "In the Medina mushaf:",
+    "juzDiffStart": "starts at {ref}",
+    "juzDiffEnd": "ends at {ref}",
+    "juzDiffPages": "{count} pages",
+    "juzDiffPages_one": "{count} page"
   },
   "folder": {
     "search": "Search",
@@ -448,7 +454,10 @@
     "nextSurahAria": "Next surah",
     "mushafEditionTitle": "Mushaf edition",
     "mushafEditionTurkish": "Turkish print",
-    "mushafEditionMedina": "Medina"
+    "mushafEditionMedina": "Medina",
+    "mushafDiffIntro": "The two editions differ here (Turkish print / Medina):",
+    "mushafDiffJuz": "juz {n} starts at {tr} / {medina}",
+    "mushafDiffPages": "In the Turkish print, Al-Fatiha and the start of Al-Baqarah share page 1 and later page numbers are one lower than in Medina; juz 30 has 24 pages (23 in Medina)."
   },
   "settings": {
     "title": "Settings",

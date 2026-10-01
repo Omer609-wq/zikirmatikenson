@@ -232,7 +232,13 @@
     "hatimEditionTurkish": "ترکی طباعت کے مطابق",
     "hatimEditionMedina": "مدینہ مصحف کے مطابق",
     "hatimEditionChange": "طباعت تبدیل کریں",
-    "hatimEditionLocked": "پڑھنا شروع کرنے کے بعد ختم کی طباعت نہیں بدلتی۔ مصحف کی ترتیب نئے ختم پر لاگو ہوگی۔"
+    "hatimEditionLocked": "پڑھنا شروع کرنے کے بعد ختم کی طباعت نہیں بدلتی۔ مصحف کی ترتیب نئے ختم پر لاگو ہوگی۔",
+    "juzDiffTurkish": "ترکی طباعت میں:",
+    "juzDiffMedina": "مدینہ مصحف میں:",
+    "juzDiffStart": "آغاز {ref}",
+    "juzDiffEnd": "اختتام {ref}",
+    "juzDiffPages": "{count} صفحات",
+    "juzDiffPages_one": "{count} صفحہ"
   },
   "folder": {
     "search": "تلاش",
@@ -436,7 +442,10 @@
     "nextSurahAria": "اگلی سورت",
     "mushafEditionTitle": "مصحف کی طباعت",
     "mushafEditionTurkish": "ترکی طباعت",
-    "mushafEditionMedina": "مدینہ"
+    "mushafEditionMedina": "مدینہ",
+    "mushafDiffIntro": "دونوں طباعتوں میں یہاں فرق ہے (ترکی طباعت / مدینہ):",
+    "mushafDiffJuz": "پارہ {n} کا آغاز {tr} / {medina}",
+    "mushafDiffPages": "ترکی طباعت میں سورۂ فاتحہ اور بقرہ کا آغاز ایک ہی صفحے (۱) پر ہے، بعد کے صفحات کے نمبر مدینہ سے ایک کم ہیں؛ پارہ ۳۰ کے ۲۴ صفحات ہیں (مدینہ میں ۲۳)۔"
   },
   "settings": {
     "title": "ترتیبات",

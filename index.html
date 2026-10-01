@@ -212,6 +212,8 @@
                     <span id="hatimEditionText"></span>
                     <span class="material-icons-outlined hatim-edition__swap" aria-hidden="true">swap_horiz</span>
                 </button>
+                <!-- İki baskının ayrıldığı yerler (yıldızlı not). -->
+                <p class="mushaf-edition-note hatim-edition-note" id="hatimEditionNote" hidden></p>
                 <!-- Kişisel hatimde niyet: yalnız sahibi görür. Dokununca değişir. -->
                 <button type="button" class="hatim-intention" id="hatimIntentionBtn" hidden>
                     <span class="material-icons-outlined hatim-intention__icon" aria-hidden="true">volunteer_activism</span>
@@ -902,6 +904,8 @@
                             <span class="quran-read-mode-option__label" data-i18n="quran.mushafEditionMedina">Medine</span>
                         </button>
                     </div>
+                    <!-- İki baskının ayrıldığı yerler (yıldızlı not). -->
+                    <p class="mushaf-edition-note" id="quranMushafEditionNote"></p>
                 </aside>
             </div>
 
@@ -1995,9 +1999,10 @@
                 <button class="icon-btn closeModalBtn" data-modal="hatimJuzOverlay" data-i18n="community.close" data-i18n-attr="aria-label" aria-label="Kapat"><span class="material-icons-outlined">close</span></button>
             </div>
             <div class="modal-body">
-                <p class="hatim-juz-state" id="hatimJuzState"></p>
-                <!-- Grup hatiminde cüz sınırı kişinin mushafındakinden farklıysa. -->
+                <!-- Başlığın hemen altında: bu cüz öbür baskıda farklıysa (kişisel hatim)
+                     ya da grubun sınırı kişinin mushafından farklıysa (grup hatimi). -->
                 <p class="hatim-juz-note" id="hatimJuzMushafNote" hidden></p>
+                <p class="hatim-juz-state" id="hatimJuzState"></p>
                 <!-- Kişisel hatimde: kâğıt mushaftan okuyan son okuduğu sayfayı işaretler.
                      Sayfa numarası baskıya göre değişebilir; sayfanın bittiği ayet de yazar. -->
                 <section class="hatim-juz-progress" id="hatimJuzProgress" hidden>

@@ -279,7 +279,16 @@
     "hatimEditionTurkish": "وفق الطبعة التركية",
     "hatimEditionMedina": "وفق مصحف المدينة",
     "hatimEditionChange": "تغيير الطبعة",
-    "hatimEditionLocked": "بعد بدء القراءة لا تتغير طبعة الختمة. يسري إعداد المصحف على الختمات الجديدة."
+    "hatimEditionLocked": "بعد بدء القراءة لا تتغير طبعة الختمة. يسري إعداد المصحف على الختمات الجديدة.",
+    "juzDiffTurkish": "في الطبعة التركية:",
+    "juzDiffMedina": "في مصحف المدينة:",
+    "juzDiffStart": "البداية {ref}",
+    "juzDiffEnd": "النهاية {ref}",
+    "juzDiffPages": "{count} صفحة",
+    "juzDiffPages_one": "صفحة واحدة",
+    "juzDiffPages_two": "صفحتان",
+    "juzDiffPages_few": "{count} صفحات",
+    "juzDiffPages_many": "{count} صفحة"
   },
   "folder": {
     "search": "بحث",
@@ -514,7 +523,10 @@
     "nextSurahAria": "السورة التالية",
     "mushafEditionTitle": "طبعة المصحف",
     "mushafEditionTurkish": "الطبعة التركية",
-    "mushafEditionMedina": "المدينة"
+    "mushafEditionMedina": "المدينة",
+    "mushafDiffIntro": "تختلف الطبعتان في هذه المواضع (الطبعة التركية / المدينة):",
+    "mushafDiffJuz": "بداية الجزء {n}: {tr} / {medina}",
+    "mushafDiffPages": "في الطبعة التركية تقع الفاتحة وأول البقرة في الصفحة 1، وأرقام الصفحات التالية أقل بواحد من مصحف المدينة؛ والجزء 30 في 24 صفحة (23 في المدينة)."
   },
   "settings": {
     "title": "الإعدادات",

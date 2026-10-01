@@ -207,6 +207,7 @@ import {
 } from './lib/hatim-remote-map.js';
 import { getHatimContext, getHatimSyncAvailability, hatimSessionErrorKey } from './lib/hatim-session.js';
 import { getJuzDetail } from './lib/hatim-juz.js';
+import { listJuzEditionDifferences } from './lib/juz-boundaries.js';
 import {
     MUSHAF_MEDINA,
     MUSHAF_TURKISH,
@@ -2597,6 +2598,25 @@ function syncMushafEditionUI() {
         btn.classList.toggle('active', on);
         btn.setAttribute('aria-checked', on ? 'true' : 'false');
     });
+    const note = document.getElementById('quranMushafEditionNote');
+    if (note) note.textContent = mushafEditionDifferencesNote();
+}
+
+/**
+ * "* İki baskı şu yerlerde ayrılır (Türk baskısı / Medine): 4. cüz başı Âl-i
+ * İmrân 92 / 93; … Türk baskısında Fatiha ile Bakara'nın başı tek sayfadır…"
+ * Cüz farkları veriden (listJuzEditionDifferences), sure adları dile göre.
+ */
+function mushafEditionDifferencesNote() {
+    const ref = (r) => `${hatimSurahName(r.surah)} ${r.ayah}`;
+    const items = listJuzEditionDifferences().map(({ juz, turkish, medina }) =>
+        t('quran.mushafDiffJuz', {
+            n: juz,
+            tr: ref(turkish),
+            medina: turkish.surah === medina.surah ? String(medina.ayah) : ref(medina)
+        })
+    );
+    return `* ${t('quran.mushafDiffIntro')} ${items.join('; ')}. ${t('quran.mushafDiffPages')}`;
 }
 
 /**
@@ -2664,6 +2684,7 @@ function applyAppLocale(locale) {
     // Başlık anahtarı çeviriden önce ayarlanmalı; sonra yapılırsa eski metin kalır.
     syncCommunityUI();
     applyLocaleToDocument(appSettings.locale);
+    syncMushafEditionUI(); // yıldızlı not yeni dilde
     syncLocalizedDefaults({ persist: true });
     syncQuranSettingsForLocale(appSettings);
     syncQuranTabVisibility();
@@ -7843,6 +7864,11 @@ function renderHatimPersonalExtras(group) {
     }
 
     // Hatmin baskısı: hatim boyunca sabit, okumaya başlanmadıysa dokununca değişir.
+    const editionNote = document.getElementById('hatimEditionNote');
+    if (editionNote) {
+        editionNote.hidden = !personal || complete;
+        if (!editionNote.hidden) editionNote.textContent = mushafEditionDifferencesNote();
+    }
     const editionBtn = document.getElementById('hatimEditionBtn');
     if (editionBtn) {
         editionBtn.hidden = !personal || complete;
@@ -8136,10 +8162,24 @@ function handleHatimEditionTap() {
  * 3/4, 6/7, 10/11, 25/26. cüzler) cüz penceresinde not. Aynıysa boş.
  */
 function hatimJuzMushafNote(group, detail) {
-    if (isPersonalHatim(group) || getCurrentMushaf() === MUSHAF_TURKISH) return '';
+    const same = (a, b) => a.surah === b.surah && a.ayah === b.ayah;
+    // Kişisel hatim: bu cüz öbür baskıda nasıl — Medine hatminde Türk baskısına
+    // göre, Türk hatminde Medine'ye göre ("Türk baskısında: başı Âl-i İmrân 92").
+    if (isPersonalHatim(group)) {
+        const other = hatimMushafOf(group) === MUSHAF_TURKISH ? MUSHAF_MEDINA : MUSHAF_TURKISH;
+        const o = getJuzDetail(detail.juz, { juzMushaf: other, pageMushaf: other });
+        if (!o) return '';
+        const parts = [];
+        if (!same(o.start, detail.start)) parts.push(t('community.juzDiffStart', { ref: hatimAyahRef(o.start) }));
+        if (!same(o.end, detail.end)) parts.push(t('community.juzDiffEnd', { ref: hatimAyahRef(o.end) }));
+        if (o.pageCount !== detail.pageCount) parts.push(t('community.juzDiffPages', { count: o.pageCount }));
+        if (!parts.length) return '';
+        const where = t(other === MUSHAF_TURKISH ? 'community.juzDiffTurkish' : 'community.juzDiffMedina');
+        return `${where} ${parts.join(' · ')}`;
+    }
+    if (getCurrentMushaf() === MUSHAF_TURKISH) return '';
     const own = getJuzDetail(detail.juz);
     if (!own) return '';
-    const same = (a, b) => a.surah === b.surah && a.ayah === b.ayah;
     const notes = [];
     if (!same(own.start, detail.start)) {
         notes.push(t('community.juzStartDiffers', { group: hatimAyahRef(detail.start), mine: hatimAyahRef(own.start) }));
@@ -8159,7 +8199,7 @@ function renderHatimJuzDetail() {
     if (mushafNote) {
         const text = hatimJuzMushafNote(group, detail);
         mushafNote.hidden = !text;
-        mushafNote.textContent = text;
+        mushafNote.textContent = text ? `* ${text}` : '';
     }
 
     const juz = group.juz.find((x) => x.n === detail.juz);
