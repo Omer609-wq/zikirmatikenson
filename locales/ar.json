@@ -288,7 +288,8 @@
     "juzDiffPages_one": "صفحة واحدة",
     "juzDiffPages_two": "صفحتان",
     "juzDiffPages_few": "{count} صفحات",
-    "juzDiffPages_many": "{count} صفحة"
+    "juzDiffPages_many": "{count} صفحة",
+    "hatimEditionHelp": "الفروق بين الطبعتين"
   },
   "folder": {
     "search": "بحث",

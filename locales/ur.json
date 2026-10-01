@@ -238,7 +238,8 @@
     "juzDiffStart": "آغاز {ref}",
     "juzDiffEnd": "اختتام {ref}",
     "juzDiffPages": "{count} صفحات",
-    "juzDiffPages_one": "{count} صفحہ"
+    "juzDiffPages_one": "{count} صفحہ",
+    "hatimEditionHelp": "دونوں طباعتوں کا فرق"
   },
   "folder": {
     "search": "تلاش",

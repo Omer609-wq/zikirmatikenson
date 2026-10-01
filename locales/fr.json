@@ -245,7 +245,8 @@
     "juzDiffStart": "début {ref}",
     "juzDiffEnd": "fin {ref}",
     "juzDiffPages": "{count} pages",
-    "juzDiffPages_one": "{count} page"
+    "juzDiffPages_one": "{count} page",
+    "hatimEditionHelp": "Différences entre les deux éditions"
   },
   "folder": {
     "search": "Rechercher",

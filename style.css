@@ -2712,12 +2712,43 @@ html[lang='ur'] .smart-reminder-weekday {
 
 /* Kişisel hatmin baskısı: tarihin altında küçük satır. Okumaya başlanınca
    değiştirme işareti gizlenir (dokununca neden değişmediği söylenir). */
+/* Baskı satırı ve yanındaki "?": ortada, yan yana. */
+.hatim-edition-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    margin: -0.55rem 0 0.7rem;
+}
+.hatim-edition-row[hidden] {
+    display: none;
+}
+.hatim-edition-help {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--hatim-claimed-fg);
+    color: #1f1600;
+    font: inherit;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.hatim-edition-help[aria-expanded="true"] {
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--hatim-claimed-fg) 35%, transparent);
+}
 .hatim-edition {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.3rem;
-    margin: -0.55rem auto 0.7rem;
+    margin: 0;
     padding: 0.2rem 0.5rem;
     background: none;
     border: 0;
@@ -3423,8 +3454,7 @@ html[lang='ur'] .smart-reminder-weekday {
     display: none;
 }
 /* "Mushaf baskısı *" ve "Türk baskısına göre *": altta küçük yıldızlı not var. */
-#quranMushafEditionTitle::after,
-#hatimEditionText::after {
+#quranMushafEditionTitle::after {
     content: ' *';
     color: var(--text-gray);
 }

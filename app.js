@@ -2607,7 +2607,7 @@ function syncMushafEditionUI() {
  * İmrân 92 / 93; … Türk baskısında Fatiha ile Bakara'nın başı tek sayfadır…"
  * Cüz farkları veriden (listJuzEditionDifferences), sure adları dile göre.
  */
-function mushafEditionDifferencesNote() {
+function mushafEditionDifferencesNote({ asterisk = true } = {}) {
     const ref = (r) => `${hatimSurahName(r.surah)} ${r.ayah}`;
     const items = listJuzEditionDifferences().map(({ juz, turkish, medina }) =>
         t('quran.mushafDiffJuz', {
@@ -2616,7 +2616,23 @@ function mushafEditionDifferencesNote() {
             medina: turkish.surah === medina.surah ? String(medina.ayah) : ref(medina)
         })
     );
-    return `* ${t('quran.mushafDiffIntro')} ${items.join('; ')}. ${t('quran.mushafDiffPages')}`;
+    const text = `${t('quran.mushafDiffIntro')} ${items.join('; ')}. ${t('quran.mushafDiffPages')}`;
+    return asterisk ? `* ${text}` : text;
+}
+
+/** Hatim ekranındaki "?" notu: hatme her girişte kapalı başlar. */
+let hatimEditionHelpOpen = false;
+
+function syncHatimEditionHelp() {
+    const btn = document.getElementById('hatimEditionHelpBtn');
+    const note = document.getElementById('hatimEditionNote');
+    const row = document.getElementById('hatimEditionRow');
+    const open = hatimEditionHelpOpen && !!row && !row.hidden;
+    if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (note) {
+        note.hidden = !open;
+        if (open) note.textContent = mushafEditionDifferencesNote({ asterisk: false });
+    }
 }
 
 /**
@@ -5865,6 +5881,7 @@ function showView(viewId, param = null, options = {}) {
         void syncRemoteHatimsInBackground();
     } else if (viewId === 'hatimGroupView') {
         if (param != null) currentHatimGroupId = param;
+        hatimEditionHelpOpen = false; // baskı notu her girişte kapalı
         renderHatimGroupView();
         void syncRemoteHatimInBackground(currentHatimGroupId);
     } else if (viewId === 'hatimDuaView') {
@@ -7864,14 +7881,11 @@ function renderHatimPersonalExtras(group) {
     }
 
     // Hatmin baskısı: hatim boyunca sabit, okumaya başlanmadıysa dokununca değişir.
-    const editionNote = document.getElementById('hatimEditionNote');
-    if (editionNote) {
-        editionNote.hidden = !personal || complete;
-        if (!editionNote.hidden) editionNote.textContent = mushafEditionDifferencesNote();
-    }
+    const editionRow = document.getElementById('hatimEditionRow');
+    if (editionRow) editionRow.hidden = !personal || complete;
+    syncHatimEditionHelp();
     const editionBtn = document.getElementById('hatimEditionBtn');
     if (editionBtn) {
-        editionBtn.hidden = !personal || complete;
         const edition = hatimMushafOf(group);
         const text = document.getElementById('hatimEditionText');
         if (text) {
@@ -8847,6 +8861,10 @@ function setupHatimListeners() {
     document.getElementById('hatimJuzProgressForward')?.addEventListener('click', () => stepHatimJuzProgress(1));
     document.getElementById('hatimJuzProgressSave')?.addEventListener('click', saveHatimJuzProgress);
     document.getElementById('hatimEditionBtn')?.addEventListener('click', handleHatimEditionTap);
+    document.getElementById('hatimEditionHelpBtn')?.addEventListener('click', () => {
+        hatimEditionHelpOpen = !hatimEditionHelpOpen;
+        syncHatimEditionHelp();
+    });
     document.getElementById('quranMushafEditionList')?.addEventListener('click', (e) => {
         const btn = e.target.closest('[data-mushaf]');
         if (btn) setMushafEdition(btn.dataset.mushaf);

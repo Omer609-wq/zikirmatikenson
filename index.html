@@ -207,12 +207,15 @@
 
                 <p class="hatim-meta" id="hatimGroupMeta" hidden></p>
                 <!-- Kişisel hatmin baskısı: hatim boyunca sabit; okumaya başlanmadıysa dokununca değişir. -->
-                <button type="button" class="hatim-edition" id="hatimEditionBtn" hidden>
-                    <span class="material-icons-outlined hatim-edition__icon" aria-hidden="true">menu_book</span>
-                    <span id="hatimEditionText"></span>
-                    <span class="material-icons-outlined hatim-edition__swap" aria-hidden="true">swap_horiz</span>
-                </button>
-                <!-- İki baskının ayrıldığı yerler (yıldızlı not). -->
+                <div class="hatim-edition-row" id="hatimEditionRow" hidden>
+                    <button type="button" class="hatim-edition" id="hatimEditionBtn">
+                        <span class="material-icons-outlined hatim-edition__icon" aria-hidden="true">menu_book</span>
+                        <span id="hatimEditionText"></span>
+                        <span class="material-icons-outlined hatim-edition__swap" aria-hidden="true">swap_horiz</span>
+                    </button>
+                    <!-- İki baskının ayrıldığı yerler: yer kaplamasın diye "?" ile açılır. -->
+                    <button type="button" class="hatim-edition-help" id="hatimEditionHelpBtn" aria-expanded="false" aria-controls="hatimEditionNote" data-i18n="community.hatimEditionHelp" data-i18n-attr="aria-label" aria-label="İki baskının farkları">?</button>
+                </div>
                 <p class="mushaf-edition-note hatim-edition-note" id="hatimEditionNote" hidden></p>
                 <!-- Kişisel hatimde niyet: yalnız sahibi görür. Dokununca değişir. -->
                 <button type="button" class="hatim-intention" id="hatimIntentionBtn" hidden>

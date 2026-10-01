@@ -232,7 +232,8 @@
     "juzDiffMedina": "Medine mushafında:",
     "juzDiffStart": "başı {ref}",
     "juzDiffEnd": "sonu {ref}",
-    "juzDiffPages": "{count} sayfa"
+    "juzDiffPages": "{count} sayfa",
+    "hatimEditionHelp": "İki baskının farkları"
   },
   "folder": {
     "search": "Ara",

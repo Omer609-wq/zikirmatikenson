@@ -232,7 +232,8 @@
     "juzDiffMedina": "মদিনা মুসহাফে:",
     "juzDiffStart": "শুরু {ref}",
     "juzDiffEnd": "শেষ {ref}",
-    "juzDiffPages": "{count} পৃষ্ঠা"
+    "juzDiffPages": "{count} পৃষ্ঠা",
+    "hatimEditionHelp": "দুই সংস্করণের পার্থক্য"
   },
   "folder": {
     "search": "খুঁজুন",

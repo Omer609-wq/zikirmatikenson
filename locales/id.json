@@ -232,7 +232,8 @@
     "juzDiffMedina": "Dalam mushaf Madinah:",
     "juzDiffStart": "awal {ref}",
     "juzDiffEnd": "akhir {ref}",
-    "juzDiffPages": "{count} halaman"
+    "juzDiffPages": "{count} halaman",
+    "hatimEditionHelp": "Perbedaan kedua edisi"
   },
   "folder": {
     "search": "Cari",
