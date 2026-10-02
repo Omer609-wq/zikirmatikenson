@@ -35,6 +35,9 @@
 		F00DFACE0000000000000004 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F00DFACE0000000000000005 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F00DFACE0000000000000006 /* ur */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ur; path = ur.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F00DFACE0000000000000007 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F00DFACE0000000000000008 /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ms; path = ms.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F00DFACE0000000000000009 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +152,9 @@
 				ar,
 				bn,
 				ur,
+				id,
+				ms,
+				fr,
 			);
 			mainGroup = 504EC2FB1FED79650016851F;
 			packageReferences = (
@@ -250,6 +256,9 @@
 				F00DFACE0000000000000004 /* ar */,
 				F00DFACE0000000000000005 /* bn */,
 				F00DFACE0000000000000006 /* ur */,
+				F00DFACE0000000000000007 /* id */,
+				F00DFACE0000000000000008 /* ms */,
+				F00DFACE0000000000000009 /* fr */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

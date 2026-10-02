@@ -1,10 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <!-- Ana ekran simgesinin altinda yazan ad. Magaza basligindan AYRI:
-         magaza basligi ASO icin uzun olabilir (30 karakter), burasi ~12
-         karakterde kesilir. Sadece marka adi kalsin. -->
-    <string name="app_name">Zikirmatik</string>
-    <string name="title_activity_main">Zikirmatik</string>
+    <!-- Ana ekran simgesinin altinda yazan ad (varsayilan = Ingilizce).
+         Magaza basligindan AYRI: magaza basligi ASO icin 30 karakter olabilir,
+         burasi launcher'a gore ~12-15 karakterde kesilir. Magaza basliginin ilk
+         parcasi (anahtar kelime) kullanilir; marka adi degil. -->
+    <string name="app_name">Tasbeeh Counter</string>
+    <string name="title_activity_main">Tasbeeh Counter</string>
     <string name="package_name">com.omerzikirmatik.app</string>
     <string name="custom_url_scheme">com.omerzikirmatik.app</string>
 </resources>
