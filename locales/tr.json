@@ -234,7 +234,8 @@
     "juzDiffEnd": "sonu {ref}",
     "juzDiffPages": "{count} sayfa",
     "hatimEditionHelp": "İki baskının farkları",
-    "readerEditionSwitched": "Kuran okuyucusu bu hatmin baskısına geçti: {edition}"
+    "readerEditionSwitched": "Kuran okuyucusu bu hatmin baskısına geçti: {edition}",
+    "juzDetailsTitle": "Cüz ayrıntıları"
   },
   "folder": {
     "search": "Ara",

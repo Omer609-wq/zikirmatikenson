@@ -240,7 +240,8 @@
     "juzDiffPages": "{count} صفحات",
     "juzDiffPages_one": "{count} صفحہ",
     "hatimEditionHelp": "دونوں طباعتوں کا فرق",
-    "readerEditionSwitched": "قرآن ریڈر اس ختم کی طباعت پر منتقل ہو گیا: {edition}"
+    "readerEditionSwitched": "قرآن ریڈر اس ختم کی طباعت پر منتقل ہو گیا: {edition}",
+    "juzDetailsTitle": "پارے کی تفصیل"
   },
   "folder": {
     "search": "تلاش",

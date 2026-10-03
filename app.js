@@ -8330,8 +8330,17 @@ function renderHatimJuzDetail() {
 
     // Kişisel hatimde bitmemiş cüzde asıl iş sayfa işaretlemek; o varken
     // "Okumaya başla" ve "Bitirdim" ikincil düğme olur.
-    const showProgress = personal && juz.state !== JUZ_DONE && !isHatimFrozen(group);
+    // Sayfa işaretleme yalnız okunan (alınmış) cüzde: boş cüzde öne çıkan
+    // cüzün bilgileri, okunan cüzde işaretleme — bilgiler o zaman katlı durur.
+    const showProgress = personal && juz.state === JUZ_CLAIMED && !isHatimFrozen(group);
     renderHatimJuzProgress(showProgress ? juz : null, detail);
+    const detailsToggle = document.getElementById('hatimJuzDetailsToggle');
+    const detailsBox = document.getElementById('hatimJuzDetails');
+    if (detailsToggle) {
+        detailsToggle.hidden = !showProgress;
+        detailsToggle.setAttribute('aria-expanded', showProgress && hatimJuzDetailsOpen ? 'true' : 'false');
+    }
+    if (detailsBox) detailsBox.hidden = showProgress && !hatimJuzDetailsOpen;
 
     const actions = document.getElementById('hatimJuzActions');
     if (!actions) return;
@@ -8469,8 +8478,20 @@ function saveHatimJuzProgress() {
     }
 }
 
+/** "Cüz ayrıntıları" her açılışta katlı başlar. */
+let hatimJuzDetailsOpen = false;
+
+function toggleHatimJuzDetails() {
+    hatimJuzDetailsOpen = !hatimJuzDetailsOpen;
+    const toggle = document.getElementById('hatimJuzDetailsToggle');
+    const box = document.getElementById('hatimJuzDetails');
+    if (toggle) toggle.setAttribute('aria-expanded', hatimJuzDetailsOpen ? 'true' : 'false');
+    if (box) box.hidden = !hatimJuzDetailsOpen;
+}
+
 function openHatimJuzDetail(juzN) {
     currentHatimJuzN = Number(juzN);
+    hatimJuzDetailsOpen = false;
     renderHatimJuzDetail();
     openOverlay('hatimJuzOverlay');
 }
@@ -8951,6 +8972,7 @@ function setupHatimListeners() {
     document.getElementById('hatimJuzProgressBack')?.addEventListener('click', () => stepHatimJuzProgress(-1));
     document.getElementById('hatimJuzProgressForward')?.addEventListener('click', () => stepHatimJuzProgress(1));
     document.getElementById('hatimJuzProgressSave')?.addEventListener('click', saveHatimJuzProgress);
+    document.getElementById('hatimJuzDetailsToggle')?.addEventListener('click', toggleHatimJuzDetails);
     document.getElementById('hatimEditionBtn')?.addEventListener('click', handleHatimEditionTap);
     document.getElementById('quranEditionWarnClose')?.addEventListener('click', dismissQuranEditionWarn);
     document.getElementById('hatimEditionHelpBtn')?.addEventListener('click', () => {

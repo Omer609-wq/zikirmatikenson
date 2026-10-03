@@ -246,7 +246,8 @@
     "juzDiffPages": "{count} pages",
     "juzDiffPages_one": "{count} page",
     "hatimEditionHelp": "Differences between the two editions",
-    "readerEditionSwitched": "The Quran reader switched to this hatim's edition: {edition}"
+    "readerEditionSwitched": "The Quran reader switched to this hatim's edition: {edition}",
+    "juzDetailsTitle": "Juz details"
   },
   "folder": {
     "search": "Search",

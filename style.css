@@ -3576,6 +3576,13 @@ html[lang='ur'] .smart-reminder-weekday {
 .hatim-archive__toggle[aria-expanded="true"] .material-icons-outlined {
     transform: rotate(180deg);
 }
+/* Cüz penceresinde "Cüz ayrıntıları": sayfa işaretleme kutusunun altında. */
+.hatim-juz-details-toggle {
+    margin-top: 0.75rem;
+}
+.hatim-juz-details[hidden] {
+    display: none;
+}
 .hatim-archive {
     margin-top: 0.2rem;
 }

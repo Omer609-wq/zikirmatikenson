@@ -234,7 +234,8 @@
     "juzDiffEnd": "শেষ {ref}",
     "juzDiffPages": "{count} পৃষ্ঠা",
     "hatimEditionHelp": "দুই সংস্করণের পার্থক্য",
-    "readerEditionSwitched": "কুরআন রিডার এই খতমের সংস্করণে চলে গেছে: {edition}"
+    "readerEditionSwitched": "কুরআন রিডার এই খতমের সংস্করণে চলে গেছে: {edition}",
+    "juzDetailsTitle": "পারার বিবরণ"
   },
   "folder": {
     "search": "খুঁজুন",

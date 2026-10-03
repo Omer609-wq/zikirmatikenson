@@ -2033,8 +2033,16 @@
                     <p class="hatim-juz-progress__hint" id="hatimJuzProgressHint"></p>
                     <button type="button" class="primary-btn full-width" id="hatimJuzProgressSave">Kaydet</button>
                 </section>
-                <dl class="hatim-juz-facts" id="hatimJuzFacts"></dl>
-                <div class="hatim-juz-surahs" id="hatimJuzSurahs"></div>
+                <!-- Kişisel hatimde okunan cüzde asıl iş sayfa işaretlemek: cüz bilgileri
+                     bu başlığın altında katlı durur. Diğer durumlarda başlık yok, bilgiler açık. -->
+                <button type="button" class="hatim-archive__toggle hatim-juz-details-toggle" id="hatimJuzDetailsToggle" aria-expanded="false" aria-controls="hatimJuzDetails" hidden>
+                    <span data-i18n="community.juzDetailsTitle">Cüz ayrıntıları</span>
+                    <span class="material-icons-outlined" aria-hidden="true">expand_more</span>
+                </button>
+                <div class="hatim-juz-details" id="hatimJuzDetails">
+                    <dl class="hatim-juz-facts" id="hatimJuzFacts"></dl>
+                    <div class="hatim-juz-surahs" id="hatimJuzSurahs"></div>
+                </div>
             </div>
             <div class="modal-footer hatim-juz-actions" id="hatimJuzActions"></div>
         </div>

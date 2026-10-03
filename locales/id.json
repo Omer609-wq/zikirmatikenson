@@ -234,7 +234,8 @@
     "juzDiffEnd": "akhir {ref}",
     "juzDiffPages": "{count} halaman",
     "hatimEditionHelp": "Perbedaan kedua edisi",
-    "readerEditionSwitched": "Pembaca Al-Qur’an beralih ke edisi khataman ini: {edition}"
+    "readerEditionSwitched": "Pembaca Al-Qur’an beralih ke edisi khataman ini: {edition}",
+    "juzDetailsTitle": "Detail juz"
   },
   "folder": {
     "search": "Cari",
