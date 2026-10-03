@@ -441,7 +441,7 @@
     "mushafEditionMedina": "Medine",
     "mushafDiffIntro": "İki baskı şu yerlerde ayrılır (Türk baskısı / Medine):",
     "mushafDiffJuz": "{n}. cüz başı {tr} / {medina}",
-    "mushafDiffPages": "Türk baskısında Fatiha ile Bakara'nın başı tek sayfadır, sonraki sayfa numaraları Medine'den bir eksiktir; 30. cüz 24 sayfadır (Medine'de 23).",
+    "mushafDiffPages": "Uygulamadaki Türk düzeninde Fâtiha ile Bakara'nın ilk beş ayeti aynı sayfadadır (1. sayfa). 2–580. sayfalar Medine düzenindeki bir sonraki sayfaya karşılık gelir. 30. cüzde sayfa bölünmeleri farklıdır; Türk düzeninde 24, Medine düzeninde 23 sayfadır.",
     "editionWarnReaderTurkish": "Okuyucu şu an Türk baskısında.",
     "editionWarnReaderMedina": "Okuyucu şu an Medine düzeninde.",
     "editionWarnAdvice": "Hatimde sayfa işaretlerken numaralar farklı olabilir; hatimdeki “{button}” okuyucuyu hatmin baskısına geçirir.",

@@ -457,7 +457,7 @@
     "mushafEditionMedina": "Médine",
     "mushafDiffIntro": "Les deux éditions diffèrent ici (édition turque / Médine) :",
     "mushafDiffJuz": "le juz {n} commence à {tr} / {medina}",
-    "mushafDiffPages": "Dans l’édition turque, Al-Fatiha et le début d’Al-Baqara forment la page 1 et les numéros suivants sont inférieurs d’un à ceux de Médine ; le juz 30 compte 24 pages (23 à Médine).",
+    "mushafDiffPages": "Dans la mise en page turque de l’application, Al-Fatiha et les cinq premiers versets d’Al-Baqara sont sur la même page (page 1). Les pages 2 à 580 correspondent à la page suivante de la mise en page de Médine. Le juz 30 est découpé autrement : 24 pages dans la mise en page turque, 23 dans celle de Médine.",
     "editionWarnReaderTurkish": "Le lecteur est actuellement sur l’édition turque.",
     "editionWarnReaderMedina": "Le lecteur est actuellement sur la mise en page de Médine.",
     "editionWarnAdvice": "Les numéros de page peuvent différer quand tu marques des pages dans le khatm ; « {button} » dans le khatm fait passer le lecteur à l’édition du khatm.",

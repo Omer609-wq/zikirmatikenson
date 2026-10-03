@@ -441,7 +441,7 @@
     "mushafEditionMedina": "Madinah",
     "mushafDiffIntro": "Kedua edisi berbeda di sini (cetakan Turki / Madinah):",
     "mushafDiffJuz": "juz {n} dimulai di {tr} / {medina}",
-    "mushafDiffPages": "Dalam cetakan Turki, Al-Fatihah dan awal Al-Baqarah berada di halaman 1 dan nomor halaman berikutnya satu lebih kecil daripada Madinah; juz 30 berisi 24 halaman (23 di Madinah).",
+    "mushafDiffPages": "Dalam tata letak Turki di aplikasi, Al-Fatihah dan lima ayat pertama Al-Baqarah berada di halaman yang sama (halaman 1). Halaman 2–580 sesuai dengan halaman berikutnya dalam tata letak Madinah. Pembagian halaman juz 30 berbeda: 24 halaman dalam tata letak Turki, 23 dalam tata letak Madinah.",
     "editionWarnReaderTurkish": "Pembaca saat ini memakai cetakan Turki.",
     "editionWarnReaderMedina": "Pembaca saat ini memakai tata letak Madinah.",
     "editionWarnAdvice": "Nomor halaman bisa berbeda saat menandai halaman di khataman; “{button}” di khataman memindahkan pembaca ke edisi khataman.",

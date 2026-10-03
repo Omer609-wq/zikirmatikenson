@@ -459,7 +459,7 @@
     "mushafEditionMedina": "Medina",
     "mushafDiffIntro": "The two editions differ here (Turkish print / Medina):",
     "mushafDiffJuz": "juz {n} starts at {tr} / {medina}",
-    "mushafDiffPages": "In the Turkish print, Al-Fatiha and the start of Al-Baqarah share page 1 and later page numbers are one lower than in Medina; juz 30 has 24 pages (23 in Medina).",
+    "mushafDiffPages": "In the app's Turkish layout, Al-Fatiha and the first five verses of Al-Baqarah are on the same page (page 1). Pages 2–580 correspond to the next page in the Medina layout. Juz 30 is divided into pages differently: 24 pages in the Turkish layout, 23 in the Medina layout.",
     "editionWarnReaderTurkish": "The reader is now on the Turkish print.",
     "editionWarnReaderMedina": "The reader is now on the Medina layout.",
     "editionWarnAdvice": "Page numbers may differ when you mark pages in the hatim; “{button}” in the hatim switches the reader to the hatim’s edition.",
