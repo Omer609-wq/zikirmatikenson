@@ -8246,12 +8246,14 @@ function hatimJuzMushafNote(group, detail) {
     if (getCurrentMushaf() === MUSHAF_TURKISH) return '';
     const own = getJuzDetail(detail.juz);
     if (!own) return '';
+    // "Senin mushafında (Medine): …" — hangi baskıyla karşılaştırıldığı açık olsun.
+    const edition = t(getCurrentMushaf() === MUSHAF_TURKISH ? 'quran.mushafEditionTurkish' : 'quran.mushafEditionMedina');
     const notes = [];
     if (!same(own.start, detail.start)) {
-        notes.push(t('community.juzStartDiffers', { group: hatimAyahRef(detail.start), mine: hatimAyahRef(own.start) }));
+        notes.push(t('community.juzStartDiffers', { group: hatimAyahRef(detail.start), mine: hatimAyahRef(own.start), edition }));
     }
     if (!same(own.end, detail.end)) {
-        notes.push(t('community.juzEndDiffers', { group: hatimAyahRef(detail.end), mine: hatimAyahRef(own.end) }));
+        notes.push(t('community.juzEndDiffers', { group: hatimAyahRef(detail.end), mine: hatimAyahRef(own.end), edition }));
     }
     return notes.join(' ');
 }

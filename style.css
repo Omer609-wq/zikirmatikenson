@@ -701,8 +701,8 @@ html.counter-customize-open .bottom-nav {
     bottom: calc(var(--bottom-nav-stack-height, 64px) + 1rem);
     z-index: 1100;
     max-width: min(88vw, 24rem);
-    padding: 0.7rem 1.05rem;
-    border-radius: 999px;
+    padding: 0.7rem 1rem;
+    border-radius: 12px;
     background: var(--surface-card);
     border: 1px solid var(--surface-border);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
