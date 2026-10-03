@@ -8415,6 +8415,16 @@ function updateHatimJuzProgressLabels() {
     const page = Number(range.value);
     const started = page >= detail.startPage;
 
+    // Sarıdan yeşile: başlamadın 0, cüzün son sayfası 1.
+    const section = document.getElementById('hatimJuzProgress');
+    if (section) {
+        const min = Number(range.min);
+        const span = Number(range.max) - min;
+        const pos = span > 0 ? Math.min(1, Math.max(0, (page - min) / span)) : 0;
+        section.style.setProperty('--juz-pos', String(pos));
+        section.style.setProperty('--juz-tone', String(pos));
+    }
+
     const value = document.getElementById('hatimJuzProgressValue');
     if (value) {
         value.textContent = started

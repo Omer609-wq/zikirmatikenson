@@ -3746,12 +3746,32 @@ html[lang='ur'] .smart-reminder-weekday {
 }
 
 /* Cüz penceresinde son okunan sayfa: kaydırıcı ve tek sayfa adımları. */
+/*
+ * İlerleme rengi: cüzün başında sarı (okunuyor), sonunda yeşil (bitti).
+ * --juz-pos: doluluğun ucu, tutamaçla birlikte anında oynar.
+ * --juz-tone: renk; kayıtlı (@property) olduğu için adımlar arası yumuşak geçer.
+ * Renkler oklch'de karışır: arada griye düşmeden sarı-yeşil üzerinden yeşile.
+ */
+@property --juz-tone {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+}
 .hatim-juz-progress {
+    --juz-pos: 0;
+    --juz-tone: 0;
+    --juz-color: color-mix(in oklch, var(--hatim-claimed-fg), var(--hatim-done-fg) calc(var(--juz-tone) * 100%));
     margin-top: 0.85rem;
     padding: 0.8rem 0.85rem 0.85rem;
     border: 1px solid var(--surface-border);
     border-radius: 12px;
     background: var(--hatim-free-bg);
+    transition: --juz-tone 0.25s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+    .hatim-juz-progress {
+        transition: none;
+    }
 }
 .hatim-juz-progress[hidden] {
     display: none;
@@ -3767,7 +3787,7 @@ html[lang='ur'] .smart-reminder-weekday {
 .hatim-juz-progress__value {
     font-size: var(--text-sm);
     font-weight: 600;
-    color: var(--hatim-claimed-fg);
+    color: var(--juz-color);
 }
 /* "Başlamadın": bir değer değil, durum; sade yazılır. */
 .hatim-juz-progress__value--none {
@@ -3783,10 +3803,64 @@ html[lang='ur'] .smart-reminder-weekday {
 .hatim-juz-progress__step {
     flex: 0 0 auto;
 }
+/* Kaydırıcı uygulamanın kendi çizimiyle: her platformda aynı renk geçişi.
+   Doluluk tutamacın ortasında biter (uçlarda tutamaç genişliği hesaba katılır). */
 .hatim-juz-progress__range {
+    --thumb: 22px;
+    --fill: calc(var(--thumb) / 2 + var(--juz-pos) * (100% - var(--thumb)));
     flex: 1 1 auto;
     min-width: 0;
-    accent-color: var(--hatim-claimed-fg);
+    height: 28px;
+    margin: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.hatim-juz-progress__range:focus {
+    outline: none;
+}
+.hatim-juz-progress__range::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 999px;
+    background: linear-gradient(
+        to right,
+        var(--juz-color) 0 var(--fill),
+        rgba(148, 163, 184, 0.22) var(--fill) 100%
+    );
+}
+.hatim-juz-progress__range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: var(--thumb);
+    height: var(--thumb);
+    margin-top: calc((6px - var(--thumb)) / 2);
+    border: 3px solid var(--bg-dark);
+    border-radius: 50%;
+    background: var(--juz-color);
+    box-shadow: 0 0 0 4px color-mix(in oklch, var(--juz-color) 22%, transparent);
+}
+.hatim-juz-progress__range:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 0 0 5px color-mix(in oklch, var(--juz-color) 40%, transparent);
+}
+.hatim-juz-progress__range::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.22);
+}
+.hatim-juz-progress__range::-moz-range-progress {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--juz-color);
+}
+.hatim-juz-progress__range::-moz-range-thumb {
+    width: var(--thumb);
+    height: var(--thumb);
+    border: 3px solid var(--bg-dark);
+    border-radius: 50%;
+    background: var(--juz-color);
+    box-sizing: border-box;
 }
 .hatim-juz-progress__hint {
     min-height: 1.45em;
