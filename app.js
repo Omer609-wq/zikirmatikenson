@@ -68,7 +68,7 @@ import {
     findCounterBgPreset,
     normalizeCounterBackground
 } from './lib/counter-backgrounds.js';
-import { sanitizeLoadedData, mintId } from './lib/sanitize.js';
+import { sanitizeLoadedData, sanitizeAyahNoteText, mintId } from './lib/sanitize.js';
 import {
     MAX_SMART_REMINDERS,
     MAX_MESSAGES_PER_RULE,
@@ -299,6 +299,8 @@ import {
     renderQuranSurahDetail,
     renderQuranSurahList,
     setQuranAyahFavoritesApi,
+    setQuranAyahNotesApi,
+    syncQuranAyahNoteButtons,
     setQuranViewTab,
     teardownQuranReader,
     setQuranMealChangeHandler,
@@ -1074,6 +1076,8 @@ let currentHatimJuzN = null;
     olduğu için grup sekmesi önde ve varsayılan. */
 let currentHatimTab = HATIM_KIND_SHARED;
 let quranAyahFavorites = [];
+/** Ayet notları: { s, a, n: metin, t: son düzenleme } — en yeni önde. */
+let quranAyahNotes = [];
 import { QURAN_COUNTER_LAYOUTS, normalizeQuranCounterLayout } from './lib/quran-counter-layout.js';
 
 function isQuranZikir(z) {
@@ -1886,6 +1890,89 @@ function toggleQuranAyahFavorite(surahN, ayahN) {
     syncQuranAyahFavoriteButtons();
     if (getQuranViewTab() === 'favorites') void renderQuranFavoritesList(appSettings.quranMeal, quranAyahFavorites);
     return true;
+}
+
+function getQuranAyahNote(surahN, ayahN) {
+    const s = Number(surahN);
+    const a = Number(ayahN);
+    return quranAyahNotes.find((x) => x.s === s && x.a === a)?.n || '';
+}
+
+function hasQuranAyahNote(surahN, ayahN) {
+    return !!getQuranAyahNote(surahN, ayahN);
+}
+
+/** Boş metin notu siler. Yazarken her tuşta çağrılır: diske yazma ertelenir. */
+function setQuranAyahNote(surahN, ayahN, rawText) {
+    const s = Number(surahN);
+    const a = Number(ayahN);
+    if (!Number.isFinite(s) || !Number.isFinite(a)) return;
+    const text = sanitizeAyahNoteText(rawText);
+    const idx = quranAyahNotes.findIndex((x) => x.s === s && x.a === a);
+    const prev = idx >= 0 ? quranAyahNotes[idx].n : '';
+    if (text === prev) return;
+    if (idx >= 0) quranAyahNotes.splice(idx, 1);
+    if (text) quranAyahNotes.unshift({ s, a, n: text, t: Date.now() });
+    scheduleSave();
+    // Yalnız dolu/boş durumu değişince ikonları güncelle.
+    if (!prev !== !text) syncQuranAyahNoteButtons();
+}
+
+/** Açık not ekranının ayeti; yazılanlar buna kaydedilir. */
+let quranAyahNoteTarget = null;
+
+function openQuranAyahNoteEditor(surahN, ayahN, refLabel) {
+    const input = document.getElementById('quranAyahNoteInput');
+    const refEl = document.getElementById('quranAyahNoteRef');
+    if (!input) return;
+    quranAyahNoteTarget = { s: Number(surahN), a: Number(ayahN) };
+    input.value = getQuranAyahNote(surahN, ayahN);
+    if (refEl) refEl.textContent = refLabel || '';
+    openOverlay('quranAyahNoteOverlay', {
+        onOpen: () => {
+            // Boş notta imleç hemen yazı alanında; dolu notta metin sonunda.
+            requestAnimationFrame(() => {
+                try {
+                    input.focus({ preventScroll: true });
+                    const end = input.value.length;
+                    input.setSelectionRange(end, end);
+                } catch (_) {
+                    // ignore
+                }
+            });
+        }
+    });
+}
+
+function commitQuranAyahNoteInput() {
+    const input = document.getElementById('quranAyahNoteInput');
+    if (!input || !quranAyahNoteTarget) return;
+    setQuranAyahNote(quranAyahNoteTarget.s, quranAyahNoteTarget.a, input.value);
+}
+
+function bindQuranAyahNoteEditor() {
+    const overlay = document.getElementById('quranAyahNoteOverlay');
+    const input = document.getElementById('quranAyahNoteInput');
+    const saveBtn = document.getElementById('quranAyahNoteSaveBtn');
+    if (!overlay || !input || overlay.dataset.bound === '1') return;
+    overlay.dataset.bound = '1';
+    input.addEventListener('input', commitQuranAyahNoteInput);
+    saveBtn?.addEventListener('click', () => {
+        commitQuranAyahNoteInput();
+        flushSave();
+        input.blur();
+        closeOverlayPreferHistory('quranAyahNoteOverlay');
+    });
+    // Geri tuşu / popstate overlay'i yalnız 'active' sınıfını silerek kapatır;
+    // kapanışı buradan yakalayıp bekleyen yazmayı diske işle ve klavyeyi indir.
+    new MutationObserver(() => {
+        if (overlay.classList.contains('active')) return;
+        if (!quranAyahNoteTarget) return;
+        commitQuranAyahNoteInput();
+        flushSave();
+        input.blur();
+        quranAyahNoteTarget = null;
+    }).observe(overlay, { attributes: true, attributeFilter: ['class'] });
 }
 
 function setQuranDrawerFolderError(message) {
@@ -2928,6 +3015,7 @@ function loadData() {
         entitlements = sanitized.entitlements || { premium: false };
         trash = sanitized.trash || { v: 1, entries: [] };
         quranAyahFavorites = sanitized.quranAyahFavorites || [];
+        quranAyahNotes = sanitized.quranAyahNotes || [];
         appMeta = sanitized.appMeta || { installedAt: null };
         lifetimeTotal = sanitized.lifetimeTotal || 0;
         lifetimeByZikir = sanitized.lifetimeByZikir || {};
@@ -3099,6 +3187,7 @@ function buildBackupPayload() {
         entitlements,
         trash,
         quranAyahFavorites,
+        quranAyahNotes,
         appMeta,
         lifetimeTotal,
         lifetimeByZikir,
@@ -4525,6 +4614,7 @@ function applySanitizedBackupToApp(sanitized) {
     smartReminders = Array.isArray(sanitized.smartReminders) ? sanitized.smartReminders : [];
     trash = sanitized.trash || { v: 1, entries: [] };
     quranAyahFavorites = sanitized.quranAyahFavorites || [];
+    quranAyahNotes = sanitized.quranAyahNotes || [];
     appMeta = sanitized.appMeta || { installedAt: null };
     lifetimeTotal = sanitized.lifetimeTotal || 0;
     lifetimeByZikir = sanitized.lifetimeByZikir || {};
@@ -11087,6 +11177,11 @@ function setupEventListeners() {
         isFavorite: isQuranAyahFavorite,
         toggleFavorite: toggleQuranAyahFavorite
     });
+    setQuranAyahNotesApi({
+        hasNote: hasQuranAyahNote,
+        openNote: openQuranAyahNoteEditor
+    });
+    bindQuranAyahNoteEditor();
     setMushafSettingsApi({
         getRemember: () => !!appSettings.quranMushafRememberPage,
         getSavedPage: () => Number(appSettings.quranMushafSavedPage) || 1,

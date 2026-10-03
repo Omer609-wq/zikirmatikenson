@@ -140,6 +140,11 @@ let ayahFavoritesApi = {
     toggleFavorite: () => false
 };
 
+let ayahNotesApi = {
+    hasNote: () => false,
+    openNote: () => {}
+};
+
 export function getQuranMealsForLocale(locale) {
     const code = normalizeAppLocale(locale || getLocale());
     return QURAN_MEALS_BY_LOCALE[code]?.meals ?? [];
@@ -288,6 +293,13 @@ export function setQuranAyahFavoritesApi(api) {
     ayahFavoritesApi = {
         isFavorite: typeof api?.isFavorite === 'function' ? api.isFavorite : () => false,
         toggleFavorite: typeof api?.toggleFavorite === 'function' ? api.toggleFavorite : () => false
+    };
+}
+
+export function setQuranAyahNotesApi(api) {
+    ayahNotesApi = {
+        hasNote: typeof api?.hasNote === 'function' ? api.hasNote : () => false,
+        openNote: typeof api?.openNote === 'function' ? api.openNote : () => {}
     };
 }
 
@@ -1079,6 +1091,42 @@ export function syncQuranAyahFavoriteButtons() {
     });
 }
 
+const SVG_NS = 'http://www.w3.org/2000/svg';
+/** Konuşma balonu; not yokken yalnız çerçeve, varken içi dolu (CSS fill ile). */
+const AYAH_NOTE_ICON_PATH =
+    'M6 4h12a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6.6l-4.3 3.4c-.4.3-.9 0-.9-.4V17H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z';
+
+function createAyahNoteIcon() {
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('class', 'quran-ayah__note-icon');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('focusable', 'false');
+    const path = document.createElementNS(SVG_NS, 'path');
+    path.setAttribute('d', AYAH_NOTE_ICON_PATH);
+    svg.appendChild(path);
+    return svg;
+}
+
+function syncAyahNoteButton(btn, surahN, ayahN) {
+    if (!btn) return;
+    const on = ayahNotesApi.hasNote(surahN, ayahN);
+    btn.classList.toggle('quran-ayah__note--on', on);
+    const label = on ? t('quran.noteEdit') : t('quran.noteAdd');
+    btn.setAttribute('aria-label', label);
+    btn.title = label;
+}
+
+export function syncQuranAyahNoteButtons() {
+    document.querySelectorAll('.quran-ayah__note').forEach((btn) => {
+        const surahN = Number(btn.closest('.quran-ayah')?.getAttribute('data-surah'));
+        const ayahN = Number(btn.closest('.quran-ayah')?.getAttribute('data-ayah'));
+        if (Number.isFinite(surahN) && Number.isFinite(ayahN)) {
+            syncAyahNoteButton(btn, surahN, ayahN);
+        }
+    });
+}
+
 async function openAyahExpandView(surahN, ayahRef) {
     if (getCurrentReaderLayout() === 'mushaf') return;
     if (isAyahExpandSuppressed()) return;
@@ -1296,7 +1344,7 @@ function ayahPointerMoved(clientX, clientY, startX, startY, pointerType) {
 
 function attachAyahPointerInteractions(block, surahN, ayah, readMode) {
     block.addEventListener('click', (e) => {
-        if (e.target.closest('.quran-ayah__fav')) return;
+        if (e.target.closest('.quran-ayah__fav, .quran-ayah__note')) return;
         if (block.dataset.ayahSuppressTap === '1') {
             delete block.dataset.ayahSuppressTap;
             return;
@@ -1308,7 +1356,7 @@ function attachAyahPointerInteractions(block, surahN, ayah, readMode) {
         'pointerdown',
         (e) => {
             if (e.pointerType === 'mouse' && e.button !== 0) return;
-            if (e.target.closest('.quran-ayah__fav')) return;
+            if (e.target.closest('.quran-ayah__fav, .quran-ayah__note')) return;
             if (!localeShowsQuranTafsir()) return;
 
             const pid = e.pointerId;
@@ -1386,6 +1434,17 @@ function createAyahElement(ayah, surahN, readMode) {
     ref.textContent = cardRef;
     head.appendChild(ref);
 
+    const noteBtn = document.createElement('button');
+    noteBtn.type = 'button';
+    noteBtn.className = 'quran-ayah__note icon-btn';
+    noteBtn.appendChild(createAyahNoteIcon());
+    syncAyahNoteButton(noteBtn, surahN, ayah.n);
+    noteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        ayahNotesApi.openNote(surahN, ayah.n, cardRef);
+    });
+    head.appendChild(noteBtn);
+
     const favBtn = document.createElement('button');
     favBtn.type = 'button';
     favBtn.className = 'quran-ayah__fav icon-btn';
@@ -1405,6 +1464,8 @@ function createAyahElement(ayah, surahN, readMode) {
 
     attachAyahPointerInteractions(block, surahN, ayah, readMode);
     block.addEventListener('keydown', (e) => {
+        // Kart içindeki düğmeler kendi Enter/Boşluk davranışını korusun.
+        if (e.target !== block) return;
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             void openAyahExpandView(surahN, ayah.n);
