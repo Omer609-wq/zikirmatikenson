@@ -65,8 +65,8 @@
   {
     "id": "lib_d_uyku",
     "category": "dua",
-    "name": "Bismike Allâhümme ahyâ ve emût",
-    "meaning": "Ey Allah'ım! Senin adınla yaşarım ve ölürüm (uyurum).",
+    "name": "Bismike Allâhümme emûtü ve ahyâ",
+    "meaning": "Ey Allah'ım! Senin adınla ölürüm (uyurum) ve yaşarım.",
     "context": "Uyumadan önce yatağa yatınca; geceyi Allah'a emanet etmek sünnettir.",
     "source": "Buhari, Daavat 11",
     "target": 1,
@@ -78,7 +78,7 @@
     "name": "Elhamdülillâhillezî ahyânâ ba'de mâ emâtenâ ve ileyhin-nüşûr",
     "meaning": "Bizi ölüm gibi uyku sonrası dirilten Allah'a hamd olsun; dönüş O'nadır.",
     "context": "Sabah uyandığında, gözü açınca; uyku nimetine şükür ve güne Allah'la başlamak için.",
-    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "source": "Buhari, Daavat 11",
     "target": 1,
     "keywords": "sabah uyanmak göz gece gündüz şükür"
   },
@@ -88,7 +88,7 @@
     "name": "Bismillâhi tevekkeltü alallâhi, lâ havle ve lâ kuvvete illâ billâh",
     "meaning": "Allah'ın adıyla; Allah'a tevekkül ettim. Güç ve kuvvet ancak Allah'tandır.",
     "context": "Evden, işten veya güvenli bir yerden çıkarken; yol ve iş için Allah'a dayanmak içindir.",
-    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "source": "Ebu Davud 5095; Tirmizi 3426",
     "target": 1,
     "keywords": "ev çıkış kapı iş yol günlük tevekkül"
   },
@@ -108,10 +108,10 @@
     "category": "dua",
     "name": "Allâhümme kemâ hassente halkî fe hassin hulukî",
     "meaning": "Ya Allah, dış görünüşümü güzel yaptığın gibi ahlâkımı da güzelleştir.",
-    "context": "Aynaya bakıldığında; suret nimetine şükür ve iç güzelliği dilemek için.",
-    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "context": "Aynaya bakıldığında; suret nimetine şükür ve iç güzelliği dilemek için. Bu rivayetin senedi hakkında âlimler ihtilaf etmiştir; zayıf görenler vardır.",
+    "source": "İmâm Nevevî, El-Ezkar (sıhhati tartışmalı)",
     "target": 1,
-    "keywords": "ayna suret yüz ahlâk şükür"
+    "keywords": "ayna suret yüz ahlâk şükür sened tartışmalı"
   },
   {
     "id": "lib_d_cami_giris",
@@ -119,7 +119,7 @@
     "name": "Allâhümmeftah li ebvâbe rahmetik",
     "meaning": "Ya Allah, bana rahmetinin kapılarını aç.",
     "context": "Cami veya mescide girerken; ibadet yeri saygısı ve mağfiret ümidiyle.",
-    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "source": "Müslim 713",
     "target": 1,
     "keywords": "cami mescid giriş kapı namaz"
   },
@@ -129,7 +129,7 @@
     "name": "Allâhümme innî es'elüke min fadlik",
     "meaning": "Ya Allah, Senin lütfundan (fadlından) Senden dilerim.",
     "context": "Cami veya mescidden çıkarken; ibadet sonrası hayır ve mağfiret dilemek için.",
-    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "source": "Müslim 713",
     "target": 1,
     "keywords": "cami mescid çıkış namaz hayır"
   },
@@ -139,7 +139,7 @@
     "name": "Esselâmü aleyküm ehle'd-diyâri mine'l-mü'minîne ve'l-müslimîn",
     "meaning": "Ey bu diyarın mümin ve Müslüman halkı, size selâm olsun.",
     "context": "Kabristana girildiğinde veya mezarlıkta; ölülere selâm ve ahiret hatırlatması için.",
-    "source": "İmâm Nevevî, El-Ezkar (el-Adhkâr)",
+    "source": "Müslim 974-975",
     "target": 1,
     "keywords": "kabir mezarlık ölü ziyaret ahiret"
   },
