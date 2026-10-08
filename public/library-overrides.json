@@ -636,11 +636,13 @@
         "lib_d_tovbe_seyyidul_istigfar": {
             "prev": {
                 "name": [
-                    "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ"
+                    "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+                    "Allahümme ente rabbî lâ ilâhe illâ ente, halaktanî ve ene abduke ve ene alâ ahdike ve va'dike mâ estaata't, eûzü bike min şerri mâ sana't, ebû'u leke bi ni'metike aleyye ve ebû'u bi zenbî fağfir lî fe innehû lâ yağfiruz-zünûbe illâ ent"
                 ]
             },
             "tr": {
-                "arabic": "اللَّهُمَّ أَنْتَ رَبِّي، لَا إِلَهَ إِلَّا أَنْتَ؛ خَلَقْتَنِي وَأَنَا عَبْدُكَ؛ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ؛ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ؛ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي؛ فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ"
+                "arabic": "اللَّهُمَّ أَنْتَ رَبِّي، لَا إِلَهَ إِلَّا أَنْتَ؛ خَلَقْتَنِي وَأَنَا عَبْدُكَ؛ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ؛ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ؛ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي؛ فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+                "name": "Allahümme ente rabbî lâ ilâhe illâ ente, halaktanî ve ene abduke ve ene alâ ahdike ve va'dike mâ estata'tü, eûzü bike min şerri mâ sana't, ebû'u leke bi ni'metike aleyye ve ebû'u bi zenbî fağfir lî fe innehû lâ yağfiruz-zünûbe illâ ent"
             }
         },
         "lib_d_sikinti_yunus": {
@@ -651,6 +653,16 @@
             },
             "tr": {
                 "arabic": "لَا إِلَٰهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ"
+            }
+        },
+        "lib_d_tovbe_tesbihat": {
+            "prev": {
+                "name": [
+                    "Estağfirullah, estağfirullah, estağfirullâhe'l-azîme'l-kerîm ellezî lâ ilâhe illâ hüve'l-hayye'l-kayyûme ve etûbü ileyh. Ve nes'elühü't-tevbete ve'l-mağfirete ve'l-hidâyete lenâ, innehû hüve't-tevvâbü'r-rahîm. Tevbete abdin zâlimin li-nefsihî, lâ yemlikü li-nefsihî mevten velâ hayâten velâ nüşûrâ"
+                ]
+            },
+            "tr": {
+                "name": "Estağfirullah, estağfirullah, estağfirullâhe'l-azîme'l-kerîm ellezî lâ ilâhe illâ hüve'l-hayyu'l-kayyûmu ve etûbü ileyh. Ve nes'elühü't-tevbete ve'l-mağfirete ve'l-hidâyete lenâ, innehû hüve't-tevvâbü'r-rahîm. Tevbete abdin zâlimin li-nefsihî, lâ yemlikü li-nefsihî mevten velâ hayâten velâ nüşûrâ"
             }
         }
     }

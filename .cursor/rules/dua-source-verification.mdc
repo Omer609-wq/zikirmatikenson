@@ -45,3 +45,20 @@ Ayrıntı: `docs/dua-references/README.md`.
   (bkz. `i18n-religious-content.mdc`). Referanslar Arapça + kaynak + kapsam içindir.
 - Fazilet politikasını değiştirme: zayıf-popüler fazilet bu korpuslarda yoktur;
   eklenirse kaynağı ve derecesi açıkça belirtilir.
+
+## Metin değişince propagasyon (ÖNEMLİ)
+
+tr.json'da bir kütüphane maddesinin `name`/`arabic`/`meaning`/`fazilet` metnini değiştirmek
+**tek başına yetmez** — mevcut kurulumlardaki kullanıcı kayıtları güncellenmez. Uygulama,
+kullanıcının eski metnini "bilinen eski metin" kümesinde bulamazsa "elle düzenlenmiş" sanıp
+korur (`i18n.js` → `getKnownLibraryNameTexts`; migrasyon `app.js`).
+
+Her metin değişikliğinde `public/library-overrides.json`'u da güncelle:
+- **`prev.name`** dizisine **eski metni** ekle (migrasyon tanısın, kanona çeksin).
+  Eski birden çok varyant (okunuş + Arapça) varsa hepsini ekle. `prev.name` hem ad hem
+  Arapça eşleştirmede kullanılır.
+- **`tr`** katmanına **yeni metni** yaz (mağaza güncellemesi beklemeden canlı yama).
+- `source` alanı kullanıcıya **gösterilmez** ve kayda kopyalanmaz → kaynak düzeltmesi için
+  yalnız tr.json yeterli, overrides gerekmez.
+- `en.name` yazıyorsan `ar`/`bn`/`ur` okunuşlarını da yaz (dosyadaki `_arKatmaniTuzagi`).
+- Push sonrası jsDelivr purge adresini çağır (dosyadaki `_pushSonrasi`).
