@@ -36,6 +36,11 @@ Ayrıntı: `docs/dua-references/README.md`.
 
 - Arapça metni veya hadis numarasını hafızadan yazıp referansla doğrulamadan ekleme.
 - İki korpus çeliştiğinde "muhtemelen biri doğrudur" deyip geçme — ekstra kontrol şart.
+- İki referansın **aynı varyantta birleşmesini**, uygulamadaki farklı bir metnin "hatalı"
+  olduğuna kanıt sayma. Aynı duanın birden çok sahih varyantı olabilir (ör. uyku duası:
+  "ahyâ ve emût" Buhari 7394 / Müslim 2711 ↔ "emûtü ve ahyâ" Buhari 6324 — ikisi de sahih).
+  Referanslar bir varyantı taşıyor diye mevcut metni "referansta yok" gerekçesiyle değiştirme;
+  önce birincil hadiste karşılığı var mı diye bak.
 - Türkçe meali referanstan çevirme; meal/ton projeye özgü yazılır
   (bkz. `i18n-religious-content.mdc`). Referanslar Arapça + kaynak + kapsam içindir.
 - Fazilet politikasını değiştirme: zayıf-popüler fazilet bu korpuslarda yoktur;
