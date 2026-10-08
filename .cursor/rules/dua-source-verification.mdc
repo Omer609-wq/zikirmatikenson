@@ -1,0 +1,42 @@
+---
+description: Yeni dua/zikir eklerken Arapça metni ve kaynağı iki bağımsız referansla doğrula
+alwaysApply: true
+---
+
+# Dua/zikir kaynak doğrulama
+
+Kütüphaneye **yeni dua veya zikir** eklerken Arapça metni ve kaynak künyesini **hafızadan
+üretme** — `docs/dua-references/` altındaki iki referans korpusundan **kopyala ve doğrula**.
+
+## İki referans
+
+| Korpus | Yol | İçerik |
+|--------|-----|--------|
+| fitrahive | `docs/dua-references/fitrahive-dua-dhikr/` | Arapça + translit + EN çeviri + **kaynak künyesi** (97 madde) |
+| Hüsnü'l-Müslim (el-Kahtânî) | `docs/dua-references/hisnul-muslim-qahtani/hisnmuslim.json` | Arapça + tekrar sayısı (tam kitap, 267 madde) |
+
+Farklı soydan gelirler (fitrahive: Endonezya + Elbânî tahkiki; rn0x: doğrudan el-Kahtânî).
+Ayrıntı: `docs/dua-references/README.md`.
+
+## Akış
+
+1. **Her iki korpusta ara.** Eklenecek duanın Arapçasını ikisinde de bul.
+2. **Arapçayı karşılaştır** (harekesiz/yazım-varyantı normalize ederek):
+   - **Uyuşuyorlarsa** → metin güvenli, kopyala. Ek kontrol gerekmez.
+   - **Çelişiyorlarsa** → dur, **ekstra kontrol** yap: üçüncü bağımsız kaynakla
+     (hadis koleksiyonu Arapça nüshası / sunnah.com / dorar.net) karakter düzeyinde
+     teyit et, hangi varyantın doğru olduğunu belirle. Kullanıcıya farkı bildir.
+3. **Kaynak künyesi** fitrahive'den gelir (rn0x'te yoktur). Künyeyi projenin kendi
+   formatına normalize et ("HR." ve Endonezce üslubu temizle; "Buhari, Daavât …" gibi).
+   Şüpheli/boş künyeyi bağımsız hadis kaynağıyla doğrula.
+4. Yalnız **bir** korpusta varsa: tek kaynaklı olduğunu belirt ve künyeyi bağımsız olarak
+   bir hadis kaynağından teyit et.
+
+## Yapma
+
+- Arapça metni veya hadis numarasını hafızadan yazıp referansla doğrulamadan ekleme.
+- İki korpus çeliştiğinde "muhtemelen biri doğrudur" deyip geçme — ekstra kontrol şart.
+- Türkçe meali referanstan çevirme; meal/ton projeye özgü yazılır
+  (bkz. `i18n-religious-content.mdc`). Referanslar Arapça + kaynak + kapsam içindir.
+- Fazilet politikasını değiştirme: zayıf-popüler fazilet bu korpuslarda yoktur;
+  eklenirse kaynağı ve derecesi açıkça belirtilir.
