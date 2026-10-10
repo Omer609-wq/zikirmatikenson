@@ -1662,7 +1662,7 @@ async function init() {
             setTimeout(() => void refreshNativeBottomInsetVar(), 200);
             App.addListener('appStateChange', ({ isActive }) => {
                 appInForeground = isActive;
-                syncHatimLive();
+                syncHatimForeground();
                 if (isActive) {
                     void refreshNativeBottomInsetVar();
                     usageTracker?.resume();
@@ -1741,7 +1741,7 @@ async function init() {
         setInAppStackTo(getViewState('homeView', null));
         syncPremiumLockedControls();
         document.addEventListener('visibilitychange', onAppBecameVisibleForReminders);
-        document.addEventListener('visibilitychange', syncHatimLive);
+        document.addEventListener('visibilitychange', syncHatimForeground);
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState !== 'visible') {
                 usageTracker?.pause();
@@ -6023,7 +6023,7 @@ function showView(viewId, param = null, options = {}) {
         applyHatimHousekeeping();
         renderCommunityView();
         warmHatimSync();
-        void syncRemoteHatimsInBackground();
+        void syncHatimListOnce();
     } else if (viewId === 'hatimGroupView') {
         if (param != null) currentHatimGroupId = param;
         hatimEditionHelpOpen = false; // baskı notu her girişte kapalı
@@ -7271,6 +7271,33 @@ async function drainHatimLive(live) {
 /** Kullanıcının işlemi bitti: bekletilen haber varsa şimdi işlensin. */
 function kickHatimLive() {
     if (hatimLive && !hatimLive.closed) void drainHatimLive(hatimLive);
+}
+
+/**
+ * Topluluk listesinin eşlemesi aynı anda bir kez: öne gelişte uygulama durumu ve
+ * görünürlük olayları art arda gelir, iki eşleme aynı "grup silindi" uyarısını
+ * iki kez göstermesin.
+ */
+let hatimListSync = null;
+
+function syncHatimListOnce() {
+    if (!hatimListSync) {
+        hatimListSync = syncRemoteHatimsInBackground().finally(() => {
+            hatimListSync = null;
+        });
+    }
+    return hatimListSync;
+}
+
+/**
+ * Uygulama öne geldi ya da arka plana geçti. Grup ekranında canlı dinleme
+ * açılır/kapanır; Topluluk listesi açıksa gruplar öne gelişte bir kez yenilenir
+ * (liste canlı dinlenmez: her grup için ayrı dinleme gerekirdi).
+ */
+function syncHatimForeground() {
+    syncHatimLive();
+    if (!appInForeground || document.visibilityState === 'hidden') return;
+    if (currentViewId === 'communityView') void syncHatimListOnce();
 }
 
 /**
