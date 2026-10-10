@@ -203,6 +203,7 @@ import {
     dropGoneHatims,
     isRemoteHatim,
     memberDiff,
+    remoteHatimChanged,
     withSeenMembers
 } from './lib/hatim-remote-map.js';
 import { getHatimContext, getHatimSyncAvailability, hatimSessionErrorKey } from './lib/hatim-session.js';
@@ -1660,6 +1661,8 @@ async function init() {
             void setupCrashReporting();
             setTimeout(() => void refreshNativeBottomInsetVar(), 200);
             App.addListener('appStateChange', ({ isActive }) => {
+                appInForeground = isActive;
+                syncHatimLive();
                 if (isActive) {
                     void refreshNativeBottomInsetVar();
                     usageTracker?.resume();
@@ -1738,6 +1741,7 @@ async function init() {
         setInAppStackTo(getViewState('homeView', null));
         syncPremiumLockedControls();
         document.addEventListener('visibilitychange', onAppBecameVisibleForReminders);
+        document.addEventListener('visibilitychange', syncHatimLive);
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState !== 'visible') {
                 usageTracker?.pause();
@@ -6024,7 +6028,7 @@ function showView(viewId, param = null, options = {}) {
         if (param != null) currentHatimGroupId = param;
         hatimEditionHelpOpen = false; // baskı notu her girişte kapalı
         renderHatimGroupView();
-        void syncRemoteHatimInBackground(currentHatimGroupId);
+        void syncHatimGroupOnce(currentHatimGroupId);
     } else if (viewId === 'hatimDuaView') {
         renderHatimDuaView();
     } else if (viewId === 'libraryGroupView') {
@@ -6086,6 +6090,7 @@ function showView(viewId, param = null, options = {}) {
     }
 
     currentViewId = viewId;
+    syncHatimLive();
 }
 
 function renderPremium() {
@@ -6957,6 +6962,8 @@ async function withHatimBusy(task) {
     } finally {
         hatimSyncBusy = false;
         document.body.classList.remove('hatim-syncing');
+        // İşlem sürerken gelen canlı haber bekletildi; çağıran sonucunu yazdıktan sonra işlensin.
+        setTimeout(kickHatimLive, 0);
     }
 }
 
@@ -7156,6 +7163,114 @@ async function syncRemoteHatimInBackground(id) {
             showTransientNote(t('community.groupArchivedNotice', { name: findHatimGroup(id)?.name || '' }));
         }
     }
+}
+
+/**
+ * Aynı grubun eşlemesi aynı anda bir kez: grup açılırken başlayan eşleme sürerken
+ * canlı dinlemenin ilk haberi ikinci bir okuma başlatmasın, onu beklesin.
+ */
+const hatimGroupSyncs = new Map();
+
+function syncHatimGroupOnce(id) {
+    const running = hatimGroupSyncs.get(id);
+    if (running) return running;
+    const task = syncRemoteHatimInBackground(id).finally(() => hatimGroupSyncs.delete(id));
+    hatimGroupSyncs.set(id, task);
+    return task;
+}
+
+/*
+ * Canlı eşitleme: grup ekranı açık ve uygulama öndeyken hatim belgesi dinlenir
+ * (lib/hatim-remote.js watchHatim). Belgede ekrana yansıyan bir şey değişince
+ * grup bir kez eşlenir; cüz tablosu yalnız rev değiştiyse okunur. Ekrandan
+ * çıkınca ya da uygulama arka plana geçince dinleme kapanır; geri gelince
+ * yeniden kurulur ve ilk haber aradaki değişiklikleri getirir.
+ */
+let hatimLive = null;
+let appInForeground = true;
+
+function hatimLiveTargetId() {
+    if (!appInForeground || document.visibilityState === 'hidden') return null;
+    if (currentViewId !== 'hatimGroupView') return null;
+    const group = findHatimGroup(currentHatimGroupId);
+    if (!isRemoteHatim(group) || isHatimFrozen(group)) return null;
+    return group.id;
+}
+
+/** Ekran, grup ya da uygulamanın ön/arka durumu değişince: dinleme ona uysun. */
+function syncHatimLive() {
+    const id = hatimLiveTargetId();
+    if (hatimLive && hatimLive.id === id) return;
+    stopHatimLive();
+    if (id) void startHatimLive(id);
+}
+
+function stopHatimLive() {
+    if (!hatimLive) return;
+    hatimLive.closed = true;
+    hatimLive.stop?.();
+    hatimLive = null;
+}
+
+async function startHatimLive(id) {
+    const live = { id, stop: null, latest: undefined, running: false, dirty: false, closed: false };
+    hatimLive = live;
+    const ctx = await getHatimContextQuiet();
+    const mod = ctx ? await loadHatimRemote().catch(() => null) : null;
+    if (live.closed) return;
+    if (!mod) {
+        // Oturum ya da bağlantı yok: bir sonraki girişte ya da öne gelişte yeniden denenir.
+        hatimLive = null;
+        return;
+    }
+    live.stop = mod.watchHatim(
+        ctx,
+        id,
+        (data) => {
+            if (live.closed) return;
+            live.latest = data;
+            void drainHatimLive(live);
+        },
+        () => {
+            // Dinleme bitti (yetki): ekrana yeniden girilince kurulur.
+            live.closed = true;
+            if (hatimLive === live) hatimLive = null;
+        }
+    );
+}
+
+/**
+ * Gelen haberi işler. Eşleme sürerken yeni haber gelirse bitince bir tur daha
+ * döner. Kullanıcının kendi işlemi sürerken beklenir — iyimser hâli ezmesin;
+ * işlem bitince withHatimBusy dürter (kickHatimLive), o zaman yerel hâl çoğu
+ * zaman zaten günceldir ve okuma yapılmaz.
+ */
+async function drainHatimLive(live) {
+    if (live.running) {
+        live.dirty = true;
+        return;
+    }
+    live.running = true;
+    try {
+        do {
+            live.dirty = false;
+            const running = hatimGroupSyncs.get(live.id);
+            if (running) await running;
+            if (live.closed || live.latest === undefined) break;
+            if (hatimSyncBusy || hatimConfirmedBase.has(live.id)) break;
+            if (!remoteHatimChanged(findHatimGroup(live.id), live.latest)) break;
+            await syncHatimGroupOnce(live.id);
+        } while (live.dirty && !live.closed);
+    } finally {
+        live.running = false;
+    }
+    // Grup silindi, arşive indi ya da ekrandan çıkıldı: dinleme kendini toplar.
+    syncHatimLive();
+}
+
+/** Kullanıcının işlemi bitti: bekletilen haber varsa şimdi işlensin. */
+function kickHatimLive() {
+    if (hatimLive && !hatimLive.closed) void drainHatimLive(hatimLive);
 }
 
 /**

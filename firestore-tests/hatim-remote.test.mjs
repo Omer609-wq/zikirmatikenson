@@ -27,7 +27,8 @@ import {
     removeHatimMember,
     renameHatim,
     reportHatim,
-    uncompleteJuzRemote
+    uncompleteJuzRemote,
+    watchHatim
 } from '../lib/hatim-remote.js';
 
 const PROJECT_ID = 'demo-zikirmatik-rules';
@@ -265,6 +266,37 @@ test('silme: yalnızca yönetici; sonra kod bulunmaz, katılımcıda grup "gone"
     assert.equal((await findHatimByCode(ctxOf(OUTSIDER), code)).reason, 'notFound');
     assert.equal((await fetchHatim(ctx[MEMBER], hatimId)).reason, 'gone');
     assert.equal(await serverHatim(hatimId), null);
+});
+
+test('canlı dinleme: başkasının cüz alması ve grubun silinmesi açık ekrana düşer', async () => {
+    const { hatimId, ctx } = await setup(MEMBER);
+    const seen = [];
+    let wake = () => {};
+    const stop = watchHatim(ctx[MEMBER], hatimId, (data) => {
+        seen.push(data);
+        wake();
+    });
+    const waitFor = async (what, pred) => {
+        const deadline = Date.now() + 5000;
+        while (!seen.some(pred)) {
+            assert.ok(Date.now() < deadline, `dinleyiciye düşmedi: ${what}`);
+            await new Promise((resolve) => {
+                wake = resolve;
+                setTimeout(resolve, 100);
+            });
+        }
+    };
+    try {
+        await waitFor('ilk hâl', (d) => d?.rev === 0 && d?.memberCount === 2);
+        assert.equal((await claimJuzRemote(ctx[OWNER], hatimId, 5, 'Hoca')).ok, true);
+        await waitFor('cüz alındı', (d) => d?.rev === 1);
+        assert.equal((await joinHatim(ctxOf(OTHER), hatimId, 'Zeynep')).ok, true);
+        await waitFor('biri katıldı', (d) => d?.memberCount === 3);
+        assert.equal((await deleteHatim(ctx[OWNER], hatimId)).ok, true);
+        await waitFor('grup silindi', (d) => d === null);
+    } finally {
+        stop();
+    }
 });
 
 test('şikâyet: katılmamış biri de gönderebilir', async () => {
