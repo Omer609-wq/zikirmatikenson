@@ -10157,7 +10157,8 @@ function renderBarChart(chartEl, yAxisEl, buckets, density, scaleMaxOverride) {
  * Çubuğa basınca sayıyı gösteren baloncuk. Çubuğun ::after'ı yerine grafik
  * kartının (.chart-container) içinde, kaydırma şeridinin DIŞINDA tek bir eleman:
  * aylık şerit overflow ile kırpıyordu, uzun çubuklarda baloncuk başlığın altında
- * kalıyordu. Kart içinde yatayda sınırlanır; basılı tutulduğu sürece görünür.
+ * kalıyordu. Kart içinde yatayda sınırlanır; dokununca açılır, başka yere
+ * dokunulana ya da şerit kayana kadar açık kalır.
  */
 function getChartTooltipEl(chartEl, create) {
     const host = chartEl?.closest('.chart-container');
@@ -10200,20 +10201,27 @@ function showChartTooltip(chartEl, bar) {
     tip.style.top = `${Math.round(top)}px`;
 }
 
+let chartTooltipOutsideBound = false;
+
 function bindChartTooltip(chartEl) {
     if (!chartEl || chartEl.dataset.tooltipBound === '1') return;
     chartEl.dataset.tooltipBound = '1';
     const hide = () => hideChartTooltip(chartEl);
+    // Sütunun tamamı dokunulabilir: sıfır ya da kısa günlerde çubuk birkaç
+    // piksel, parmakla tam isabet ettirmek zor.
     const barFrom = (e) => {
-        const bar = e.target.closest?.('.chart-bar');
-        return bar && chartEl.contains(bar) ? bar : null;
+        const group = e.target.closest?.('.chart-bar-group');
+        if (!group || !chartEl.contains(group)) return null;
+        return group.querySelector('.chart-bar');
     };
-    chartEl.addEventListener('pointerdown', (e) => {
+    // Dokununca göster ve açık bırak (eski yapışkan :hover gibi); kapanması
+    // için başka yere dokunulur. click kaydırma hareketinde tetiklenmez.
+    chartEl.addEventListener('click', (e) => {
         const bar = barFrom(e);
         if (bar) showChartTooltip(chartEl, bar);
         else hide();
     });
-    // Fare: üzerine gelince göster (eski :hover davranışı)
+    // Fare: üzerine gelince göster
     chartEl.addEventListener('pointerover', (e) => {
         if (e.pointerType !== 'mouse') return;
         const bar = barFrom(e);
@@ -10222,11 +10230,23 @@ function bindChartTooltip(chartEl) {
     chartEl.addEventListener('pointerout', (e) => {
         if (e.pointerType === 'mouse' && barFrom(e)) hide();
     });
-    chartEl.addEventListener('pointerup', hide);
-    chartEl.addEventListener('pointercancel', hide);
-    chartEl.addEventListener('pointerleave', hide);
     // Aylık şerit kayarken baloncuk çubuktan kopmasın
     chartEl.addEventListener('scroll', hide, { passive: true });
+
+    if (!chartTooltipOutsideBound) {
+        chartTooltipOutsideBound = true;
+        // Sütun dışında herhangi bir yere dokununca açık baloncuk kapanır.
+        document.addEventListener(
+            'pointerdown',
+            (e) => {
+                if (e.target.closest?.('.chart-bar-group')) return;
+                document.querySelectorAll('.chart-tooltip:not([hidden])').forEach((tip) => {
+                    tip.hidden = true;
+                });
+            },
+            { capture: true, passive: true }
+        );
+    }
 }
 
 /** Kaydırmanın sayfa değiştirmesi için gereken en az yatay mesafe. */
