@@ -1023,42 +1023,199 @@ function scoreHaystackMeal(hay, tokens, fuzzy = false) {
     return total + span * 0.02 + 2500;
 }
 
-function makeSnippet(text, rawQuery, cfg, maxLen = 72) {
+/** Parça için kelime: harf, hareke, rakam ve kelime içi kesme/ayn işaretleri. Tire ve boşluk ayırır. */
+const SNIPPET_WORD_RE = /[\p{L}\p{M}\p{N}'’`´ʻʿ]+/gu;
+/** Eşleşmenin önünde bırakılan bağlam (karakter). */
+const SNIPPET_LEAD_CHARS = 22;
+
+function snippetWords(text, normalize) {
+    const words = [];
+    for (const m of text.matchAll(SNIPPET_WORD_RE)) {
+        const norm = normalize(m[0]).replace(/\s+/g, '');
+        if (!norm) continue;
+        words.push({ start: m.index, end: m.index + m[0].length, norm });
+    }
+    return words;
+}
+
+/** findTokenInHay ile aynı sıralama: 0 tam, 1 önek, 2 içerir, 3 kök, 4 tek harf hatası; -1 yok. */
+function snippetWordRank(token, word) {
+    if (word === token) return 0;
+    if (word.startsWith(token)) return 1;
+    if (word.includes(token)) return 2;
+    if (token.startsWith(word) && word.length >= 4) return 2;
+    if (turkishTokenStemMatch(token, word) >= 5) return 3;
+    if (token.length >= 4 && levenshteinAtMost1(word, token) <= 1) return 4;
+    return -1;
+}
+
+/** Çakışan ya da yalnız tireyle ayrılan vurguları birleştirir ("[Vehüve]-[lḳaviyyü]" -> tek vurgu). */
+function mergeSnippetMarks(marks, text) {
+    const sorted = marks.filter(([a, b]) => b > a).sort((x, y) => x[0] - y[0]);
+    const out = [];
+    for (const m of sorted) {
+        const last = out[out.length - 1];
+        if (last && (m[0] <= last[1] || /^[-‐–]$/.test(text.slice(last[1], m[0])))) {
+            last[1] = Math.max(last[1], m[1]);
+        } else {
+            out.push([m[0], m[1]]);
+        }
+    }
+    return out;
+}
+
+/**
+ * Öneri satırındaki ayet parçası: aranan kelimeyi içeren pencere + vurgu aralıkları.
+ * Konum normalize edilmiş metinde değil, orijinal metnin kelimelerinde bulunur:
+ * hareke/noktalama/kesme silindiği için normalize metindeki sıra orijinalden kayıyor,
+ * uzun ayetlerde ve Arapça/okunuşta parça aranan kelimenin önünde bitiyordu.
+ * @returns {{ text: string, marks: Array<[number, number]> }}
+ */
+function buildSnippet(text, rawQuery, cfg, maxLen = cfg.localeTag === 'ar' ? 120 : 72) {
     const original = String(text || '').trim();
-    if (!original) return '';
+    if (!original) return { text: '', marks: [] };
     const normalize = cfg.normalize;
-    const stopWords = cfg.stopWords;
-    const localeTag = cfg.localeTag || 'tr';
-    const tokens = searchTokensFromQuery(rawQuery, normalize, stopWords);
-    const lower =
-        localeTag === 'bn' || localeTag === 'ur' || localeTag === 'ar'
-            ? original
-            : original.toLocaleLowerCase(localeTag === 'tr' ? 'tr' : localeTag);
-    let hitAt = -1;
-    for (const tok of tokens) {
-        const plain = normalize(tok);
-        const idx = normalize(lower).indexOf(plain);
-        if (idx >= 0 && (hitAt < 0 || idx < hitAt)) hitAt = idx;
+    const tokens = searchTokensFromQuery(rawQuery, normalize, cfg.stopWords);
+    const words = snippetWords(original, normalize);
+
+    // Okunuşta eşleşme kelime sınırını aşabiliyor (ör. "lareybefih"): birleşik
+    // metinde ara, karakterden kelimeye geri eşle.
+    let compactAll = '';
+    const owner = [];
+    words.forEach((w, i) => {
+        compactAll += w.norm;
+        for (let k = 0; k < w.norm.length; k += 1) owner.push(i);
+    });
+    const compactHit = (needle, fuzzy) => {
+        if (!needle || needle.length < MIN_TEXT_SEARCH_CHARS) return null;
+        let idx = compactAll.indexOf(needle);
+        let end = idx + needle.length;
+        if (idx < 0 && fuzzy && needle.length >= 4) {
+            const found = findFuzzySubstringFrom(compactAll, needle, 0);
+            if (!found) return null;
+            idx = found.pos;
+            end = found.end;
+        }
+        if (idx < 0) return null;
+        return { from: owner[idx], to: owner[end - 1] };
+    };
+
+    const hits = [];
+    const normQuery = normalize(rawQuery);
+    if (tokens.length > 1 || /\s/.test(normQuery)) {
+        const phrase = compactHit(normQuery.replace(/\s+/g, ''), false);
+        if (phrase) hits.push({ ...phrase, tok: -1 });
     }
-    if (hitAt < 0) {
-        return original.length <= maxLen ? original : `${original.slice(0, maxLen - 1)}…`;
+    tokens.forEach((tok, ti) => {
+        let best = 5;
+        let idxs = [];
+        words.forEach((w, wi) => {
+            const r = snippetWordRank(tok, w.norm);
+            if (r < 0 || r > best) return;
+            if (r < best) {
+                best = r;
+                idxs = [];
+            }
+            idxs.push(wi);
+        });
+        // Tam ya da önek eşleşmesi kelimenin kendisi; daha zayıfsa sorgu kelimesi
+        // ayette birden çok kelimeye yayılmış olabilir ("ruhulkudüs" ->
+        // "rûḥu-lḳudüsi"): birleşik metindeki tam eşleşme o zaman daha doğru.
+        if (best >= 2) {
+            const exact = compactHit(tok, false);
+            if (exact && exact.to > exact.from) {
+                hits.push({ ...exact, tok: ti });
+                return;
+            }
+        }
+        if (idxs.length) {
+            idxs.forEach((wi) => hits.push({ from: wi, to: wi, tok: ti }));
+            return;
+        }
+        const c = compactHit(tok, true);
+        if (c) hits.push({ ...c, tok: ti });
+    });
+
+    if (!hits.length) {
+        const head = original.length <= maxLen ? original : `${original.slice(0, maxLen - 1)}…`;
+        return { text: head, marks: [] };
     }
-    const start = Math.max(0, hitAt - 18);
-    const slice = original.slice(start, start + maxLen);
+
+    const ranges = hits
+        .map((h) => ({ start: words[h.from].start, end: words[h.to].end, tok: h.tok }))
+        .sort((a, b) => a.start - b.start);
+
+    // Pencerenin çapası: kendisinden sonra en çok farklı kelimeyi sığdıran eşleşme.
+    let anchor = ranges[0];
+    let bestCover = -1;
+    for (const a of ranges) {
+        const limitEnd = a.start + maxLen - SNIPPET_LEAD_CHARS;
+        const covered = new Set();
+        for (const r of ranges) {
+            if (r.start < a.start || r.end > limitEnd) continue;
+            if (r.tok === -1) tokens.forEach((_, i) => covered.add(i));
+            else covered.add(r.tok);
+        }
+        const cover = covered.size + (a.tok === -1 ? 0.5 : 0);
+        if (cover > bestCover) {
+            bestCover = cover;
+            anchor = a;
+        }
+    }
+
+    const isSpace = (ch) => /\s/.test(ch);
+    // Başlangıcı kelime ortasından değil, kelime başından al.
+    const snapStart = (s) => {
+        if (s <= 0) return 0;
+        if (isSpace(original[s - 1])) return s;
+        const sp = original.indexOf(' ', s);
+        return sp >= 0 && sp < anchor.start ? sp + 1 : anchor.start;
+    };
+    let start = snapStart(Math.max(0, anchor.start - SNIPPET_LEAD_CHARS));
+    let end = start + maxLen;
+    if (end >= original.length) {
+        // Eşleşme ayetin sonunda: pencereyi geriye doldur.
+        end = original.length;
+        start = Math.min(start, snapStart(Math.max(0, end - maxLen)));
+    } else {
+        const sp = original.lastIndexOf(' ', end);
+        if (sp > anchor.end) end = sp;
+    }
+    end = Math.max(end, anchor.end);
+    while (start < end && isSpace(original[start])) start += 1;
+    while (end > start && isSpace(original[end - 1])) end -= 1;
+
     const prefix = start > 0 ? '…' : '';
-    const suffix = start + maxLen < original.length ? '…' : '';
-    return `${prefix}${slice}${suffix}`;
+    const suffix = end < original.length ? '…' : '';
+    const shift = prefix.length - start;
+    const snippet = `${prefix}${original.slice(start, end)}${suffix}`;
+    const marks = mergeSnippetMarks(
+        ranges
+            .filter((r) => r.end > start && r.start < end)
+            .map((r) => [Math.max(r.start, start) + shift, Math.min(r.end, end) + shift]),
+        snippet
+    );
+    return { text: snippet, marks };
+}
+
+/** Sıralama bittikten sonra yalnız gösterilecek satırlar için parça üretir. */
+function withSnippet(hit, raw, cfg) {
+    const { text, ...rest } = hit;
+    const sn = buildSnippet(text, raw, cfg);
+    return { ...rest, snippet: sn.text, snippetMarks: sn.marks };
 }
 
 function mapScoredHits(scored, surahIndex, locale, raw, kind, cfg, extras = {}) {
     return scored.map((hit) => {
         const meta = (surahIndex || []).find((s) => s.n === hit.surah);
+        const sn = buildSnippet(hit.text, raw, cfg);
         return {
             kind,
             surah: hit.surah,
             ayah: hit.ayah,
             displayName: getSurahRefDisplayName(meta || { n: hit.surah }, locale),
-            snippet: makeSnippet(hit.text, raw, cfg),
+            snippet: sn.text,
+            snippetMarks: sn.marks,
             score: hit.score,
             ...extras.fields?.(hit)
         };
@@ -1194,7 +1351,8 @@ export function searchAyahTextHits(raw, surahIndex, locale = 'tr', options = {})
                 surah: hit.surah,
                 ayah: hit.ayah,
                 displayName: getSurahRefDisplayName(meta || { n: hit.surah }, locale),
-                snippet: hit.snippet
+                snippet: hit.snippet,
+                snippetMarks: hit.snippetMarks
             };
             if (hit.kind === 'ar') return { ...base, readModeId: 'ar-only' };
             return { ...base, readModeId: hit.readModeId };
@@ -1214,7 +1372,8 @@ export function searchAyahTextHits(raw, surahIndex, locale = 'tr', options = {})
             surah: hit.surah,
             ayah: hit.ayah,
             displayName: getSurahRefDisplayName(meta || { n: hit.surah }, locale),
-            snippet: hit.snippet
+            snippet: hit.snippet,
+            snippetMarks: hit.snippetMarks
         };
         if (hit.kind === 'meal') return { ...base, mealId: hit.mealId };
         return { ...base, readModeId: hit.readModeId };
@@ -1240,6 +1399,7 @@ export function searchArabicAyahs(raw, surahIndex, locale = 'ar', options = {}) 
             ayah: hit.ayah,
             displayName: getSurahRefDisplayName(meta || { n: hit.surah }, locale),
             snippet: hit.snippet,
+            snippetMarks: hit.snippetMarks,
             readModeId: 'ar-only'
         };
     });
@@ -1266,13 +1426,14 @@ function searchArabicAyahsInternal(raw, options = {}) {
             surah: row.s,
             ayah: row.a,
             score,
-            snippet: makeSnippet(row.t, raw, AR_AYAH_SEARCH_CONFIG)
+            text: row.t
         });
     }
 
     return scored
         .sort((a, b) => a.score - b.score || a.surah - b.surah || a.ayah - b.ayah)
-        .slice(0, limit);
+        .slice(0, limit)
+        .map((hit) => withSnippet(hit, raw, AR_AYAH_SEARCH_CONFIG));
 }
 
 function searchMealAyahsInternal(raw, locale, options = {}) {
@@ -1304,14 +1465,15 @@ function searchMealAyahsInternal(raw, locale, options = {}) {
                 ayah: row.a,
                 mealId: row.m,
                 score,
-                snippet: makeSnippet(row.t, raw, mealCfg)
+                text: row.t
             });
         }
     }
 
     return [...bestByAyah.values()]
         .sort((a, b) => a.score - b.score || a.surah - b.surah || a.ayah - b.ayah)
-        .slice(0, limit);
+        .slice(0, limit)
+        .map((hit) => withSnippet(hit, raw, mealCfg));
 }
 
 function searchTranslitAyahsInternal(raw, locale = 'tr', options = {}) {
@@ -1341,9 +1503,12 @@ function searchTranslitAyahsInternal(raw, locale = 'tr', options = {}) {
             ayah: row.a,
             readModeId: 'translit-ar',
             score,
-            snippet: makeSnippet(row.t, raw, translitCfg)
+            text: row.t
         });
     }
 
-    return scored.sort((a, b) => a.score - b.score || a.surah - b.surah || a.ayah - b.ayah).slice(0, limit);
+    return scored
+        .sort((a, b) => a.score - b.score || a.surah - b.surah || a.ayah - b.ayah)
+        .slice(0, limit)
+        .map((hit) => withSnippet(hit, raw, translitCfg));
 }

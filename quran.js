@@ -460,6 +460,21 @@ function escapeSearchHtml(value) {
         .replace(/>/g, '&gt;');
 }
 
+/** Ayet parçası; aranan kelime(ler) vurgulu. marks: [başlangıç, bitiş] karakter aralıkları. */
+function searchSnippetHtml(text, marks) {
+    const s = String(text || '');
+    if (!Array.isArray(marks) || !marks.length) return escapeSearchHtml(s);
+    let html = '';
+    let pos = 0;
+    for (const [a, b] of marks) {
+        if (!(a >= pos && b > a && b <= s.length)) continue;
+        html += escapeSearchHtml(s.slice(pos, a));
+        html += `<mark class="quran-search-ref__hit">${escapeSearchHtml(s.slice(a, b))}</mark>`;
+        pos = b;
+    }
+    return html + escapeSearchHtml(s.slice(pos));
+}
+
 function getQuranSearchSuggestionHits(query) {
     const q = (query || '').trim();
     const locale = getLocale();
@@ -500,7 +515,8 @@ function getQuranSearchSuggestionHits(query) {
                     surah: hit.displayName,
                     ayah: hit.ayah
                 })}`,
-                snippet: hit.snippet
+                snippet: hit.snippet,
+                snippetMarks: hit.snippetMarks
             };
         }
         if (hit.kind === 'translit') {
@@ -514,7 +530,8 @@ function getQuranSearchSuggestionHits(query) {
                     surah: hit.displayName,
                     ayah: hit.ayah
                 })}`,
-                snippet: hit.snippet
+                snippet: hit.snippet,
+                snippetMarks: hit.snippetMarks
             };
         }
         const mealMeta = mealMetaById(hit.mealId);
@@ -532,7 +549,8 @@ function getQuranSearchSuggestionHits(query) {
                 surah: hit.displayName,
                 ayah: hit.ayah
             })}`,
-            snippet: hit.snippet
+            snippet: hit.snippet,
+            snippetMarks: hit.snippetMarks
         };
     });
 }
@@ -579,7 +597,7 @@ function renderQuranSearchSuggestions(query) {
                 : ''
         }`;
         const snippetHtml = hit.snippet
-            ? `<span class="quran-search-ref__snippet">${escapeSearchHtml(hit.snippet)}</span>`
+            ? `<span class="quran-search-ref__snippet">${searchSnippetHtml(hit.snippet, hit.snippetMarks)}</span>`
             : '';
         btn.innerHTML = `
             <span class="material-icons-outlined quran-search-ref__icon" aria-hidden="true">arrow_forward</span>

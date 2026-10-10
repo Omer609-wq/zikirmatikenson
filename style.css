@@ -5948,6 +5948,16 @@ html[data-counter-show-round="false"] .round-badge { display: none !important; }
     line-height: var(--leading-body);
     word-break: break-word;
 }
+/* Ayet parçasında aranan kelime: kullanıcı doğru ayet olduğunu hemen görsün. */
+.quran-search-ref__hit {
+    color: var(--primary-green);
+    font-weight: 600;
+    background: color-mix(in srgb, var(--primary-green) 16%, transparent);
+    border-radius: 4px;
+    padding: 0 0.12em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
 .quran-search-ref--meal {
     align-items: flex-start;
 }

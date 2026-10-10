@@ -189,6 +189,40 @@ test('searchTranslitAyahs finds Turkish transliteration phrase', async () => {
     assert.match(hits[0].snippet, /raybe/i);
 });
 
+/** Vurgulanan parçaların metni. */
+const markedParts = (hit) => (hit.snippetMarks || []).map(([a, b]) => hit.snippet.slice(a, b));
+
+test('snippet shows and marks a word from the middle of a long ayah', async () => {
+    // Normalize metindeki konum orijinalden kayıyordu (kesme/noktalama/hareke);
+    // parça aranan kelimenin önünde bitiyor, kullanıcı doğru ayeti seçemiyordu.
+    await preloadMealSearchIndex('tr');
+    const meal = searchMealAyahs('kürsüsü', surahIndex, 'tr', { limit: 3 });
+    const kursi = meal.find((h) => h.surah === 2 && h.ayah === 255);
+    assert.ok(kursi);
+    assert.deepEqual(markedParts(kursi), ['kürsüsü']);
+
+    await preloadTranslitSearchIndex('translit-tr');
+    const translit = searchTranslitAyahs('kursisi', surahIndex, 'tr', { limit: 5 });
+    const translitKursi = translit.find((h) => h.surah === 2 && h.ayah === 255);
+    assert.ok(translitKursi);
+    assert.match(markedParts(translitKursi).join(' '), /kürsiyy/);
+
+    await preloadArabicAyahSearchIndex();
+    const ar = searchArabicAyahs('كرسيه', surahIndex, 'ar', { limit: 5 });
+    const arKursi = ar.find((h) => h.surah === 2 && h.ayah === 255);
+    assert.ok(arKursi);
+    assert.equal(markedParts(arKursi).length, 1);
+    assert.equal(normalizeArabicAyahSearchText(markedParts(arKursi)[0]), 'كرسيه');
+});
+
+test('snippet marks a transliteration match that spans several words', async () => {
+    await preloadTranslitSearchIndex('translit-tr');
+    const hits = searchTranslitAyahs('lareybefih', surahIndex, 'tr', { limit: 3 });
+    assert.equal(hits[0].surah, 2);
+    assert.equal(hits[0].ayah, 2);
+    assert.deepEqual(markedParts(hits[0]), ['lâ raybe fîh']);
+});
+
 test('searchTranslitAyahs tolerates one typo', async () => {
     await preloadTranslitSearchIndex('translit-tr');
     const hits = searchTranslitAyahs('elhamdu lillahi rabbi', surahIndex, 'tr', { limit: 3 });
