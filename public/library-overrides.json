@@ -197,7 +197,7 @@
             },
             "tr": {
                 "name": "Lâ ilâhe illallâhü'l-melikü'l-hakkü'l-mübîn",
-                "meaning": "Allah'tan başka ilah yoktur; O, mülkün gerçek sahibi (Melik), hak ve adaletle hükmeden (Hakk), birliği ve hakkı apaçık olan (Mübîn) Allah'tır.",
+                "meaning": "Allah'tan başka ilah yoktur; O, mülkün gerçek sahibi (Melik), varlığı ve ilâhlığı gerçek ve sabit olan (Hakk), birliği ve hakkı apaçık olan (Mübîn) Allah'tır.",
                 "context": "Hz. Ali (r.a.) tarikiyle rivayet edilen hadiste: günde yüz defa okuyanın fakirlikten emin olacağı, kabirde yoldaş bulacağı, zenginlik ve cennet kapısına vesile olacağı bildirilir. Bu rivayetin senedi zayıf bulunmuştur; zikrin kendisi okunabilir.",
                 "source": "Hz. Ali (r.a.) rivayeti (Kenzü'l-Ummâl; senedi tenkit edilmiş)",
                 "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ الْمَلِكُ الْحَقُّ الْمُبِينُ",
@@ -663,6 +663,16 @@
             },
             "tr": {
                 "name": "Estağfirullah, estağfirullah, estağfirullâhe'l-azîme'l-kerîm ellezî lâ ilâhe illâ hüve'l-hayyu'l-kayyûmu ve etûbü ileyh. Ve nes'elühü't-tevbete ve'l-mağfirete ve'l-hidâyete lenâ, innehû hüve't-tevvâbü'r-rahîm. Tevbete abdin zâlimin li-nefsihî, lâ yemlikü li-nefsihî mevten velâ hayâten velâ nüşûrâ"
+            }
+        },
+        "lib_17": {
+            "prev": {
+                "meaning": [
+                    "Allah'ı Rabb olarak, İslam'ı din olarak ve Muhammed'i (sallallâhu aleyhi ve sellem) nebî olarak razı oldum."
+                ]
+            },
+            "tr": {
+                "meaning": "Rab olarak Allah'tan, din olarak İslâm'dan, peygamber olarak Muhammed'den (sallallâhu aleyhi ve sellem) razı oldum."
             }
         }
     }
