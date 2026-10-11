@@ -117,6 +117,8 @@
     "codeNotFound": "No group was found with this code. Please check it again.",
     "displayNameTitle": "Your name in the group",
     "displayNamePrompt": "Other members will see you by this name.",
+    "termsNotice": "By continuing, you agree to the {terms}.",
+    "termsNoticeLink": "Terms of Use",
     "syncUnsupported": "Groups are available only in the mobile app.",
     "syncNotConfigured": "Groups are unavailable right now. Please try again later.",
     "syncOffline": "No connection. Groups need the internet.",

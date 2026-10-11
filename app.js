@@ -7004,6 +7004,24 @@ async function getHatimContextQuiet() {
     }
 }
 
+/**
+ * "Devam ederek Kullanım Şartları'nı kabul etmiş olursun." — grup kurma/katılmada
+ * ad penceresinin altında. Ayrı onay kutusu yok: Tamam'a basmak kabul sayılır
+ * (Play UGC: içerik oluşturmadan önce şartların kabulü).
+ */
+function buildHatimTermsNotice() {
+    const mark = '\u0001';
+    const [before, after = ''] = t('community.termsNotice', { terms: mark }).split(mark);
+    const link = document.createElement('button');
+    link.type = 'button';
+    link.className = 'app-dialog__note-link';
+    link.textContent = t('community.termsNoticeLink');
+    link.addEventListener('click', () => openTermsOfUsePage());
+    const frag = document.createDocumentFragment();
+    frag.append(before, link, after);
+    return frag;
+}
+
 /** Grupta görünecek ad ya da cüz alırken sorulan ad. Son kullanılanla dolu gelir. */
 async function askHatimName(kind) {
     const isClaim = kind === 'claim';
@@ -7017,7 +7035,8 @@ async function askHatimName(kind) {
             {
                 title: t(isClaim ? 'community.claimNameTitle' : 'community.displayNameTitle'),
                 inputLabel: t('community.claimNameLabel'),
-                maxLength: HATIM_MEMBER_NAME_MAX
+                maxLength: HATIM_MEMBER_NAME_MAX,
+                note: isClaim ? null : buildHatimTermsNotice()
             }
         );
         if (name == null) return null;

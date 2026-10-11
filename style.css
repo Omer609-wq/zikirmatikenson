@@ -7632,6 +7632,22 @@ input:checked + .slider:before { transform: translateX(22px); }
     white-space: pre-line;
     word-break: break-word;
 }
+.app-dialog__note {
+    margin: 0.75rem 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--leading-body);
+    color: var(--text-gray);
+}
+.app-dialog__note-link {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: var(--primary-green);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    cursor: pointer;
+}
 .locale-welcome__body { margin-bottom: 0.85rem; }
 .locale-welcome__email {
     display: inline-block;

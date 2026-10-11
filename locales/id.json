@@ -116,6 +116,8 @@
     "codeNotFound": "Grup dengan kode ini tidak ditemukan. Periksa lagi.",
     "displayNameTitle": "Namamu di grup",
     "displayNamePrompt": "Anggota lain akan melihatmu dengan nama ini.",
+    "termsNotice": "Dengan melanjutkan, kamu menyetujui {terms}.",
+    "termsNoticeLink": "Ketentuan Penggunaan",
     "syncUnsupported": "Grup hanya tersedia di aplikasi seluler.",
     "syncNotConfigured": "Grup sedang tidak tersedia. Coba lagi nanti.",
     "syncOffline": "Tidak ada koneksi. Grup butuh internet.",
