@@ -6030,7 +6030,7 @@ function showView(viewId, param = null, options = {}) {
         if (param != null) currentHatimGroupId = param;
         hatimEditionHelpOpen = false; // baskı notu her girişte kapalı
         renderHatimGroupView();
-        void syncHatimGroupOnce(currentHatimGroupId);
+        void syncHatimGroupOnEnter(currentHatimGroupId);
     } else if (viewId === 'hatimDuaView') {
         renderHatimDuaView();
     } else if (viewId === 'libraryGroupView') {
@@ -7068,6 +7068,7 @@ async function refreshRemoteHatim(id, ctx = null) {
     if (!context) return 'unavailable';
     const res = await fetchHatim(context, id, group);
     if (res.ok) {
+        hatimSyncedAt.set(id, Date.now());
         const me = hatimMemberIdFor(group);
         const wasOwner = group.ownerId === me;
         // Eşitleme kullanıcının beklediği bir iş değil: yazma ertelenir.
@@ -7167,6 +7168,31 @@ async function syncRemoteHatimInBackground(id) {
     }
 }
 
+/** Grubun son başarılı eşlemesi (ms) — gruba girerken aynı kontrol tekrarlanmasın. */
+const hatimSyncedAt = new Map();
+/**
+ * Bu kadar yeni eşlenmiş gruba girerken sunucuya yeniden sorulmaz. Topluluk'a
+ * her girişte bütün gruplar eşleniyor; hemen ardından gruba girince aynı okumayı
+ * tekrarlamak boşa. Arada bir değişiklik olduysa canlı dinlemenin ilk haberi
+ * (1 okuma) farkı görür ve grubu o zaman eşler — çıkarılma ve silinme de dahil
+ * (üye sayısı değişir, belge kaybolur).
+ */
+const HATIM_ENTER_RESYNC_MS = 5 * 60 * 1000;
+
+async function syncHatimGroupOnEnter(id) {
+    // Topluluk'tan hızlı dokunuşta liste eşlemesi henüz sürüyor olabilir: onu bekle.
+    if (hatimListSync) {
+        await hatimListSync;
+        // Eşleme bu ekran açıkken bitti: yeni hâl ekrana yansısın.
+        if (currentViewId === 'hatimGroupView' && currentHatimGroupId === id) {
+            renderHatimGroupView();
+            if (document.getElementById('hatimJuzOverlay')?.classList.contains('active')) renderHatimJuzDetail();
+        }
+    }
+    if (Date.now() - (hatimSyncedAt.get(id) || 0) < HATIM_ENTER_RESYNC_MS) return;
+    await syncHatimGroupOnce(id);
+}
+
 /**
  * Aynı grubun eşlemesi aynı anda bir kez: grup açılırken başlayan eşleme sürerken
  * canlı dinlemenin ilk haberi ikinci bir okuma başlatmasın, onu beklesin.
@@ -7256,6 +7282,8 @@ async function drainHatimLive(live) {
     try {
         do {
             live.dirty = false;
+            // Açılış ya da Topluluk eşlemesi sürüyorsa onu bekle: ilk haber ikinci okuma başlatmasın.
+            if (hatimListSync) await hatimListSync;
             const running = hatimGroupSyncs.get(live.id);
             if (running) await running;
             if (live.closed || live.latest === undefined) break;
