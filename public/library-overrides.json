@@ -621,6 +621,9 @@
             },
             "tr": {
                 "name": "Allâhümme kemâ hassente halkî fe hassin hulukî"
+            },
+            "en": {
+                "context": "Recite when looking in a mirror; gratitude for one's appearance and asking for good character. Scholars differ over the chain of this report; some grade it weak."
             }
         },
         "lib_d_uyku": {
@@ -673,6 +676,30 @@
             },
             "tr": {
                 "meaning": "Rab olarak Allah'tan, din olarak İslâm'dan, peygamber olarak Muhammed'den (sallallâhu aleyhi ve sellem) razı oldum."
+            }
+        },
+        "lib_2": {
+            "prev": {
+                "name": [
+                    "হাসবুনাল্লাহু ওয়া নিআমাল ওয়াকীল"
+                ]
+            },
+            "bn": {
+                "name": "হাসবুনাল্লাহু ওয়া নি'মাল ওয়াকীল"
+            }
+        },
+        "lib_d_uyaninca": {
+            "prev": {
+                "meaning": [
+                    "Bizi ölüm gibi uyku sonrası dirilten Allah'a hamd olsun; dönüş O'nadır.",
+                    "Praise be to Allah who gave us life after death-like sleep; to Him is the return."
+                ]
+            },
+            "tr": {
+                "meaning": "Bizi ölüm gibi uyku sonrası dirilten Allah'a hamd olsun; diriliş O'nadır."
+            },
+            "en": {
+                "meaning": "Praise be to Allah who gave us life after death-like sleep; and to Him is the resurrection."
             }
         }
     }
