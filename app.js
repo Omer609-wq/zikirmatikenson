@@ -1841,6 +1841,15 @@ async function init() {
         window.addEventListener('popstate', (e) => {
             const st = e && e.state ? e.state : null;
             closeAllOverlays();
+            if (isStaleOverlayState(st)) {
+                // Başka ekrandan kalmış pencere kaydı: açma, bir kayıt daha geri git.
+                try {
+                    window.history.back();
+                } catch (_) {
+                    /* ignore */
+                }
+                return;
+            }
             if (isOverlayState(st)) {
                 const el = document.getElementById(st.overlayId);
                 if (el) el.classList.add('active');
@@ -5859,12 +5868,40 @@ function getViewState(viewId, param = null) {
     return { viewId, param: p };
 }
 
+/** Ekranda açık olan görünümün geçmiş kaydı (henüz ekran yoksa null). */
+function getCurrentViewState() {
+    if (!currentViewId) return null;
+    return getViewState(currentViewId, (
+        currentViewId === 'folderDetailView' ? currentFolderId :
+        currentViewId === 'counterView' ? currentZikirId :
+        currentViewId === 'quranSurahView' ? currentQuranSurahId :
+        currentViewId === 'libraryGroupView' ? currentLibraryGroupId :
+        currentViewId === 'hatimGroupView' ? currentHatimGroupId :
+        null
+    ));
+}
+
 function isOverlayState(st) {
     return !!(st && typeof st === 'object' && typeof st.overlayId === 'string');
 }
 
 function getOverlayState(overlayId) {
-    return { overlayId: String(overlayId) };
+    // Pencerenin hangi ekranın üstünde açıldığı da yazılır (bkz. isStaleOverlayState).
+    // Üst düzeyde viewId olmamalı: showView onu ekran kaydı sanıp pushState'i atlardı.
+    const owner = getCurrentViewState();
+    return owner ? { overlayId: String(overlayId), owner } : { overlayId: String(overlayId) };
+}
+
+/**
+ * Pencere kaydı açık ekrana ait değilse bayattır. Pencere yalnız sınıfı silinerek
+ * kapatılıp başka ekrana geçilince (ör. Keşfet → Klasörüme Ekle → Ekle) kaydı
+ * geçmişte kalıyordu; Geri ona düşünce pencere klasörün üstünde açılıyor, Ekle'ye
+ * yeniden basmak zikri ikinci kez ekliyordu. Sahibi yazılmamış eski kayıt geçerlidir.
+ */
+function isStaleOverlayState(st) {
+    if (!isOverlayState(st) || !st.owner) return false;
+    const cur = getCurrentViewState();
+    return !!cur && !viewStateEquals(st.owner, cur);
 }
 
 function isOverlayActive(el) {
@@ -6049,13 +6086,6 @@ function showView(viewId, param = null, options = {}) {
         param = null;
     }
     const nextState = getViewState(viewId, param);
-    const prevState = currentViewId ? getViewState(currentViewId, (
-        currentViewId === 'folderDetailView' ? currentFolderId :
-        currentViewId === 'counterView' ? currentZikirId :
-        currentViewId === 'quranSurahView' ? currentQuranSurahId :
-        currentViewId === 'libraryGroupView' ? currentLibraryGroupId :
-        null
-    )) : null;
 
     if (push) ensureInitialHistoryState();
     // Push new state BEFORE UI switch so Android back always has an entry.
@@ -11733,6 +11763,8 @@ function setupEventListeners() {
         }
         zikirs.push(newZ);
         saveData();
+        // Detay ve klasör seçimi pencerelerinin geçmiş kayıtları geride kalır;
+        // klasörden Geri'de popstate onları bayat sayıp atlar ve Keşfet'e döner.
         libraryFolderSelectOverlay.classList.remove('active');
         showView('folderDetailView', destId);
     });
