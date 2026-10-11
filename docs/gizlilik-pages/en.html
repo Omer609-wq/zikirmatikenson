@@ -60,6 +60,7 @@
     <li>App data is not included in Android system / Google automatic backup.</li>
     <li>Internet may be used for Quran content, update notices, and seasonal content.</li>
     <li>If the app crashes, a crash report is sent for debugging (Google Firebase Crashlytics).</li>
+    <li>On Android, the app connects to RevenueCat with an anonymous ID to check subscription status (see section 6).</li>
   </ul>
 
   <h2>2. Data stored on your device</h2>
@@ -97,7 +98,7 @@
     <li>The group name and its 6-character join code</li>
     <li>The name you use in that group — a nickname is fine, your real name is never required</li>
     <li>Which juz you took or completed, and when</li>
-    <li>An <strong>anonymous identity</strong> specific to your device: it is not tied to your name, email or phone number</li>
+    <li>An <strong>anonymous identity</strong> specific to your device, created with Google Firebase Authentication: it is not tied to your name, email or phone number. While creating and using this identity, Firebase Authentication processes your IP address and device/browser information (user agent).</li>
     <li>If you report a group, the report record and the description you wrote</li>
   </ul>
   <p>
@@ -107,10 +108,21 @@
     profiling and is not sold to third parties.
   </p>
   <p>
+    <strong>Where data is processed:</strong> group records are stored in the
+    European region of Firebase Firestore. Firebase Authentication runs only in
+    data centers in the United States. So when you use shared khatm, your data is
+    processed outside your country.
+  </p>
+  <p>
     <strong>Deletion:</strong> when you leave a group, your membership record is
     deleted. When the person who created a group deletes it, all of the group's
-    records are deleted. The anonymous identity belongs to your device, so if you
-    delete the app
+    records are deleted. Even after you leave a group, your name stays on the juz
+    you finished until the group is deleted. Groups are not deleted automatically
+    after a period of time; they stay on the server until the person who created
+    them deletes them. The anonymous identity record stays in Firebase
+    Authentication unless you ask us to delete it; Firebase keeps the IP addresses
+    linked to it for a few weeks. The anonymous identity belongs to your device, so
+    if you delete the app
     or change devices you lose access to it. For any other deletion request, write to
     the address below. Step-by-step: <a href="hesap-silme.html#en">Account and Data Deletion</a>.
   </p>
@@ -128,22 +140,34 @@
     technical details of the error; your dhikr entries, counters, and
     statistics are not included. Crash reports are used only to fix bugs;
     they are not used for advertising or profiling.
+    Crashlytics runs on Google’s global infrastructure; reports are kept for 90
+    days, after which Google starts the process of deleting them.
   </p>
 
-  <h2>6. Permissions</h2>
+  <h2>6. Purchases and subscriptions</h2>
+  <p>
+    Payments are handled entirely by Google Play; we never have access to your card
+    or payment details. When the Android app opens, it connects to the subscription
+    management service <strong>RevenueCat</strong> with an anonymous user ID specific
+    to your device to check subscription status. If you make a purchase, the
+    product ID and transaction status are also shared with RevenueCat. RevenueCat
+    processes this data in the United States.
+  </p>
+
+  <h2>7. Permissions</h2>
   <ul>
     <li><strong>Notifications:</strong> optional daily reminder</li>
     <li><strong>Vibration, sound, keep screen awake:</strong> in-app experience</li>
     <li><strong>Internet:</strong> for the content and notices above</li>
   </ul>
 
-  <h2>7. Children</h2>
+  <h2>8. Children</h2>
   <p>
     The app is not directed at children. We do not knowingly collect personal
     data from anyone under 13.
   </p>
 
-  <h2>8. Updates</h2>
+  <h2>9. Updates</h2>
   <p class="note">
     This privacy policy may be updated from time to time. The current version
     is always published on this page. For important changes we may also use
@@ -151,7 +175,7 @@
     periodically.
   </p>
 
-  <h2>9. Contact</h2>
+  <h2>10. Contact</h2>
   <p>
     Questions:
     <a href="mailto:zikirmatik.help@gmail.com">zikirmatik.help@gmail.com</a>

@@ -117,9 +117,18 @@
       e-postayla talep ettiğinizde silinir.
     </li>
     <li>
+      <strong>Gruplar</strong> süreyle kendiliğinden silinmez; grubu kuran kişi
+      silene kadar sunucuda kalır.
+    </li>
+    <li>
+      <strong>Anonim kimlik kaydı</strong> (Google Firebase Authentication),
+      e-postayla silinmesini istemediğiniz sürece kalır. Firebase bu kayda bağlı
+      IP adreslerini birkaç hafta tutar.
+    </li>
+    <li>
       <strong>Çökme raporları</strong> (Google Firebase Crashlytics) adınıza ya da
-      grup kimliğinize bağlı değildir; Google tarafından en fazla 90 gün saklanıp
-      otomatik olarak silinir.
+      grup kimliğinize bağlı değildir; 90 gün saklanır, ardından Google silme
+      sürecini başlatır.
     </li>
   </ul>
 
@@ -200,9 +209,19 @@
         they are deleted when you request it by email.
       </li>
       <li>
+        <strong>Groups</strong> are not deleted automatically after a period of
+        time; they stay on the server until the person who created them deletes
+        them.
+      </li>
+      <li>
+        The <strong>anonymous identity record</strong> (Google Firebase
+        Authentication) stays unless you ask us by email to delete it. Firebase
+        keeps the IP addresses linked to it for a few weeks.
+      </li>
+      <li>
         <strong>Crash reports</strong> (Google Firebase Crashlytics) are not linked
-        to your name or group identity; Google keeps them for at most 90 days and
-        then deletes them automatically.
+        to your name or group identity; they are kept for 90 days, after which
+        Google starts the process of deleting them.
       </li>
     </ul>
   </section>

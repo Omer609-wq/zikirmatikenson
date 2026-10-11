@@ -60,6 +60,7 @@
     <li>Uygulama verisi Android sistem / Google otomatik yedeklemesine dahil edilmez.</li>
     <li>İnternet; Kur’an içeriği, güncelleme duyurusu ve mevsimsel içerik gibi özellikler için kullanılır.</li>
     <li>Uygulama çökerse hata ayıklama için çökme kaydı gönderilir (Google Firebase Crashlytics).</li>
+    <li>Android’de abonelik durumunu öğrenmek için RevenueCat’e anonim bir kimlikle bağlanılır (bkz. 6. bölüm).</li>
   </ul>
 
   <h2>2. Cihazda saklanan veriler</h2>
@@ -97,7 +98,7 @@
     <li>Grubun adı ve 6 haneli katılma kodu</li>
     <li>O grupta kullandığınız ad — takma ad olabilir, gerçek adınız istenmez</li>
     <li>Hangi cüzü aldığınız, bitirdiğiniz ve bunların zamanı</li>
-    <li>Cihazınıza özel <strong>anonim kimlik</strong>: adınıza, e-postanıza ya da telefonunuza bağlı değildir</li>
+    <li>Cihazınıza özel <strong>anonim kimlik</strong> (Google Firebase Authentication ile oluşturulur): adınıza, e-postanıza ya da telefonunuza bağlı değildir. Bu kimlik oluşturulurken ve kullanılırken Firebase Authentication IP adresinizi ve cihaz/tarayıcı bilgisini işler.</li>
     <li>Bir grubu şikâyet ederseniz şikâyet kaydı ve yazdığınız açıklama</li>
   </ul>
   <p>
@@ -107,8 +108,18 @@
     taraflara satılmaz.
   </p>
   <p>
+    <strong>Verilerin işlendiği yer:</strong> grup kayıtları Firebase Firestore’un
+    Avrupa bölgesinde saklanır. Firebase Authentication yalnızca ABD’deki veri
+    merkezlerinde çalışır. Bu nedenle paylaşımlı hatim kullandığınızda verileriniz
+    Türkiye dışında işlenir.
+  </p>
+  <p>
     <strong>Silme:</strong> gruptan ayrıldığınızda üyelik kaydınız silinir. Grubu
-    kuran kişi grubu sildiğinde grubun tüm kayıtları silinir. Anonim kimlik
+    kuran kişi grubu sildiğinde grubun tüm kayıtları silinir. Gruptan ayrılsanız da
+    bitirdiğiniz cüzlerde adınız grup silinene kadar görünür. Gruplar süreyle
+    kendiliğinden silinmez; grubu kuran kişi silene kadar sunucuda kalır. Anonim
+    kimlik kaydı, silinmesini istemediğiniz sürece Firebase Authentication’da
+    kalır; Firebase bu kayda bağlı IP adreslerini birkaç hafta tutar. Anonim kimlik
     cihazınıza bağlı olduğu
     için uygulamayı silmeniz ya da cihaz değiştirmeniz durumunda bu kimliğe
     erişiminiz kalmaz. Kayıtlarınızın silinmesini istediğiniz başka bir durumda
@@ -128,22 +139,33 @@
     zikirleriniz, sayaçlarınız veya istatistikleriniz bu kayıtta yer almaz.
     Çökme kayıtları yalnızca hataları düzeltmek için kullanılır; reklam veya
     profilleme amacıyla kullanılmaz.
+    Crashlytics, Google’ın dünya genelindeki altyapısında çalışır; kayıtlar 90 gün
+    saklanır, ardından Google silme sürecini başlatır.
   </p>
 
-  <h2>6. İzinler</h2>
+  <h2>6. Satın almalar ve abonelik</h2>
+  <p>
+    Ödemeler tamamen Google Play üzerinden işlenir; kart ya da ödeme bilgilerinize
+    erişmeyiz. Android uygulaması açıldığında abonelik durumunu öğrenmek için
+    abonelik yönetim servisi <strong>RevenueCat</strong>’e cihazınıza özel anonim bir
+    kullanıcı kimliğiyle bağlanır. Satın alma yaparsanız ürün kimliği ve işlem
+    durumu da RevenueCat ile paylaşılır. RevenueCat bu verileri ABD’de işler.
+  </p>
+
+  <h2>7. İzinler</h2>
   <ul>
     <li><strong>Bildirimler:</strong> isteğe bağlı günlük hatırlatıcı</li>
     <li><strong>Titreşim, ses, ekranı uyanık tutma:</strong> uygulama içi deneyim</li>
     <li><strong>İnternet:</strong> yukarıdaki içerik ve duyurular için</li>
   </ul>
 
-  <h2>7. Çocuklar</h2>
+  <h2>8. Çocuklar</h2>
   <p>
     Uygulama çocuklara özel tasarlanmış bir hizmet değildir.
     Bilerek 13 yaş altından kişisel veri toplamayız.
   </p>
 
-  <h2>8. Güncellemeler</h2>
+  <h2>9. Güncellemeler</h2>
   <p class="note">
     Bu gizlilik politikası zaman zaman güncellenebilir. Güncel sürüm her zaman
     bu sayfada yayınlanır. Önemli değişikliklerde Play Store açıklaması veya
@@ -151,7 +173,7 @@
     kontrol etmenizi öneririz.
   </p>
 
-  <h2>9. İletişim</h2>
+  <h2>10. İletişim</h2>
   <p>
     Sorularınız için:
     <a href="mailto:zikirmatik.help@gmail.com">zikirmatik.help@gmail.com</a>
