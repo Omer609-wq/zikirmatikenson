@@ -6876,6 +6876,22 @@ function renderSpecialDaysList({ scrollToCurrent = false } = {}) {
     }
 }
 
+/**
+ * Dokunarak açılan bir alanı ekran okuyucuya düğme olarak duyurur ve Enter/Boşluk ile
+ * çalıştırır. Kartın tamamı değil içindeki metin alanı işaretlenir: kartta sürükleme ve
+ * seçim düğmeleri var, düğme içinde düğme erişilebilirlikte geçersiz.
+ */
+function makeKeyboardActivatable(el, activate) {
+    if (!el) return;
+    el.setAttribute('role', 'button');
+    el.tabIndex = 0;
+    el.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        activate();
+    });
+}
+
 function renderFolders() {
     renderHomeSpecialDay();
     if (!folderSelectMode) folderSelectBarVisible = false;
@@ -6925,6 +6941,8 @@ function renderFolders() {
                 <p>${escapeHtml(countLine)}</p>
             </div>
         `;
+        // Ekran okuyucu ve klavye: kart eskiden yalnız dokunmayla açılan bir div'di.
+        makeKeyboardActivatable(card.querySelector('.folder-card__text'), () => card.click());
         const dragHandle = card.querySelector('.row-drag-handle');
         attachListDragLongPress(dragHandle, {
             id: f.id,
@@ -9589,6 +9607,8 @@ function renderFolderDetail() {
         }
 
         attachLongPressSelect(li, z.id, { onEnter: onZikirLongPressSelect });
+        // Ekran okuyucu ve klavye: satır yalnız dokunmayla açılıyordu (içinde düğmeler var, başlık işaretlenir).
+        makeKeyboardActivatable(li.querySelector('.zikir-row__inner h3'), () => li.click());
 
         const zcb = li.querySelector('.zikir-select-cb');
         const zikirCheckLabel = li.querySelector('.zikir-row__check');
@@ -11755,6 +11775,13 @@ function setupEventListeners() {
     mainCounterBtn.addEventListener('click', (e) => {
         if (e.target.closest('#enterStealthBtn')) return;
         incrementCounter();
+    });
+    // Sayı alanı ekran okuyucuya "Dokunarak Say" düğmesi olarak duyurulur (index.html);
+    // klavyede Enter/Boşluk sayar. Basılı tutmak art arda saymasın: tekrar yok sayılır.
+    mainCounterBtn.querySelector('.counter-content')?.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        if (!e.repeat) incrementCounter();
     });
     if(decrementBtn) decrementBtn.addEventListener('click', decrementCounter);
     if (openZikirStatsBtn && zikirStatsOverlay) {

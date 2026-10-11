@@ -245,15 +245,20 @@ body {
     display: flex;
     flex-direction: column;
     background-color: transparent;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, visibility 0s;
     opacity: 1;
     transform: translateX(0);
 }
 
+/* Görünmeyen ekran ekran okuyucuya ve klavyeye de kapalı: opacity tek başına onu
+   erişilebilirlik ağacından çıkarmıyordu (TalkBack gizli ekranların düğmelerini
+   okuyordu). visibility kapanış animasyonu bitince değişir; açılışta hemen görünür. */
 .view.hidden {
     opacity: 0;
     pointer-events: none;
     transform: translateX(20px);
+    visibility: hidden;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, visibility 0s linear 0.3s;
 }
 
 /* Genel gizleme — .view.hidden animasyonlu kalır (display:none yok) */
@@ -7554,7 +7559,9 @@ input:checked + .slider:before { transform: translateX(22px); }
     z-index: 30; display: flex; align-items: center; justify-content: center;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.22s ease;
+    /* Kapalı pencere de erişilebilirlik ağacından çıksın (bkz. .view.hidden). */
+    visibility: hidden;
+    transition: opacity 0.22s ease, visibility 0s linear 0.22s;
     will-change: opacity;
 }
 .modal-overlay.app-dialog-overlay {
@@ -7564,7 +7571,7 @@ input:checked + .slider:before { transform: translateX(22px); }
        Koyu zemin aynı ayrımı bedelsiz veriyor. */
     background: var(--modal-backdrop-dialog, rgba(2, 6, 23, 0.82));
 }
-.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.modal-overlay.active { opacity: 1; pointer-events: auto; visibility: visible; transition: opacity 0.22s ease, visibility 0s; }
 
 /* Taşma koruması — tüm pencerelerde geçerli: küçük ekran, 3 tuş nav veya uzun
    içerik (ör. 300 karakterlik dua okunuşu) pencereyi ekran dışına taşırıyordu.

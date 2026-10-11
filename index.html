@@ -402,8 +402,8 @@
                             <circle class="progress-ring__background" stroke-width="8" fill="transparent" r="130" cx="140" cy="140"/>
                             <circle class="progress-ring__circle" id="progressCircle" stroke-width="12" fill="transparent" r="130" cx="140" cy="140"/>
                         </svg>
-                        <div class="counter-content">
-                            <div class="count-display" id="countDisplay">0</div>
+                        <div class="counter-content" role="button" tabindex="0" data-i18n="counter.tapToCount" data-i18n-attr="aria-label" aria-label="Dokunarak Say" aria-describedby="countDisplay">
+                            <div class="count-display" id="countDisplay" aria-live="polite" aria-atomic="true">0</div>
                             <div class="target-display"><span data-i18n="counter.target">Hedef:</span> <span id="targetDisplay">33</span></div>
                             <div class="total-number-display" id="totalDisplay">0</div>
                         </div>
