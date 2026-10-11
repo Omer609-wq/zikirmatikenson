@@ -7,6 +7,12 @@ Anahtar kelime ağırlığı: başlık > kısa açıklama > tam açıklama (meti
 
 > Not: Metinler uygulamanın **gerçek** özelliklerine göre yazıldı. Premium, bulut yedekleme
 > ve "onaylı kaynak" gibi henüz canlı olmayan/kaldırılan şeyler bilerek geçmiyor.
+>
+> **Adlar (11 Ekim 2026):** TR başlığı **Zikirmatik Pro**, EN başlığı **Tasbeeh Counter**.
+> Ana ekran adları (`values-<dil>/strings.xml`) başlığın anahtar kelime kısmıyla aynı.
+> 11 Ekim'de canlı mağazada EN başlığı hâlâ "Zikirmatik: Dhikr & Quran" görünüyordu;
+> ID/MS canlıda "Zikirmatik: Tasbih & Quran", UR/BN çevirisi girilmemiş (İngilizce gösteriliyor).
+> Diğer dillerin başlıkları aşağıda eski hâliyle duruyor; Play Console'dakiyle karşılaştır.
 
 ---
 
@@ -14,7 +20,7 @@ Anahtar kelime ağırlığı: başlık > kısa açıklama > tam açıklama (meti
 
 **Başlık**
 ```
-Zikirmatik: Zikir Sayacı Kuran
+Zikirmatik Pro
 ```
 
 **Kısa açıklama**
@@ -24,7 +30,7 @@ Reklamsız zikir sayacı, Esma'ül Hüsna, dua arşivi ve çevrimdışı Kur'an-
 
 **Tam açıklama**
 ```
-Zikirmatik; zikir sayacı, dua arşivi ve Kur'an-ı Kerim'i tek uygulamada birleştirir. Reklam yok, internet gerekmez.
+Zikirmatik Pro; zikir sayacı, dua arşivi ve Kur'an-ı Kerim'i tek uygulamada birleştirir. Reklam yok, internet gerekmez.
 
 ⭐ ZİKİR SAYACI
 Dokunarak say, hedefini belirle, turlarını takip et. Titreşimli geri bildirim sayesinde ekrana bakmadan, tek elle zikir çekebilirsin. Gizli mod ile sayacını kimseye göstermeden kullan.
@@ -48,10 +54,10 @@ Günlük, haftalık, aylık ve yıllık grafiklerle ilerlemeni gör. En çok çe
 🔔 GÜNLÜK HATIRLATICI
 Seçtiğin saatte hatırlatma al; her gün bir ayet meali ile karşılaş.
 
-✨ NEDEN ZİKİRMATİK?
+✨ NEDEN ZİKİRMATİK PRO?
 • Reklam yok, rahatsız eden bildirim yok
-• Tamamen çevrimdışı — Kur'an dahil her şey cihazında
-• Hesap açmak zorunlu değil, verilerin cihazından çıkmaz
+• Çevrimdışı çalışır — Kur'an da cihazında
+• Hesap açmak gerekmez, verilerin cihazında kalır (hatim grupları hariç)
 • 8 dil: Türkçe, İngilizce, Arapça, Endonezce, Malayca, Fransızca, Bengalce, Urduca
 • Açık ve karanlık tema
 • Sade, dikkat dağıtmayan tasarım
@@ -65,7 +71,7 @@ Tesbih çekmek, dua etmek ve Kur'an okumak için ihtiyacın olan her şey bir ar
 
 **Title**
 ```
-Zikirmatik: Tasbih & Quran
+Tasbeeh Counter
 ```
 
 **Short description**
@@ -75,7 +81,7 @@ Ad-free tasbih counter, 99 Names of Allah, daily duas and offline Quran.
 
 **Full description**
 ```
-Zikirmatik brings a tasbih counter, a dua library and the Holy Quran together in one app. No ads, no internet required.
+Tasbeeh Counter brings a tasbih counter, a dua library and the Holy Quran together in one app. No ads, no internet required.
 
 ⭐ TASBIH COUNTER
 Tap to count, set your target, track your rounds. Haptic feedback lets you make dhikr one-handed, without looking at the screen. Use stealth mode to keep your counter private.
@@ -99,10 +105,10 @@ Track your progress with daily, weekly, monthly and yearly charts. See your most
 🔔 DAILY REMINDER
 Get a reminder at the time you choose, with a different Quran verse each day.
 
-✨ WHY ZIKIRMATIK?
+✨ WHY TASBEEH COUNTER?
 • No ads, no spam notifications
-• Fully offline — the Quran and everything else lives on your device
-• No account required, your data never leaves your phone
+• Works offline — the Quran lives on your device too
+• No account required, your data stays on your phone (except shared hatim groups)
 • 8 languages: English, Turkish, Arabic, Indonesian, Malay, French, Bengali, Urdu
 • Light and dark theme
 • Clean, distraction-free design
@@ -152,8 +158,8 @@ Dapatkan pengingat pada waktu yang kamu pilih, dengan ayat Al-Quran berbeda seti
 
 ✨ MENGAPA ZIKIRMATIK?
 • Tanpa iklan, tanpa notifikasi mengganggu
-• Sepenuhnya offline — Al-Quran pun tersimpan di perangkatmu
-• Tanpa perlu akun, datamu tidak keluar dari ponselmu
+• Bisa dipakai offline — Al-Quran pun tersimpan di perangkatmu
+• Tanpa perlu akun, datamu tetap di ponselmu (kecuali grup khatam bersama)
 • 8 bahasa: Indonesia, Melayu, Inggris, Turki, Arab, Prancis, Bengali, Urdu
 • Tema terang dan gelap
 • Desain bersih dan tidak mengganggu
@@ -203,8 +209,8 @@ Terima peringatan pada waktu pilihan anda, dengan ayat Al-Quran berbeza setiap h
 
 ✨ MENGAPA ZIKIRMATIK?
 • Tiada iklan, tiada pemberitahuan mengganggu
-• Sepenuhnya luar talian — Al-Quran juga tersimpan dalam peranti anda
-• Tiada akaun diperlukan, data anda kekal dalam telefon
+• Boleh digunakan luar talian — Al-Quran juga tersimpan dalam peranti anda
+• Tiada akaun diperlukan, data anda kekal dalam telefon (kecuali kumpulan khatam bersama)
 • 8 bahasa: Melayu, Indonesia, Inggeris, Turki, Arab, Perancis, Bengali, Urdu
 • Tema cerah dan gelap
 • Reka bentuk kemas dan tidak mengganggu
@@ -254,8 +260,8 @@ Semua yang anda perlukan untuk zikir, doa dan bacaan Al-Quran dalam satu aplikas
 
 ✨ لماذا ذكرماتيك؟
 • بدون إعلانات وبدون إشعارات مزعجة
-• يعمل بالكامل دون إنترنت — حتى القرآن محفوظ على جهازك
-• لا حاجة إلى حساب، وبياناتك لا تغادر هاتفك
+• يعمل دون إنترنت — حتى القرآن محفوظ على جهازك
+• لا حاجة إلى حساب، وبياناتك تبقى على هاتفك (باستثناء مجموعات الختمة المشتركة)
 • 8 لغات: العربية، الإنجليزية، التركية، الإندونيسية، الماليزية، الفرنسية، البنغالية، الأردية
 • الوضع الفاتح والداكن
 • تصميم بسيط لا يشتّت الانتباه
@@ -305,8 +311,8 @@ Semua yang anda perlukan untuk zikir, doa dan bacaan Al-Quran dalam satu aplikas
 
 ✨ ذکرماتک کیوں؟
 • کوئی اشتہار نہیں، کوئی پریشان کن نوٹیفکیشن نہیں
-• مکمل آف لائن — قرآن سمیت سب کچھ آپ کے آلے پر
-• اکاؤنٹ کی ضرورت نہیں، آپ کا ڈیٹا فون سے باہر نہیں جاتا
+• آف لائن چلتی ہے — قرآن بھی آپ کے آلے پر
+• اکاؤنٹ کی ضرورت نہیں، آپ کا ڈیٹا فون پر ہی رہتا ہے (مشترکہ ختم گروپس کے سوا)
 • 8 زبانیں: اردو، انگریزی، ترکی، عربی، انڈونیشی، ملائی، فرانسیسی، بنگالی
 • روشن اور تاریک تھیم
 • سادہ اور بغیر خلل ڈیزائن
@@ -356,8 +362,8 @@ Semua yang anda perlukan untuk zikir, doa dan bacaan Al-Quran dalam satu aplikas
 
 ✨ কেন জিকিরমাটিক?
 • কোনো বিজ্ঞাপন নেই, বিরক্তিকর নোটিফিকেশন নেই
-• সম্পূর্ণ অফলাইন — কুরআনসহ সবকিছু আপনার ডিভাইসে
-• অ্যাকাউন্ট লাগে না, আপনার তথ্য ফোনেই থাকে
+• অফলাইনে চলে — কুরআনও আপনার ডিভাইসে
+• অ্যাকাউন্ট লাগে না, আপনার তথ্য ফোনেই থাকে (যৌথ খতম গ্রুপ ছাড়া)
 • ৮টি ভাষা: বাংলা, ইংরেজি, তুর্কি, আরবি, ইন্দোনেশীয়, মালয়, ফরাসি, উর্দু
 • উজ্জ্বল ও অন্ধকার থিম
 • পরিচ্ছন্ন, মনোযোগ নষ্ট না করা ডিজাইন
@@ -407,8 +413,8 @@ Recevez un rappel à l'heure de votre choix, avec un verset différent chaque jo
 
 ✨ POURQUOI ZIKIRMATIK ?
 • Aucune publicité, aucune notification intrusive
-• Entièrement hors ligne — le Coran aussi est stocké sur votre appareil
-• Aucun compte requis, vos données restent sur votre téléphone
+• Fonctionne hors ligne — le Coran aussi est stocké sur votre appareil
+• Aucun compte requis, vos données restent sur votre téléphone (sauf les groupes de khatm partagés)
 • 8 langues : français, anglais, turc, arabe, indonésien, malais, bengali, ourdou
 • Thème clair et sombre
 • Design épuré, sans distraction
