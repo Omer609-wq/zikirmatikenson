@@ -250,6 +250,19 @@ test('okuma: üye kimlikleri gelir — yeşil/kırmızı nokta bunlara bakar', a
     assert.equal(afterRemove.group.remote.memberUids.includes(MEMBER), false, 'çıkarılan listeden düşer');
 });
 
+test('okuma: üye sayısı değişmediyse üye listesi okunmaz, değişince okunur', async () => {
+    const { hatimId, ctx } = await setup(MEMBER);
+    const first = await fetchHatim(ctx[OWNER], hatimId);
+    // Önbellekteki liste bilerek sahte: okunmadıysa aynen kalır.
+    const cached = { ...first.group, remote: { ...first.group.remote, memberUids: ['eski1', 'eski2'] } };
+    const same = await fetchHatim(ctx[OWNER], hatimId, cached);
+    assert.deepEqual(same.group.remote.memberUids, ['eski1', 'eski2'], 'sayı aynı: liste okunmadı');
+
+    await joinHatim(ctxOf(OTHER), hatimId, 'Ali');
+    const joined = await fetchHatim(ctx[OWNER], hatimId, cached);
+    assert.deepEqual(joined.group.remote.memberUids, [OWNER, MEMBER, OTHER], 'sayı değişti: liste katılma sırasıyla okundu');
+});
+
 test('üye listesi katılma sırasıyla gelir', async () => {
     const { hatimId, ctx } = await setup(MEMBER, OTHER);
     const listed = await listHatimMembers(ctx[OWNER], hatimId);
@@ -600,6 +613,17 @@ test('devir: yönetici 14 gündür görünmüyorsa yedek açılışta devralır'
     assert.equal((await renameHatim(ctx[OWNER], hatimId, 'Eski')).reason, 'denied');
     // Eski yönetici artık sıradan üye: ayrılabilir.
     assert.equal((await leaveHatim(ctx[OWNER], hatimId)).ok, true);
+});
+
+test('devir: önbellekteki üye listesi eskiyse yeni yedek güncel listeden seçilir', async () => {
+    const { hatimId, ctx } = await setup(MEMBER, OTHER);
+    const first = await fetchHatim(ctx[MEMBER], hatimId);
+    // Sayı tutuyor (liste normalde okunmaz) ama kimliklerden biri artık grupta değil.
+    const cached = { ...first.group, remote: { ...first.group.remote, memberUids: [OWNER, MEMBER, 'ayrilmis'] } };
+    await seedHatim(hatimId, { ownerSeenAt: new Date(Date.now() - 15 * GUN) });
+    const res = await fetchHatim(ctx[MEMBER], hatimId, cached);
+    assert.equal(res.tookOver, true);
+    assert.equal((await serverHatim(hatimId)).successorUid, OTHER);
 });
 
 test('devir: yönetici bakınca sayaç sıfırlanır, doğrudan erken devir kuralda reddedilir', async () => {
