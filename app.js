@@ -566,13 +566,20 @@ function resolveLibraryBackedName(z) {
     return cur;
 }
 
-/** Görüntüleme adı: kütüphane/klasik 4 locale okunuşu; kullanıcı zikirleri saklanan ad. */
+/**
+ * Görüntüleme adı: kütüphane/klasik/Esma'da uygulamanın yazdığı (bilinen) ad locale
+ * okunuşuyla; elle verilen ad ve kullanıcı zikirleri saklanan adla.
+ */
 function getZikirDisplayName(z) {
     if (!z) return '';
     const fromLib = resolveLibraryBackedName(z);
     if (fromLib != null) return fromLib;
     if (CLASSIC_ZIKIR_IDS.includes(z.id)) {
-        return getLocalizedClassicZikirName(z.id);
+        // Eskiden koşulsuz okunuş dönüyordu: verilen ad görünmüyor, düzenleme formu da
+        // okunuşla açılıyordu. syncLocalizedDefaults da yalnız bilinen adı günceller.
+        const cur = String(z.name || '').trim();
+        if (!cur || getKnownClassicZikirNames(z.id).has(cur)) return getLocalizedClassicZikirName(z.id);
+        return cur;
     }
     const esmaIdx = parseEsmaZikirIndex(z);
     if (esmaIdx >= 0) {
@@ -760,24 +767,27 @@ function resolveLibraryBackedMeaning(z) {
     return cur;
 }
 
-/** Görüntüleme mealı: kütüphane kaynaklı → locale kanonu; klasik 4 dil başına; Esma EN; diğerleri saklanan. */
+/**
+ * Görüntüleme mealı: kütüphane kaynaklı → locale kanonu. Klasik ve Esma'da uygulamanın
+ * yazdığı (bilinen) metin dilin kanonuyla (klasik dil başına, Esma EN); kullanıcının
+ * yazdığı ya da sildiği not olduğu gibi. Diğerleri saklanan.
+ */
 function getZikirDisplayMeaning(z) {
     if (!z) return '';
     const fromLib = resolveLibraryBackedMeaning(z);
     if (fromLib != null) return fromLib;
-    if (!localeUsesEnglishMeals(appSettings.locale)) {
-        return String(z.meaning || '').trim();
-    }
+    const cur = String(z.meaning || '').trim();
+    // Eskiden TR dışında kanon koşulsuz gösteriliyordu: yazılan not görünmüyor, form da
+    // kanonla açıldığı için yalnız hedefi değiştirip kaydetmek notu siliyordu.
+    if (!cur || !localeUsesEnglishMeals(appSettings.locale)) return cur;
     if (CLASSIC_ZIKIR_IDS.includes(z.id)) {
-        return getLocalizedClassicZikirMeaning(z.id);
+        return getKnownClassicZikirMeanings(z.id).has(cur) ? getLocalizedClassicZikirMeaning(z.id) : cur;
     }
-    const m = /^z_e_(\d+)$/.exec(z.id || '');
-    if (m) {
-        const idx = parseInt(m[1], 10);
-        const en = ESMA_MEANING_EN[idx];
-        if (en) return en;
+    const esmaIdx = parseEsmaZikirIndex(z);
+    if (esmaIdx >= 0 && getKnownEsmaMeanings(esmaIdx).has(cur)) {
+        return getEsmaMeaningForLocale(esmaIdx) || cur;
     }
-    return String(z.meaning || '').trim();
+    return cur;
 }
 
 /**
