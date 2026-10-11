@@ -73,6 +73,7 @@ import {
     FOLDER_NAME_MAX,
     ZIKIR_TARGET_MAX,
     ZIKIR_TEXT_MAX,
+    applyClearedTextFlags,
     normalizeFolderName,
     normalizeZikirText
 } from './lib/zikir-text.js';
@@ -751,9 +752,41 @@ function getEsmaNameForLocale(index, locale) {
     return ESMA_NAME_EN[index] || (ESMA_LIST[index] && ESMA_LIST[index].name) || '';
 }
 
+/**
+ * Esma sırası: asıl kayıtta kimlikten (z_e_N), başka klasöre kopyada `esmaIndex`
+ * alanından. Eskiden yalnız kimliğe bakılıyordu; kopya yeni kimlik aldığı için
+ * varsayılan faziletini ve dil bağlantısını (ad/anlam) kaybediyordu.
+ */
 function parseEsmaZikirIndex(z) {
-    const m = /^z_e_(\d+)$/.exec(z && z.id != null ? String(z.id) : '');
-    return m ? parseInt(m[1], 10) : -1;
+    if (!z) return -1;
+    const m = /^z_e_(\d+)$/.exec(z.id != null ? String(z.id) : '');
+    if (m) return parseInt(m[1], 10);
+    return Number.isInteger(z.esmaIndex) && ESMA_LIST[z.esmaIndex] ? z.esmaIndex : -1;
+}
+
+/** Bilinen Esma metni (ad/Arapça, eski yazımlar dahil) → hangi sıralara ait. */
+let esmaIndexesByKnownText = null;
+
+/**
+ * Eski sürümde başka klasöre kopyalanmış Esma'nın kaynağı. Arapça metni ya da bilinen
+ * adı tek bir Esma'yı gösteriyorsa o; birden fazlasını gösteriyorsa (ör. eski "Ya Majid")
+ * emin olunamaz, bağlanmaz.
+ */
+function inferEsmaIndexForCopy(z) {
+    if (!esmaIndexesByKnownText) {
+        esmaIndexesByKnownText = new Map();
+        ESMA_LIST.forEach((_, i) => {
+            for (const text of getKnownEsmaNames(i)) {
+                if (!esmaIndexesByKnownText.has(text)) esmaIndexesByKnownText.set(text, new Set());
+                esmaIndexesByKnownText.get(text).add(i);
+            }
+        });
+    }
+    const found = new Set();
+    for (const text of [String(z.arabic || '').trim(), String(z.name || '').trim()]) {
+        for (const i of esmaIndexesByKnownText.get(text) || []) found.add(i);
+    }
+    return found.size === 1 ? [...found][0] : -1;
 }
 
 /**
@@ -766,12 +799,28 @@ function inferLibraryIdForSavedZikir(z) {
     return inferLibraryIdForZikir(z, { matchKnownNames: !builtIn });
 }
 
+/**
+ * Yüklenen kayda kaynak bağını kurar: önce eski Esma kopyası (kütüphane eşleşmesinde
+ * Esma yalnız TR adla eşleşsin diye), sonra kütüphane maddesi.
+ */
+function inferSavedZikirLinks(z) {
+    if (!z.libraryId && !isQuranZikir(z) && !CLASSIC_ZIKIR_IDS.includes(z.id) && parseEsmaZikirIndex(z) < 0) {
+        const esmaIdx = inferEsmaIndexForCopy(z);
+        if (esmaIdx >= 0) z.esmaIndex = esmaIdx;
+    }
+    const inferred = inferLibraryIdForSavedZikir(z);
+    if (inferred) z.libraryId = inferred;
+}
+
 function resolveLibraryBackedMeaning(z) {
     if (!z || !z.libraryId) return null;
     const cur = String(z.meaning || '').trim();
     const known = getKnownLibraryMeaningTexts(z.libraryId);
     const canonical = getLibraryMeaningForLocale(z.libraryId, appSettings.locale);
-    if (!cur || known.has(cur)) return canonical;
+    // Boş not: kullanıcı boşalttıysa boş kalır; hiç doldurulmamış eski kayıtta
+    // (ör. adı kütüphaneyle eşleşip sonradan bağlanan zikir) kütüphane metni gösterilir.
+    if (!cur) return z.meaningCleared ? '' : canonical;
+    if (known.has(cur)) return canonical;
     return cur;
 }
 
@@ -3020,10 +3069,7 @@ function loadData() {
         const sanitized = sanitizeLoadedData(d);
         folders = sanitized.folders.length ? sanitized.folders : [...getDefaultFolders()];
         zikirs = sanitized.zikirs.length ? sanitized.zikirs : [...DEFAULT_ZIKIRS];
-        zikirs.forEach((z) => {
-            const inferred = inferLibraryIdForSavedZikir(z);
-            if (inferred) z.libraryId = inferred;
-        });
+        zikirs.forEach(inferSavedZikirLinks);
         history = sanitized.history || {};
         usageByDay = sanitized.usageByDay || {};
         usageAreasByDay = sanitized.usageAreasByDay || {};
@@ -3103,9 +3149,10 @@ function loadData() {
         let arFix = false;
         zikirs.forEach((z) => {
             if (z.arabic && String(z.arabic).trim()) return;
-            const m = /^z_e_(\d+)$/.exec(z.id);
-            if (m) {
-                const idx = parseInt(m[1], 10);
+            // Kullanıcının bilerek sildiği Arapça eksik veri değil; eskiden her açılışta geri geliyordu.
+            if (z.arabicCleared) return;
+            const idx = parseEsmaZikirIndex(z);
+            if (idx >= 0) {
                 if (ESMA_LIST[idx] && ESMA_LIST[idx].arabic) {
                     z.arabic = ESMA_LIST[idx].arabic;
                     arFix = true;
@@ -4640,10 +4687,7 @@ function applySanitizedBackupToApp(sanitized) {
 
     folders = sanitized.folders.length ? sanitized.folders : [...getDefaultFolders()];
     zikirs = sanitized.zikirs.length ? sanitized.zikirs : [...DEFAULT_ZIKIRS];
-    zikirs.forEach((z) => {
-        const inferred = inferLibraryIdForSavedZikir(z);
-        if (inferred) z.libraryId = inferred;
-    });
+    zikirs.forEach(inferSavedZikirLinks);
     history = sanitized.history || {};
     usageByDay = sanitized.usageByDay || {};
     usageAreasByDay = sanitized.usageAreasByDay || {};
@@ -9323,10 +9367,8 @@ function setupHatimListeners() {
 }
 
 function getEsmaListEntryForZikir(z) {
-    const m = /^z_e_(\d+)$/.exec(z && z.id != null ? String(z.id) : '');
-    if (!m) return null;
-    const idx = parseInt(m[1], 10);
-    return ESMA_LIST[idx] || null;
+    const idx = parseEsmaZikirIndex(z);
+    return idx >= 0 ? ESMA_LIST[idx] || null : null;
 }
 
 function getEsmaDefaultFaziletForZikir(z) {
@@ -12137,6 +12179,7 @@ function setupEventListeners() {
             applyQuranZikirFormEdits(z, editZikirShownValues, textFields);
         } else {
             Object.assign(z, textFields);
+            applyClearedTextFlags(z, editZikirShownValues, textFields);
         }
         z.target = val;
         if (!localeUsesEnglishMeals(appSettings.locale)) {
@@ -12248,13 +12291,20 @@ async function processCopyMove(actionType) {
             const maxOrder = zikirs
                 .filter(x => x.folderId === destFolderId)
                 .reduce((m2, x) => Math.max(m2, typeof x.order === 'number' ? x.order : -1), -1);
-            zikirs.push({
+            const copy = {
                 ...z,
                 id: 'z_' + Date.now(),
                 folderId: destFolderId,
+                // Sıfırdan başlayan kopya özgünün son okunma zamanını taşımasın
+                // ("Son çekilen zikir" hiç okunmamış kopyayı gösteriyordu).
                 count: 0,
+                lastClicked: 0,
                 order: maxOrder + 1
-            });
+            };
+            // Esma kopyası yeni kimlikle Esma bağını kaybetmesin: fazilet ve dil karşılıkları.
+            const esmaIdx = parseEsmaZikirIndex(z);
+            if (esmaIdx >= 0) copy.esmaIndex = esmaIdx;
+            zikirs.push(copy);
         } else if (actionType === 'move') {
             z.folderId = destFolderId;
         }
