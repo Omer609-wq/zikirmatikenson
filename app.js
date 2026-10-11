@@ -3242,6 +3242,10 @@ function flushSave() {
     saveData();
 }
 
+/** Kayıt yazılamadığında kullanıcı bir kez uyarılır; yazma yeniden tutunca sıfırlanır. */
+let saveFailureNotified = false;
+
+/** @returns {boolean} veri diske yazıldıysa true */
 function saveData() {
     // Gerçek yazma olduğunda bekleyen ertelenmiş yazma gereksizdir.
     if (_saveTimer) {
@@ -3257,16 +3261,35 @@ function saveData() {
             (e.name === 'QuotaExceededError' ||
                 e.code === 22 ||
                 e.code === 1014);
+        let saved = false;
         if (isQuota && (pruneHistory() || sanitizeHistory())) {
             try {
                 localStorage.setItem('zikirmatik_data_v2', JSON.stringify(buildBackupPayload()));
+                saved = true;
             } catch (e2) {
                 console.error('saveData: kota dolu, eski geçmiş budandıktan sonra da yazılamadı.', e2);
             }
         } else {
             console.error('saveData', e);
         }
+        if (!saved) {
+            notifySaveFailure();
+            return false;
+        }
     }
+    saveFailureNotified = false;
+    return true;
+}
+
+/**
+ * Eskiden hata yalnız konsola yazılıyordu: kullanıcı kaydedildiğini sanıyor, yeniden
+ * açılışta değişiklikler kayboluyordu. Bellekteki veri durur; sonraki her kayıt
+ * tamamını yeniden yazmayı dener, yer açılınca kendiliğinden tutar.
+ */
+function notifySaveFailure() {
+    if (saveFailureNotified) return;
+    saveFailureNotified = true;
+    void showAppAlert(t('dialog.saveFailedMsg'), { title: t('dialog.saveFailedTitle') });
 }
 
 function buildBackupPayload() {
@@ -5852,6 +5875,11 @@ function closeAllOverlays() {
     closeLocaleWelcomeIfOpen();
     // Liste lib/overlay-registry.js'te: burası ile Geri tuşu aynı kaynaktan okur.
     for (const id of IN_APP_OVERLAY_IDS) {
+        // Diyalog geçmişe kayıt eklemez, bir ekrana da bağlı değil: popstate onu kapatmasın.
+        // Pencereyi geçmişte geri giderek kapatan kaydetme yolları hemen ardından uyarı
+        // gösterebiliyor (ör. kayıt yazılamadı); gecikmeli popstate o uyarıyı siliyordu.
+        // Android Geri diyaloğu yine kapatır (goBackInApp → closeOverlayPreferHistory).
+        if (id === 'appDialogOverlay') continue;
         document.getElementById(id)?.classList.remove('active');
     }
 }

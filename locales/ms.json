@@ -745,7 +745,9 @@
     "prompt": "Input",
     "ok": "OK",
     "cancel": "Batal",
-    "inputLabelName": "Nama"
+    "inputLabelName": "Nama",
+    "saveFailedTitle": "Gagal menyimpan",
+    "saveFailedMsg": "Perubahan tidak dapat disimpan pada peranti ini. Storan mungkin penuh; kosongkan sedikit ruang dan cuba lagi."
   },
   "localeWelcome": {
     "title": "Terima kasih kerana guna Zikirmatik",

@@ -764,7 +764,9 @@
     "prompt": "Input",
     "ok": "OK",
     "cancel": "Cancel",
-    "inputLabelName": "Name"
+    "inputLabelName": "Name",
+    "saveFailedTitle": "Couldn't save",
+    "saveFailedMsg": "Your changes couldn't be saved on this device. Storage may be full; free up some space and try again."
   },
   "localeWelcome": {
     "title": "Thanks for using Zikirmatik",

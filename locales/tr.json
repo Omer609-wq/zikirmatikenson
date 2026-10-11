@@ -745,7 +745,9 @@
     "prompt": "Giriş",
     "ok": "Tamam",
     "cancel": "İptal",
-    "inputLabelName": "Ad"
+    "inputLabelName": "Ad",
+    "saveFailedTitle": "Kaydedilemedi",
+    "saveFailedMsg": "Değişiklikler cihaza kaydedilemedi. Depolama alanı dolmuş olabilir; biraz yer açıp tekrar deneyin."
   },
   "localeWelcome": {
     "title": "Zikirmatik’i kullandığınız için teşekkürler",
