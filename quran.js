@@ -2,6 +2,7 @@ import surahIndex from './data/quran/index.json';
 import mealsIndex from './data/quran/meals/index.json';
 import { getJuzAtStart, getJuzDividerBeforeAyah, getJuzForAyah } from './lib/juz.js';
 import { getCurrentMushaf } from './lib/mushaf.js';
+import { parseWholeNumber, toLatinDigits } from './lib/digits.js';
 import {
     MUSHAF_PAGE_COUNT,
     getPageForAyah,
@@ -2513,9 +2514,10 @@ function parseAyahGotoInput(surahRaw, ayahRaw) {
     const meta = surahMeta(surahN);
     if (!meta) return { ok: false, message: t('quran.gotoInvalidSurah') };
 
-    const ayahText = String(ayahRaw || '').trim();
-    const ayahN = ayahText === '' ? 1 : Number(ayahText);
-    if (!Number.isFinite(ayahN) || ayahN < 1 || ayahN > meta.ayahCount) {
+    // Tam sayı ve yerel rakam: eskiden "1.5" kabul, "١" ret ediliyordu.
+    const ayahText = toLatinDigits(ayahRaw || '').trim();
+    const ayahN = ayahText === '' ? 1 : parseWholeNumber(ayahText);
+    if (!Number.isInteger(ayahN) || ayahN < 1 || ayahN > meta.ayahCount) {
         return {
             ok: false,
             message: t('quran.gotoInvalidAyah', { max: meta.ayahCount })
@@ -3037,15 +3039,24 @@ export function setQuranViewTab(tab) {
     syncQuranViewTabsUI();
 }
 
+/**
+ * Favori listesi çizim nesli. Çizim her favori için ayet metnini bekliyor; beklerken
+ * liste yeniden çizilirse (favori kaldırma, hızlı sekme geçişi) eski çizim yenisinin
+ * üstüne kart eklemeyi sürdürüyordu — kaldırılan ya da çift kartlar görünüyordu.
+ */
+let favoritesRenderGen = 0;
+
 export async function renderQuranFavoritesList(mealId, favorites) {
     const list = document.getElementById('quranFavoritesList');
     const loading = document.getElementById('quranFavoritesLoading');
     if (!list) return;
 
+    const gen = ++favoritesRenderGen;
     const items = Array.isArray(favorites) ? favorites : [];
     list.replaceChildren();
 
     if (!items.length) {
+        if (loading) loading.hidden = true; // eski çizim yüklenirken açtıysa
         const empty = document.createElement('p');
         empty.className = 'quran-surah-empty';
         empty.textContent = t('quran.favoritesEmpty');
@@ -3073,6 +3084,7 @@ export async function renderQuranFavoritesList(mealId, favorites) {
             } catch {
                 /* preview optional */
             }
+            if (gen !== favoritesRenderGen) return; // beklerken yeni çizim başladı
 
             const card = document.createElement('button');
             card.type = 'button';
@@ -3123,7 +3135,8 @@ export async function renderQuranFavoritesList(mealId, favorites) {
             list.appendChild(card);
         }
     } finally {
-        if (loading) loading.hidden = true;
+        // Yükleme göstergesi yalnız son çizime ait: eskisi bitince yenisininkini kapatmasın.
+        if (loading && gen === favoritesRenderGen) loading.hidden = true;
     }
 }
 

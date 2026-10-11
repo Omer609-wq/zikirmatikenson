@@ -3,6 +3,7 @@
  */
 import latinSurahNames from './data/quran/surah-names-latin.json' with { type: 'json' };
 import { getSurahLocalizedName, getSurahLocalizedNamesRow } from './quran-surah-names.js';
+import { toLatinDigits } from './lib/digits.js';
 
 const LATIN_BY_N = new Map((latinSurahNames || []).map((row) => [row.n, row]));
 
@@ -190,7 +191,8 @@ export function findSurahByFuzzyName(namePart, surahIndex, locale = 'tr') {
  * @returns {{ type: 'ref', surahHint?: number, namePart?: string, ayah: number } | null}
  */
 export function parseQuranRefQuery(raw) {
-    let q = String(raw || '').trim();
+    // Arapça/Urduca/Bengalce klavyenin rakamı da sayı (٢:٢٥٥ → 2:255).
+    let q = toLatinDigits(raw || '').trim();
     if (!q) return null;
     q = q.replace(REF_SUFFIX_RE, '').trim();
     if (!q) return null;
@@ -258,7 +260,7 @@ export function resolveQuranRefSuggestions(raw, surahIndex, locale = 'tr') {
  * @returns {{ surah: object } | { ambiguous: true, count: number } | null}
  */
 export function resolveSurahNameQuery(raw, surahIndex, locale = 'tr') {
-    const q = String(raw || '').trim();
+    const q = toLatinDigits(raw || '').trim();
     if (!q) return null;
 
     if (/^\d+$/.test(q)) {

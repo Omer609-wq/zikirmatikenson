@@ -78,6 +78,7 @@ import {
     normalizeZikirText
 } from './lib/zikir-text.js';
 import { addRemovedEsma, dropRemovedEsma } from './lib/removed-esma.js';
+import { parseWholeNumber } from './lib/digits.js';
 import {
     MAX_SMART_REMINDERS,
     MAX_MESSAGES_PER_RULE,
@@ -2196,8 +2197,9 @@ function parseQuranDrawerAyahSelection(ayahCount) {
     raw.split(/[,،\s]+/).forEach((part) => {
         const token = String(part || '').trim();
         if (!token) return;
-        const n = Number(token);
-        if (!Number.isFinite(n) || n < 1 || n > ayahCount) {
+        // Tam sayı ve yerel rakam: eskiden "1.5" kabul, "١" ret ediliyordu.
+        const n = parseWholeNumber(token);
+        if (!Number.isInteger(n) || n < 1 || n > ayahCount) {
             throw new Error(t('quran.folderAddInvalidAyah', { max: ayahCount }));
         }
         if (!nums.includes(n)) nums.push(n);
@@ -2363,7 +2365,11 @@ async function saveQuranDrawerFolderAdd() {
     };
     const displayMode = getQuranDrawerFolderSelectedMode();
     const counterLayout = getQuranDrawerCounterLayoutSelected();
-    addQuranAyahsBatchToFolder(resolvedDestId, batch, ayahNums, displayMode, counterLayout);
+    // Ekleme gerçekten olmadıysa "Eklendi" deme (eskiden sonuç kontrol edilmiyordu).
+    if (!addQuranAyahsBatchToFolder(resolvedDestId, batch, ayahNums, displayMode, counterLayout)) {
+        setQuranDrawerFolderError(t('quran.loadError'));
+        return false;
+    }
     setQuranDrawerFolderPanelOpen(false);
     closeQuranReaderDrawer();
     await showAppAlert(t('quran.addedToFolder'), { title: t('quran.addToFolder') });

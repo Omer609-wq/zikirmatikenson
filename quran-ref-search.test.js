@@ -176,3 +176,10 @@ test('parseScopedMealSearchQuery ignores meal words mistaken for surah names', (
 test('normalizeLatinSearchText', () => {
     assert.equal(normalizeLatinSearchText('Al-Baqarah'), 'al baqarah');
 });
+
+test('yerel rakamlar referans ve sure numarası olarak tanınır', () => {
+    assert.deepEqual(parseQuranRefQuery('٢:٢٥٥'), { type: 'ref', surahHint: 2, ayah: 255 });
+    assert.deepEqual(parseQuranRefQuery('২ ২৫৫'), { type: 'ref', surahHint: 2, ayah: 255 });
+    assert.equal(resolveSurahNameQuery('۱۸', surahIndex, 'ur')?.surah?.n, 18);
+    assert.equal(resolveSurahNameQuery('١١٤', surahIndex, 'ar')?.surah?.n, 114);
+});
