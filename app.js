@@ -70,6 +70,14 @@ import {
 } from './lib/counter-backgrounds.js';
 import { sanitizeLoadedData, sanitizeAyahNoteText, mintId } from './lib/sanitize.js';
 import {
+    FOLDER_NAME_MAX,
+    ZIKIR_TARGET_MAX,
+    ZIKIR_TEXT_MAX,
+    normalizeFolderName,
+    normalizeZikirText
+} from './lib/zikir-text.js';
+import { addRemovedEsma, dropRemovedEsma } from './lib/removed-esma.js';
+import {
     MAX_SMART_REMINDERS,
     MAX_MESSAGES_PER_RULE,
     SMART_REMINDER_MESSAGE_MAX_LEN,
@@ -3054,10 +3062,13 @@ function loadData() {
         });
         if (touched) saveData();
 
+        // Kullanıcının sildiği Esma'lar tamamlanmaz; eskiden her açılışta geri geliyordu.
+        const removedEsma = new Set(appMeta.removedEsma || []);
         // Migration for Esma folder (for existing users)
         if (!folders.find(f => f.id === 'f_esma')) {
             folders.push({ id: 'f_esma', name: 'Esma\'ül Hüsna' });
             ESMA_LIST.forEach((esma, index) => {
+                if (removedEsma.has(index)) return;
                 zikirs.push({
                     id: 'z_e_' + index, folderId: 'f_esma',
                     name: esma.name, arabic: esma.arabic || '', target: esma.target, meaning: esma.meaning,
@@ -3070,6 +3081,7 @@ function loadData() {
             let changed = false;
             ESMA_LIST.forEach((esma, index) => {
                 const id = 'z_e_' + index;
+                if (removedEsma.has(index)) return;
                 if (!zikirs.find(z => z.id === id)) {
                     zikirs.push({
                         id,
@@ -3600,6 +3612,20 @@ function capTrashEntries() {
     if (trash.entries.length > MAX_TRASH) trash.entries.length = MAX_TRASH;
 }
 
+/**
+ * Silinen Esma'lar hatırlanır: açılıştaki "eksik Esma'yı tamamla" onları geri getirmesin.
+ * Silmeye kalıcı tercih olarak saygı duyulur; geri yüklenen Esma listeden çıkar.
+ */
+function rememberRemovedEsma(zikirIds) {
+    if (!appMeta || typeof appMeta !== 'object') appMeta = { installedAt: null };
+    appMeta.removedEsma = addRemovedEsma(appMeta.removedEsma, zikirIds);
+}
+
+function forgetRemovedEsma(zikirIds) {
+    if (!appMeta || typeof appMeta !== 'object' || !appMeta.removedEsma) return;
+    appMeta.removedEsma = dropRemovedEsma(appMeta.removedEsma, zikirIds);
+}
+
 function restoreTrashEntry(index) {
     const e = trash && Array.isArray(trash.entries) ? trash.entries[index] : null;
     if (!e) return false;
@@ -3615,6 +3641,7 @@ function restoreTrashEntry(index) {
             .reduce((m, x) => Math.max(m, typeof x.order === 'number' ? x.order : -1), -1);
         z.order = maxOrder + 1;
         zikirs.push(z);
+        forgetRemovedEsma([z.id]);
         trash.entries.splice(index, 1);
         saveData();
         return true;
@@ -3639,6 +3666,7 @@ function restoreTrashEntry(index) {
             maxZOrder += 1;
             z.order = maxZOrder;
             zikirs.push(z);
+            forgetRemovedEsma([z.id]);
         });
 
         trash.entries.splice(index, 1);
@@ -5596,9 +5624,10 @@ async function renameSelectedFolder() {
     if (!folder) return;
     const name = await showAppPrompt(t('home.renameFolderPrompt'), folder.name, {
         title: t('home.renameFolderTitle'),
-        inputLabel: t('home.folderNameLabel')
+        inputLabel: t('home.folderNameLabel'),
+        maxLength: FOLDER_NAME_MAX
     });
-    const next = name != null ? name.trim() : '';
+    const next = name != null ? normalizeFolderName(name) : '';
     if (next && next !== folder.name) {
         folder.name = next;
         saveData();
@@ -5657,6 +5686,8 @@ async function deleteSelectedFolders() {
         // Non-premium: permanent delete (old behavior).
         removeHistoryForZikirIds(zikirIdsToRemove);
     }
+    // Başka klasöre taşınmış Esma da klasörle birlikte silinebilir.
+    rememberRemovedEsma(zikirIdsToRemove);
     zikirs = zikirs.filter((z) => !ids.includes(z.folderId));
     folders = folders.filter((f) => !ids.includes(f.id));
     exitFolderSelectMode(false);
@@ -5699,6 +5730,7 @@ async function deleteSelectedZikirs() {
         // Non-premium: permanent delete (old behavior).
         removeHistoryForZikirIds(new Set(ids));
     }
+    rememberRemovedEsma(ids);
     zikirs = zikirs.filter((z) => !ids.includes(z.id));
     if (currentZikirId && ids.includes(currentZikirId)) {
         currentZikirId = null;
@@ -11609,11 +11641,13 @@ function setupEventListeners() {
         if (handleFolderLimitBlocked()) return;
         const name = await showAppPrompt(t('home.newFolderPrompt'), '', {
             title: t('home.newFolderTitle'),
-            inputLabel: t('home.folderNameLabel')
+            inputLabel: t('home.folderNameLabel'),
+            maxLength: FOLDER_NAME_MAX
         });
-        if (name != null && name.trim()) {
+        const folderName = name != null ? normalizeFolderName(name) : '';
+        if (folderName) {
             const maxOrder = folders.reduce((m, f) => Math.max(m, typeof f.order === 'number' ? f.order : -1), -1);
-            folders.push({ id: 'f_' + Date.now(), name: name.trim(), order: maxOrder + 1 });
+            folders.push({ id: 'f_' + Date.now(), name: folderName, order: maxOrder + 1 });
             saveData();
             renderFolders();
         }
@@ -12025,17 +12059,34 @@ function setupEventListeners() {
         openOverlay('addModalOverlay');
     });
 
+    // Form sınırları kayıttakiyle aynı (lib/zikir-text.js): fazlası yazılamaz. Eskiden
+    // sınır yoktu, kabul edilen metin ve hedef yeniden açılışta sessizce kesiliyordu.
+    for (const [id, field] of [
+        ['newZikirName', 'name'], ['editZikirName', 'name'],
+        ['newZikirArabic', 'arabic'], ['editZikirArabic', 'arabic'],
+        ['newZikirMeaning', 'meaning'], ['editZikirMeaning', 'meaning'],
+        ['editZikirFazilet', 'fazilet']
+    ]) {
+        const el = document.getElementById(id);
+        if (el) el.maxLength = ZIKIR_TEXT_MAX[field];
+    }
+    for (const id of ['newZikirTarget', 'editZikirTarget']) {
+        const el = document.getElementById(id);
+        if (el) el.max = String(ZIKIR_TARGET_MAX);
+    }
+
     saveZikirBtn.addEventListener('click', async () => {
-        const n = document.getElementById('newZikirName').value.trim();
+        // Kayıttaki biçimle aynı: ekranda görünen, yeniden açılışta gelenle aynı olsun.
+        const n = normalizeZikirText('name', document.getElementById('newZikirName').value);
         const targetVal = parseInt(document.getElementById('newZikirTarget').value, 10);
-        const m = document.getElementById('newZikirMeaning').value.trim();
-        const ar = document.getElementById('newZikirArabic').value.trim();
-        
+        const m = normalizeZikirText('meaning', document.getElementById('newZikirMeaning').value);
+        const ar = normalizeZikirText('arabic', document.getElementById('newZikirArabic').value);
+
         if(!n) {
             await showAppAlert(t('confirm.nameRequired'), { title: t('confirm.missingNameTitle') });
             return;
         }
-        if(isNaN(targetVal) || targetVal < 1) {
+        if(isNaN(targetVal) || targetVal < 1 || targetVal > ZIKIR_TARGET_MAX) {
             await showAppAlert(t('confirm.invalidTarget'), { title: t('confirm.invalidTargetTitle') });
             return;
         }
@@ -12067,20 +12118,20 @@ function setupEventListeners() {
     // Edit Target Handle
     saveEditBtn.addEventListener('click', async () => {
         if (!editingZikirIdMap) return;
-        const nameVal = editZikirNameInp ? editZikirNameInp.value.trim() : '';
+        const nameVal = editZikirNameInp ? normalizeZikirText('name', editZikirNameInp.value) : '';
         if (!nameVal) {
             await showAppAlert(t('confirm.nameEmpty'), { title: t('confirm.missingNameTitle') });
             return;
         }
         const val = parseInt(editZikirTargetInp.value, 10);
-        if (isNaN(val) || val < 1) {
+        if (isNaN(val) || val < 1 || val > ZIKIR_TARGET_MAX) {
             await showAppAlert(t('confirm.invalidTargetNumber'), { title: t('confirm.invalidTargetTitle') });
             return;
         }
         const z = zikirs.find((x) => x.id === editingZikirIdMap);
         if (!z) return;
-        const textFields = { name: nameVal, meaning: editZikirMeaningInp.value.trim() };
-        if (editZikirArabicInp) textFields.arabic = editZikirArabicInp.value.trim();
+        const textFields = { name: nameVal, meaning: normalizeZikirText('meaning', editZikirMeaningInp.value) };
+        if (editZikirArabicInp) textFields.arabic = normalizeZikirText('arabic', editZikirArabicInp.value);
         if (isQuranZikir(z)) {
             // Ad ve ayet metni dil/meal değişince yenilenir; yalnızca formda değiştirilen alan kullanıcıya geçer.
             applyQuranZikirFormEdits(z, editZikirShownValues, textFields);
@@ -12089,8 +12140,8 @@ function setupEventListeners() {
         }
         z.target = val;
         if (!localeUsesEnglishMeals(appSettings.locale)) {
-            const fzVal = editZikirFaziletInp ? editZikirFaziletInp.value.trim() : '';
-            const defF = getEsmaDefaultFaziletForZikir(z);
+            const fzVal = editZikirFaziletInp ? normalizeZikirText('fazilet', editZikirFaziletInp.value) : '';
+            const defF = normalizeZikirText('fazilet', getEsmaDefaultFaziletForZikir(z));
             if (getEsmaListEntryForZikir(z)) {
                 if (!fzVal || fzVal === defF) delete z.fazilet;
                 else z.fazilet = fzVal;
@@ -12151,11 +12202,12 @@ function openEditModal(zId) {
     editZikirTargetInp.value = z.target;
     editZikirMeaningInp.value = getZikirDisplayMeaning(z) || '';
     if (editZikirArabicInp) editZikirArabicInp.value = z.arabic || '';
-    // Kutudan geri okunur: textarea satır sonlarını, input satır kırılımlarını kendince düzeltir.
+    // Kutudan geri okunur (textarea satır sonlarını, input satır kırılımlarını kendince
+    // düzeltir) ve kaydetmedeki biçime getirilir: dokunulmayan alan "değişti" sanılmasın.
     editZikirShownValues = {
-        name: editZikirNameInp ? editZikirNameInp.value.trim() : '',
-        meaning: editZikirMeaningInp.value.trim(),
-        arabic: editZikirArabicInp ? editZikirArabicInp.value.trim() : ''
+        name: editZikirNameInp ? normalizeZikirText('name', editZikirNameInp.value) : '',
+        meaning: normalizeZikirText('meaning', editZikirMeaningInp.value),
+        arabic: editZikirArabicInp ? normalizeZikirText('arabic', editZikirArabicInp.value) : ''
     };
     syncEditFaziletFieldForLocale(z);
     openOverlay('editModalOverlay');
