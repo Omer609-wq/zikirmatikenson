@@ -2217,13 +2217,13 @@ function populateQuranDrawerFolderSelect() {
     // listeyi yeniden kurunca sıfırlanmasın diye önce mevcut değeri sakla.
     const prev = select.value;
     select.innerHTML = '';
-    folders.forEach((f) => {
+    folders.filter((f) => isWritableFolderId(f.id)).forEach((f) => {
         const opt = document.createElement('option');
         opt.value = f.id;
         opt.textContent = f.name;
         select.appendChild(opt);
     });
-    if (prev && folders.some((f) => f.id === prev)) {
+    if (prev && folders.some((f) => f.id === prev && isWritableFolderId(f.id))) {
         select.value = prev;
     }
     return select.options.length > 0;
@@ -9426,8 +9426,12 @@ function renderFolderDetail() {
     // Arama sırasında alaka puanı, aksi hâlde kullanıcının sürükleme sırası geçerli.
     const searchScores = new Map();
     const fZikirsAll = zikirs.filter(z => z.folderId === currentFolderId);
+    // Özel gün zikirleri favorilenemez (içerik yenilenince geri dönüyordu): filtre orada yok.
+    const seasonalFolder = isSeasonalFolderId(currentFolderId);
+    const favoritesRow = folderFavoritesOnly && folderFavoritesOnly.closest('.setting-item');
+    if (favoritesRow) favoritesRow.style.display = seasonalFolder ? 'none' : '';
     const fZikirs = fZikirsAll.filter(z => {
-        if (folderFavOnly && !z.favorite) return false;
+        if (folderFavOnly && !seasonalFolder && !z.favorite) return false;
         if (!searching) return true;
         const score = scoreSearchMatch(
             buildSearchHaystack(folderZikirSearchParts(z)),
@@ -9490,6 +9494,9 @@ function renderFolderDetail() {
             : '';
         const meaningBlock = meaningPrev ? `<p>${escapeHtml(meaningPrev)}</p>` : '';
         const displayName = getZikirDisplayName(z);
+        // Özel gün zikrinde düzenleme ve favori kalıcı olmuyordu (uzak içerikten yeniden
+        // üretiliyor): düğmeler gösterilmez, değiştirmek isteyen kendi klasörüne kopyalar.
+        const editable = !isSeasonalZikirId(z.id);
         const arabicLine = shouldShowZikirArabicSubline(z, displayName)
             ? `<p class="zikir-arabic" dir="rtl" lang="ar">${escapeHtml(String(z.arabic).trim())}</p>`
             : '';
@@ -9508,14 +9515,14 @@ function renderFolderDetail() {
                         <h3 style="margin:0;" class="${localeUsesRtlUiScript(appSettings.locale) ? 'arabic-text' : ''}"${localeUsesRtlUiScript(appSettings.locale) ? ` dir="rtl" lang="${normalizeAppLocale(appSettings.locale) === 'ur' ? 'ur' : 'ar'}"` : ''}>${escapeHtml(displayName)}</h3>
                         ${arabicLine}
                     </div>
-                    <button class="icon-btn fav-btn" data-id="${escapeAttr(z.id)}" aria-label="${escapeAttr(favTitle)}" title="${escapeAttr(favTitle)}" style="padding:0.25rem; flex-shrink:0;">
+                    ${editable ? `<button class="icon-btn fav-btn" data-id="${escapeAttr(z.id)}" aria-label="${escapeAttr(favTitle)}" title="${escapeAttr(favTitle)}" style="padding:0.25rem; flex-shrink:0;">
                         <span class="material-icons-outlined" style="color: ${z.favorite ? 'var(--primary-green)' : 'var(--text-gray)'}">${favIcon}</span>
-                    </button>
+                    </button>` : ''}
                 </div>
                 ${meaningBlock}
                 <div class="meta">
                     <span>${escapeHtml(t('zikir.metaTarget'))} ${z.target} 
-                        <button class="edit-target-btn" data-id="${escapeAttr(z.id)}" aria-label="${escapeAttr(t('zikir.editAria'))}" title="${escapeAttr(t('zikir.editAria'))}"><span class="material-icons-outlined" style="font-size:16px;">edit</span></button>
+                        ${editable ? `<button class="edit-target-btn" data-id="${escapeAttr(z.id)}" aria-label="${escapeAttr(t('zikir.editAria'))}" title="${escapeAttr(t('zikir.editAria'))}"><span class="material-icons-outlined" style="font-size:16px;">edit</span></button>` : ''}
                         <button class="edit-target-btn copy-btn" data-id="${escapeAttr(z.id)}" aria-label="${escapeAttr(t('zikir.copyAria'))}" title="${escapeAttr(t('zikir.copyAria'))}"><span class="material-icons-outlined" style="font-size:16px;">content_copy</span></button>
                     </span>
                     <span>${escapeHtml(t('zikir.metaRead'))} ${z.count}</span>
@@ -11608,7 +11615,7 @@ function setupEventListeners() {
         if(!selectedLibraryItem) return;
 
         libDestFolder.innerHTML = '';
-        folders.forEach(f => {
+        folders.filter((f) => isWritableFolderId(f.id)).forEach(f => {
             const opt = document.createElement('option');
             opt.value = f.id;
             opt.textContent = f.name;
@@ -12264,9 +12271,12 @@ function openEditModal(zId) {
 
 async function openCopyModal(zId) {
     copyingZikirId = zId;
+    // Özel gün zikri taşınamaz, yalnız kopyalanır: kimliği geçici içerik sayıldığı için
+    // taşınan kayıt bir sonraki yenilemede özel gün klasörüne geri dönüyordu.
+    if (saveMoveBtn) saveMoveBtn.style.display = isSeasonalZikirId(zId) ? 'none' : '';
     copyDestFolder.innerHTML = '';
     folders.forEach(f => {
-        if(f.id !== currentFolderId) {
+        if (f.id !== currentFolderId && isWritableFolderId(f.id)) {
             const opt = document.createElement('option');
             opt.value = f.id;
             opt.textContent = f.name;
@@ -12282,6 +12292,14 @@ async function openCopyModal(zId) {
     }
     
     openOverlay('copyModalOverlay');
+}
+
+/**
+ * Kullanıcının zikir ekleyebileceği klasör. Özel gün klasörü uzaktan gelen içeriktir,
+ * kaydedilmez: oraya eklenen zikir yeniden açılışta sessizce varsayılan klasöre kayıyordu.
+ */
+function isWritableFolderId(folderId) {
+    return !isSeasonalFolderId(folderId);
 }
 
 async function processCopyMove(actionType) {
@@ -12312,6 +12330,7 @@ async function processCopyMove(actionType) {
             if (esmaIdx >= 0) copy.esmaIndex = esmaIdx;
             zikirs.push(copy);
         } else if (actionType === 'move') {
+            if (isSeasonalZikirId(z.id)) return;
             z.folderId = destFolderId;
         }
         saveData();
