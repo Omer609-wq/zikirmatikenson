@@ -1080,6 +1080,11 @@ let quranAyahFavorites = [];
 /** Ayet notları: { s, a, n: metin, t: son düzenleme } — en yeni önde. */
 let quranAyahNotes = [];
 import { QURAN_COUNTER_LAYOUTS, normalizeQuranCounterLayout } from './lib/quran-counter-layout.js';
+import {
+    applyQuranZikirAutoContent,
+    applyQuranZikirFormEdits,
+    releaseQuranCustomFields
+} from './lib/quran-zikir-fields.js';
 
 function isQuranZikir(z) {
     return !!(z?.quranRef && Number.isFinite(Number(z.quranRef.s)));
@@ -1096,7 +1101,10 @@ function getQuranRefAyahNums(ref) {
     return Number.isFinite(a) && a >= 1 ? [a] : [];
 }
 
-/** Kur'an kaynaklı zikirlerin adı, Arapça metni ve meal/okunuşu locale + meal ile yenilenir. */
+/**
+ * Kur'an kaynaklı zikirlerin adı, Arapça metni ve meal/okunuşu locale + meal ile yenilenir.
+ * Kullanıcının düzenleme formunda değiştirdiği alanlara dokunulmaz (z.quranCustom).
+ */
 async function syncQuranZikirLocalizedContent() {
     const quranZikirs = zikirs.filter(isQuranZikir);
     if (!quranZikirs.length) return false;
@@ -1143,18 +1151,7 @@ async function syncQuranZikirLocalizedContent() {
             getSurahLocalizedName(surah.n || surahN, locale) || t('quran.surahFallback', { n: surahN });
         const nextName = formatQuranZikirName(surahName, ayahNums);
 
-        if (z.name !== nextName) {
-            z.name = nextName;
-            changed = true;
-        }
-        if (z.arabic !== arabic) {
-            z.arabic = arabic;
-            changed = true;
-        }
-        if (z.meaning !== meaning) {
-            z.meaning = meaning;
-            changed = true;
-        }
+        if (applyQuranZikirAutoContent(z, { name: nextName, arabic, meaning })) changed = true;
     }
     return changed;
 }
@@ -1619,9 +1616,7 @@ function initCounterCustomizeSheetDrag() {
 }
 
 // Modals
-const addModalOverlay = document.getElementById('addModalOverlay');
 const saveZikirBtn = document.getElementById('saveZikirBtn');
-const editModalOverlay = document.getElementById('editModalOverlay');
 const saveEditBtn = document.getElementById('saveEditBtn');
 const editZikirNameInp = document.getElementById('editZikirName');
 const editZikirTargetInp = document.getElementById('editZikirTarget');
@@ -1629,8 +1624,9 @@ const editZikirMeaningInp = document.getElementById('editZikirMeaning');
 const editZikirFaziletInp = document.getElementById('editZikirFazilet');
 const editZikirArabicInp = document.getElementById('editZikirArabic');
 let editingZikirIdMap = null; // tracking edit
+/** Form açılırken alanlarda görünen değerler: Kur'an zikrinde hangi alanın elle değiştiği buna göre anlaşılır. */
+let editZikirShownValues = null;
 
-const copyModalOverlay = document.getElementById('copyModalOverlay');
 const copyDestFolder = document.getElementById('copyDestFolder');
 const saveCopyBtn = document.getElementById('saveCopyBtn');
 const saveMoveBtn = document.getElementById('saveMoveBtn');
@@ -2110,10 +2106,16 @@ async function applyReviseQuranDisplay() {
     }
 
     const { arabic, meaning } = buildQuranZikirContent(rows, displayMode);
+    const prevMode = normalizeQuranZikirDisplayMode(
+        zikir.quranDisplayMode || getDefaultQuranReadModeForLocale(appSettings.locale),
+        appSettings.locale
+    );
+    // Başka okuma modu seçmek ayetin hangi metniyle görüneceğini seçmektir: elle
+    // yazılan Arapça/not yerini ona bırakır. Yalnız düzen değiştiyse ikisi de kalır.
+    if (displayMode !== prevMode) releaseQuranCustomFields(zikir, ['arabic', 'meaning']);
     zikir.quranDisplayMode = displayMode;
     zikir.quranCounterLayout = counterLayout;
-    zikir.arabic = arabic;
-    zikir.meaning = meaning;
+    applyQuranZikirAutoContent(zikir, { arabic, meaning });
     saveData();
     updateCounterUI();
     closeOverlayPreferHistory('reviseQuranDisplayOverlay');
@@ -11995,7 +11997,7 @@ function setupEventListeners() {
             order: maxOrder + 1
         });
         saveData();
-        addModalOverlay.classList.remove('active');
+        closeOverlayPreferHistory('addModalOverlay');
         renderFolderDetail();
 
         // clear
@@ -12020,10 +12022,15 @@ function setupEventListeners() {
         }
         const z = zikirs.find((x) => x.id === editingZikirIdMap);
         if (!z) return;
-        z.name = nameVal;
+        const textFields = { name: nameVal, meaning: editZikirMeaningInp.value.trim() };
+        if (editZikirArabicInp) textFields.arabic = editZikirArabicInp.value.trim();
+        if (isQuranZikir(z)) {
+            // Ad ve ayet metni dil/meal değişince yenilenir; yalnızca formda değiştirilen alan kullanıcıya geçer.
+            applyQuranZikirFormEdits(z, editZikirShownValues, textFields);
+        } else {
+            Object.assign(z, textFields);
+        }
         z.target = val;
-        z.meaning = editZikirMeaningInp.value.trim();
-        if (editZikirArabicInp) z.arabic = editZikirArabicInp.value.trim();
         if (!localeUsesEnglishMeals(appSettings.locale)) {
             const fzVal = editZikirFaziletInp ? editZikirFaziletInp.value.trim() : '';
             const defF = getEsmaDefaultFaziletForZikir(z);
@@ -12039,8 +12046,11 @@ function setupEventListeners() {
         saveData();
         renderFolderDetail();
         if (currentZikirId === z.id) updateCounterUI();
-        editModalOverlay.classList.remove('active');
+        // Geçmiş kaydıyla birlikte kapat: yalnızca sınıfı silmek kaydı bırakıyordu,
+        // sonraki ekrandan Geri'ye basınca pencere ölü Güncelle düğmesiyle geri açılıyordu.
+        closeOverlayPreferHistory('editModalOverlay');
         editingZikirIdMap = null;
+        editZikirShownValues = null;
     });
 
     // Copy / Move
@@ -12084,6 +12094,12 @@ function openEditModal(zId) {
     editZikirTargetInp.value = z.target;
     editZikirMeaningInp.value = getZikirDisplayMeaning(z) || '';
     if (editZikirArabicInp) editZikirArabicInp.value = z.arabic || '';
+    // Kutudan geri okunur: textarea satır sonlarını, input satır kırılımlarını kendince düzeltir.
+    editZikirShownValues = {
+        name: editZikirNameInp ? editZikirNameInp.value.trim() : '',
+        meaning: editZikirMeaningInp.value.trim(),
+        arabic: editZikirArabicInp ? editZikirArabicInp.value.trim() : ''
+    };
     syncEditFaziletFieldForLocale(z);
     openOverlay('editModalOverlay');
 }
@@ -12135,7 +12151,7 @@ async function processCopyMove(actionType) {
         }
         saveData();
         renderFolderDetail();
-        copyModalOverlay.classList.remove('active');
+        closeOverlayPreferHistory('copyModalOverlay');
     }
 }
 
