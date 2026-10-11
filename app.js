@@ -680,6 +680,14 @@ const ESMA_TARGET_PREV = {
     93: [400]    // Hâdî     ← 20²
 };
 
+/**
+ * ESMA_TARGET_PREV düzeltmesinin sürümü. Düzeltme kullanıcı başına bir kez çalışır
+ * (appMeta.esmaTargetsFixed). Eskiden her açılışta çalışıyordu: eski değeri bilerek
+ * seçen kullanıcının hedefi (ör. Vedûd için 400) tekrar tekrar değiştiriliyordu.
+ * Listeye yeni bir düzeltme eklersen sürümü bir artır.
+ */
+const ESMA_TARGET_FIX_VERSION = 1;
+
 function getKnownEsmaMeanings(index) {
     const known = new Set();
     const tr = ESMA_LIST[index] && ESMA_LIST[index].meaning;
@@ -898,6 +906,9 @@ function syncLocalizedDefaults({ persist = false } = {}) {
         }
     }
 
+    // Eski hatalı Esma hedeflerinin düzeltmesi kullanıcı başına bir kez (ESMA_TARGET_FIX_VERSION).
+    const fixEsmaTargets = (appMeta?.esmaTargetsFixed || 0) < ESMA_TARGET_FIX_VERSION;
+
     for (const z of zikirs) {
         const idx = parseEsmaZikirIndex(z);
         if (idx < 0) continue;
@@ -920,9 +931,13 @@ function syncLocalizedDefaults({ persist = false } = {}) {
 
         const eskiHedefler = ESMA_TARGET_PREV[idx];
         const kanonHedef = ESMA_LIST[idx] && ESMA_LIST[idx].target;
-        if (eskiHedefler && kanonHedef && eskiHedefler.includes(Number(z.target))) {
+        if (fixEsmaTargets && eskiHedefler && kanonHedef && eskiHedefler.includes(Number(z.target))) {
             setField(z, 'target', kanonHedef);
         }
+    }
+    if (fixEsmaTargets && appMeta && typeof appMeta === 'object') {
+        appMeta.esmaTargetsFixed = ESMA_TARGET_FIX_VERSION;
+        changed = true;
     }
 
     for (const z of zikirs) {
