@@ -10,6 +10,12 @@ import {
 } from './native-reminders.js';
 import { IN_APP_OVERLAY_IDS } from './lib/overlay-registry.js';
 import { initKeyboardVisibilityClass } from './lib/keyboard-visibility.js';
+import {
+    archiveDaysBefore,
+    monthlyArchiveTotal,
+    removeZikirsFromMonthly,
+    yearArchiveTotal
+} from './lib/history-archive.js';
 import { truncateText } from './lib/coerce.js';
 import { isNameAllowed } from './lib/name-filter.js';
 import { buildHatimInvite, isShareCancelled } from './lib/hatim-invite.js';
@@ -1049,6 +1055,8 @@ function createDefaultAppSettings() {
 let folders = [];
 let zikirs = [];
 let history = {};
+/** Budanan (400 günden eski) günlerin aylık özeti: { "2026-04": { zid: adet } } */
+let historyMonthly = {};
 let usageByDay = {};
 let usageAreasByDay = {};
 let appSettings = createDefaultAppSettings();
@@ -2423,7 +2431,9 @@ function pruneHistory() {
     const cm = String(cutoff.getMonth() + 1).padStart(2, '0');
     const cd = String(cutoff.getDate()).padStart(2, '0');
     const cutoffStr = `${cy}-${cm}-${cd}`;
-    let changed = false;
+    if (!historyMonthly || typeof historyMonthly !== 'object') historyMonthly = {};
+    // Silmeden önce aylık özete aktar: beş yıllık grafik eski yılları 0 göstermesin.
+    let changed = archiveDaysBefore(history, historyMonthly, cutoffStr);
     Object.keys(history).forEach((day) => {
         if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || day < cutoffStr) {
             delete history[day];
@@ -3094,6 +3104,7 @@ function loadData() {
             history = {};
             usageByDay = {};
             usageAreasByDay = {};
+            historyMonthly = {};
             appSettings = createDefaultAppSettings();
             reminderSettings = { enabled: false, time: '21:00', lastFiredYmd: null };
             entitlements = { premium: false };
@@ -3110,6 +3121,7 @@ function loadData() {
         zikirs = sanitized.zikirs.length ? sanitized.zikirs : [...DEFAULT_ZIKIRS];
         zikirs.forEach(inferSavedZikirLinks);
         history = sanitized.history || {};
+        historyMonthly = sanitized.historyMonthly || {};
         usageByDay = sanitized.usageByDay || {};
         usageAreasByDay = sanitized.usageAreasByDay || {};
         appSettings = sanitized.settings || appSettings;
@@ -3208,6 +3220,7 @@ function loadData() {
         folders = [...getDefaultFolders()];
         zikirs = [...DEFAULT_ZIKIRS];
         history = {};
+        historyMonthly = {};
         usageByDay = {};
         usageAreasByDay = {};
         trash = { v: 1, entries: [] };
@@ -3316,6 +3329,7 @@ function buildBackupPayload() {
         folders: folders.filter((f) => !isSeasonalFolderId(f.id)),
         zikirs: zikirs.filter((z) => !isSeasonalZikirId(z.id)),
         history,
+        historyMonthly,
         usageByDay,
         usageAreasByDay,
         settings: appSettings,
@@ -4751,6 +4765,7 @@ function applySanitizedBackupToApp(sanitized) {
     zikirs = sanitized.zikirs.length ? sanitized.zikirs : [...DEFAULT_ZIKIRS];
     zikirs.forEach(inferSavedZikirLinks);
     history = sanitized.history || {};
+    historyMonthly = sanitized.historyMonthly || {};
     usageByDay = sanitized.usageByDay || {};
     usageAreasByDay = sanitized.usageAreasByDay || {};
     appSettings = sanitized.settings || appSettings;
@@ -5548,6 +5563,7 @@ function logDecrement(zId) {
 
 function removeHistoryForZikirIds(zidSet) {
     if (!history || !zidSet || zidSet.size === 0) return;
+    removeZikirsFromMonthly(historyMonthly, zidSet);
     Object.keys(history).forEach((day) => {
         const block = history[day];
         if (!block || typeof block !== 'object') return;
@@ -10352,10 +10368,11 @@ function zikirClicksOnDay(dayKey, zid) {
     return v ? Number(v) || 0 : 0;
 }
 
+/** Ay toplamı: günlük geçmiş + budanmış günlerin aylık özeti (ikisi çakışmaz). */
 function totalClicksForMonth(ym, zid) {
-    let sum = 0;
+    let sum = monthlyArchiveTotal(historyMonthly, ym, zid);
     const prefix = `${ym}-`;
-    if (!history || typeof history !== 'object') return 0;
+    if (!history || typeof history !== 'object') return sum;
     Object.keys(history).forEach((day) => {
         if (!day.startsWith(prefix)) return;
         sum += zid ? zikirClicksOnDay(day, zid) : dayHistoryTotal(day);
@@ -10363,10 +10380,11 @@ function totalClicksForMonth(ym, zid) {
     return sum;
 }
 
+/** Yıl toplamı: günlük geçmiş + budanmış günlerin aylık özeti (ikisi çakışmaz). */
 function totalClicksForYear(year, zid) {
-    let sum = 0;
+    let sum = yearArchiveTotal(historyMonthly, year, zid);
     const prefix = `${year}-`;
-    if (!history || typeof history !== 'object') return 0;
+    if (!history || typeof history !== 'object') return sum;
     Object.keys(history).forEach((day) => {
         if (!day.startsWith(prefix)) return;
         sum += zid ? zikirClicksOnDay(day, zid) : dayHistoryTotal(day);
