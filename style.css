@@ -164,6 +164,12 @@
 html[lang='ur'] {
     --font-main: 'Inter', 'Noto Naskh Arabic Local', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
+/* Düğme ve form alanları fontu üstten almaz, tarayıcının sistem fontunu kullanır;
+   iOS'ta bu da Nestalik demek (alt sekmeler, Gizlilik, diyalog düğmeleri…).
+   :where ile özgüllük sıfır: sınıfla font veren kurallar yine kazanır. */
+:where(html[lang='ur']) :where(button, input, select, textarea) {
+    font-family: inherit;
+}
 
 .material-icons-outlined {
     font-family: "Material Icons Outlined";
