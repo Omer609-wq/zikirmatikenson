@@ -561,6 +561,15 @@ html.counter-customize-open .bottom-nav {
     visibility: hidden !important;
     pointer-events: none !important;
 }
+/* Klavye açıkken sekme çubuğu klavyenin üstüne binip arama sonuçlarını
+   kapatmasın (lib/keyboard-visibility.js). Yer kaplamaya devam etsin ki
+   kaydırma alanı ve okuyucu konumu oynamasın. */
+html.keyboard-open .bottom-nav,
+html.keyboard-open .quran-surah-scroll-nav--down {
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+}
 .bottom-nav__btn {
     flex: 1 1 0;
     min-width: 0;

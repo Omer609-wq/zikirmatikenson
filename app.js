@@ -9,6 +9,7 @@ import {
     syncNativeSmartReminders
 } from './native-reminders.js';
 import { IN_APP_OVERLAY_IDS } from './lib/overlay-registry.js';
+import { initKeyboardVisibilityClass } from './lib/keyboard-visibility.js';
 import { truncateText } from './lib/coerce.js';
 import { isNameAllowed } from './lib/name-filter.js';
 import { buildHatimInvite, isShareCancelled } from './lib/hatim-invite.js';
@@ -1736,6 +1737,7 @@ async function init() {
         }
 
         applyNativeBottomInsetVar();
+        initKeyboardVisibilityClass();
         if (isCapacitorNative()) {
             void setupCrashReporting();
             setTimeout(() => void refreshNativeBottomInsetVar(), 200);
