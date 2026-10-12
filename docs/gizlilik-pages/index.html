@@ -42,14 +42,16 @@
 
   <h1>Gizlilik Politikası</h1>
   <p class="meta">
-    Zikirmatik Pro · Geliştirici: Anka Studio · Son güncelleme: 11 Ekim 2026<br>
+    Zikirmatik Pro · Geliştirici: Anka Studio · Son güncelleme: 12 Ekim 2026<br>
     İletişim: <a href="mailto:zikirmatik.help@gmail.com">zikirmatik.help@gmail.com</a>
   </p>
 
   <p>
-    Bu metin, Google Play’de yayınlanan <strong>Zikirmatik Pro</strong> uygulamasının
-    verileri nasıl işlediğini açıklar. Uygulamayı kullanarak bu politikayı
-    okuduğunuzu kabul etmiş sayılırsınız.
+    Bu metin, <strong>Zikirmatik Pro</strong> uygulamasının verileri nasıl
+    işlediğini açıklar: hem Google Play’deki Android uygulaması hem App Store’daki
+    iPhone uygulaması için geçerlidir. İkisinin farklı olduğu yerler ayrıca
+    belirtilmiştir. Uygulamayı kullanarak bu politikayı okuduğunuzu kabul etmiş
+    sayılırsınız.
   </p>
 
   <h2>1. Özet</h2>
@@ -57,10 +59,10 @@
     <li>Zikirleriniz, klasörleriniz, sayaç geçmişiniz ve ayarlarınız <strong>cihazınızda</strong> saklanır.</li>
     <li>Hesap açmak, giriş yapmak gerekmez.</li>
     <li>Yalnızca <strong>paylaşımlı hatim grubuna</strong> katılırsanız grup adı, o grupta kullandığınız ad ve cüz durumu sunucuda saklanır (bkz. 4. bölüm).</li>
-    <li>Uygulama verisi Android sistem / Google otomatik yedeklemesine dahil edilmez.</li>
+    <li>Android’de uygulama verisi Android sistem / Google otomatik yedeklemesine dahil edilmez. iPhone’da iCloud Yedekleme açıksa cihazın iCloud yedeğine dahil olabilir.</li>
     <li>İnternet; Kur’an içeriği, güncelleme duyurusu ve mevsimsel içerik gibi özellikler için kullanılır.</li>
-    <li>Uygulama çökerse hata ayıklama için çökme kaydı gönderilir (Google Firebase Crashlytics).</li>
-    <li>Android’de abonelik durumunu öğrenmek için RevenueCat’e anonim bir kimlikle bağlanılır (bkz. 6. bölüm).</li>
+    <li>Android’de uygulama çökerse hata ayıklama için çökme kaydı gönderilir (Google Firebase Crashlytics). iPhone uygulaması çökme kaydı göndermez.</li>
+    <li>Android’de abonelik durumunu öğrenmek için RevenueCat’e anonim bir kimlikle bağlanılır (bkz. 6. bölüm). iPhone uygulamasında satın alma yoktur, RevenueCat’e bağlanılmaz.</li>
   </ul>
 
   <h2>2. Cihazda saklanan veriler</h2>
@@ -131,9 +133,9 @@
     <a href="kullanim-sartlari.html">Kullanım Şartları</a>.
   </p>
 
-  <h2>5. Çökme raporları</h2>
+  <h2>5. Çökme raporları (yalnızca Android)</h2>
   <p>
-    Uygulama çöktüğünde, hatayı bulup düzeltebilmemiz için Google Firebase
+    Android uygulaması çöktüğünde, hatayı bulup düzeltebilmemiz için Google Firebase
     Crashlytics aracılığıyla bir çökme kaydı gönderilir. Bu kayıt cihaz modeli,
     işletim sistemi sürümü ve hatanın teknik detayı gibi bilgiler içerir;
     zikirleriniz, sayaçlarınız veya istatistikleriniz bu kayıtta yer almaz.
@@ -141,11 +143,14 @@
     profilleme amacıyla kullanılmaz.
     Crashlytics, Google’ın dünya genelindeki altyapısında çalışır; kayıtlar 90 gün
     saklanır, ardından Google silme sürecini başlatır.
+    iPhone uygulamasında Crashlytics yoktur, çökme kaydı gönderilmez.
   </p>
 
-  <h2>6. Satın almalar ve abonelik</h2>
+  <h2>6. Satın almalar ve abonelik (yalnızca Android)</h2>
   <p>
-    Ödemeler tamamen Google Play üzerinden işlenir; kart ya da ödeme bilgilerinize
+    iPhone uygulamasında şu an satın alma ya da abonelik yoktur ve RevenueCat’e
+    bağlanılmaz. Android uygulamasında ödemeler tamamen Google Play üzerinden
+    işlenir; kart ya da ödeme bilgilerinize
     erişmeyiz. Android uygulaması açıldığında abonelik durumunu öğrenmek için
     abonelik yönetim servisi <strong>RevenueCat</strong>’e cihazınıza özel anonim bir
     kullanıcı kimliğiyle bağlanır. Satın alma yaparsanız ürün kimliği ve işlem
@@ -168,7 +173,7 @@
   <h2>9. Güncellemeler</h2>
   <p class="note">
     Bu gizlilik politikası zaman zaman güncellenebilir. Güncel sürüm her zaman
-    bu sayfada yayınlanır. Önemli değişikliklerde Play Store açıklaması veya
+    bu sayfada yayınlanır. Önemli değişikliklerde mağaza sayfası (Google Play ya da App Store) veya
     uygulama içi duyuru ile bilgilendirme yapılabilir. Politikayı ara sıra
     kontrol etmenizi öneririz.
   </p>
@@ -183,8 +188,9 @@
     <li>
       <strong>İşlenen veriler ve amaçları:</strong> paylaşımlı hatim grubu
       kayıtları (grup adı, grupta kullandığınız ad, cüz durumu, anonim kimlik,
-      şikâyetler) grup özelliğini sunmak için; çökme kayıtları hataları düzeltmek
-      için; abonelik bilgisi satın almaları doğrulamak için işlenir.
+      şikâyetler) grup özelliğini sunmak için; Android uygulamasında ayrıca çökme
+      kayıtları hataları düzeltmek, abonelik bilgisi satın almaları doğrulamak
+      için işlenir.
     </li>
     <li>
       <strong>Toplama yöntemi:</strong> veriler, uygulamayı kullanırken elektronik
@@ -197,7 +203,8 @@
     </li>
     <li>
       <strong>Aktarılan taraflar:</strong> veriler, hizmet aldığımız Google
-      (Firebase) ve RevenueCat ile bu sayfada anlatılan amaçlarla paylaşılır. Bu
+      (Firebase) ve Android uygulamasında RevenueCat ile bu sayfada anlatılan
+      amaçlarla paylaşılır. Bu
       hizmet sağlayıcıların sunucuları yurt dışında (Avrupa ve ABD) bulunduğundan
       verileriniz yurt dışına aktarılır.
     </li>
