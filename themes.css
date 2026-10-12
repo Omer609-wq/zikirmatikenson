@@ -111,12 +111,15 @@ html[data-theme="light"] {
     --community-card-icon-bg: rgba(12, 40, 60, 0.07);
     --community-card-icon-border: rgba(12, 40, 60, 0.14);
     --community-card-chevron: rgba(28, 25, 23, 0.42);
-    /* Hatim cüz durumları — krem zeminde koyu sarı/yeşil, açık tonlar kayboluyor */
+    /* Hatim cüz durumları — krem zeminde koyu sarı/yeşil, açık tonlar kayboluyor.
+       "Okunuyor" sarısı eskiden amber-700'dü (#b45309): krem zeminde turuncu-kahve
+       okunuyordu. Aynı koyulukta (krem üstünde 4.7:1, küçük yazıda AA) ama sarı
+       tonda altın kullanılır; zemin ve kenar da turuncu değil sarı. */
     --hatim-free-bg: rgba(28, 25, 23, 0.05);
     --hatim-free-border: rgba(28, 25, 23, 0.13);
-    --hatim-claimed-bg: rgba(217, 119, 6, 0.13);
-    --hatim-claimed-border: rgba(180, 83, 9, 0.32);
-    --hatim-claimed-fg: #b45309;
+    --hatim-claimed-bg: rgba(234, 179, 8, 0.17);
+    --hatim-claimed-border: rgba(202, 138, 4, 0.42);
+    --hatim-claimed-fg: #946600;
     --hatim-done-bg: rgba(4, 120, 87, 0.12);
     --hatim-done-border: rgba(4, 120, 87, 0.3);
     --hatim-done-fg: #047857;
@@ -125,12 +128,32 @@ html[data-theme="light"] {
        kırmızı yolculuğu burada da korunuyor, sadece tamamı bir oktav aşağıda.
        Amber 3:1 tabanının bir tık altında (2.51:1): tabana yapıştırıldığında
        1 cüz ile 2 cüz gözle ayrılmıyordu. Koyu temada kırmızı ucu da aynı
-       gerekçeyle 2.00:1'de; bu şerit için tutarlı olan taviz bu yönde. */
-    --hatim-load1-fg: #b76802;
+       gerekçeyle 2.00:1'de; bu şerit için tutarlı olan taviz bu yönde.
+       1 cüz rengi eski #b76802 ile aynı parlaklıkta (kontrast aynı) ama sarı tonda;
+       turuncuya kaçıp 2 cüzün turuncusuna yaklaşıyordu. */
+    --hatim-load1-fg: #a07400;
     --hatim-load2-fg: #963302;
     --hatim-load3-fg: #650801;
     /* Açık kartta rampa koyu tarafta olduğu için boş nokta kısılmasına gerek yok. */
     --hatim-strip-empty: rgba(255, 255, 255, 0.16);
+}
+
+/* Baskı satırındaki "?": zemini "okunuyor" yazı rengiydi, açık temada koyu
+   altın zeminde koyu "?" okunmuyor ve turuncu görünüyordu. Koyu temadaki gibi
+   parlak sarı zemin + koyu işaret. */
+html[data-theme="light"] .hatim-edition-help {
+    background: #eab308;
+    color: #3b2a00;
+}
+/* Sınır uyarısı (hatim/klasör/zikir) ve hatırlatıcı karakter sayacı: parlak sarı
+   yazı krem zeminde ~1.9:1 kalıp okunmuyordu; "okunuyor" altınına bağlandı. */
+html[data-theme="light"] .limit-warning {
+    color: var(--hatim-claimed-fg);
+    background: var(--hatim-claimed-bg);
+    border-color: var(--hatim-claimed-border);
+}
+html[data-theme="light"] .smart-reminder-char-count.is-near-limit {
+    color: var(--hatim-claimed-fg);
 }
 
 html[data-theme="light"] .quran-surah-section__frame {
