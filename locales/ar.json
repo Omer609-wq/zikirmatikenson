@@ -872,6 +872,7 @@
     "arabicPlaceholder": "مثال: سُبْحَانَ اللَّهِ",
     "saveAdd": "إضافة إلى المجلد",
     "saveEdit": "تحديث",
+    "restoreDefaultText": "استعادة النص الافتراضي",
     "copyDestFolder": "اختر مجلد الوجهة",
     "copyDuplicate": "نسخ (تكرار)",
     "copyMove": "نقل",

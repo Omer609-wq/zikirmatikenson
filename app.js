@@ -1216,28 +1216,32 @@ async function syncQuranZikirLocalizedContent() {
 
     let changed = false;
     for (const z of quranZikirs) {
-        const surahN = Number(z.quranRef?.s);
-        const ayahNums = getQuranRefAyahNums(z.quranRef);
-        if (!Number.isFinite(surahN) || !ayahNums.length) continue;
-
-        const surah = surahCache.get(surahN);
-        if (!surah?.ayahs?.length) continue;
-
-        const rows = ayahNums.map((n) => surah.ayahs.find((a) => a.n === n)).filter(Boolean);
-        if (!rows.length) continue;
-
-        const displayMode = normalizeQuranZikirDisplayMode(
-            z.quranDisplayMode || getDefaultQuranReadModeForLocale(locale),
-            locale
-        );
-        const { arabic, meaning } = buildQuranZikirContent(rows, displayMode);
-        const surahName =
-            getSurahLocalizedName(surah.n || surahN, locale) || t('quran.surahFallback', { n: surahN });
-        const nextName = formatQuranZikirName(surahName, ayahNums);
-
-        if (applyQuranZikirAutoContent(z, { name: nextName, arabic, meaning })) changed = true;
+        const auto = buildQuranZikirAutoTexts(z, surahCache.get(Number(z.quranRef?.s)), locale);
+        if (auto && applyQuranZikirAutoContent(z, auto)) changed = true;
     }
     return changed;
+}
+
+/**
+ * Kur'an zikrinin ayetten üretilen adı, Arapçası ve meali/okunuşu (dil ve okuma moduna göre).
+ * Sure yüklenemediyse ya da ayet bulunamadıysa null.
+ */
+function buildQuranZikirAutoTexts(z, surah, locale) {
+    const surahN = Number(z.quranRef?.s);
+    const ayahNums = getQuranRefAyahNums(z.quranRef);
+    if (!Number.isFinite(surahN) || !ayahNums.length || !surah?.ayahs?.length) return null;
+
+    const rows = ayahNums.map((n) => surah.ayahs.find((a) => a.n === n)).filter(Boolean);
+    if (!rows.length) return null;
+
+    const displayMode = normalizeQuranZikirDisplayMode(
+        z.quranDisplayMode || getDefaultQuranReadModeForLocale(locale),
+        locale
+    );
+    const { arabic, meaning } = buildQuranZikirContent(rows, displayMode);
+    const surahName =
+        getSurahLocalizedName(surah.n || surahN, locale) || t('quran.surahFallback', { n: surahN });
+    return { name: formatQuranZikirName(surahName, ayahNums), arabic, meaning };
 }
 
 function refreshViewsAfterLocalizedZikirSync() {
@@ -1710,6 +1714,9 @@ const editZikirArabicInp = document.getElementById('editZikirArabic');
 let editingZikirIdMap = null; // tracking edit
 /** Form açılırken alanlarda görünen değerler: Kur'an zikrinde hangi alanın elle değiştiği buna göre anlaşılır. */
 let editZikirShownValues = null;
+const restoreZikirDefaultsBtn = document.getElementById('restoreZikirDefaultsBtn');
+/** "Varsayılan metne dön" ile forma getirilen değerler; kaydedilene kadar bekler. */
+let editZikirRestoredDefaults = null;
 
 const copyDestFolder = document.getElementById('copyDestFolder');
 const saveCopyBtn = document.getElementById('saveCopyBtn');
@@ -12292,6 +12299,11 @@ function setupEventListeners() {
         const textFields = { name: nameVal, meaning: normalizeZikirText('meaning', editZikirMeaningInp.value) };
         if (editZikirArabicInp) textFields.arabic = normalizeZikirText('arabic', editZikirArabicInp.value);
         if (isQuranZikir(z)) {
+            if (editZikirRestoredDefaults) {
+                // "Varsayılan metne dön": alanlar yeniden ayetten gelir (dil/meal değişince yenilenir).
+                releaseQuranCustomFields(z, ['name', 'arabic', 'meaning']);
+                applyQuranZikirAutoContent(z, editZikirRestoredDefaults);
+            }
             // Ad ve ayet metni dil/meal değişince yenilenir; yalnızca formda değiştirilen alan kullanıcıya geçer.
             applyQuranZikirFormEdits(z, editZikirShownValues, textFields);
         } else {
@@ -12319,7 +12331,9 @@ function setupEventListeners() {
         closeOverlayPreferHistory('editModalOverlay');
         editingZikirIdMap = null;
         editZikirShownValues = null;
+        editZikirRestoredDefaults = null;
     });
+    restoreZikirDefaultsBtn?.addEventListener('click', () => void restoreZikirDefaultTextsInForm());
 
     // Copy / Move
     saveCopyBtn.addEventListener('click', () => void processCopyMove('copy'));
@@ -12339,6 +12353,138 @@ function setupEventListeners() {
             renderStats();
         });
     });
+}
+
+/**
+ * Zikrin uygulamadaki varsayılan metinleri, o anki dilde. Klasik zikir önce gelir: TR'de
+ * Elhamdülillah kütüphane maddesine de bağlanıyor, ama metni klasik metin. Kullanıcının
+ * kendi zikrinde null; Kur'an zikri ayetten üretilir (buildQuranZikirAutoTexts).
+ * Fazilet yalnız Türkçede var.
+ */
+function getZikirDefaultTexts(z) {
+    if (!z) return null;
+    const locale = appSettings.locale;
+    const localeIsTr = !localeUsesEnglishMeals(locale);
+    if (CLASSIC_ZIKIR_IDS.includes(z.id)) {
+        return {
+            name: getLocalizedClassicZikirName(z.id),
+            arabic: DEFAULT_ZIKIR_ARABIC_BY_ID[z.id] || '',
+            meaning: getLocalizedClassicZikirMeaning(z.id),
+            fazilet: ''
+        };
+    }
+    if (z.libraryId) {
+        const canon = getLibraryCanonItem(z.libraryId, 'tr');
+        return {
+            name: getLibraryNameForLocale(z.libraryId, locale) || '',
+            arabic: (canon && canon.arabic && String(canon.arabic).trim()) || getLibraryNameForLocale(z.libraryId, 'ar') || '',
+            meaning: getLibraryMeaningForLocale(z.libraryId, locale) || '',
+            fazilet: localeIsTr ? getLibraryFaziletForLocale(z.libraryId) || '' : ''
+        };
+    }
+    const esmaIdx = parseEsmaZikirIndex(z);
+    if (esmaIdx >= 0) {
+        return {
+            name: getEsmaNameForLocale(esmaIdx),
+            arabic: ESMA_ARABIC[esmaIdx] || '',
+            meaning: getEsmaMeaningForLocale(esmaIdx),
+            fazilet: localeIsTr ? getEsmaDefaultFaziletForZikir(z) : ''
+        };
+    }
+    return null;
+}
+
+/** Zikrin bağlı olduğu kaynakların bilinen (uygulamanın yazdığı) metinleri, alan başına. */
+function getZikirKnownTexts(z) {
+    const known = { name: new Set(), arabic: new Set(), meaning: new Set(), fazilet: new Set() };
+    const add = (field, values) => {
+        for (const v of values || []) {
+            const text = normalizeZikirText(field, v);
+            if (text) known[field].add(text);
+        }
+    };
+    if (CLASSIC_ZIKIR_IDS.includes(z.id)) {
+        const names = getKnownClassicZikirNames(z.id); // Arapça varsayılan da içinde
+        add('name', names);
+        add('arabic', names);
+        add('meaning', getKnownClassicZikirMeanings(z.id));
+    }
+    if (z.libraryId) {
+        const names = getKnownLibraryNameTexts(z.libraryId); // Arapça metin de içinde
+        add('name', names);
+        add('arabic', names);
+        add('meaning', getKnownLibraryMeaningTexts(z.libraryId));
+        add('fazilet', getKnownLibraryFaziletTexts(z.libraryId));
+    }
+    const esmaIdx = parseEsmaZikirIndex(z);
+    if (esmaIdx >= 0) {
+        const names = getKnownEsmaNames(esmaIdx);
+        add('name', names);
+        add('arabic', names);
+        add('meaning', getKnownEsmaMeanings(esmaIdx));
+        add('fazilet', [getEsmaDefaultFaziletForZikir(z)]);
+    }
+    return known;
+}
+
+/**
+ * Kullanıcı varsayılan metinlerden birini değiştirmiş ya da silmiş mi? Öyleyse düzenleme
+ * penceresinde "Varsayılan metne dön" görünür: değiştirilen metne uzaktan gelen
+ * düzeltmeler uygulanmıyor, kullanıcı bununla güncel metne dönebilir.
+ */
+function isZikirTextCustomized(z) {
+    if (!z) return false;
+    if (isQuranZikir(z)) return !!z.quranCustom;
+    if (!getZikirDefaultTexts(z)) return false;
+    if (z.meaningCleared || z.arabicCleared) return true;
+    const known = getZikirKnownTexts(z);
+    const isCustom = (field, value) => {
+        const text = normalizeZikirText(field, value || '');
+        return !!text && !known[field].has(text);
+    };
+    if (isCustom('name', z.name) || isCustom('arabic', z.arabic) || isCustom('meaning', z.meaning)) return true;
+    // Esma ve klasik zikrin notu hep doluydu: boşsa kullanıcı silmiştir (işaretten önceki kayıtlar).
+    if (!z.libraryId && !String(z.meaning || '').trim()) return true;
+    if (!localeUsesEnglishMeals(appSettings.locale) && z.fazilet != null && isCustom('fazilet', z.fazilet)) return true;
+    return false;
+}
+
+/** "Varsayılan metne dön": formu güncel varsayılanla doldurur; Güncelle'ye basınca kaydedilir. */
+async function restoreZikirDefaultTextsInForm() {
+    const z = zikirs.find((x) => x.id === editingZikirIdMap);
+    if (!z) return;
+    let defaults = null;
+    if (isQuranZikir(z)) {
+        try {
+            const mealId = normalizeQuranMeal(appSettings.quranMeal, appSettings.locale);
+            const surah = await fetchSurahAyahs(Number(z.quranRef.s), mealId, appSettings.locale);
+            defaults = buildQuranZikirAutoTexts(z, surah, appSettings.locale);
+        } catch {
+            defaults = null;
+        }
+        if (!defaults) {
+            await showAppAlert(t('quran.loadError'));
+            return;
+        }
+    } else {
+        defaults = getZikirDefaultTexts(z);
+    }
+    // Ayet beklenirken pencere kapanmış ya da başka zikre geçilmiş olabilir.
+    if (!defaults || editingZikirIdMap !== z.id) return;
+    if (editZikirNameInp) editZikirNameInp.value = defaults.name || '';
+    if (editZikirArabicInp) editZikirArabicInp.value = defaults.arabic || '';
+    editZikirMeaningInp.value = defaults.meaning || '';
+    if (editZikirFaziletInp && !localeUsesEnglishMeals(appSettings.locale)) {
+        editZikirFaziletInp.value = defaults.fazilet || '';
+    }
+    // Bundan sonra "formda değişti mi" varsayılana göre: dokunulmayan alan uygulamaya geçer.
+    editZikirShownValues = {
+        name: editZikirNameInp ? normalizeZikirText('name', editZikirNameInp.value) : '',
+        meaning: normalizeZikirText('meaning', editZikirMeaningInp.value),
+        arabic: editZikirArabicInp ? normalizeZikirText('arabic', editZikirArabicInp.value) : ''
+    };
+    editZikirRestoredDefaults = defaults;
+    if (restoreZikirDefaultsBtn) restoreZikirDefaultsBtn.style.display = 'none';
 }
 
 function syncEditFaziletFieldForLocale(z) {
@@ -12370,6 +12516,8 @@ function openEditModal(zId) {
         arabic: editZikirArabicInp ? normalizeZikirText('arabic', editZikirArabicInp.value) : ''
     };
     syncEditFaziletFieldForLocale(z);
+    editZikirRestoredDefaults = null;
+    if (restoreZikirDefaultsBtn) restoreZikirDefaultsBtn.style.display = isZikirTextCustomized(z) ? '' : 'none';
     openOverlay('editModalOverlay');
 }
 

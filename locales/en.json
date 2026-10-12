@@ -790,6 +790,7 @@
     "arabicPlaceholder": "e.g. سُبْحَانَ اللَّهِ",
     "saveAdd": "Add to folder",
     "saveEdit": "Update",
+    "restoreDefaultText": "Restore default text",
     "copyDestFolder": "Choose destination folder",
     "copyDuplicate": "Copy there (duplicate)",
     "copyMove": "Move there",
