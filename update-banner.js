@@ -159,6 +159,9 @@ export function shouldShowUpdateBanner() {
 export async function refreshUpdateBannerConfig() {
     cachedPayload = null;
     if (UPDATE_BANNER_DISABLED) return null;
+    // Duyuru Android versionCode'una göre karşılaştırır ve Play Store'a götürür;
+    // iOS derleme numarası ayrı sayılır, Play bağlantısı da App Store'da red sebebi.
+    if (Capacitor.getPlatform() === 'ios') return null;
     await loadRuntimeFlags();
 
     installedVersionCode = await readInstalledVersionCode();

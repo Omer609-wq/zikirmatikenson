@@ -516,6 +516,7 @@
   "reminderDialog": {
     "notificationPermTitle": "Notification permission",
     "notificationPermDeniedNative": "Daily reminders need notification permission. On Android: App info → Notifications.",
+    "notificationPermDeniedIos": "Daily reminders need notification permission. On iPhone: Settings → this app → Notifications.",
     "scheduleFailedTitle": "Reminder",
     "scheduleFailedBody": "Could not schedule the daily reminder. Update the app and try again; if it persists, check Settings → Notifications.",
     "unsupportedTitle": "Notifications",
@@ -534,6 +535,7 @@
     "statsText": "Daily tap and usage summaries are kept on your device; statistics show about the last year.",
     "backupTitle": "Backup",
     "backupText": "App data is not included in Android system / Google automatic backup. Clearing app data, switching devices, or uninstalling may delete all records.",
+    "backupTextIos": "App data is kept on this iPhone; if iCloud Backup is on, it may be included in your device backup. Deleting the app may delete all records.",
     "permissionsTitle": "Permissions",
     "permissionsText": "Notifications (optional reminder), vibration, sound, and keep-screen-awake are for the in-app experience. Internet is used for Quran content, update notices, and seasonal content.",
     "crashTitle": "Crash reports",

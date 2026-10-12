@@ -498,6 +498,7 @@
   "reminderDialog": {
     "notificationPermTitle": "Izin notifikasi",
     "notificationPermDeniedNative": "Pengingat harian memerlukan izin notifikasi. Di Android: Info aplikasi → Notifikasi.",
+    "notificationPermDeniedIos": "Pengingat harian memerlukan izin notifikasi. Di iPhone: Pengaturan → aplikasi ini → Notifikasi.",
     "scheduleFailedTitle": "Pengingat",
     "scheduleFailedBody": "Pengingat harian tidak dapat dijadwalkan. Perbarui aplikasi dan coba lagi; jika masih gagal, periksa Pengaturan → Notifikasi.",
     "unsupportedTitle": "Notifikasi",
@@ -516,6 +517,7 @@
     "statsText": "Ringkasan ketukan dan penggunaan harian disimpan di perangkat Anda; statistik menampilkan sekitar 1 tahun terakhir.",
     "backupTitle": "Cadangan",
     "backupText": "Data aplikasi tidak termasuk cadangan otomatis sistem Android / Google. Menghapus data aplikasi, ganti perangkat, atau uninstall dapat menghapus semua catatan.",
+    "backupTextIos": "Data aplikasi disimpan di iPhone ini; jika Cadangan iCloud aktif, data dapat ikut dalam cadangan perangkat. Menghapus aplikasi dapat menghapus semua catatan.",
     "permissionsTitle": "Izin",
     "permissionsText": "Notifikasi (pengingat opsional), getar, suara, dan layar tetap menyala untuk pengalaman aplikasi. Internet dipakai untuk konten Al-Qur'an, pemberitahuan pembaruan, dan konten musiman.",
     "crashTitle": "Laporan kerusakan",

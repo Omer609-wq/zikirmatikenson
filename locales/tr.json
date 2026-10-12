@@ -498,6 +498,7 @@
   "reminderDialog": {
     "notificationPermTitle": "Bildirim izni",
     "notificationPermDeniedNative": "Günlük hatırlatıcı için bildirim izni gerekir. Android'de Uygulama bilgisi → Bildirimler bölümünden açabilirsiniz.",
+    "notificationPermDeniedIos": "Günlük hatırlatıcı için bildirim izni gerekir. iPhone'da Ayarlar → bu uygulama → Bildirimler bölümünden açabilirsiniz.",
     "scheduleFailedTitle": "Hatırlatıcı",
     "scheduleFailedBody": "Günlük hatırlatıcı zamanlanamadı. Uygulamayı güncelleyip tekrar deneyin; sorun sürerse Ayarlar → Bildirimler bölümünü kontrol edin.",
     "unsupportedTitle": "Bildirim",
@@ -516,6 +517,7 @@
     "statsText": "Günlük tıklama ve kullanım özetleri cihazınızda tutulur; istatistiklerde yaklaşık son 1 yıl gösterilir.",
     "backupTitle": "Yedekleme",
     "backupText": "Uygulama verisi Android sistem / Google otomatik yedeklemesine dahil edilmez. Uygulama verilerini silmek, cihaz değiştirmek veya kaldırmak tüm kaydı silebilir.",
+    "backupTextIos": "Uygulama verisi bu iPhone'da tutulur; iCloud yedeklemesi açıksa cihaz yedeğine dahil olabilir. Uygulamayı silmek tüm kaydı silebilir.",
     "permissionsTitle": "İzinler",
     "permissionsText": "Bildirimler (isteğe bağlı hatırlatıcı), titreşim, ses ve ekranı uyanık tutma uygulama deneyimi içindir. İnternet; Kur’an içeriği, güncelleme duyurusu ve mevsimsel içerik için kullanılır.",
     "crashTitle": "Çökme raporları",

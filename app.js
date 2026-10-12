@@ -3,6 +3,7 @@ import {
     applyNativeBottomInsetVar,
     bindNativeReminderNotificationLaunch,
     isCapacitorNative,
+    isIosNative,
     openExactAlarmSettings,
     refreshNativeBottomInsetVar,
     syncNativeDailyReminder,
@@ -18,7 +19,7 @@ import {
 } from './lib/history-archive.js';
 import { truncateText } from './lib/coerce.js';
 import { isNameAllowed } from './lib/name-filter.js';
-import { buildHatimInvite, isShareCancelled } from './lib/hatim-invite.js';
+import { APP_STORE_URL, buildHatimInvite, isShareCancelled } from './lib/hatim-invite.js';
 import {
     clampPageIndex,
     findPageIndex,
@@ -3659,6 +3660,12 @@ function syncPrivacyViewUI() {
         billingCard.hidden = !showBilling;
         billingCard.classList.toggle('hidden', !showBilling);
     }
+    // Varsayılan metin Android yedeklemesini anlatıyor; iPhone'da hem yanlış hem red sebebi.
+    const backupText = document.getElementById('privacyBackupText');
+    if (backupText && isIosNative()) {
+        backupText.setAttribute('data-i18n', 'privacy.backupTextIos');
+        backupText.textContent = t('privacy.backupTextIos');
+    }
 }
 
 function syncPremiumNavUI() {
@@ -4107,7 +4114,10 @@ async function ensureReminderSchedule() {
         clearInAppReminderTick();
         const r = await syncNativeDailyReminder(reminderSettings.enabled, reminderSettings.time, getLocale());
         if (reminderSettings.enabled && !r.ok && r.reason === 'denied') {
-            await showAppAlert(t('reminderDialog.notificationPermDeniedNative'), {
+            const deniedKey = isIosNative()
+                ? 'reminderDialog.notificationPermDeniedIos'
+                : 'reminderDialog.notificationPermDeniedNative';
+            await showAppAlert(t(deniedKey), {
                 title: t('reminderDialog.notificationPermTitle')
             });
         } else if (reminderSettings.enabled && !r.ok && r.reason === 'schedule') {
@@ -12200,7 +12210,17 @@ function setupEventListeners() {
     const settingsRateUsBtn = document.getElementById('settingsRateUsBtn');
     if (settingsRateUsBtn && settingsRateUsBtn.dataset.bound !== '1') {
         settingsRateUsBtn.dataset.bound = '1';
-        settingsRateUsBtn.addEventListener('click', () => openPlayStore());
+        // iPhone'da Play Store'a gitmek red sebebi; Apple ID girilene kadar düğme gizli.
+        const iosWithoutStore = isIosNative() && !APP_STORE_URL;
+        settingsRateUsBtn.hidden = iosWithoutStore;
+        settingsRateUsBtn.classList.toggle('hidden', iosWithoutStore);
+        settingsRateUsBtn.addEventListener('click', () => {
+            if (isIosNative()) {
+                if (APP_STORE_URL) window.open(`${APP_STORE_URL}?action=write-review`, '_system');
+                return;
+            }
+            openPlayStore();
+        });
     }
 
     const privacyPolicyBtn = document.getElementById('privacyPolicyBtn');

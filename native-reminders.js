@@ -41,6 +41,10 @@ export function isCapacitorNative() {
     }
 }
 
+export function isIosNative() {
+    return isCapacitorNative() && Capacitor.getPlatform() === 'ios';
+}
+
 function setBottomInsetPx(px) {
     const root = document.documentElement;
     if (px > 0) {

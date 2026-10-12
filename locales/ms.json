@@ -498,6 +498,7 @@
   "reminderDialog": {
     "notificationPermTitle": "Kebenaran pemberitahuan",
     "notificationPermDeniedNative": "Peringatan harian memerlukan kebenaran pemberitahuan. Di Android: Maklumat aplikasi → Pemberitahuan.",
+    "notificationPermDeniedIos": "Peringatan harian memerlukan kebenaran pemberitahuan. Di iPhone: Tetapan → aplikasi ini → Pemberitahuan.",
     "scheduleFailedTitle": "Peringatan",
     "scheduleFailedBody": "Peringatan harian tidak dapat dijadualkan. Kemas kini aplikasi dan cuba lagi; jika masih gagal, semak Tetapan → Pemberitahuan.",
     "unsupportedTitle": "Pemberitahuan",
@@ -516,6 +517,7 @@
     "statsText": "Ringkasan ketukan dan penggunaan harian disimpan pada peranti anda; statistik memaparkan kira-kira 1 tahun lepas.",
     "backupTitle": "Sandaran",
     "backupText": "Data aplikasi tidak termasuk sandaran automatik sistem Android / Google. Memadam data aplikasi, tukar peranti, atau nyahpasang boleh memadam semua rekod.",
+    "backupTextIos": "Data aplikasi disimpan pada iPhone ini; jika Sandaran iCloud dihidupkan, data mungkin termasuk dalam sandaran peranti. Memadam aplikasi boleh memadam semua rekod.",
     "permissionsTitle": "Kebenaran",
     "permissionsText": "Pemberitahuan (peringatan pilihan), getaran, bunyi dan skrin sentiasa hidup untuk pengalaman apl. Internet digunakan untuk kandungan Al-Quran, notis kemas kini dan kandungan bermusim.",
     "crashTitle": "Laporan ranap",

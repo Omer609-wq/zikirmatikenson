@@ -22,10 +22,12 @@
     },
     "ios": {
         "includePlugins": [
+            "@capacitor-community/in-app-review",
             "@capacitor-community/keep-awake",
             "@capacitor/app",
             "@capacitor/haptics",
             "@capacitor/local-notifications",
+            "@capacitor/share",
             "@capacitor/splash-screen",
             "@capacitor/status-bar",
             "@revenuecat/purchases-capacitor"
