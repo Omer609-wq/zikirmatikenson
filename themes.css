@@ -148,9 +148,12 @@ html[data-theme="light"] .hatim-edition-help {
 /* Sınır uyarısı (hatim/klasör/zikir) ve hatırlatıcı karakter sayacı: parlak sarı
    yazı krem zeminde ~1.9:1 kalıp okunmuyordu; "okunuyor" altınına bağlandı. */
 html[data-theme="light"] .limit-warning {
-    color: var(--hatim-claimed-fg);
-    background: var(--hatim-claimed-bg);
-    border-color: var(--hatim-claimed-border);
+    /* Uyarı olduğu belli olsun: altının en koyu tonu (~6.7:1), kalın yazı,
+       belirgin kenar. */
+    color: #6b4a00;
+    font-weight: 600;
+    background: rgba(234, 179, 8, 0.22);
+    border-color: rgba(202, 138, 4, 0.6);
 }
 html[data-theme="light"] .smart-reminder-char-count.is-near-limit {
     color: var(--hatim-claimed-fg);
