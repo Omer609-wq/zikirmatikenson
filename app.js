@@ -3666,6 +3666,12 @@ function syncPrivacyViewUI() {
         backupText.setAttribute('data-i18n', 'privacy.backupTextIos');
         backupText.textContent = t('privacy.backupTextIos');
     }
+    // Crashlytics yalnız Android'de (lib/crash-reporting.js); iPhone'da çökme kaydı gitmiyor.
+    const crashCard = document.getElementById('privacyCrashCard');
+    if (crashCard && isIosNative()) {
+        crashCard.hidden = true;
+        crashCard.classList.add('hidden');
+    }
 }
 
 function syncPremiumNavUI() {
