@@ -145,8 +145,8 @@ html[data-theme="light"] .hatim-edition-help {
     background: #eab308;
     color: #3b2a00;
 }
-/* Sınır uyarısı (hatim/klasör/zikir) ve hatırlatıcı karakter sayacı: parlak sarı
-   yazı krem zeminde ~1.9:1 kalıp okunmuyordu; "okunuyor" altınına bağlandı. */
+/* Sınır uyarısı (hatim/klasör/zikir): parlak sarı yazı krem zeminde ~1.9:1
+   kalıp okunmuyordu. */
 html[data-theme="light"] .limit-warning {
     /* Uyarı olduğu belli olsun: altının en koyu tonu (~6.7:1), kalın yazı,
        belirgin kenar. */
@@ -155,8 +155,15 @@ html[data-theme="light"] .limit-warning {
     background: rgba(234, 179, 8, 0.22);
     border-color: rgba(202, 138, 4, 0.6);
 }
-html[data-theme="light"] .smart-reminder-char-count.is-near-limit {
-    color: var(--hatim-claimed-fg);
+/* Hatim tamamlandı kartı: krem zeminde soluk kalıyordu. Sınır uyarısıyla aynı
+   koyu altın (~6.7:1); kart içinde token'lar yerel olarak koyulaştırılır. */
+html[data-theme="light"] .hatim-done-card {
+    --hatim-claimed-fg: #6b4a00;
+    --hatim-claimed-bg: rgba(234, 179, 8, 0.22);
+    --hatim-claimed-border: rgba(202, 138, 4, 0.6);
+}
+html[data-theme="light"] .hatim-done-card__stats {
+    color: var(--text-arabic);
 }
 
 html[data-theme="light"] .quran-surah-section__frame {
