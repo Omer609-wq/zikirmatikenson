@@ -972,7 +972,8 @@ html[data-accent="lime"] { --primary-green: #65a30d; --primary-green-hover: #4d7
 }
 .counter-customize-back {
     position: absolute;
-    top: calc(0.45rem + var(--app-top-inset, 0px));
+    /* iPhone çentik / Dynamic Island: web görünümü ekranın tepesine uzanıyor */
+    top: calc(0.45rem + env(safe-area-inset-top, 0px));
     left: 0.55rem;
     z-index: 6;
     pointer-events: auto;
