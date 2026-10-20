@@ -1,9 +1,15 @@
-# Play Store mağaza metinleri (8 dil)
+# Mağaza metinleri — Play Store ve App Store (8 dil)
 
 Play Console → Grow → Store presence → **Ana mağaza girişi → Çevirileri yönet**
 
 Limitler: **Başlık 30**, **Kısa açıklama 80**, **Tam açıklama 4000** karakter.
 Anahtar kelime ağırlığı: başlık > kısa açıklama > tam açıklama (metinde 2-3 doğal tekrar).
+
+**App Store:** App Store Connect → iOS App 1.0 → sağ üstten dil seç. Tam açıklama →
+**Description** (aynen), kısa açıklama → **Promotional Text** (170). Otomatik çeviri yok;
+yeni dilde açıklama ve anahtar kelimeler boş gelir, elle yapıştırılır. App Store açıklamayı
+aramada kullanmaz — arama için ad, alt başlık (30) ve **Keywords** (100) alanı önemli.
+Metinlerde Android / Google Play geçmemeli (App Store kuralı 2.3.10).
 
 > Not: Metinler uygulamanın **gerçek** özelliklerine göre yazıldı. Premium, bulut yedekleme
 > ve "onaylı kaynak" gibi henüz canlı olmayan/kaldırılan şeyler bilerek geçmiyor.
@@ -47,6 +53,14 @@ Dokunarak say, hedefini belirle, turlarını takip et. Titreşimli geri bildirim
 • Cüz ve sayfa takibi — kaldığın sayfadan devam et
 • Sure, ayet ve meal içinde arama
 • Ayarlanabilir Arapça yazı boyutu
+
+👥 HATİM GRUPLARI
+Ailen ve arkadaşlarınla birlikte hatim et:
+• Grup kur, 6 haneli katılma kodunu paylaş
+• Herkes bir cüz alsın, kendi hızında okusun
+• Hangi cüzlerin alındığını ve kaçının bittiğini tek ekranda gör
+• Hatim tamamlanınca hatim duası açılır
+Gruplar kapalıdır: yalnızca kodu bilenler katılabilir, gruplar listelenmez ve aranamaz.
 
 📊 İSTATİSTİK
 Günlük, haftalık, aylık ve yıllık grafiklerle ilerlemeni gör. En çok çektiğin zikirleri ve en verimli günlerini takip et.
@@ -99,6 +113,14 @@ Tap to count, set your target, track your rounds. Haptic feedback lets you make 
 • Search by surah, verse or translation text
 • Adjustable Arabic font size
 
+👥 KHATM GROUPS
+Complete the Quran together with family and friends:
+• Create a group and share its 6-character join code
+• Everyone takes a juz and reads at their own pace
+• See which juz are taken and how many are done, on one screen
+• When the khatm is complete, the khatm supplication opens
+Groups are private: only people with the code can join, and groups are never listed or searchable.
+
 📊 STATISTICS
 Track your progress with daily, weekly, monthly and yearly charts. See your most-recited dhikrs and your most consistent days.
 
@@ -149,6 +171,14 @@ Ketuk untuk menghitung, tentukan targetmu, pantau putaranmu. Getaran halus membu
 • Penanda juz dan halaman — lanjutkan dari halaman terakhir
 • Cari berdasarkan surah, ayat, atau teks terjemahan
 • Ukuran huruf Arab dapat diatur
+
+👥 GRUP KHATAMAN
+Khatamkan Al-Quran bersama keluarga dan temanmu:
+• Buat grup dan bagikan kode gabung 6 karakter
+• Setiap orang mengambil satu juz dan membaca sesuai kecepatannya
+• Lihat juz mana yang sudah diambil dan berapa yang selesai dalam satu layar
+• Saat khataman selesai, doa khatam langsung terbuka
+Grup bersifat tertutup: hanya yang tahu kodenya yang bisa bergabung, dan grup tidak pernah ditampilkan atau bisa dicari.
 
 📊 STATISTIK
 Pantau perkembanganmu dengan grafik harian, mingguan, bulanan, dan tahunan. Lihat dzikir yang paling sering kamu baca.
@@ -201,6 +231,14 @@ Ketik untuk mengira, tetapkan sasaran, jejaki pusinganmu. Maklum balas getaran m
 • Cari mengikut surah, ayat atau teks terjemahan
 • Saiz tulisan Arab boleh dilaraskan
 
+👥 KUMPULAN KHATAM
+Khatamkan al-Quran bersama keluarga dan rakan anda:
+• Cipta kumpulan dan kongsi kod sertai 6 aksara
+• Setiap orang mengambil satu juzuk dan membaca mengikut kelajuan sendiri
+• Lihat juzuk yang telah diambil dan berapa yang telah selesai dalam satu skrin
+• Apabila khatam selesai, doa khatam akan terbuka
+Kumpulan adalah tertutup: hanya mereka yang tahu kod boleh menyertai, dan kumpulan tidak pernah disenaraikan atau boleh dicari.
+
 📊 STATISTIK
 Jejaki kemajuan anda dengan carta harian, mingguan, bulanan dan tahunan. Lihat zikir yang paling kerap anda baca.
 
@@ -251,6 +289,14 @@ Semua yang anda perlukan untuk zikir, doa dan bacaan Al-Quran dalam satu aplikas
 • تتبّع الجزء والصفحة — تابع من صفحتك الأخيرة
 • البحث بالسورة أو الآية أو نص الترجمة
 • حجم الخط العربي قابل للتعديل
+
+👥 مجموعات الختمة
+اختم القرآن مع عائلتك وأصدقائك:
+• أنشئ مجموعة وشارك رمز الانضمام المكوّن من 6 خانات
+• يأخذ كل شخص جزءًا ويقرؤه على مهله
+• شاهد الأجزاء المحجوزة وعدد الأجزاء المكتملة في شاشة واحدة
+• عند اكتمال الختمة يُفتح دعاء ختم القرآن
+المجموعات مغلقة: لا ينضم إليها إلا من يعرف الرمز، ولا تظهر في أي قائمة ولا يمكن البحث عنها.
 
 📊 الإحصائيات
 تابع تقدمك برسوم بيانية يومية وأسبوعية وشهرية وسنوية. اطّلع على أكثر الأذكار التي تداوم عليها.
@@ -303,6 +349,14 @@ Semua yang anda perlukan untuk zikir, doa dan bacaan Al-Quran dalam satu aplikas
 • سورت، آیت یا ترجمے کے متن سے تلاش
 • عربی متن کا سائز ایڈجسٹ کریں
 
+👥 ختم گروپ
+اپنے گھر والوں اور دوستوں کے ساتھ مل کر قرآن ختم کریں:
+• گروپ بنائیں اور 6 حروف کا شمولیت کوڈ شیئر کریں
+• ہر شخص ایک پارہ لے اور اپنی رفتار سے پڑھے
+• کون سے پارے لیے جا چکے ہیں اور کتنے مکمل ہوئے، ایک ہی اسکرین پر دیکھیں
+• ختم مکمل ہونے پر ختم قرآن کی دعا کھل جاتی ہے
+گروپ بند ہوتے ہیں: صرف کوڈ جاننے والے شامل ہو سکتے ہیں، اور گروپ نہ کسی فہرست میں دکھائے جاتے ہیں نہ تلاش کیے جا سکتے ہیں۔
+
 📊 اعداد و شمار
 روزانہ، ہفتہ وار، ماہانہ اور سالانہ چارٹس سے اپنی پیش رفت دیکھیں۔ سب سے زیادہ پڑھے جانے والے اذکار جانیں۔
 
@@ -354,6 +408,14 @@ Semua yang anda perlukan untuk zikir, doa dan bacaan Al-Quran dalam satu aplikas
 • সূরা, আয়াত বা অনুবাদ থেকে অনুসন্ধান
 • আরবি লেখার আকার সমন্বয়যোগ্য
 
+👥 খতম গ্রুপ
+পরিবার ও বন্ধুদের সাথে মিলে কুরআন খতম করুন:
+• গ্রুপ তৈরি করুন এবং ৬ অক্ষরের যোগদান কোড শেয়ার করুন
+• প্রত্যেকে একটি পারা নিয়ে নিজের গতিতে পড়ুন
+• কোন পারাগুলো নেওয়া হয়েছে এবং কতগুলো সম্পন্ন হয়েছে, এক স্ক্রিনেই দেখুন
+• খতম সম্পন্ন হলে খতমের দোয়া খুলে যায়
+গ্রুপগুলো বন্ধ: শুধু কোড জানা ব্যক্তিরাই যোগ দিতে পারেন, এবং গ্রুপ কোনো তালিকায় দেখানো হয় না বা খোঁজা যায় না।
+
 📊 পরিসংখ্যান
 দৈনিক, সাপ্তাহিক, মাসিক ও বার্ষিক চার্টে অগ্রগতি দেখুন। সবচেয়ে বেশি পড়া জিকিরগুলো জানুন।
 
@@ -404,6 +466,14 @@ Touchez pour compter, fixez votre objectif, suivez vos tours. Le retour vibratoi
 • Suivi du juz et de la page — reprenez à votre dernière page
 • Recherche par sourate, verset ou texte de la traduction
 • Taille du texte arabe ajustable
+
+👥 GROUPES DE KHATMA
+Terminez le Coran ensemble, en famille ou entre amis :
+• Créez un groupe et partagez son code de 6 caractères
+• Chacun prend un juz et lit à son rythme
+• Voyez sur un seul écran quels juz sont pris et combien sont terminés
+• Une fois la khatma terminée, l'invocation du khatm s'ouvre
+Les groupes sont privés : seules les personnes ayant le code peuvent les rejoindre, et ils ne sont jamais listés ni trouvables par recherche.
 
 📊 STATISTIQUES
 Suivez votre progression avec des graphiques quotidiens, hebdomadaires, mensuels et annuels. Découvrez vos dhikrs les plus récités.
