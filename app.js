@@ -9252,7 +9252,9 @@ async function handleShareHatimGroup() {
         invite: name ? t('community.shareInvite', { name }) : t('community.shareInviteNoName'),
         codeLine: t('community.shareCode', { code: group.code }),
         androidLabel: t('community.shareAndroidLabel'),
-        iosLabel: t('community.shareIosLabel')
+        iosLabel: t('community.shareIosLabel'),
+        downloadLine: t('community.shareDownload'),
+        closing: t('community.shareClosing')
     });
     const title = t('community.shareTitle');
     try {
