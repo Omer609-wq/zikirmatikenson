@@ -113,12 +113,12 @@ Tap to count, set your target, track your rounds. Haptic feedback lets you make 
 • Search by surah, verse or translation text
 • Adjustable Arabic font size
 
-👥 KHATM GROUPS
+👥 HATIM (KHATM) GROUPS
 Complete the Quran together with family and friends:
 • Create a group and share its 6-character join code
 • Everyone takes a juz and reads at their own pace
 • See which juz are taken and how many are done, on one screen
-• When the khatm is complete, the khatm supplication opens
+• When the hatim is complete, the hatim supplication opens
 Groups are private: only people with the code can join, and groups are never listed or searchable.
 
 📊 STATISTICS
@@ -130,7 +130,7 @@ Get a reminder at the time you choose, with a different Quran verse each day.
 ✨ WHY TASBEEH COUNTER?
 • No ads, no spam notifications
 • Works offline — the Quran lives on your device too
-• No account required, your data stays on your phone (except shared khatm groups)
+• No account required, your data stays on your phone (except shared hatim groups)
 • 8 languages: English, Turkish, Arabic, Indonesian, Malay, French, Bengali, Urdu
 • Light and dark theme
 • Clean, distraction-free design
