@@ -36,7 +36,7 @@ Reklamsız zikir sayacı, Esma'ül Hüsna, dua arşivi ve çevrimdışı Kur'an-
 
 **Tam açıklama**
 ```
-Zikirmatik Pro; zikir sayacı, dua arşivi ve Kur'an-ı Kerim'i tek uygulamada birleştirir. Reklam yok, internet gerekmez.
+Zikirmatik Pro; zikir sayacı, dua arşivi ve Kur'an-ı Kerim'i tek uygulamada birleştirir. Reklam yok; zikir ve Kur'an için internet gerekmez.
 
 ⭐ ZİKİR SAYACI
 Dokunarak say, hedefini belirle, turlarını takip et. Titreşimli geri bildirim sayesinde ekrana bakmadan, tek elle zikir çekebilirsin. Gizli mod ile sayacını kimseye göstermeden kullan.
@@ -95,7 +95,7 @@ Ad-free tasbih counter, 99 Names of Allah, daily duas and offline Quran.
 
 **Full description**
 ```
-Tasbeeh Counter brings a tasbih counter, a dua library and the Holy Quran together in one app. No ads, no internet required.
+Tasbeeh Counter brings a tasbih counter, a dua library and the Holy Quran together in one app. No ads; no internet needed for dhikr and the Quran.
 
 ⭐ TASBIH COUNTER
 Tap to count, set your target, track your rounds. Haptic feedback lets you make dhikr one-handed, without looking at the screen. Use stealth mode to keep your counter private.
@@ -130,7 +130,7 @@ Get a reminder at the time you choose, with a different Quran verse each day.
 ✨ WHY TASBEEH COUNTER?
 • No ads, no spam notifications
 • Works offline — the Quran lives on your device too
-• No account required, your data stays on your phone (except shared hatim groups)
+• No account required, your data stays on your phone (except shared khatm groups)
 • 8 languages: English, Turkish, Arabic, Indonesian, Malay, French, Bengali, Urdu
 • Light and dark theme
 • Clean, distraction-free design
