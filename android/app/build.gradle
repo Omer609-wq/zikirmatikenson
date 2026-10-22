@@ -57,6 +57,21 @@ android {
     }
 }
 
+// Amazon Appstore modülü dışlandı. Yalnız Google Play'de satıyoruz ve bu modül
+// R8 kurallarına -dontoptimize koyuyor; o direktif GLOBAL, yani tüm uygulamada
+// optimizasyon geçişini kapatıyordu (ölçüldü: optimizasyon %0 -> %34,3).
+//
+// Modülün içinde yalnızca AmazonConfiguration + Builder'ı var; RevenueCat'i
+// Amazon için yapılandırırken kullanılıyor, biz Purchases.configure({apiKey})
+// ile Play'e gidiyoruz (lib/premium-purchase.js). Amazon entegrasyon sınıfları
+// zaten çekirdek purchases modülünde duruyor; burada giden sadece bu iki
+// yapılandırma sınıfı ve Amazon'un cihaz SDK'sı.
+//
+// Amazon Appstore'a çıkılırsa bu blok kaldırılmalı.
+configurations.all {
+    exclude group: 'com.revenuecat.purchases', module: 'purchases-store-amazon'
+}
+
 repositories {
     flatDir{
         dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
