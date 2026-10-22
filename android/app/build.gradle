@@ -42,7 +42,16 @@ android {
                     'Play Store için keystore.properties.example dosyasına bakın.'
                 )
             }
-            minifyEnabled false
+            // R8: kullanılmayan kodu atar, kalanı karartır. Play "DEX kodu
+            // optimizasyonu" eşiği (her kategoride %25) bunu şart koşuyor;
+            // kapalıyken kod karartma %5'te kalıyordu.
+            //
+            // Eklenti köprüsü reflection kullanıyor ama Capacitor kendi keep
+            // kurallarını AAR'ıyla gönderiyor (consumerProguardFiles), bizim
+            // eklediklerimiz proguard-rules.pro'da.
+            minifyEnabled true
+            // Kaynak küçültme: adıyla çözülen kaynaklar res/raw/keep.xml'de korunuyor.
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

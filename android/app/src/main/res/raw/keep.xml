@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  shrinkResources'ın silmemesi gereken kaynaklar.
+
+  Bu iki ikon XML'de hiçbir yerden referanslanmıyor; adları JS'ten geliyor
+  (native-reminders.js -> ANDROID_NOTIFICATION_ICONS) ve eklenti onları çalışma
+  anında AssetUtil.getResourceID(context, ad, "drawable") ile çözüyor. Kaynak
+  küçültücü statik referans aradığı için ikisini de "kullanılmıyor" sayıp siler;
+  sonuç: hatırlatıcı bildirimleri ikonsuz çıkar.
+
+  splash burada DEĞİL: values/styles.xml içinde @drawable/splash olarak
+  referanslı, küçültücü onu zaten görüyor.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_stat_notification,@drawable/ic_notification_large" />
