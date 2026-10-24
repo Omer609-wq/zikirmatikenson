@@ -2038,18 +2038,20 @@ function openQuranAyahNoteEditor(surahN, ayahN, refLabel) {
     quranAyahNoteTarget = { s: Number(surahN), a: Number(ayahN) };
     input.value = getQuranAyahNote(surahN, ayahN);
     if (refEl) refEl.textContent = refLabel || '';
-    openOverlay('quranAyahNoteOverlay', {
-        onOpen: () => {
-            // Boş notta imleç hemen yazı alanında; dolu notta metin sonunda.
-            requestAnimationFrame(() => {
-                try {
-                    input.focus({ preventScroll: true });
-                    const end = input.value.length;
-                    input.setSelectionRange(end, end);
-                } catch (_) {
-                    // ignore
-                }
-            });
+    // Geçmişe kayıt EKLEMEDEN açılır (Kur'an arama rehberi gibi). openOverlay kayıt
+    // ekliyordu; kapanışta window.history.back() → popstate → showView('quranSurahView',
+    // açılıştaki param) okuyucuyu baştan çiziyor, kullanıcı okuduğu ayetten sure
+    // başına, açılıştaki sureye ya da kayıtlı mushaf sayfasına atılıyordu.
+    // Kapat, Kaydet ve Android Geri closeOverlayPreferHistory ile yalnız sınıfı kaldırır.
+    document.getElementById('quranAyahNoteOverlay')?.classList.add('active');
+    // Boş notta imleç hemen yazı alanında; dolu notta metin sonunda.
+    requestAnimationFrame(() => {
+        try {
+            input.focus({ preventScroll: true });
+            const end = input.value.length;
+            input.setSelectionRange(end, end);
+        } catch (_) {
+            // ignore
         }
     });
 }
